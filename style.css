@@ -1,0 +1,350 @@
+/* ===== RESET & BASE ===== */
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #0f172a, #020617);
+  color: white;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.app {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 40px;
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #fff, #888);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== GRILLE DE JEUX ===== */
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  padding: 20px;
+}
+
+/* ===== VARIABLES DE COULEURS PAR JEU ===== */
+:root {
+  /* Jeux existants */
+  --color-pile-face: #eab308;
+  --color-hifumi: #06b6d4;
+  --color-de: #f59e0b;
+  --color-reflex: #10b981;
+  --color-tetris: #8b5cf6;
+  --color-snake: #22c55e;
+  --color-pong: #ec4899;
+  --color-demineur: #ef4444;
+  
+  /* Nouveaux jeux */
+  --color-2048: #f97316;
+  --color-bataille: #0ea5e9;
+  --color-casse-blocs: #e879f9;
+}
+
+/* ===== STYLE COMMUN DES CARTES ===== */
+.game-card {
+  --card-color: #888;
+  --card-color-rgb: 136, 136, 136;
+  
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--card-color);
+  border-radius: 16px 0 0 16px;
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(var(--card-color-rgb), 0.15);
+  border-color: rgba(var(--card-color-rgb), 0.3);
+}
+
+/* ===== COULEURS SPÉCIFIQUES PAR JEU ===== */
+
+/* 🪙 Pile ou Face - Jaune doré */
+.game-card[data-game="pile-face"],
+.game-card:has(.game-title:contains("Pile")) {
+  --card-color: #eab308;
+  --card-color-rgb: 234, 179, 8;
+}
+
+/* ✊ HiFuMi - Cyan */
+.game-card[data-game="hifumi"] {
+  --card-color: #06b6d4;
+  --card-color-rgb: 6, 182, 212;
+}
+
+/* 🎲 Dé Magique - Orange */
+.game-card[data-game="de"] {
+  --card-color: #f59e0b;
+  --card-color-rgb: 245, 158, 11;
+}
+
+/* ⚡ Chrono Réflexe - Vert émeraude */
+.game-card[data-game="reflex"] {
+  --card-color: #10b981;
+  --card-color-rgb: 16, 185, 129;
+}
+
+/* 🧱 Tetris - Violet */
+.game-card[data-game="tetris"] {
+  --card-color: #8b5cf6;
+  --card-color-rgb: 139, 92, 246;
+}
+
+/* 🐍 Snake Néon - Vert néon */
+.game-card[data-game="snake"] {
+  --card-color: #22c55e;
+  --card-color-rgb: 34, 197, 94;
+}
+
+/* 🏓 Pong Arcade - Rose magenta */
+.game-card[data-game="pong"] {
+  --card-color: #ec4899;
+  --card-color-rgb: 236, 72, 153;
+}
+
+/* 💣 Démineur - Rouge */
+.game-card[data-game="demineur"] {
+  --card-color: #ef4444;
+  --card-color-rgb: 239, 68, 68;
+}
+
+/* 🚢 Bataille Navale - Bleu océan */
+.game-card[data-game="bataille"] {
+  --card-color: #0ea5e9;
+  --card-color-rgb: 14, 165, 233;
+}
+
+/* 🔢 2048 - Orange brûlé */
+.game-card[data-game="2048"] {
+  --card-color: #f97316;
+  --card-color-rgb: 249, 115, 22;
+}
+
+/* 🎯 Casse-Briques - Violet rose */
+.game-card[data-game="casse-blocs"] {
+  --card-color: #e879f9;
+  --card-color-rgb: 232, 121, 249;
+}
+
+/* ===== ICÔNE DU JEU ===== */
+.game-icon {
+  width: 50px;
+  height: 50px;
+  background: rgba(var(--card-color-rgb), 0.15);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(var(--card-color-rgb), 0.3);
+}
+
+/* ===== TITRE DU JEU ===== */
+.game-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+/* ===== TAGS ===== */
+.game-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.tag {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tag.difficulty-easy {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.tag.difficulty-medium {
+  background: rgba(234, 179, 8, 0.2);
+  color: #eab308;
+  border-color: rgba(234, 179, 8, 0.3);
+}
+
+.tag.difficulty-hard {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ===== DESCRIPTION ===== */
+.game-description {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+/* ===== ZONE INTERACTIVE ===== */
+.game-interactive {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.result-display {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--card-color);
+  letter-spacing: 2px;
+}
+
+/* ===== BOUTON LANCER ===== */
+.btn-launch {
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, var(--card-color), rgba(var(--card-color-rgb), 0.7));
+  color: #000;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-launch:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(var(--card-color-rgb), 0.4);
+}
+
+.btn-launch:active {
+  transform: translateY(0);
+}
+
+/* Effet brillance sur le bouton */
+.btn-launch::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-launch:hover::before {
+  left: 100%;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  body {
+    padding: 20px 10px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  .games {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 10px;
+  }
+  
+  .game-card {
+    padding: 20px;
+  }
+  
+  .game-title {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-tags {
+    justify-content: center;
+  }
+  
+  .game-interactive {
+    padding: 15px;
+  }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.game-card {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.game-card:nth-child(1) { animation-delay: 0.05s; }
+.game-card:nth-child(2) { animation-delay: 0.1s; }
+.game-card:nth-child(3) { animation-delay: 0.15s; }
+.game-card:nth-child(4) { animation-delay: 0.2s; }
+.game-card:nth-child(5) { animation-delay: 0.25s; }
+.game-card:nth-child(6) { animation-delay: 0.3s; }
+.game-card:nth-child(7) { animation-delay: 0.35s; }
+.game-card:nth-child(8) { animation-delay: 0.4s; }
+.game-card:nth-child(9) { animation-delay: 0.45s; }
+.game-card:nth-child(10) { animation-delay: 0.5s; }
+.game-card:nth-child(11) { animation-delay: 0.55s; }

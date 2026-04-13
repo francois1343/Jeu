@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bataille Navale</title>
+  <style>
+    /* Style minimal pour que le jeu soit jouable */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #1a1a2e; color: white; min-height: 100vh; padding: 20px; }
+    .hidden { display: none !important; }
+    
+    /* Menus */
+    .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 100; }
+    .menu-content { background: #16213e; padding: 40px; border-radius: 15px; text-align: center; max-width: 500px; }
+    .menu-content h1, .menu-content h2 { margin-bottom: 20px; }
+    .menu-btn { display: block; width: 100%; padding: 15px 30px; margin: 10px 0; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+    .menu-btn.primary { background: #4d7cff; color: white; }
+    .menu-btn.secondary { background: #333; color: white; }
+    .menu-btn:hover { transform: scale(1.05); }
+    
+    /* HUD */
+    .hud { display: flex; justify-content: space-around; padding: 15px; background: #16213e; border-radius: 10px; margin-bottom: 20px; }
+    .hud-item { text-align: center; }
+    .hud-label { font-size: 12px; color: #888; }
+    .hud-value { font-size: 24px; font-weight: bold; color: #4d7cff; }
+    
+    /* Grilles */
+    .boards-container { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .board-wrapper { text-align: center; }
+    .board-title { font-size: 18px; margin-bottom: 10px; padding: 10px; background: #16213e; border-radius: 8px; }
+    .grid { display: inline-grid; gap: 2px; background: #333; padding: 2px; border-radius: 5px; }
+    .cell { width: 35px; height: 35px; background: #1a1a2e; border: 1px solid #333; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 14px; transition: 0.2s; }
+    .cell:hover { background: #2a2a4e; }
+    .cell.ship { background: #4d7cff; }
+    .cell.hit { background: #ff4757; color: white; }
+    .cell.miss { background: #333; color: #888; }
+    .cell.sunk { background: #8b0000; }
+    .cell.preview { background: rgba(77, 124, 255, 0.5); }
+    .cell.preview-invalid { background: rgba(255, 71, 87, 0.5); }
+    
+    /* Sélecteur de navires */
+    .ship-selector { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0; padding: 20px; background: #16213e; border-radius: 10px; }
+    .ship-option { padding: 10px 20px; background: #333; border: 2px solid #4d7cff; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+    .ship-option:hover { background: #4d7cff; }
+    .ship-option.selected { background: #4d7cff; }
+    .ship-option.placed { opacity: 0.5; border-color: #00ff88; background: #00ff88; cursor: not-allowed; }
+    
+    /* Contrôles */
+    .controls { display: flex; justify-content: center; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+    .control-btn { padding: 12px 24px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+    .control-btn:hover { transform: scale(1.05); }
+    .control-btn.primary { background: #4d7cff; color: white; }
+    .control-btn.secondary { background: #333; color: white; }
+    .control-btn.danger { background: #ff4757; color: white; }
+    .control-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    
+    /* Status flotte */
+    .fleet-status { display: flex; justify-content: center; gap: 40px; margin: 20px 0; padding: 20px; background: #16213e; border-radius: 10px; flex-wrap: wrap; }
+    .fleet-column { text-align: center; }
+    .fleet-column h3 { margin-bottom: 10px; }
+    .ship-status { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
+    .ship-status.sunk { text-decoration: line-through; opacity: 0.5; }
+    .ship-cells { display: flex; gap: 2px; }
+    .ship-cell { width: 15px; height: 15px; background: #4d7cff; border-radius: 2px; }
+    .ship-status.sunk .ship-cell { background: #ff4757; }
+    
+    /* Turn indicator */
+    .turn-indicator { text-align: center; padding: 15px; margin: 10px 0; border-radius: 10px; font-size: 18px; font-weight: bold; }
+    .turn-indicator.player { background: #00ff88; color: #000; }
+    .turn-indicator.enemy { background: #ff4757; color: #fff; }
+    
+    /* Messages */
+    .message { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 15px 30px; border-radius: 10px; font-weight: bold; z-index: 200; animation: fadeInOut 2.5s forwards; }
+    .message.success { background: #00ff88; color: #000; }
+    .message.danger { background: #ff4757; color: #fff; }
+    .message.info { background: #4d7cff; color: #fff; }
+    @keyframes fadeInOut { 0% { opacity: 0; top: 0; } 15% { opacity: 1; top: 20px; } 85% { opacity: 1; top: 20px; } 100% { opacity: 0; top: 0; } }
+    
+    /* Game over stats */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+    .stat-item { background: #1a1a2e; padding: 15px; border-radius: 8px; }
+    .stat-label { font-size: 12px; color: #888; }
+    .stat-value { font-size: 24px; font-weight: bold; color: #4d7cff; }
+    
+    /* Responsive */
+    @media (max-width: 800px) {
+      .boards-container { flex-direction: column; align-items: center; }
+      .cell { width: 30px; height: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menu Principal -->
+  <div id="main-menu" class="menu-overlay">
+    <div class="menu-content">
+      <h1>🚢 Bataille Navale</h1>
+      <p style="margin-bottom: 30px; color: #888;">Coulez tous les navires ennemis pour gagner !</p>
+      
+      <h3 style="margin-bottom: 15px;">Choisissez la difficulté :</h3>
+      <button class="menu-btn primary" onclick="game.start('easy')">🟢 Facile</button>
+      <button class="menu-btn primary" onclick="game.start('medium')">🟡 Moyen</button>
+      <button class="menu-btn primary" onclick="game.start('hard')">🔴 Difficile</button>
+      <button class="menu-btn primary" onclick="game.start('impossible')">💀 Impossible</button>
+      
+      <button class="menu-btn secondary" onclick="showRules()" style="margin-top: 20px;">📖 Règles du jeu</button>
+    </div>
+  </div>
+
+  <!-- Menu Règles -->
+  <div id="rules-menu" class="menu-overlay hidden">
+    <div class="menu-content">
+      <h2>📖 Règles du jeu</h2>
+      <div style="text-align: left; margin: 20px 0; line-height: 1.8;">
+        <p><strong>🎯 Objectif :</strong> Couler tous les navires ennemis avant qu'il ne coule les vôtres.</p>
+        <br>
+        <p><strong>🚢 Vos navires :</strong></p>
+        <ul style="margin-left: 20px;">
+          <li>Porte-avions (5 cases)</li>
+          <li>Croiseur (4 cases)</li>
+          <li>Destroyer (3 cases)</li>
+          <li>Sous-marin (3 cases)</li>
+          <li>Torpilleur (2 cases)</li>
+        </ul>
+        <br>
+        <p><strong>🎮 Comment jouer :</strong></p>
+        <ul style="margin-left: 20px;">
+          <li>Placez vos navires sur votre grille</li>
+          <li>Clic gauche pour placer, clic droit pour pivoter</li>
+          <li>Cliquez sur la grille ennemie pour attaquer</li>
+          <li>Rouge = Touché, Gris = Manqué</li>
+          <li>Si vous touchez, vous rejouez !</li>
+        </ul>
+      </div>
+      <button class="menu-btn secondary" onclick="hideRules()">← Retour</button>
+    </div>
+  </div>
+
+  <!-- Menu Game Over -->
+  <div id="gameover-menu" class="menu-overlay hidden">
+    <div class="menu-content">
+      <h2 id="gameover-title">🎉 Victoire !</h2>
+      <div id="gameover-stats" class="stats-grid"></div>
+      <button class="menu-btn primary" onclick="game.restart()">🔄 Rejouer</button>
+      <button class="menu-btn secondary" onclick="game.backToMenu()">🏠 Menu principal</button>
+    </div>
+  </div>
+
+  <!-- Écran de jeu -->
+  <div id="game-screen" class="hidden">
+    
+    <!-- HUD -->
+    <div class="hud">
+      <div class="hud-item">
+        <div class="hud-label">Vos navires</div>
+        <div class="hud-value" id="player-ships">5</div>
+      </div>
+      <div class="hud-item">
+        <div class="hud-label">Navires ennemis</div>
+        <div class="hud-value" id="enemy-ships">5</div>
+      </div>
+      <div class="hud-item">
+        <div class="hud-label">Tirs</div>
+        <div class="hud-value" id="shots-count">0</div>
+      </div>
+      <div class="hud-item">
+        <div class="hud-label">Précision</div>
+        <div class="hud-value" id="accuracy">0%</div>
+      </div>
+    </div>
+
+    <!-- Phase indicator -->
+    <div id="phase-indicator" style="text-align: center; margin-bottom: 20px;">
+      <h2 id="phase-title">Placement des navires</h2>
+      <p id="phase-subtitle" style="color: #888;">Sélectionnez un navire et cliquez sur la grille pour le placer</p>
+    </div>
+
+    <!-- Ship selector (placement phase) -->
+    <div id="ship-selector" class="ship-selector"></div>
+
+    <!-- Placement controls -->
+    <div id="placement-controls" class="controls">
+      <button class="control-btn secondary" onclick="game.rotateShip()">🔄 Pivoter (R)</button>
+      <button class="control-btn secondary" onclick="game.randomPlacement()">🎲 Aléatoire</button>
+      <button class="control-btn secondary" onclick="game.resetPlacement()">🗑️ Réinitialiser</button>
+      <button class="control-btn primary" id="start-battle-btn" onclick="game.startBattle()" disabled>⚔️ Commencer la bataille</button>
+    </div>
+
+    <!-- Turn indicator (battle phase) -->
+    <div id="turn-indicator" class="turn-indicator player hidden">C'est votre tour !</div>
+
+    <!-- Grilles -->
+    <div class="boards-container">
+      <div class="board-wrapper">
+        <div class="board-title">🛡️ Votre flotte</div>
+        <div id="player-grid" class="grid"></div>
+      </div>
+      <div class="board-wrapper" id="enemy-board-wrapper" class="hidden">
+        <div class="board-title">🎯 Flotte ennemie</div>
+        <div id="enemy-grid" class="grid"></div>
+      </div>
+    </div>
+
+    <!-- Fleet status (battle phase) -->
+    <div id="fleet-status" class="fleet-status hidden"></div>
+
+    <!-- Battle controls -->
+    <div id="battle-controls" class="controls hidden">
+      <button class="control-btn danger" onclick="game.surrender()">🏳️ Abandonner</button>
+    </div>
+
+  </div>
+
+<script>
+// ============================================
+// CONFIGURATION
+// ============================================
+const CONFIG = {
+  GRID_SIZE: 10,
+  SHIPS: [
+    { id: 'carrier', name: 'Porte-avions', size: 5, color: '#ff6b6b' },
+    { id: 'battleship', name: 'Croiseur', size: 4, color: '#ffa502' },
+    { id: 'destroyer', name: 'Destroyer', size: 3, color: '#7bed9f' },
+    { id: 'submarine', name: 'Sous-marin', size: 3, color: '#70a1ff' },
+    { id: 'patrol', name: 'Torpilleur', size: 2, color: '#a29bfe' }
+  ],
+  AI_DELAY: 800
+};
+
+// ============================================
+// CLASSE CELL (Cellule de grille)
+// ============================================
+class Cell {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.shipId = null;
+    this.isHit = false;
+    this.isMiss = false;
+  }
+
+  hasShip() {
+    return this.shipId !== null;
+  }
+
+  reset() {
+    this.shipId = null;
+    this.isHit = false;
+    this.isMiss = false;
+  }
+}
+
+// ============================================
+// CLASSE SHIP (Navire)
+// ============================================
+class Ship {
+  constructor(config) {
+    this.id = config.id;
+    this.name = config.name;
+    this.size = config.size;
+    this.color = config.color;
+    this.cells = []; // [{x, y}, ...]
+    this.hits = 0;
+    this.isSunk = false;
+  }
+
+  addCell(x, y) {
+    this.cells.push({ x, y });
+  }
+
+  hit() {
+    this.hits++;
+    if (this.hits >= this.size) {
+      this.isSunk = true;
+    }
+    return this.isSunk;
+  }
+
+  reset() {
+    this.cells = [];
+    this.hits = 0;
+    this.isSunk = false;
+  }
+}
+
+// ============================================
+// CLASSE GRID (Grille de jeu)
+// ============================================
+class Grid {
+  constructor() {
+    this.size = CONFIG.GRID_SIZE;
+    this.cells = [];
+    this.ships = [];
+    this.init();
+  }
+
+  init() {
+    this.cells = [];
+    this.ships = [];
+    for (let y = 0; y < this.size; y++) {
+      this.cells[y] = [];
+      for (let x = 0; x < this.size; x++) {
+        this.cells[y][x] = new Cell(x, y);
+      }
+    }
+  }
+
+  getCell(x, y) {
+    if (x < 0 || x >= this.size || y < 0 || y >= this.size) {
+      return null;
+    }
+    return this.cells[y][x];
+  }
+
+  canPlaceShip(x, y, size, horizontal) {
+    // Vérifier les limites
+    if (horizontal) {
+      if (x + size > this.size) return false;
+    } else {
+      if (y + size > this.size) return false;
+    }
+
+    // Vérifier les cellules et les voisines
+    for (let i = 0; i < size; i++) {
+      const cx = horizontal ? x + i : x;
+      const cy = horizontal ? y : y + i;
+
+      // Cellule occupée ?
+      if (this.cells[cy][cx].hasShip()) return false;
+
+      // Vérifier les 8 cellules adjacentes
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          const nx = cx + dx;
+          const ny = cy + dy;
+          if (nx >= 0 && nx < this.size && ny >= 0 && ny < this.size) {
+            if (this.cells[ny][nx].hasShip()) return false;
+          }
+        }
+      }
+    }
+
+    return true;
+  }
+
+  placeShip(shipConfig, x, y, horizontal) {
+    const ship = new Ship(shipConfig);
+
+    for (let i = 0; i < ship.size; i++) {
+      const cx = horizontal ? x + i : x;
+      const cy = horizontal ? y : y + i;
+      this.cells[cy][cx].shipId = ship.id;
+      ship.addCell(cx, cy);
+    }
+
+    this.ships.push(ship);
+    return ship;
+  }
+
+  attack(x, y) {
+    const cell = this.getCell(x, y);
+    if (!cell) return { hit: false, sunk: false, ship: null, alreadyHit: true };
+    if (cell.isHit || cell.isMiss) return { hit: false, sunk: false, ship: null, alreadyHit: true };
+
+    if (cell.hasShip()) {
+      cell.isHit = true;
+      const ship = this.ships.find(s => s.id === cell.shipId);
+      const sunk = ship.hit();
+      return { hit: true, sunk, ship, alreadyHit: false };
+    } else {
+      cell.isMiss = true;
+      return { hit: false, sunk: false, ship: null, alreadyHit: false };
+    }
+  }
+
+  getShipById(id) {
+    return this.ships.find(s => s.id === id);
+  }
+
+  allShipsSunk() {
+    return this.ships.length > 0 && this.ships.every(s => s.isSunk);
+  }
+
+  getAliveShipsCount() {
+    return this.ships.filter(s => !s.isSunk).length;
+  }
+}
+
+// ============================================
+// CLASSE AI (Intelligence Artificielle)
+// ============================================
+class AI {
+  constructor(difficulty) {
+    this.difficulty = difficulty;
+    this.targets = []; // Cibles prioritaires
+    this.lastHit = null;
+    this.huntDirection = null; // Direction de chasse quand on a touché
+    this.firstHit = null; // Premier touché d'un navire
+  }
+
+  reset() {
+    this.targets = [];
+    this.lastHit = null;
+    this.huntDirection = null;
+    this.firstHit = null;
+  }
+
+  chooseTarget(grid) {
+    switch (this.difficulty) {
+      case 'easy':
+        return this.easyAI(grid);
+      case 'medium':
+        return this.mediumAI(grid);
+      case 'hard':
+        return this.hardAI(grid);
+      case 'impossible':
+        return this.impossibleAI(grid);
+      default:
+        return this.easyAI(grid);
+    }
+  }
+
+  // IA Facile : Tirs complètement aléatoires
+  easyAI(grid) {
+    const available = this.getAvailableCells(grid);
+    if (available.length === 0) return null;
+    return available[Math.floor(Math.random() * available.length)];
+  }
+
+  // IA Moyenne : Poursuite basique après un touché
+  mediumAI(grid) {
+    // S'il y a des cibles prioritaires, les utiliser
+    while (this.targets.length > 0) {
+      const target = this.targets.shift();
+      const cell = grid.getCell(target.x, target.y);
+      if (cell && !cell.isHit && !cell.isMiss) {
+        return target;
+      }
+    }
+
+    // Sinon, tir aléatoire
+    return this.easyAI(grid);
+  }
+
+  // IA Difficile : Stratégie en damier + poursuite intelligente
+  hardAI(grid) {
+    // S'il y a des cibles prioritaires
+    while (this.targets.length > 0) {
+      const target = this.targets.shift();
+      const cell = grid.getCell(target.x, target.y);
+      if (cell && !cell.isHit && !cell.isMiss) {
+        return target;
+      }
+    }
+
+    // Sinon, utiliser le pattern damier
+    const available = this.getAvailableCells(grid);
+    const checkerboard = available.filter(c => (c.x + c.y) % 2 === 0);
+    
+    if (checkerboard.length > 0) {
+      return checkerboard[Math.floor(Math.random() * checkerboard.length)];
+    }
+
+    if (available.length > 0) {
+      return available[Math.floor(Math.random() * available.length)];
+    }
+
+    return null;
+  }
+
+  // IA Impossible : Probabilités + chasse optimale
+  impossibleAI(grid) {
+    // Priorité aux cibles de poursuite
+    while (this.targets.length > 0) {
+      const target = this.targets.shift();
+      const cell = grid.getCell(target.x, target.y);
+      if (cell && !cell.isHit && !cell.isMiss) {
+        return target;
+      }
+    }
+
+    // Calculer les probabilités
+    const probabilities = this.calculateProbabilities(grid);
+    let maxProb = 0;
+    let bestCells = [];
+
+    for (let y = 0; y < grid.size; y++) {
+      for (let x = 0; x < grid.size; x++) {
+        const cell = grid.getCell(x, y);
+        if (!cell.isHit && !cell.isMiss) {
+          if (probabilities[y][x] > maxProb) {
+            maxProb = probabilities[y][x];
+            bestCells = [{ x, y }];
+          } else if (probabilities[y][x] === maxProb) {
+            bestCells.push({ x, y });
+          }
+        }
+      }
+    }
+
+    if (bestCells.length > 0) {
+      return bestCells[Math.floor(Math.random() * bestCells.length)];
+    }
+
+    return this.easyAI(grid);
+  }
+
+  calculateProbabilities(grid) {
+    const probs = Array(grid.size).fill(null).map(() => Array(grid.size).fill(0));
+
+    // Pour chaque navire non coulé, calculer où il pourrait être
+    const aliveShips = grid.ships.filter(s => !s.isSunk);
+    const remainingSizes = aliveShips.length > 0 
+      ? aliveShips.map(s => s.size) 
+      : CONFIG.SHIPS.map(s => s.size);
+
+    for (const size of remainingSizes) {
+      // Horizontal
+      for (let y = 0; y < grid.size; y++) {
+        for (let x = 0; x <= grid.size - size; x++) {
+          if (this.canFitShip(grid, x, y, size, true)) {
+            for (let i = 0; i < size; i++) {
+              probs[y][x + i]++;
+            }
+          }
+        }
+      }
+
+      // Vertical
+      for (let y = 0; y <= grid.size - size; y++) {
+        for (let x = 0; x < grid.size; x++) {
+          if (this.canFitShip(grid, x, y, size, false)) {
+            for (let i = 0; i < size; i++) {
+              probs[y + i][x]++;
+            }
+          }
+        }
+      }
+    }
+
+    return probs;
+  }
+
+  canFitShip(grid, x, y, size, horizontal) {
+    for (let i = 0; i < size; i++) {
+      const cx = horizontal ? x + i : x;
+      const cy = horizontal ? y : y + i;
+      const cell = grid.getCell(cx, cy);
+      if (!cell || cell.isMiss) return false;
+      // On peut passer sur les touches (pour les navires partiellement découverts)
+    }
+    return true;
+  }
+
+  getAvailableCells(grid) {
+    const available = [];
+    for (let y = 0; y < grid.size; y++) {
+      for (let x = 0; x < grid.size; x++) {
+        const cell = grid.getCell(x, y);
+        if (!cell.isHit && !cell.isMiss) {
+          available.push({ x, y });
+        }
+      }
+    }
+    return available;
+  }
+
+  onHit(x, y, grid) {
+    // Ajouter les cellules adjacentes comme cibles potentielles
+    const directions = [
+      { dx: 0, dy: -1 }, // haut
+      { dx: 0, dy: 1 },  // bas
+      { dx: -1, dy: 0 }, // gauche
+      { dx: 1, dy: 0 }   // droite
+    ];
+
+    // Si c'est le premier touché, mémoriser
+    if (!this.firstHit) {
+      this.firstHit = { x, y };
+    }
+
+    // Si on a une direction de chasse, privilégier cette direction
+    if (this.huntDirection) {
+      const nextX = x + this.huntDirection.dx;
+      const nextY = y + this.huntDirection.dy;
+      const cell = grid.getCell(nextX, nextY);
+      if (cell && !cell.isHit && !cell.isMiss) {
+        this.targets.unshift({ x: nextX, y: nextY });
+      } else {
+        // Inverser la direction depuis le premier touché
+        if (this.firstHit) {
+          this.reverseHunt(grid);
+        }
+      }
+    } else {
+      // Ajouter toutes les directions adjacentes
+      for (const dir of directions) {
+        const nx = x + dir.dx;
+        const ny = y + dir.dy;
+        const cell = grid.getCell(nx, ny);
+        if (cell && !cell.isHit && !cell.isMiss) {
+          this.targets.push({ x: nx, y: ny });
+        }
+      }
+    }
+
+    this.lastHit = { x, y };
+  }
+
+  // Quand on touche une deuxième case, on établit la direction
+  setHuntDirection(x, y) {
+    if (this.lastHit) {
+      const dx = x - this.lastHit.x;
+      const dy = y - this.lastHit.y;
+      if (dx !== 0 || dy !== 0) {
+        this.huntDirection = { dx: Math.sign(dx), dy: Math.sign(dy) };
+        // Filtrer les cibles pour ne garder que celles dans la direction
+        this.targets = this.targets.filter(t => {
+          if (this.huntDirection.dx !== 0) {
+            return t.y === y;
+          } else {
+            return t.x === x;
+          }
+        });
+      }
+    }
+  }
+
+  reverseHunt(grid) {
+    if (this.firstHit && this.huntDirection) {
+      // Aller dans la direction opposée depuis le premier touché
+      const oppositeDir = { dx: -this.huntDirection.dx, dy: -this.huntDirection.dy };
+      let cx = this.firstHit.x + oppositeDir.dx;
+      let cy = this.firstHit.y + oppositeDir.dy;
+      const cell = grid.getCell(cx, cy);
+      if (cell && !cell.isHit && !cell.isMiss) {
+        this.targets.unshift({ x: cx, y: cy });
+        this.huntDirection = oppositeDir;
+      }
+    }
+  }
+
+  onSunk() {
+    // Navire coulé, réinitialiser la chasse
+    this.targets = [];
+    this.lastHit = null;
+    this.huntDirection = null;
+    this.firstHit = null;
+  }
+
+  onMiss() {
+    // Si on était en chasse et on rate, essayer l'autre direction
+    if (this.huntDirection && this.firstHit) {
+      this.reverseHunt(null); // Note: grid non passé ici, on va juste changer la direction
+    }
+  }
+}
+
+// ============================================
+// CLASSE AUDIO MANAGER
+// ============================================
+class AudioManager {
+  constructor() {
+    this.enabled = true;
+    try {
+      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+      this.enabled = false;
+    }
+  }
+
+  play(type) {
+    if (!this.enabled || !this.ctx) return;
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    const now = this.ctx.currentTime;
+    gain.gain.setValueAtTime(0.1, now);
+
+    switch (type) {
+      case 'hit':
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(200, now + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        osc.start(now);
+        osc.stop(now + 0.2);
+        break;
+
+      case 'miss':
+        osc.frequency.setValueAtTime(150, now);
+        osc.type = 'sine';
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+        break;
+
+      case 'sunk':
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(100, now + 0.5);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+        osc.start(now);
+        osc.stop(now + 0.5);
+        break;
+
+      case 'place':
+        osc.frequency.setValueAtTime(500, now);
+        osc.frequency.setValueAtTime(600, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        osc.start(now);
+        osc.stop(now + 0.1);
+        break;
+
+      case 'victory':
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(523, now);
+        osc.frequency.setValueAtTime(659, now + 0.15);
+        osc.frequency.setValueAtTime(784, now + 0.3);
+        osc.frequency.setValueAtTime(1047, now + 0.45);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+        osc.start(now);
+        osc.stop(now + 0.8);
+        break;
+
+      case 'defeat':
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(200, now);
+        osc.frequency.exponentialRampToValueAtTime(50, now + 0.8);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+        osc.start(now);
+        osc.stop(now + 0.8);
+        break;
+
+      case 'error':
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(100, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        osc.start(now);
+        osc.stop(now + 0.1);
+        break;
+    }
+  }
+}
+
+// ============================================
+// CLASSE GAME (Contrôleur principal)
+// ============================================
+class Game {
+  constructor() {
+    this.playerGrid = new Grid();
+    this.enemyGrid = new Grid();
+    this.ai = null;
+    this.audio = new AudioManager();
+
+    this.phase = 'menu'; // menu, placement, battle, gameover
+    this.difficulty = 'medium';
+    this.isPlayerTurn = true;
+
+    // Placement
+    this.selectedShipIndex = 0;
+    this.isHorizontal = true;
+    this.placedShips = [];
+
+    // Stats
+    this.shots = 0;
+    this.hits = 0;
+
+    // Bindings
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+    document.addEventListener('keydown', this.handleKeyPress);
+    document.addEventListener('contextmenu', (e) => {
+      if (this.phase === 'placement') {
+        e.preventDefault();
+        this.rotateShip();
+      }
+    });
+  }
+
+  handleKeyPress(e) {
+    if (this.phase === 'placement' && (e.key === 'r' || e.key === 'R')) {
+      this.rotateShip();
+    }
+  }
+
+  // Démarre une nouvelle partie
+  start(difficulty) {
+    this.difficulty = difficulty;
+    this.ai = new AI(difficulty);
+    
+    this.playerGrid = new Grid();
+    this.enemyGrid = new Grid();
+    
+    this.phase = 'placement';
+    this.isPlayerTurn = true;
+    this.selectedShipIndex = 0;
+    this.isHorizontal = true;
+    this.placedShips = [];
+    this.shots = 0;
+    this.hits = 0;
+
+    // UI
+    document.getElementById('main-menu').classList.add('hidden');
+    document.getElementById('game-screen').classList.remove('hidden');
+    document.getElementById('enemy-board-wrapper').classList.add('hidden');
+    document.getElementById('ship-selector').classList.remove('hidden');
+    document.getElementById('placement-controls').classList.remove('hidden');
+    document.getElementById('turn-indicator').classList.add('hidden');
+    document.getElementById('fleet-status').classList.add('hidden');
+    document.getElementById('battle-controls').classList.add('hidden');
+    document.getElementById('start-battle-btn').disabled = true;
+
+    document.getElementById('phase-title').textContent = '🚢 Placement des navires';
+    document.getElementById('phase-subtitle').textContent = 'Sélectionnez un navire et cliquez sur la grille pour le placer';
+
+    this.renderPlayerGrid();
+    this.renderShipSelector();
+    this.updateHUD();
+  }
+
+  // Render la grille du joueur
+  renderPlayerGrid() {
+    const container = document.getElementById('player-grid');
+    container.innerHTML = '';
+    container.style.gridTemplateColumns = `repeat(${CONFIG.GRID_SIZE}, 1fr)`;
+
+    for (let y = 0; y < CONFIG.GRID_SIZE; y++) {
+      for (let x = 0; x < CONFIG.GRID_SIZE; x++) {
+        const cell = this.playerGrid.getCell(x, y);
+        const div = document.createElement('div');
+        div.className = 'cell';
+        div.dataset.x = x;
+        div.dataset.y = y;
+
+        if (cell.isHit) {
+          div.classList.add('hit');
+          div.textContent = '🔥';
+        } else if (cell.isMiss) {
+          div.classList.add('miss');
+          div.textContent = '•';
+        } else if (cell.hasShip() && this.phase !== 'battle') {
+          div.classList.add('ship');
+        } else if (cell.hasShip()) {
+          div.classList.add('ship');
+        }
+
+        // Events pour placement
+        if (this.phase === 'placement') {
+          div.addEventListener('click', () => this.handlePlacementClick(x, y));
+          div.addEventListener('mouseenter', () => this.showPreview(x, y));
+          div.addEventListener('mouseleave', () => this.clearPreview());
+        }
+
+        container.appendChild(div);
+      }
+    }
+  }
+
+  // Render la grille ennemie
+  renderEnemyGrid() {
+    const container = document.getElementById('enemy-grid');
+    container.innerHTML = '';
+    container.style.gridTemplateColumns = `repeat(${CONFIG.GRID_SIZE}, 1fr)`;
+
+    for (let y = 0; y < CONFIG.GRID_SIZE; y++) {
+      for (let x = 0; x < CONFIG.GRID_SIZE; x++) {
+        const cell = this.enemyGrid.getCell(x, y);
+        const div = document.createElement('div');
+        div.className = 'cell';
+        div.dataset.x = x;
+        div.dataset.y = y;
+
+        if (cell.isHit) {
+          const ship = this.enemyGrid.getShipById(cell.shipId);
+          if (ship && ship.isSunk) {
+            div.classList.add('sunk');
+            div.textContent = '💀';
+          } else {
+            div.classList.add('hit');
+            div.textContent = '🔥';
+          }
+        } else if (cell.isMiss) {
+          div.classList.add('miss');
+          div.textContent = '•';
+        }
+
+        // Event pour attaque
+        if (this.phase === 'battle' && this.isPlayerTurn) {
+          div.addEventListener('click', () => this.handleAttack(x, y));
+        }
+
+        container.appendChild(div);
+      }
+    }
+  }
+
+  // Render le sélecteur de navires
+  renderShipSelector() {
+    const container = document.getElementById('ship-selector');
+    container.innerHTML = '<strong style="width:100%;text-align:center;margin-bottom:10px;">Sélectionnez un navire :</strong>';
+
+    CONFIG.SHIPS.forEach((ship, index) => {
+      const div = document.createElement('div');
+      div.className = 'ship-option';
+      
+      if (this.placedShips.includes(ship.id)) {
+        div.classList.add('placed');
+      } else if (index === this.selectedShipIndex) {
+        div.classList.add('selected');
+      }
+
+      div.innerHTML = `${ship.name} <small>(${ship.size})</small>`;
+      
+      if (!this.placedShips.includes(ship.id)) {
+        div.addEventListener('click', () => this.selectShip(index));
+      }
+
+      container.appendChild(div);
+    });
+  }
+
+  // Sélectionner un navire
+  selectShip(index) {
+    if (this.placedShips.includes(CONFIG.SHIPS[index].id)) return;
+    this.selectedShipIndex = index;
+    this.renderShipSelector();
+  }
+
+  // Pivoter le navire
+  rotateShip() {
+    if (this.phase !== 'placement') return;
+    this.isHorizontal = !this.isHorizontal;
+    this.clearPreview();
+  }
+
+  // Afficher la prévisualisation du placement
+  showPreview(x, y) {
+    if (this.phase !== 'placement') return;
+
+    const ship = CONFIG.SHIPS[this.selectedShipIndex];
+    if (!ship || this.placedShips.includes(ship.id)) return;
+
+    const isValid = this.playerGrid.canPlaceShip(x, y, ship.size, this.isHorizontal);
+
+    for (let i = 0; i < ship.size; i++) {
+      const cx = this.isHorizontal ? x + i : x;
+      const cy = this.isHorizontal ? y : y + i;
+
+      if (cx >= CONFIG.GRID_SIZE || cy >= CONFIG.GRID_SIZE) continue;
+
+      const cellEl = document.querySelector(`#player-grid .cell[data-x="${cx}"][data-y="${cy}"]`);
+      if (cellEl && !cellEl.classList.contains('ship')) {
+        cellEl.classList.add(isValid ? 'preview' : 'preview-invalid');
+      }
+    }
+  }
+
+  // Effacer la prévisualisation
+  clearPreview() {
+    document.querySelectorAll('#player-grid .cell.preview, #player-grid .cell.preview-invalid')
+      .forEach(cell => {
+        cell.classList.remove('preview', 'preview-invalid');
+      });
+  }
+
+  // Gérer le clic de placement
+  handlePlacementClick(x, y) {
+    if (this.phase !== 'placement') return;
+
+    const ship = CONFIG.SHIPS[this.selectedShipIndex];
+    if (!ship || this.placedShips.includes(ship.id)) return;
+
+    if (this.playerGrid.canPlaceShip(x, y, ship.size, this.isHorizontal)) {
+      this.playerGrid.placeShip(ship, x, y, this.isHorizontal);
+      this.placedShips.push(ship.id);
+      this.audio.play('place');
+
+      // Sélectionner le prochain navire
+      this.selectNextShip();
+
+      // Re-render
+      this.renderPlayerGrid();
+      this.renderShipSelector();
+
+      // Activer le bouton si tous placés
+      if (this.placedShips.length === CONFIG.SHIPS.length) {
+        document.getElementById('start-battle-btn').disabled = false;
+      }
+    } else {
+      this.audio.play('error');
+    }
+  }
+
+  // Sélectionner le prochain navire non placé
+  selectNextShip() {
+    for (let i = 0; i < CONFIG.SHIPS.length; i++) {
+      if (!this.placedShips.includes(CONFIG.SHIPS[i].id)) {
+        this.selectedShipIndex = i;
+        return;
+      }
+    }
+  }
+
+  // Placement aléatoire
+  randomPlacement() {
+    this.playerGrid = new Grid();
+    this.placedShips = [];
+
+    CONFIG.SHIPS.forEach(ship => {
+      let placed = false;
+      let attempts = 0;
+
+      while (!placed && attempts < 1000) {
+        const x = Math.floor(Math.random() * CONFIG.GRID_SIZE);
+        const y = Math.floor(Math.random() * CONFIG.GRID_SIZE);
+        const horizontal = Math.random() < 0.5;
+
+        if (this.playerGrid.canPlaceShip(x, y, ship.size, horizontal)) {
+          this.playerGrid.placeShip(ship, x, y, horizontal);
+          this.placedShips.push(ship.id);
+          placed = true;
+        }
+        attempts++;
+      }
+    });
+
+    this.audio.play('place');
+    this.renderPlayerGrid();
+    this.renderShipSelector();
+    document.getElementById('start-battle-btn').disabled = false;
+  }
+
+  // Réinitialiser le placement
+  resetPlacement() {
+    this.playerGrid = new Grid();
+    this.placedShips = [];
+    this.selectedShipIndex = 0;
+
+    this.renderPlayerGrid();
+    this.renderShipSelector();
+    document.getElementById('start-battle-btn').disabled = true;
+  }
+
+  // Commencer la bataille
+  startBattle() {
+    if (this.placedShips.length !== CONFIG.SHIPS.length) return;
+
+    this.phase = 'battle';
+    this.isPlayerTurn = true;
+
+    // Placer les navires ennemis
+    this.placeEnemyShips();
+
+    // UI
+    document.getElementById('ship-selector').classList.add('hidden');
+    document.getElementById('placement-controls').classList.add('hidden');
+    document.getElementById('enemy-board-wrapper').classList.remove('hidden');
+    document.getElementById('turn-indicator').classList.remove('hidden');
+    document.getElementById('fleet-status').classList.remove('hidden');
+    document.getElementById('battle-controls').classList.remove('hidden');
+
+    document.getElementById('phase-title').textContent = '⚔️ Bataille en cours';
+    document.getElementById('phase-subtitle').textContent = 'Cliquez sur la grille ennemie pour attaquer';
+
+    this.renderPlayerGrid();
+    this.renderEnemyGrid();
+    this.renderFleetStatus();
+    this.updateTurnIndicator();
+    this.updateHUD();
+  }
+
+  // Placer les navires ennemis
+  placeEnemyShips() {
+    CONFIG.SHIPS.forEach(ship => {
+      let placed = false;
+      let attempts = 0;
+
+      while (!placed && attempts < 1000) {
+        const x = Math.floor(Math.random() * CONFIG.GRID_SIZE);
+        const y = Math.floor(Math.random() * CONFIG.GRID_SIZE);
+        const horizontal = Math.random() < 0.5;
+
+        if (this.enemyGrid.canPlaceShip(x, y, ship.size, horizontal)) {
+          this.enemyGrid.placeShip(ship, x, y, horizontal);
+          placed = true;
+        }
+        attempts++;
+      }
+    });
+  }
+
+  // Gérer une attaque du joueur
+  handleAttack(x, y) {
+    if (this.phase !== 'battle' || !this.isPlayerTurn) return;
+
+    const cell = this.enemyGrid.getCell(x, y);
+    if (cell.isHit || cell.isMiss) return;
+
+    this.shots++;
+    const result = this.enemyGrid.attack(x, y);
+
+    if (result.hit) {
+      this.hits++;
+      this.audio.play('hit');
+
+      if (result.sunk) {
+        this.audio.play('sunk');
+        this.showMessage(`🎯 ${result.ship.name} coulé !`, 'success');
+      }
+    } else {
+      this.audio.play('miss');
+    }
+
+    // Update UI
+    this.renderEnemyGrid();
+    this.renderFleetStatus();
+    this.updateHUD();
+
+    // Vérifier victoire
+    if (this.enemyGrid.allShipsSunk()) {
+      this.endGame(true);
+      return;
+    }
+
+    // Si manqué, tour de l'IA
+    if (!result.hit) {
+      this.isPlayerTurn = false;
+      this.updateTurnIndicator();
+      setTimeout(() => this.aiTurn(), CONFIG.AI_DELAY);
+    }
+  }
+
+  // Tour de l'IA
+  aiTurn() {
+    if (this.phase !== 'battle' || this.isPlayerTurn) return;
+
+    const target = this.ai.chooseTarget(this.playerGrid);
+    if (!target) {
+      this.isPlayerTurn = true;
+      this.updateTurnIndicator();
+      return;
+    }
+
+    const result = this.playerGrid.attack(target.x, target.y);
+
+    if (result.hit) {
+      this.audio.play('hit');
+      this.ai.onHit(target.x, target.y, this.playerGrid);
+
+      // Si c'est le deuxième touché, établir la direction
+      if (this.ai.lastHit && !this.ai.huntDirection) {
+        this.ai.setHuntDirection(target.x, target.y);
+      }
+
+      if (result.sunk) {
+        this.audio.play('sunk');
+        this.ai.onSunk();
+        this.showMessage(`💀 L'ennemi a coulé votre ${result.ship.name} !`, 'danger');
+      }
+    } else {
+      this.audio.play('miss');
+      this.ai.onMiss();
+    }
+
+    // Update UI
+    this.renderPlayerGrid();
+    this.renderFleetStatus();
+    this.updateHUD();
+
+    // Vérifier défaite
+    if (this.playerGrid.allShipsSunk()) {
+      this.endGame(false);
+      return;
+    }
+
+    // Si touché, l'IA rejoue
+    if (result.hit) {
+      setTimeout(() => this.aiTurn(), CONFIG.AI_DELAY);
+    } else {
+      this.isPlayerTurn = true;
+      this.updateTurnIndicator();
+      this.renderEnemyGrid(); // Re-render pour permettre les clics
+    }
+  }
+
+  // Fin de partie
+  endGame(victory) {
+    this.phase = 'gameover';
+
+    if (victory) {
+      this.audio.play('victory');
+    } else {
+      this.audio.play('defeat');
+    }
+
+    // Stats
+    const accuracy = this.shots > 0 ? Math.round((this.hits / this.shots) * 100) : 0;
+    const enemySunk = this.enemyGrid.ships.filter(s => s.isSunk).length;
+    const playerSunk = this.playerGrid.ships.filter(s => s.isSunk).length;
+
+    // UI
+    document.getElementById('gameover-title').textContent = victory ? '🎉 Victoire !' : '💀 Défaite...';
+    document.getElementById('gameover-stats').innerHTML = `
+      <div class="stat-item">
+        <div class="stat-label">Tirs effectués</div>
+        <div class="stat-value">${this.shots}</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Précision</div>
+        <div class="stat-value">${accuracy}%</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Navires coulés</div>
+        <div class="stat-value">${enemySunk} / 5</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Navires perdus</div>
+        <div class="stat-value">${playerSunk} / 5</div>
+      </div>
+    `;
+
+    document.getElementById('gameover-menu').classList.remove('hidden');
+  }
+
+  // Render le status des flottes
+  renderFleetStatus() {
+    const container = document.getElementById('fleet-status');
+    container.innerHTML = `
+      <div class="fleet-column">
+        <h3>🛡️ Votre flotte</h3>
+        ${this.playerGrid.ships.map(ship => `
+          <div class="ship-status ${ship.isSunk ? 'sunk' : ''}">
+            <span>${ship.name}</span>
+            <div class="ship-cells">
+              ${Array(ship.size).fill(0).map((_, i) => `<div class="ship-cell"></div>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="fleet-column">
+        <h3>🎯 Flotte ennemie</h3>
+        ${this.enemyGrid.ships.map(ship => `
+          <div class="ship-status ${ship.isSunk ? 'sunk' : ''}">
+            <span>${ship.isSunk ? ship.name : '???'}</span>
+            <div class="ship-cells">
+              ${Array(ship.size).fill(0).map((_, i) => `<div class="ship-cell"></div>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  // Mettre à jour le HUD
+  updateHUD() {
+    document.getElementById('player-ships').textContent = this.playerGrid.getAliveShipsCount();
+    document.getElementById('enemy-ships').textContent = this.enemyGrid.ships.length > 0 
+      ? this.enemyGrid.getAliveShipsCount() 
+      : '?';
+    document.getElementById('shots-count').textContent = this.shots;
+    document.getElementById('accuracy').textContent = this.shots > 0 
+      ? Math.round((this.hits / this.shots) * 100) + '%' 
+      : '0%';
+  }
+
+  // Mettre à jour l'indicateur de tour
+  updateTurnIndicator() {
+    const indicator = document.getElementById('turn-indicator');
+    indicator.className = 'turn-indicator ' + (this.isPlayerTurn ? 'player' : 'enemy');
+    indicator.textContent = this.isPlayerTurn ? '🎯 C\'est votre tour !' : '⏳ L\'ennemi attaque...';
+  }
+
+  // Afficher un message
+  showMessage(text, type = 'info') {
+    const existing = document.querySelector('.message');
+    if (existing) existing.remove();
+
+    const msg = document.createElement('div');
+    msg.className = `message ${type}`;
+    msg.textContent = text;
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 2500);
+  }
+
+  // Abandonner
+  surrender() {
+    if (this.phase !== 'battle') return;
+    if (confirm('Êtes-vous sûr de vouloir abandonner ?')) {
+      this.endGame(false);
+    }
+  }
+
+  // Rejouer
+  restart() {
+    document.getElementById('gameover-menu').classList.add('hidden');
+    this.start(this.difficulty);
+  }
+
+  // Retour au menu
+  backToMenu() {
+    document.getElementById('gameover-menu').classList.add('hidden');
+    document.getElementById('game-screen').classList.add('hidden');
+    document.getElementById('main-menu').classList.remove('hidden');
+    this.phase = 'menu';
+  }
+}
+
+// ============================================
+// FONCTIONS GLOBALES
+// ============================================
+function showRules() {
+  document.getElementById('main-menu').classList.add('hidden');
+  document.getElementById('rules-menu').classList.remove('hidden');
+}
+
+function hideRules() {
+  document.getElementById('rules-menu').classList.add('hidden');
+  document.getElementById('main-menu').classList.remove('hidden');
+}
+
+// ============================================
+// INITIALISATION
+// ============================================
+const game = new Game();
+
+</script>
+
+</body>
+</html>

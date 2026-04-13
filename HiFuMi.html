@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🪨 Pierre Feuille Ciseaux - VS IA</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a0e1a 0%, #1a1f3a 50%, #0d1225 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    /* ===== PARTICULES FOND ===== */
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: float 15s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
+    }
+
+    /* ===== CONTAINER PRINCIPAL ===== */
+    .game-container {
+      position: relative;
+      z-index: 1;
+      background: rgba(15, 20, 40, 0.9);
+      border: 2px solid rgba(0, 212, 255, 0.3);
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 
+        0 0 60px rgba(0, 212, 255, 0.2),
+        inset 0 0 60px rgba(0, 212, 255, 0.05);
+      max-width: 500px;
+      width: 95%;
+      text-align: center;
+    }
+
+    /* ===== TITRE ===== */
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #00d4ff, #00ff88);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    /* ===== SCORE BOARD ===== */
+    .scoreboard {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .score-item {
+      text-align: center;
+    }
+
+    .score-label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .score-value {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .score-value.player {
+      color: #00ff88;
+      text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    }
+
+    .score-value.tie {
+      color: #ffa502;
+      text-shadow: 0 0 20px rgba(255, 165, 2, 0.5);
+    }
+
+    .score-value.ai {
+      color: #ff6b6b;
+      text-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+    }
+
+    /* ===== ARÈNE DE COMBAT ===== */
+    .arena {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 30px 20px;
+      background: linear-gradient(180deg, rgba(0, 212, 255, 0.1) 0%, transparent 100%);
+      border-radius: 20px;
+      min-height: 150px;
+    }
+
+    .fighter {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+
+    .fighter-label {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .fighter-choice {
+      font-size: 70px;
+      width: 100px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .fighter-choice.player-choice {
+      border-color: rgba(0, 255, 136, 0.5);
+      box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+    }
+
+    .fighter-choice.ai-choice {
+      border-color: rgba(255, 107, 107, 0.5);
+      box-shadow: 0 0 30px rgba(255, 107, 107, 0.2);
+    }
+
+    .fighter-choice.thinking {
+      animation: thinking 0.5s infinite;
+    }
+
+    @keyframes thinking {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .fighter-choice.winner {
+      animation: winner 0.5s ease;
+      border-color: #ffd93d !important;
+      box-shadow: 0 0 50px rgba(255, 217, 61, 0.6) !important;
+    }
+
+    @keyframes winner {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3) rotate(10deg); }
+      100% { transform: scale(1); }
+    }
+
+    .fighter-choice.loser {
+      animation: loser 0.5s ease;
+      opacity: 0.5;
+      filter: grayscale(50%);
+    }
+
+    @keyframes loser {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.8) rotate(-10deg); }
+      100% { transform: scale(1); }
+    }
+
+    /* ===== VS CENTRAL ===== */
+    .vs {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffa502;
+      text-shadow: 0 0 20px rgba(255, 165, 2, 0.5);
+      padding: 0 20px;
+    }
+
+    /* ===== RÉSULTAT ===== */
+    .result {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      min-height: 36px;
+      transition: all 0.3s ease;
+    }
+
+    .result.win {
+      color: #00ff88;
+      text-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+      animation: resultPop 0.5s ease;
+    }
+
+    .result.lose {
+      color: #ff6b6b;
+      text-shadow: 0 0 30px rgba(255, 107, 107, 0.8);
+      animation: resultPop 0.5s ease;
+    }
+
+    .result.tie {
+      color: #ffa502;
+      text-shadow: 0 0 30px rgba(255, 165, 2, 0.8);
+      animation: resultPop 0.5s ease;
+    }
+
+    @keyframes resultPop {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ===== BOUTONS DE CHOIX ===== */
+    .choices {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .choice-btn {
+      width: 100px;
+      height: 100px;
+      font-size: 50px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .choice-btn.rock {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .choice-btn.paper {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+      box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
+    }
+
+    .choice-btn.scissors {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      box-shadow: 0 10px 30px rgba(79, 172, 254, 0.4);
+    }
+
+    .choice-btn:hover:not(:disabled) {
+      transform: translateY(-10px) scale(1.05);
+    }
+
+    .choice-btn:active:not(:disabled) {
+      transform: translateY(-5px) scale(0.98);
+    }
+
+    .choice-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .choice-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .choice-btn:hover::before {
+      left: 100%;
+    }
+
+    .choice-name {
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: #888;
+      white-space: nowrap;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .choice-btn:hover .choice-name {
+      opacity: 1;
+      bottom: -30px;
+    }
+
+    /* ===== DIFFICULTÉ ===== */
+    .difficulty-selector {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .diff-btn {
+      padding: 8px 16px;
+      font-size: 12px;
+      border: 2px solid #444;
+      background: transparent;
+      color: #888;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .diff-btn:hover {
+      border-color: #00d4ff;
+      color: #00d4ff;
+    }
+
+    .diff-btn.active {
+      background: linear-gradient(135deg, #00d4ff, #0099cc);
+      border-color: #00d4ff;
+      color: #000;
+      font-weight: bold;
+    }
+
+    /* ===== BOUTON RESET ===== */
+    .reset-btn {
+      padding: 12px 30px;
+      font-size: 14px;
+      font-weight: bold;
+      border: 2px solid #ff6b6b;
+      background: transparent;
+      color: #ff6b6b;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .reset-btn:hover {
+      background: #ff6b6b;
+      color: #000;
+      box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+    }
+
+    /* ===== HISTORIQUE ===== */
+    .history {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .history-title {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .history-items {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .history-item {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      animation: historyPop 0.3s ease;
+    }
+
+    @keyframes historyPop {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+
+    .history-item.win {
+      background: rgba(0, 255, 136, 0.3);
+      border: 2px solid #00ff88;
+    }
+
+    .history-item.lose {
+      background: rgba(255, 107, 107, 0.3);
+      border: 2px solid #ff6b6b;
+    }
+
+    .history-item.tie {
+      background: rgba(255, 165, 2, 0.3);
+      border: 2px solid #ffa502;
+    }
+
+    /* ===== STREAK ===== */
+    .streak {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #888;
+    }
+
+    .streak.hot {
+      color: #ffd93d;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 500px) {
+      .game-container {
+        padding: 25px 15px;
+        border-radius: 20px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      .choice-btn {
+        width: 80px;
+        height: 80px;
+        font-size: 40px;
+      }
+
+      .fighter-choice {
+        font-size: 50px;
+        width: 80px;
+        height: 80px;
+      }
+
+      .arena {
+        padding: 20px 10px;
+      }
+
+      .score-value {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Particules de fond -->
+<div id="particles"></div>
+
+<!-- Container principal -->
+<div class="game-container">
+  <h1>🪨 Pierre Feuille Ciseaux</h1>
+  <p class="subtitle">Affrontez l'IA et prouvez votre valeur !</p>
+
+  <!-- Tableau des scores -->
+  <div class="scoreboard">
+    <div class="score-item">
+      <div class="score-label">Vous</div>
+      <div class="score-value player" id="playerScore">0</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">Égalités</div>
+      <div class="score-value tie" id="tieScore">0</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">IA</div>
+      <div class="score-value ai" id="aiScore">0</div>
+    </div>
+  </div>
+
+  <!-- Arène de combat -->
+  <div class="arena">
+    <div class="fighter">
+      <div class="fighter-label">Vous</div>
+      <div class="fighter-choice player-choice" id="playerChoice">❓</div>
+    </div>
+    <div class="vs">VS</div>
+    <div class="fighter">
+      <div class="fighter-label">IA</div>
+      <div class="fighter-choice ai-choice" id="aiChoice">🤖</div>
+    </div>
+  </div>
+
+  <!-- Résultat -->
+  <div class="result" id="result">Choisissez votre arme !</div>
+
+  <!-- Boutons de choix -->
+  <div class="choices">
+    <button class="choice-btn rock" onclick="play('rock')" id="btn-rock">
+      🪨
+      <span class="choice-name">Pierre</span>
+    </button>
+    <button class="choice-btn paper" onclick="play('paper')" id="btn-paper">
+      📄
+      <span class="choice-name">Feuille</span>
+    </button>
+    <button class="choice-btn scissors" onclick="play('scissors')" id="btn-scissors">
+      ✂️
+      <span class="choice-name">Ciseaux</span>
+    </button>
+  </div>
+
+  <!-- Sélecteur de difficulté -->
+  <div class="difficulty-selector">
+    <button class="diff-btn active" onclick="setDifficulty('easy')" id="diff-easy">Facile</button>
+    <button class="diff-btn" onclick="setDifficulty('medium')" id="diff-medium">Normal</button>
+    <button class="diff-btn" onclick="setDifficulty('hard')" id="diff-hard">Difficile</button>
+  </div>
+
+  <!-- Bouton Reset -->
+  <button class="reset-btn" onclick="resetGame()">🔄 Recommencer</button>
+
+  <!-- Historique -->
+  <div class="history">
+    <div class="history-title">Derniers résultats</div>
+    <div class="history-items" id="history"></div>
+  </div>
+
+  <!-- Streak -->
+  <div class="streak" id="streak"></div>
+</div>
+
+<script>
+// ============================================
+// CONFIGURATION DU JEU
+// ============================================
+const CHOICES = {
+  rock: { emoji: '🪨', name: 'Pierre', beats: 'scissors' },
+  paper: { emoji: '📄', name: 'Feuille', beats: 'rock' },
+  scissors: { emoji: '✂️', name: 'Ciseaux', beats: 'paper' }
+};
+
+const RESULTS = {
+  win: { text: '🎉 Victoire !', class: 'win' },
+  lose: { text: '😢 Défaite...', class: 'lose' },
+  tie: { text: '🤝 Égalité !', class: 'tie' }
+};
+
+// ============================================
+// ÉTAT DU JEU
+// ============================================
+let state = {
+  playerScore: 0,
+  aiScore: 0,
+  tieScore: 0,
+  history: [],
+  streak: 0,
+  streakType: null,
+  difficulty: 'easy',
+  isPlaying: false,
+  playerHistory: [] // Pour l'IA adaptative
+};
+
+// ============================================
+// ÉLÉMENTS DOM
+// ============================================
+const elements = {
+  playerChoice: document.getElementById('playerChoice'),
+  aiChoice: document.getElementById('aiChoice'),
+  result: document.getElementById('result'),
+  playerScore: document.getElementById('playerScore'),
+  aiScore: document.getElementById('aiScore'),
+  tieScore: document.getElementById('tieScore'),
+  history: document.getElementById('history'),
+  streak: document.getElementById('streak'),
+  buttons: {
+    rock: document.getElementById('btn-rock'),
+    paper: document.getElementById('btn-paper'),
+    scissors: document.getElementById('btn-scissors')
+  }
+};
+
+// ============================================
+// INITIALISATION
+// ============================================
+function init() {
+  createParticles();
+  loadState();
+  updateDisplay();
+}
+
+// Créer les particules de fond
+function createParticles() {
+  const container = document.getElementById('particles');
+  const colors = ['#00d4ff', '#00ff88', '#ffa502', '#ff6b6b', '#f093fb'];
+  
+  for (let i = 0; i < 30; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.top = Math.random() * 100 + '%';
+    particle.style.width = (Math.random() * 10 + 5) + 'px';
+    particle.style.height = particle.style.width;
+    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+    particle.style.animationDelay = Math.random() * 5 + 's';
+    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+    container.appendChild(particle);
+  }
+}
+
+// ============================================
+// LOGIQUE DU JEU
+// ============================================
+function play(playerChoice) {
+  if (state.isPlaying) return;
+  state.isPlaying = true;
+  
+  // Désactiver les boutons
+  setButtonsDisabled(true);
+  
+  // Afficher le choix du joueur
+  elements.playerChoice.textContent = CHOICES[playerChoice].emoji;
+  elements.playerChoice.classList.remove('winner', 'loser');
+  
+  // Animation de réflexion IA
+  elements.aiChoice.textContent = '🤔';
+  elements.aiChoice.classList.add('thinking');
+  elements.aiChoice.classList.remove('winner', 'loser');
+  elements.result.textContent = "L'IA réfléchit...";
+  elements.result.className = 'result';
+  
+  // Enregistrer le choix du joueur pour l'IA adaptative
+  state.playerHistory.push(playerChoice);
+  if (state.playerHistory.length > 10) {
+    state.playerHistory.shift();
+  }
+  
+  // Délai pour le suspense
+  const delay = state.difficulty === 'hard' ? 1200 : 800;
+  
+  setTimeout(() => {
+    const aiChoice = getAIChoice(playerChoice);
+    elements.aiChoice.classList.remove('thinking');
+    elements.aiChoice.textContent = CHOICES[aiChoice].emoji;
+    
+    // Déterminer le résultat
+    const result = getResult(playerChoice, aiChoice);
+    
+    // Mettre à jour les scores
+    updateScores(result);
+    
+    // Afficher le résultat
+    showResult(result, playerChoice, aiChoice);
+    
+    // Sauvegarder l'état
+    saveState();
+    
+    // Réactiver les boutons
+    setTimeout(() => {
+      setButtonsDisabled(false);
+      state.isPlaying = false;
+    }, 500);
+    
+  }, delay);
+}
+
+// Choix de l'IA selon la difficulté
+function getAIChoice(playerChoice) {
+  const choices = Object.keys(CHOICES);
+  
+  switch (state.difficulty) {
+    case 'easy':
+      // IA totalement aléatoire
+      return choices[Math.floor(Math.random() * 3)];
+      
+    case 'medium':
+      // IA avec 40% de chance de faire le bon choix
+      if (Math.random() < 0.4) {
+        // Trouve le choix qui bat le joueur
+        return Object.keys(CHOICES).find(c => CHOICES[c].beats === playerChoice);
+      }
+      return choices[Math.floor(Math.random() * 3)];
+      
+    case 'hard':
+      // IA adaptative qui analyse les patterns du joueur
+      return getAdaptiveChoice();
+      
+    default:
+      return choices[Math.floor(Math.random() * 3)];
+  }
+}
+
+// IA adaptative (difficile)
+function getAdaptiveChoice() {
+  const choices = Object.keys(CHOICES);
+  
+  // Si pas assez d'historique, jouer aléatoire
+  if (state.playerHistory.length < 3) {
+    return choices[Math.floor(Math.random() * 3)];
+  }
+  
+  // Analyser les tendances du joueur
+  const counts = { rock: 0, paper: 0, scissors: 0 };
+  state.playerHistory.forEach(c => counts[c]++);
+  
+  // Trouver le choix le plus fréquent du joueur
+  let mostCommon = 'rock';
+  let maxCount = 0;
+  for (const choice in counts) {
+    if (counts[choice] > maxCount) {
+      maxCount = counts[choice];
+      mostCommon = choice;
+    }
+  }
+  
+  // 70% du temps, contrer le choix le plus fréquent
+  if (Math.random() < 0.7) {
+    return Object.keys(CHOICES).find(c => CHOICES[c].beats === mostCommon);
+  }
+  
+  // Sinon jouer aléatoire
+  return choices[Math.floor(Math.random() * 3)];
+}
+
+// Déterminer le résultat
+function getResult(player, ai) {
+  if (player === ai) return 'tie';
+  if (CHOICES[player].beats === ai) return 'win';
+  return 'lose';
+}
+
+// Mettre à jour les scores
+function updateScores(result) {
+  switch (result) {
+    case 'win':
+      state.playerScore++;
+      if (state.streakType === 'win') {
+        state.streak++;
+      } else {
+        state.streak = 1;
+        state.streakType = 'win';
+      }
+      break;
+    case 'lose':
+      state.aiScore++;
+      if (state.streakType === 'lose') {
+        state.streak++;
+      } else {
+        state.streak = 1;
+        state.streakType = 'lose';
+      }
+      break;
+    case 'tie':
+      state.tieScore++;
+      state.streak = 0;
+      state.streakType = null;
+      break;
+  }
+  
+  // Ajouter à l'historique
+  state.history.push(result);
+  if (state.history.length > 10) {
+    state.history.shift();
+  }
+  
+  updateDisplay();
+}
+
+// Afficher le résultat
+function showResult(result, playerChoice, aiChoice) {
+  const data = RESULTS[result];
+  
+  elements.result.textContent = data.text;
+  elements.result.className = 'result ' + data.class;
+  
+  // Animations des choix
+  if (result === 'win') {
+    elements.playerChoice.classList.add('winner');
+    elements.aiChoice.classList.add('loser');
+    playSound('win');
+  } else if (result === 'lose') {
+    elements.playerChoice.classList.add('loser');
+    elements.aiChoice.classList.add('winner');
+    playSound('lose');
+  } else {
+    playSound('tie');
+  }
+}
+
+// ============================================
+// AFFICHAGE
+// ============================================
+function updateDisplay() {
+  // Scores
+  elements.playerScore.textContent = state.playerScore;
+  elements.aiScore.textContent = state.aiScore;
+  elements.tieScore.textContent = state.tieScore;
+  
+  // Historique
+  elements.history.innerHTML = state.history.map(result => 
+    `<div class="history-item ${result}">${result === 'win' ? '✓' : result === 'lose' ? '✗' : '='}</div>`
+  ).join('');
+  
+  // Streak
+  if (state.streak >= 3) {
+    const emoji = state.streakType === 'win' ? '🔥' : '❄️';
+    const text = state.streakType === 'win' ? 'Série de victoires' : 'Série de défaites';
+    elements.streak.textContent = `${emoji} ${text} : ${state.streak}`;
+    elements.streak.className = 'streak' + (state.streakType === 'win' ? ' hot' : '');
+  } else {
+    elements.streak.textContent = '';
+  }
+}
+
+// Activer/désactiver les boutons
+function setButtonsDisabled(disabled) {
+  Object.values(elements.buttons).forEach(btn => {
+    btn.disabled = disabled;
+  });
+}
+
+// ============================================
+// DIFFICULTÉ
+// ============================================
+function setDifficulty(level) {
+  state.difficulty = level;
+  
+  // Mettre à jour les boutons
+  document.querySelectorAll('.diff-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.getElementById('diff-' + level).classList.add('active');
+  
+  // Reset l'historique de l'IA
+  state.playerHistory = [];
+  
+  saveState();
+  playSound('click');
+}
+
+// ============================================
+// RESET
+// ============================================
+function resetGame() {
+  state = {
+    playerScore: 0,
+    aiScore: 0,
+    tieScore: 0,
+    history: [],
+    streak: 0,
+    streakType: null,
+    difficulty: state.difficulty,
+    isPlaying: false,
+    playerHistory: []
+  };
+  
+  elements.playerChoice.textContent = '❓';
+  elements.aiChoice.textContent = '🤖';
+  elements.result.textContent = 'Choisissez votre arme !';
+  elements.result.className = 'result';
+  elements.playerChoice.classList.remove('winner', 'loser');
+  elements.aiChoice.classList.remove('winner', 'loser');
+  
+  updateDisplay();
+  saveState();
+  playSound('click');
+}
+
+// ============================================
+// SAUVEGARDE
+// ============================================
+function saveState() {
+  localStorage.setItem('rps-state', JSON.stringify(state));
+}
+
+function loadState() {
+  const saved = localStorage.getItem('rps-state');
+  if (saved) {
+    const loaded = JSON.parse(saved);
+    state = { ...state, ...loaded, isPlaying: false };
+    
+    // Mettre à jour le bouton de difficulté
+    document.querySelectorAll('.diff-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.getElementById('diff-' + state.difficulty).classList.add('active');
+  }
+}
+
+// ============================================
+// AUDIO
+// ============================================
+function playSound(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    const now = ctx.currentTime;
+    gain.gain.setValueAtTime(0.1, now);
+    
+    switch (type) {
+      case 'win':
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523, now); // C5
+        osc.frequency.setValueAtTime(659, now + 0.1); // E5
+        osc.frequency.setValueAtTime(784, now + 0.2); // G5
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.start(now);
+        osc.stop(now + 0.4);
+        break;
+        
+      case 'lose':
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(150, now + 0.3);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+        break;
+        
+      case 'tie':
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        osc.start(now);
+        osc.stop(now + 0.2);
+        break;
+        
+      case 'click':
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+        osc.start(now);
+        osc.stop(now + 0.05);
+        break;
+    }
+  } catch (e) {
+    // Audio non supporté
+  }
+}
+
+// ============================================
+// RACCOURCIS CLAVIER
+// ============================================
+document.addEventListener('keydown', (e) => {
+  if (state.isPlaying) return;
+  
+  switch (e.key.toLowerCase()) {
+    case '1':
+    case 'p':
+      play('rock');
+      break;
+    case '2':
+    case 'f':
+      play('paper');
+      break;
+    case '3':
+    case 'c':
+      play('scissors');
+      break;
+    case 'r':
+      resetGame();
+      break;
+  }
+});
+
+// Initialisation au chargement
+init();
+</script>
+
+</body>
+</html>

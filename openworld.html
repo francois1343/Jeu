@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="description" content="Open World - Le jeu collaboratif qui fait grandir le savoir">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>🌍 Open World</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ===================================================
+       RESET & VARIABLES CSS
+       =================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-deep: #0f0f23;
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-card: rgba(26, 26, 46, 0.95);
+      --bg-glass: rgba(255, 255, 255, 0.08);
+      
+      --color-science: #00d9ff;
+      --color-history: #ffa726;
+      --color-nature: #66bb6a;
+      --color-arts: #ab47bc;
+      --color-tech: #42a5f5;
+      --color-society: #ef5350;
+      --color-culture: #ffca28;
+      
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b0;
+      --text-muted: #606070;
+      
+      --accent-primary: #7c4dff;
+      --accent-secondary: #00e5ff;
+      --accent-success: #00e676;
+      --accent-warning: #ffab00;
+      --accent-error: #ff5252;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      
+      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
+      --shadow-glow: 0 0 30px rgba(124, 77, 255, 0.3);
+      
+      --transition-fast: 0.15s ease;
+      --transition-normal: 0.3s ease;
+      --transition-slow: 0.5s ease;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===================================================
+       FOND ANIMÉ - UNIVERS
+       =================================================== */
+    #universeCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ===================================================
+       LAYOUT PRINCIPAL
+       =================================================== */
+    .app-container {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ===================================================
+       HEADER
+       =================================================== */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: linear-gradient(180deg, rgba(15, 15, 35, 0.98), rgba(15, 15, 35, 0.85));
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(124, 77, 255, 0.2);
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .logo-icon {
+      font-size: 28px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .logo-text {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.4rem;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 15px;
+    }
+
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-glass);
+      border-radius: var(--radius-lg);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .stat-badge .icon {
+      font-size: 1.1rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-glass);
+      color: var(--text-primary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn:hover {
+      background: var(--accent-primary);
+      transform: scale(1.1);
+    }
+
+    /* ===================================================
+       CONTENU PRINCIPAL
+       =================================================== */
+    .app-main {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ===================================================
+       ÉCRAN D'ACCUEIL
+       =================================================== */
+    .welcome-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100%;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .welcome-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(2rem, 8vw, 3.5rem);
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #fff, var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .welcome-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      max-width: 500px;
+    }
+
+    .welcome-globe {
+      font-size: 80px;
+      margin-bottom: 30px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* Sélection de profil */
+    .profile-selection {
+      margin-bottom: 30px;
+    }
+
+    .profile-selection h3 {
+      margin-bottom: 15px;
+      color: var(--text-secondary);
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      max-width: 350px;
+    }
+
+    .profile-card {
+      padding: 20px 15px;
+      background: var(--bg-glass);
+      border: 2px solid transparent;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      text-align: center;
+    }
+
+    .profile-card:hover {
+      background: rgba(124, 77, 255, 0.1);
+      border-color: var(--accent-primary);
+      transform: translateY(-3px);
+    }
+
+    .profile-card.selected {
+      background: rgba(124, 77, 255, 0.2);
+      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .profile-card .emoji {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .profile-card .label {
+      font-weight: 600;
+    }
+
+    /* Boutons */
+    .btn {
+      padding: 14px 32px;
+      border: none;
+      border-radius: var(--radius-lg);
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-primary), #9c27b0);
+      color: white;
+      box-shadow: 0 4px 15px rgba(124, 77, 255, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(124, 77, 255, 0.5);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: var(--bg-glass);
+      color: var(--text-primary);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ===================================================
+       CARTE DU MONDE (GRILLE DES DOMAINES)
+       =================================================== */
+    .world-map {
+      padding: 10px 0;
+    }
+
+    .map-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .map-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+    }
+
+    .map-subtitle {
+      color: var(--text-secondary);
+    }
+
+    .knowledge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 15px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .territory-card {
+      position: relative;
+      padding: 25px 15px;
+      background: var(--bg-card);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-xl);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      overflow: hidden;
+    }
+
+    .territory-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--territory-color);
+    }
+
+    .territory-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--territory-color);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px color-mix(in srgb, var(--territory-color) 30%, transparent);
+    }
+
+    .territory-icon {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .territory-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+
+    .territory-progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .progress-mini {
+      width: 50px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-mini-fill {
+      height: 100%;
+      background: var(--territory-color);
+      border-radius: 3px;
+      transition: width var(--transition-normal);
+    }
+
+    /* ===================================================
+       ZONE D'EXPLORATION (DÉFIS)
+       =================================================== */
+    .exploration-zone {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .zone-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .zone-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .zone-back-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-glass);
+      color: var(--text-primary);
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .zone-back-btn:hover {
+      background: var(--accent-primary);
+    }
+
+    .zone-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.5rem;
+    }
+
+    /* Carte de défi */
+    .challenge-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      padding: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .challenge-type {
+      display: inline-block;
+      padding: 5px 12px;
+      background: var(--bg-glass);
+      border-radius: var(--radius-md);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 15px;
+    }
+
+    .challenge-question {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    /* Options de quiz */
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .quiz-option {
+      padding: 15px 20px;
+      background: var(--bg-glass);
+      border: 2px solid transparent;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-align: left;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .quiz-option:hover {
+      background: rgba(124, 77, 255, 0.15);
+      border-color: var(--accent-primary);
+    }
+
+    .quiz-option.correct {
+      background: rgba(0, 230, 118, 0.2);
+      border-color: var(--accent-success);
+    }
+
+    .quiz-option.incorrect {
+      background: rgba(255, 82, 82, 0.2);
+      border-color: var(--accent-error);
+    }
+
+    .quiz-option.disabled {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .option-key {
+      width: 28px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    /* Vrai/Faux */
+    .true-false-options {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .tf-btn {
+      flex: 1;
+      max-width: 180px;
+      padding: 20px;
+      border: 2px solid transparent;
+      border-radius: var(--radius-lg);
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .tf-btn.true-btn {
+      background: rgba(0, 230, 118, 0.1);
+      color: var(--accent-success);
+    }
+
+    .tf-btn.true-btn:hover {
+      background: rgba(0, 230, 118, 0.2);
+      border-color: var(--accent-success);
+    }
+
+    .tf-btn.false-btn {
+      background: rgba(255, 82, 82, 0.1);
+      color: var(--accent-error);
+    }
+
+    .tf-btn.false-btn:hover {
+      background: rgba(255, 82, 82, 0.2);
+      border-color: var(--accent-error);
+    }
+
+    /* Actions du défi */
+    .challenge-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .action-btn {
+      padding: 10px 18px;
+      background: var(--bg-glass);
+      border: none;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--text-primary);
+    }
+
+    /* ===================================================
+       LOADING STATE
+       =================================================== */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 50px;
+      text-align: center;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid var(--bg-glass);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===================================================
+       TOAST NOTIFICATIONS
+       =================================================== */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      padding: 12px 24px;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: toastIn 0.3s ease;
+      pointer-events: auto;
+    }
+
+    .toast.success { border-left: 4px solid var(--accent-success); }
+    .toast.error { border-left: 4px solid var(--accent-error); }
+    .toast.info { border-left: 4px solid var(--accent-secondary); }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .toast.hiding {
+      animation: toastOut 0.3s ease forwards;
+    }
+
+    @keyframes toastOut {
+      to { opacity: 0; transform: translateY(20px); }
+    }
+
+    /* ===================================================
+       MODAL DE RÉCOMPENSE
+       =================================================== */
+    .reward-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-normal);
+    }
+
+    .reward-modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .reward-content {
+      background: var(--bg-card);
+      padding: 40px;
+      border-radius: var(--radius-xl);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      transform: scale(0.8);
+      transition: transform var(--transition-normal);
+    }
+
+    .reward-modal.show .reward-content {
+      transform: scale(1);
+    }
+
+    .reward-icon {
+      font-size: 4rem;
+      margin-bottom: 15px;
+      animation: bounce 0.6s ease;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .reward-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: var(--accent-success);
+    }
+
+    .reward-points {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--accent-warning);
+      margin: 15px 0;
+    }
+
+    /* ===================================================
+       PANNEAU DE COLLABORATION
+       =================================================== */
+    .collab-panel {
+      position: fixed;
+      right: -320px;
+      top: 0;
+      bottom: 0;
+      width: 300px;
+      background: var(--bg-card);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 200;
+      transition: right var(--transition-normal);
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .collab-panel.open {
+      right: 0;
+    }
+
+    .collab-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .collab-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.2rem;
+    }
+
+    .contributor-list {
+      list-style: none;
+      margin-bottom: 25px;
+    }
+
+    .contributor-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .contributor-avatar {
+      font-size: 1.5rem;
+    }
+
+    .contributor-info {
+      flex: 1;
+    }
+
+    .contributor-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .contributor-activity {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: var(--bg-glass);
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+    }
+
+    .activity-time {
+      margin-left: auto;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* ===================================================
+       WORLD STATS BAR
+       =================================================== */
+    .world-stats-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px 20px;
+      background: linear-gradient(90deg, rgba(124, 77, 255, 0.1), rgba(0, 229, 255, 0.1));
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .world-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .world-stat .value {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* ===================================================
+       RESPONSIVE
+       =================================================== */
+    @media (max-width: 600px) {
+      .app-header {
+        padding: 10px 15px;
+      }
+
+      .logo-text {
+        font-size: 1.1rem;
+      }
+
+      .header-stats {
+        display: none;
+      }
+
+      .knowledge-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .territory-card {
+        padding: 20px 10px;
+      }
+
+      .territory-icon {
+        font-size: 2.5rem;
+      }
+
+      .challenge-card {
+        padding: 20px 15px;
+      }
+
+      .challenge-question {
+        font-size: 1.1rem;
+      }
+
+      .true-false-options {
+        flex-direction: column;
+      }
+
+      .tf-btn {
+        max-width: 100%;
+      }
+    }
+
+    /* Désactivation animations */
+    .no-animations * {
+      animation: none !important;
+      transition: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FOND ANIMÉ -->
+  <canvas id="universeCanvas"></canvas>
+
+  <div class="app-container">
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="logo" onclick="goHome()">
+        <span class="logo-icon">🌍</span>
+        <span class="logo-text">Open World</span>
+      </div>
+
+      <div class="header-stats" id="headerStats">
+        <div class="stat-badge">
+          <span class="icon">⭐</span>
+          <span id="statContributions">0</span>
+        </div>
+        <div class="stat-badge">
+          <span class="icon">🔍</span>
+          <span id="statDiscoveries">0</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn" onclick="toggleCollabPanel()" title="Communauté">👥</button>
+        <button class="icon-btn" onclick="showStats()" title="Statistiques">📊</button>
+        <button class="icon-btn" onclick="showSettings()" title="Paramètres">⚙️</button>
+      </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL -->
+    <main class="app-main">
+
+      <!-- ÉCRAN D'ACCUEIL -->
+      <section class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-globe">🌍</div>
+        <h1 class="welcome-title">Open World</h1>
+        <p class="welcome-subtitle">Explorez un univers de connaissances partagées. Apprenez, contribuez, grandissez ensemble.</p>
+
+        <div class="profile-selection">
+          <h3>Qui êtes-vous ?</h3>
+          <div class="profile-grid">
+            <div class="profile-card" data-profile="child" onclick="selectProfile(this, 'child')">
+              <span class="emoji">👶</span>
+              <span class="label">Enfant</span>
+            </div>
+            <div class="profile-card" data-profile="teen" onclick="selectProfile(this, 'teen')">
+              <span class="emoji">🧑</span>
+              <span class="label">Ado</span>
+            </div>
+            <div class="profile-card" data-profile="adult" onclick="selectProfile(this, 'adult')">
+              <span class="emoji">👨</span>
+              <span class="label">Adulte</span>
+            </div>
+            <div class="profile-card" data-profile="senior" onclick="selectProfile(this, 'senior')">
+              <span class="emoji">👴</span>
+              <span class="label">Senior</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="startBtn" onclick="startGame()" disabled>
+          🚀 Commencer l'aventure
+        </button>
+      </section>
+
+      <!-- CARTE DU MONDE -->
+      <section class="world-map hidden" id="worldMap">
+        <div class="map-header">
+          <h1 class="map-title">🗺️ Carte des Savoirs</h1>
+          <p class="map-subtitle">Choisissez un territoire à explorer</p>
+        </div>
+
+        <div class="knowledge-grid" id="knowledgeGrid">
+          <!-- Généré dynamiquement -->
+        </div>
+      </section>
+
+      <!-- ZONE D'EXPLORATION -->
+      <section class="exploration-zone hidden" id="explorationZone">
+        <div class="zone-header">
+          <div class="zone-title-group">
+            <button class="zone-back-btn" onclick="backToMap()">←</button>
+            <h2 class="zone-title" id="zoneTitle">Sciences</h2>
+          </div>
+          <div class="stat-badge">
+            <span class="icon">⭐</span>
+            <span id="zoneProgress">0</span> complétés
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challengeCard">
+          <!-- Généré dynamiquement -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- BARRE DES STATS MONDIALES -->
+    <footer class="world-stats-bar">
+      <div class="world-stat">
+        <span>🌐</span>
+        <span class="value" id="worldContributions">12,847</span>
+        <span>contributions mondiales</span>
+      </div>
+      <div class="world-stat">
+        <span>👥</span>
+        <span class="value" id="worldExplorers">847</span>
+        <span>explorateurs actifs</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- PANNEAU COLLABORATION -->
+  <aside class="collab-panel" id="collabPanel">
+    <div class="collab-header">
+      <h3 class="collab-title">👥 Communauté</h3>
+      <button class="icon-btn" onclick="toggleCollabPanel()">✕</button>
+    </div>
+
+    <h4 style="margin-bottom: 10px; color: var(--text-secondary);">Explorateurs en ligne</h4>
+    <ul class="contributor-list" id="contributorList">
+      <!-- Généré dynamiquement -->
+    </ul>
+
+    <h4 style="margin-bottom: 10px; color: var(--text-secondary);">Activité récente</h4>
+    <div class="activity-list" id="activityList">
+      <!-- Généré dynamiquement -->
+    </div>
+  </aside>
+
+  <!-- MODAL RÉCOMPENSE -->
+  <div class="reward-modal" id="rewardModal">
+    <div class="reward-content">
+      <div class="reward-icon">🎉</div>
+      <h2 class="reward-title">Bravo !</h2>
+      <p id="rewardMessage">Vous avez contribué au savoir mondial !</p>
+      <div class="reward-points">+<span id="rewardPoints">10</span> ⭐</div>
+      <button class="btn btn-primary" onclick="closeRewardModal()">Continuer</button>
+    </div>
+  </div>
+
+  <!-- CONTAINER TOASTS -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // =====================================================
+    // CONFIGURATION
+    // =====================================================
+    const CONFIG = {
+      STORAGE_KEY: 'openworld_save',
+      DOMAINS: [
+        { id: 'science', name: 'Sciences', icon: '🔬', color: '#00d9ff', description: 'Physique, chimie, biologie...' },
+        { id: 'history', name: 'Histoire', icon: '🏛️', color: '#ffa726', description: 'Civilisations et événements' },
+        { id: 'nature', name: 'Nature', icon: '🌿', color: '#66bb6a', description: 'Faune, flore, écologie' },
+        { id: 'arts', name: 'Arts', icon: '🎨', color: '#ab47bc', description: 'Peinture, musique, cinéma' },
+        { id: 'tech', name: 'Technologie', icon: '💻', color: '#42a5f5', description: 'Innovation et numérique' },
+        { id: 'geography', name: 'Géographie', icon: '🗺️', color: '#ef5350', description: 'Pays, capitales, cultures' },
+        { id: 'culture', name: 'Culture G', icon: '📚', color: '#ffca28', description: 'Un peu de tout !' }
+      ]
+    };
+
+    // =====================================================
+    // ÉTAT DU JEU
+    // =====================================================
+    const GameState = {
+      player: {
+        profile: null,
+        name: 'Explorateur',
+        contributions: 0,
+        discoveries: 0,
+        level: 1,
+        currentDomain: null,
+        domainProgress: {},
+        achievements: [],
+        streak: 0,
+        lastPlayed: null
+      },
+      
+      ui: {
+        currentScreen: 'welcome',
+        collabPanelOpen: false
+      },
+
+      settings: {
+        sfx: true,
+        music: false,
+        volume: 0.7,
+        animations: true,
+        backgroundAnimation: true
+      },
+
+      worldStats: {
+        totalContributions: 12847,
+        activeExplorers: 847
+      },
+
+      collaborators: [
+        { name: 'Luna', avatar: '🌙', activity: 'explore les Sciences' },
+        { name: 'Marco', avatar: '🎯', activity: 'résout un puzzle' },
+        { name: 'Aïcha', avatar: '✨', activity: 'a fait une découverte !' },
+        { name: 'Kenji', avatar: '🎮', activity: 'explore l\'Histoire' },
+        { name: 'Sofia', avatar: '🌺', activity: 'contribue à la Nature' }
+      ],
+
+      activities: [
+        { icon: '🧪', text: 'Marie a découvert un fait', time: 'Il y a 2 min' },
+        { icon: '🌍', text: 'Lucas explore la Géographie', time: 'Il y a 5 min' },
+        { icon: '🎨', text: 'Emma a résolu un défi', time: 'Il y a 8 min' }
+      ],
+
+      currentChallenge: null
+    };
+
+    // =====================================================
+    // UTILITAIRES
+    // =====================================================
+    function showScreen(screenId) {
+      document.querySelectorAll('.app-main > section').forEach(s => s.classList.add('hidden'));
+      const screen = document.getElementById(screenId);
+      if (screen) screen.classList.remove('hidden');
+      GameState.ui.currentScreen = screenId;
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+      toast.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${message}</span>`;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('hiding');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function saveGame() {
+      localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(GameState.player));
+    }
+
+    function loadGame() {
+      const saved = localStorage.getItem(CONFIG.STORAGE_KEY);
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          GameState.player = { ...GameState.player, ...data };
+          return true;
+        } catch (e) {
+          console.log('Erreur chargement sauvegarde');
+        }
+      }
+      return false;
+    }
+
+    // =====================================================
+    // ÉCRAN D'ACCUEIL
+    // =====================================================
+    function selectProfile(element, profile) {
+      document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('selected'));
+      element.classList.add('selected');
+      GameState.player.profile = profile;
+      document.getElementById('startBtn').disabled = false;
+    }
+
+    function startGame() {
+      if (!GameState.player.profile) return;
+      
+      saveGame();
+      showScreen('worldMap');
+      renderKnowledgeGrid();
+      updateHeaderStats();
+      showToast('Bienvenue dans Open World !', 'success');
+    }
+
+    function goHome() {
+      showScreen('worldMap');
+      renderKnowledgeGrid();
+    }
+
+    // =====================================================
+    // CARTE DU MONDE
+    // =====================================================
+    function renderKnowledgeGrid() {
+      const grid = document.getElementById('knowledgeGrid');
+      
+      grid.innerHTML = CONFIG.DOMAINS.map(domain => {
+        const progress = GameState.player.domainProgress[domain.id] || 0;
+        const percentage = Math.min((progress / 10) * 100, 100);
+        
+        return `
+          <div class="territory-card" 
+               style="--territory-color: ${domain.color}" 
+               onclick="enterTerritory('${domain.id}')">
+            <span class="territory-icon">${domain.icon}</span>
+            <h3 class="territory-name">${domain.name}</h3>
+            <div class="territory-progress">
+              <div class="progress-mini">
+                <div class="progress-mini-fill" style="width: ${percentage}%"></div>
+              </div>
+              <span>${progress}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateHeaderStats() {
+      document.getElementById('statContributions').textContent = GameState.player.contributions;
+      document.getElementById('statDiscoveries').textContent = GameState.player.discoveries;
+    }
+
+    // =====================================================
+    // ZONE D'EXPLORATION
+    // =====================================================
+    function enterTerritory(domainId) {
+      const domain = CONFIG.DOMAINS.find(d => d.id === domainId);
+      if (!domain) return;
+
+      GameState.player.currentDomain = domainId;
+      
+      document.getElementById('zoneTitle').innerHTML = `${domain.icon} ${domain.name}`;
+      document.getElementById('zoneProgress').textContent = GameState.player.domainProgress[domainId] || 0;
+      
+      showScreen('explorationZone');
+      loadNewChallenge();
+    }
+
+    function backToMap() {
+      GameState.player.currentDomain = null;
+      showScreen('worldMap');
+      renderKnowledgeGrid();
+    }
+
+    // =====================================================
+    // GÉNÉRATEUR DE DÉFIS
+    // =====================================================
+    const QUESTIONS = {
+      science: [
+        { q: "Quelle planète est surnommée la planète rouge ?", options: ["Mars", "Jupiter", "Vénus", "Saturne"], correct: 0 },
+        { q: "Quel est le symbole chimique de l'or ?", options: ["Ag", "Au", "Fe", "Or"], correct: 1 },
+        { q: "Combien d'os possède le corps humain adulte ?", options: ["186", "206", "256", "312"], correct: 1 },
+        { q: "Quelle est la formule chimique de l'eau ?", options: ["CO2", "H2O", "O2", "H2O2"], correct: 1 },
+        { q: "Quel organe produit l'insuline ?", options: ["Le foie", "Le pancréas", "Les reins", "L'estomac"], correct: 1 },
+        { q: "Combien de planètes dans notre système solaire ?", options: ["7", "8", "9", "10"], correct: 1 },
+        { q: "Quel est l'élément le plus abondant dans l'univers ?", options: ["Oxygène", "Carbone", "Hydrogène", "Hélium"], correct: 2 },
+        { q: "La lumière voyage à environ...", options: ["300 km/s", "3000 km/s", "300 000 km/s", "3 millions km/s"], correct: 2 }
+      ],
+      history: [
+        { q: "En quelle année a eu lieu la Révolution française ?", options: ["1776", "1789", "1804", "1815"], correct: 1 },
+        { q: "Qui a peint la Joconde ?", options: ["Michel-Ange", "Léonard de Vinci", "Raphaël", "Botticelli"], correct: 1 },
+        { q: "Quel pharaon possède le tombeau le plus célèbre ?", options: ["Ramsès II", "Cléopâtre", "Toutankhamon", "Khéops"], correct: 2 },
+        { q: "En quelle année l'homme a marché sur la Lune ?", options: ["1965", "1969", "1972", "1959"], correct: 1 },
+        { q: "Qui était le premier empereur romain ?", options: ["César", "Auguste", "Néron", "Caligula"], correct: 1 },
+        { q: "La Grande Muraille de Chine a été construite pour...", options: ["Le commerce", "La défense", "La religion", "L'irrigation"], correct: 1 }
+      ],
+      nature: [
+        { q: "Quel est le plus grand mammifère marin ?", options: ["L'orque", "Le requin blanc", "La baleine bleue", "Le cachalot"], correct: 2 },
+        { q: "Les abeilles produisent du miel à partir de...", options: ["Pollen", "Nectar", "Sève", "Eau"], correct: 1 },
+        { q: "Quel est l'animal terrestre le plus rapide ?", options: ["Lion", "Guépard", "Gazelle", "Lévrier"], correct: 1 },
+        { q: "Les arbres absorbent quel gaz ?", options: ["Oxygène", "Azote", "CO2", "Méthane"], correct: 2 },
+        { q: "Combien de pattes a une araignée ?", options: ["6", "8", "10", "12"], correct: 1 },
+        { q: "Le bambou est une...", options: ["Fleur", "Herbe", "Arbre", "Fougère"], correct: 1 }
+      ],
+      arts: [
+        { q: "Qui a composé la 9ème Symphonie ?", options: ["Mozart", "Beethoven", "Bach", "Vivaldi"], correct: 1 },
+        { q: "Dans quel musée se trouve la Joconde ?", options: ["British Museum", "Le Louvre", "Le Prado", "Les Offices"], correct: 1 },
+        { q: "Quel artiste est connu pour ses tournesols ?", options: ["Monet", "Picasso", "Van Gogh", "Renoir"], correct: 2 },
+        { q: "Le film 'Titanic' est sorti en...", options: ["1995", "1997", "1999", "2001"], correct: 1 },
+        { q: "Qui a sculpté le David de Florence ?", options: ["Léonard de Vinci", "Michel-Ange", "Donatello", "Raphaël"], correct: 1 }
+      ],
+      tech: [
+        { q: "Qui a fondé Microsoft ?", options: ["Steve Jobs", "Bill Gates", "Mark Zuckerberg", "Elon Musk"], correct: 1 },
+        { q: "En quelle année le premier iPhone est sorti ?", options: ["2005", "2007", "2009", "2010"], correct: 1 },
+        { q: "Que signifie 'www' ?", options: ["World Web Wide", "World Wide Web", "Web World Wide", "Wide World Web"], correct: 1 },
+        { q: "Quel langage utilise des balises HTML ?", options: ["Python", "JavaScript", "HTML", "Java"], correct: 2 },
+        { q: "Un octet contient combien de bits ?", options: ["4", "8", "16", "32"], correct: 1 }
+      ],
+      geography: [
+        { q: "Quelle est la capitale de l'Australie ?", options: ["Sydney", "Melbourne", "Canberra", "Perth"], correct: 2 },
+        { q: "Quel est le plus long fleuve du monde ?", options: ["Amazone", "Nil", "Yangtsé", "Mississippi"], correct: 1 },
+        { q: "Dans quel pays se trouve le Machu Picchu ?", options: ["Mexique", "Pérou", "Chili", "Bolivie"], correct: 1 },
+        { q: "Quel est le plus grand désert du monde ?", options: ["Sahara", "Gobi", "Antarctique", "Arabie"], correct: 2 },
+        { q: "Combien de continents y a-t-il ?", options: ["5", "6", "7", "8"], correct: 2 }
+      ],
+      culture: [
+        { q: "Quelle est la langue la plus parlée au monde ?", options: ["Anglais", "Espagnol", "Mandarin", "Hindi"], correct: 2 },
+        { q: "Les Jeux Olympiques ont lieu tous les...", options: ["2 ans", "3 ans", "4 ans", "5 ans"], correct: 2 },
+        { q: "Quel est le sport le plus populaire au monde ?", options: ["Basketball", "Cricket", "Football", "Tennis"], correct: 2 },
+        { q: "Harry Potter a été écrit par...", options: ["J.R.R. Tolkien", "J.K. Rowling", "Stephen King", "George R.R. Martin"], correct: 1 },
+        { q: "La Tour Eiffel mesure environ...", options: ["230 m", "280 m", "330 m", "380 m"], correct: 2 }
+      ]
+    };
+
+    function loadNewChallenge() {
+      const domain = GameState.player.currentDomain;
+      const questions = QUESTIONS[domain] || QUESTIONS.culture;
+      
+      // Choisir une question aléatoire
+      const question = questions[Math.floor(Math.random() * questions.length)];
+      
+      // Déterminer le type de défi selon le profil
+      const challengeType = getChallengeType();
+      
+      GameState.currentChallenge = {
+        ...question,
+        type: challengeType,
+        domain: domain,
+        points: getPointsForProfile()
+      };
+
+      renderChallenge();
+    }
+
+    function getChallengeType() {
+      const profile = GameState.player.profile;
+      const random = Math.random();
+      
+      // Les enfants ont plus de chances d'avoir des défis simples
+      if (profile === 'child') {
+        return random < 0.7 ? 'quiz' : 'trueFalse';
+      } else if (profile === 'teen') {
+        return random < 0.6 ? 'quiz' : 'trueFalse';
+      } else {
+        return random < 0.5 ? 'quiz' : 'trueFalse';
+      }
+    }
+
+    function getPointsForProfile() {
+      const base = 10;
+      const profile = GameState.player.profile;
+      const multipliers = { child: 1.5, teen: 1.2, adult: 1, senior: 1.3 };
+      return Math.round(base * (multipliers[profile] || 1));
+    }
+
+    function renderChallenge() {
+      const challenge = GameState.currentChallenge;
+      const card = document.getElementById('challengeCard');
+
+      if (challenge.type === 'trueFalse') {
+        // Transformer en vrai/faux
+        const isTrue = Math.random() > 0.5;
+        const statement = isTrue 
+          ? `${challenge.q.replace('?', '')} : ${challenge.options[challenge.correct]}`
+          : `${challenge.q.replace('?', '')} : ${challenge.options[(challenge.correct + 1) % challenge.options.length]}`;
+        
+        GameState.currentChallenge.trueFalseAnswer = isTrue;
+
+        card.innerHTML = `
+          <span class="challenge-type">🎯 Vrai ou Faux</span>
+          <h3 class="challenge-question">${statement}</h3>
+          
+          <div class="true-false-options">
+            <button class="tf-btn true-btn" onclick="submitTrueFalse(true)">
+              ✅ Vrai
+            </button>
+            <button class="tf-btn false-btn" onclick="submitTrueFalse(false)">
+              ❌ Faux
+            </button>
+          </div>
+
+          <div class="challenge-actions">
+            <button class="action-btn" onclick="useHint()">💡 Indice</button>
+            <button class="action-btn" onclick="skipChallenge()">⏭️ Passer</button>
+          </div>
+        `;
+      } else {
+        // Quiz classique
+        const optionLetters = ['A', 'B', 'C', 'D'];
+        
+        card.innerHTML = `
+          <span class="challenge-type">❓ Quiz</span>
+          <h3 class="challenge-question">${challenge.q}</h3>
+          
+          <div class="quiz-options">
+            ${challenge.options.map((opt, i) => `
+              <button class="quiz-option" onclick="submitQuizAnswer(${i}, this)">
+                <span class="option-key">${optionLetters[i]}</span>
+                <span>${opt}</span>
+              </button>
+            `).join('')}
+          </div>
+
+          <div class="challenge-actions">
+            <button class="action-btn" onclick="useHint()">💡 Indice</button>
+            <button class="action-btn" onclick="skipChallenge()">⏭️ Passer</button>
+          </div>
+        `;
+      }
+    }
+
+    // =====================================================
+    // SOUMISSION DES RÉPONSES
+    // =====================================================
+    function submitQuizAnswer(index, button) {
+      const challenge = GameState.currentChallenge;
+      const isCorrect = index === challenge.correct;
+      
+      // Désactiver toutes les options
+      document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.add('disabled'));
+      
+      // Marquer la réponse
+      if (isCorrect) {
+        button.classList.add('correct');
+        handleCorrectAnswer();
+      } else {
+        button.classList.add('incorrect');
+        // Montrer la bonne réponse
+        document.querySelectorAll('.quiz-option')[challenge.correct].classList.add('correct');
+        handleWrongAnswer();
+      }
+    }
+
+    function submitTrueFalse(answer) {
+      const challenge = GameState.currentChallenge;
+      const isCorrect = answer === challenge.trueFalseAnswer;
+      
+      // Désactiver les boutons
+      document.querySelectorAll('.tf-btn').forEach(btn => btn.disabled = true);
+      
+      if (isCorrect) {
+        handleCorrectAnswer();
+      } else {
+        handleWrongAnswer();
+      }
+    }
+
+    function handleCorrectAnswer() {
+      const challenge = GameState.currentChallenge;
+      const domain = GameState.player.currentDomain;
+      
+      // Mettre à jour les stats
+      GameState.player.contributions += challenge.points;
+      GameState.player.discoveries += 1;
+      GameState.player.domainProgress[domain] = (GameState.player.domainProgress[domain] || 0) + 1;
+      
+      // Mettre à jour l'UI
+      updateHeaderStats();
+      document.getElementById('zoneProgress').textContent = GameState.player.domainProgress[domain];
+      
+      // Sauvegarder
+      saveGame();
+      
+      // Afficher récompense
+      setTimeout(() => showRewardModal(challenge.points), 800);
+    }
+
+    function handleWrongAnswer() {
+      showToast('Pas tout à fait... Essayons autre chose !', 'error');
+      setTimeout(() => loadNewChallenge(), 2000);
+    }
+
+    function showRewardModal(points) {
+      document.getElementById('rewardPoints').textContent = points;
+      document.getElementById('rewardModal').classList.add('show');
+    }
+
+    function closeRewardModal() {
+      document.getElementById('rewardModal').classList.remove('show');
+      loadNewChallenge();
+    }
+
+    // =====================================================
+    // INDICES ET PASSER
+    // =====================================================
+    function useHint() {
+      const challenge = GameState.currentChallenge;
+      
+      if (GameState.player.contributions < 5) {
+        showToast('Vous avez besoin de 5 contributions pour un indice', 'error');
+        return;
+      }
+
+      GameState.player.contributions -= 5;
+      updateHeaderStats();
+      saveGame();
+
+      // Donner un indice
+      let hint = '';
+      if (challenge.type === 'quiz') {
+        // Éliminer 2 mauvaises réponses visuellement
+        const wrongOptions = challenge.options
+          .map((_, i) => i)
+          .filter(i => i !== challenge.correct);
+        
+        const toDisable = wrongOptions.slice(0, 2);
+        const optionBtns = document.querySelectorAll('.quiz-option');
+        toDisable.forEach(i => {
+          optionBtns[i].style.opacity = '0.3';
+          optionBtns[i].style.pointerEvents = 'none';
+        });
+        
+        hint = '2 réponses éliminées !';
+      } else {
+        hint = 'Faites confiance à votre première intuition !';
+      }
+
+      showToast(`💡 ${hint}`, 'info');
+    }
+
+    function skipChallenge() {
+      if (GameState.player.contributions < 3) {
+        showToast('Vous avez besoin de 3 contributions pour passer', 'error');
+        return;
+      }
+
+      GameState.player.contributions -= 3;
+      updateHeaderStats();
+      saveGame();
+
+      showToast('Défi passé', 'info');
+      loadNewChallenge();
+    }
+
+    // =====================================================
+    // PANNEAU COLLABORATION
+    // =====================================================
+    function toggleCollabPanel() {
+      const panel = document.getElementById('collabPanel');
+      GameState.ui.collabPanelOpen = !GameState.ui.collabPanelOpen;
+      
+      if (GameState.ui.collabPanelOpen) {
+        panel.classList.add('open');
+        renderCollaborators();
+        renderActivities();
+      } else {
+        panel.classList.remove('open');
+      }
+    }
+
+    function renderCollaborators() {
+      const list = document.getElementById('contributorList');
+      list.innerHTML = GameState.collaborators.map(c => `
+        <li class="contributor-item">
+          <div class="contributor-avatar">${c.avatar}</div>
+          <div class="contributor-info">
+            <div class="contributor-name">${c.name}</div>
+            <div class="contributor-activity">${c.activity}</div>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    function renderActivities() {
+      const list = document.getElementById('activityList');
+      list.innerHTML = GameState.activities.map(a => `
+        <div class="activity-item">
+          <span class="activity-icon">${a.icon}</span>
+          <span class="activity-text">${a.text}</span>
+          <span class="activity-time">${a.time}</span>
+        </div>
+      `).join('');
+    }
+
+    // Simuler des activités
+    setInterval(() => {
+      GameState.worldStats.totalContributions += Math.floor(Math.random() * 5) + 1;
+      document.getElementById('worldContributions').textContent = GameState.worldStats.totalContributions.toLocaleString();
+    }, 10000);
+
+        // =====================================================
+    // STATISTIQUES
+    // =====================================================
+    function showStats() {
+      const modal = document.createElement('div');
+      modal.className = 'reward-modal show';
+      modal.style.background = 'rgba(0,0,0,0.9)';
+      modal.innerHTML = `
+        <div class="reward-content" style="max-width: 500px;">
+          <h2 style="margin-bottom: 20px;">📊 Vos Statistiques</h2>
+          
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+            <div style="background: var(--bg-glass); padding: 15px; border-radius: 12px; text-align: center;">
+              <div style="font-size: 2rem;">⭐</div>
+              <div style="font-size: 1.5rem; font-weight: bold;">${GameState.player.contributions}</div>
+              <div style="color: var(--text-secondary); font-size: 0.85rem;">Contributions</div>
+            </div>
+            <div style="background: var(--bg-glass); padding: 15px; border-radius: 12px; text-align: center;">
+              <div style="font-size: 2rem;">🔍</div>
+              <div style="font-size: 1.5rem; font-weight: bold;">${GameState.player.discoveries}</div>
+              <div style="color: var(--text-secondary); font-size: 0.85rem;">Découvertes</div>
+            </div>
+          </div>
+          
+          <h3 style="margin-bottom: 10px; color: var(--text-secondary);">Progression par domaine</h3>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+            ${CONFIG.DOMAINS.map(d => {
+              const progress = GameState.player.domainProgress[d.id] || 0;
+              const percentage = Math.min((progress / 10) * 100, 100);
+              return `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 1.2rem;">${d.icon}</span>
+                  <span style="width: 80px; font-size: 0.9rem;">${d.name}</span>
+                  <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                    <div style="width: ${percentage}%; height: 100%; background: ${d.color}; border-radius: 4px;"></div>
+                  </div>
+                  <span style="font-weight: bold; width: 30px; text-align: right;">${progress}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+          
+          <button class="btn btn-primary" onclick="this.closest('.reward-modal').remove()">Fermer</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    // =====================================================
+    // PARAMÈTRES
+    // =====================================================
+    function showSettings() {
+      const modal = document.createElement('div');
+      modal.className = 'reward-modal show';
+      modal.id = 'settingsModal';
+      modal.style.background = 'rgba(0,0,0,0.9)';
+      modal.innerHTML = `
+        <div class="reward-content" style="max-width: 400px;">
+          <h2 style="margin-bottom: 25px;">⚙️ Paramètres</h2>
+          
+          <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+            
+            <!-- Son -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--bg-glass); border-radius: 12px;">
+              <span>🔊 Sons</span>
+              <label style="position: relative; width: 50px; height: 26px;">
+                <input type="checkbox" id="soundToggle" ${GameState.settings.sound ? 'checked' : ''} 
+                       onchange="toggleSound(this.checked)"
+                       style="opacity: 0; width: 0; height: 0;">
+                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: ${GameState.settings.sound ? 'var(--accent-success)' : 'rgba(255,255,255,0.2)'}; border-radius: 26px; transition: 0.3s;">
+                  <span style="position: absolute; height: 20px; width: 20px; left: ${GameState.settings.sound ? '26px' : '3px'}; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s;"></span>
+                </span>
+              </label>
+            </div>
+            
+            <!-- Animations -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--bg-glass); border-radius: 12px;">
+              <span>✨ Animations</span>
+              <label style="position: relative; width: 50px; height: 26px;">
+                <input type="checkbox" id="animToggle" ${GameState.settings.animations ? 'checked' : ''} 
+                       onchange="toggleAnimations(this.checked)"
+                       style="opacity: 0; width: 0; height: 0;">
+                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: ${GameState.settings.animations ? 'var(--accent-success)' : 'rgba(255,255,255,0.2)'}; border-radius: 26px; transition: 0.3s;">
+                  <span style="position: absolute; height: 20px; width: 20px; left: ${GameState.settings.animations ? '26px' : '3px'}; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s;"></span>
+                </span>
+              </label>
+            </div>
+            
+            <!-- Profil actuel -->
+            <div style="padding: 12px; background: var(--bg-glass); border-radius: 12px;">
+              <div style="margin-bottom: 8px;">👤 Profil actuel</div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                ${['child', 'teen', 'adult', 'senior'].map(p => {
+                  const labels = { child: '👶 Enfant', teen: '🧒 Ado', adult: '🧑 Adulte', senior: '👴 Senior' };
+                  const isActive = GameState.player.profile === p;
+                  return `
+                    <button onclick="changeProfile('${p}')" 
+                            style="padding: 8px 12px; border: 2px solid ${isActive ? 'var(--accent-primary)' : 'transparent'}; 
+                                   background: ${isActive ? 'rgba(124,77,255,0.2)' : 'rgba(255,255,255,0.05)'}; 
+                                   border-radius: 8px; color: white; cursor: pointer; font-size: 0.85rem;">
+                      ${labels[p]}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+          
+          <!-- Actions dangereuses -->
+          <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; margin-bottom: 20px;">
+            <button onclick="confirmReset()" 
+                    style="width: 100%; padding: 12px; background: rgba(255,82,82,0.1); border: 1px solid var(--accent-error); 
+                           border-radius: 10px; color: var(--accent-error); cursor: pointer; font-size: 0.9rem;">
+              🗑️ Réinitialiser ma progression
+            </button>
+          </div>
+          
+          <button class="btn btn-secondary" onclick="closeSettings()" style="width: 100%;">Fermer</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function closeSettings() {
+      const modal = document.getElementById('settingsModal');
+      if (modal) modal.remove();
+    }
+
+    function toggleSound(enabled) {
+      GameState.settings.sound = enabled;
+      saveGame();
+      showToast(enabled ? '🔊 Sons activés' : '🔇 Sons désactivés', 'info');
+    }
+
+    function toggleAnimations(enabled) {
+      GameState.settings.animations = enabled;
+      if (!enabled) {
+        document.body.classList.add('no-animations');
+      } else {
+        document.body.classList.remove('no-animations');
+      }
+      saveGame();
+      showToast(enabled ? '✨ Animations activées' : '⏹️ Animations désactivées', 'info');
+    }
+
+    function changeProfile(profile) {
+      GameState.player.profile = profile;
+      saveGame();
+      closeSettings();
+      showSettings(); // Rafraîchir le modal
+      showToast('Profil mis à jour !', 'success');
+    }
+
+    function confirmReset() {
+      const confirmed = confirm('⚠️ Êtes-vous sûr de vouloir réinitialiser toute votre progression ? Cette action est irréversible.');
+      if (confirmed) {
+        localStorage.removeItem(CONFIG.STORAGE_KEY);
+        location.reload();
+      }
+    }
+
+    // =====================================================
+    // AIDE
+    // =====================================================
+    function showHelp() {
+      const modal = document.createElement('div');
+      modal.className = 'reward-modal show';
+      modal.style.background = 'rgba(0,0,0,0.9)';
+      modal.innerHTML = `
+        <div class="reward-content" style="max-width: 500px; text-align: left;">
+          <h2 style="text-align: center; margin-bottom: 20px;">❓ Comment jouer</h2>
+          
+          <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+            
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <span style="font-size: 1.5rem;">🌍</span>
+              <div>
+                <strong>Explorez les territoires</strong>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">
+                  Choisissez un domaine de connaissance et répondez aux défis pour progresser.
+                </p>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <span style="font-size: 1.5rem;">⭐</span>
+              <div>
+                <strong>Gagnez des contributions</strong>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">
+                  Chaque bonne réponse vous rapporte des points. Plus vous êtes rapide, plus vous gagnez !
+                </p>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <span style="font-size: 1.5rem;">💡</span>
+              <div>
+                <strong>Utilisez les indices</strong>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">
+                  Dépensez 5 contributions pour obtenir un indice qui élimine des mauvaises réponses.
+                </p>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <span style="font-size: 1.5rem;">⏭️</span>
+              <div>
+                <strong>Passez les questions difficiles</strong>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">
+                  Dépensez 3 contributions pour passer à une autre question.
+                </p>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <span style="font-size: 1.5rem;">🤝</span>
+              <div>
+                <strong>Rejoignez la communauté</strong>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">
+                  Vos contributions s'ajoutent au savoir collectif mondial !
+                </p>
+              </div>
+            </div>
+            
+          </div>
+          
+          <div style="background: var(--bg-glass); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+            <strong>⌨️ Raccourcis clavier</strong>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; font-size: 0.85rem; color: var(--text-secondary);">
+              <span><kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">1-4</kbd> Réponses quiz</span>
+              <span><kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">V/F</kbd> Vrai/Faux</span>
+              <span><kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">Échap</kbd> Retour</span>
+              <span><kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">H</kbd> Aide</span>
+            </div>
+          </div>
+          
+          <button class="btn btn-primary" onclick="this.closest('.reward-modal').remove()" style="width: 100%;">
+            👍 Compris !
+          </button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    // =====================================================
+    // RACCOURCIS CLAVIER
+    // =====================================================
+    document.addEventListener('keydown', (e) => {
+      // Échap pour fermer les modals ou revenir
+      if (e.key === 'Escape') {
+        const modal = document.querySelector('.reward-modal.show');
+        if (modal) {
+          modal.remove();
+        } else if (GameState.player.currentDomain) {
+          backToMap();
+        }
+        return;
+      }
+
+      // H pour l'aide
+      if (e.key.toLowerCase() === 'h' && !e.ctrlKey && !e.metaKey) {
+        const noModalOpen = !document.querySelector('.reward-modal.show');
+        if (noModalOpen) {
+          showHelp();
+        }
+        return;
+      }
+
+      // Raccourcis dans les défis
+      if (GameState.player.currentDomain && GameState.currentChallenge) {
+        const challenge = GameState.currentChallenge;
+
+        // Quiz : touches 1-4
+        if (challenge.type === 'quiz' && /^[1-4]$/.test(e.key)) {
+          const index = parseInt(e.key) - 1;
+          const options = document.querySelectorAll('.quiz-option:not(.disabled)');
+          if (options[index] && !options[index].classList.contains('disabled')) {
+            submitQuizAnswer(index, options[index]);
+          }
+        }
+
+        // Vrai/Faux : V ou F
+        if (challenge.type === 'trueFalse') {
+          if (e.key.toLowerCase() === 'v') {
+            submitTrueFalse(true);
+          } else if (e.key.toLowerCase() === 'f') {
+            submitTrueFalse(false);
+          }
+        }
+      }
+    });
+
+    // =====================================================
+    // FOND ANIMÉ - UNIVERS / CONSTELLATION
+    // =====================================================
+    function initUniverseBackground() {
+      const canvas = document.getElementById('universeCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      let width, height;
+      let stars = [];
+      let connections = [];
+      let mouse = { x: null, y: null };
+
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        initStars();
+      }
+
+      function initStars() {
+        stars = [];
+        const numStars = Math.floor((width * height) / 8000);
+        
+        for (let i = 0; i < numStars; i++) {
+          stars.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: Math.random() * 1.5 + 0.5,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: (Math.random() - 0.5) * 0.3,
+            alpha: Math.random() * 0.5 + 0.3,
+            color: getStarColor()
+          });
+        }
+      }
+
+      function getStarColor() {
+        const colors = [
+          'rgba(124, 77, 255,',   // Violet
+          'rgba(0, 229, 255,',    // Cyan
+          'rgba(255, 255, 255,',  // Blanc
+          'rgba(102, 187, 106,',  // Vert
+          'rgba(255, 167, 38,'    // Orange
+        ];
+        return colors[Math.floor(Math.random() * colors.length)];
+      }
+
+      function animate() {
+        if (!GameState.settings.animations) {
+          ctx.clearRect(0, 0, width, height);
+          requestAnimationFrame(animate);
+          return;
+        }
+
+        ctx.fillStyle = 'rgba(15, 15, 35, 0.1)';
+        ctx.fillRect(0, 0, width, height);
+
+        // Dessiner les connexions
+        ctx.strokeStyle = 'rgba(124, 77, 255, 0.1)';
+        ctx.lineWidth = 0.5;
+        
+        for (let i = 0; i < stars.length; i++) {
+          for (let j = i + 1; j < stars.length; j++) {
+            const dx = stars[i].x - stars[j].x;
+            const dy = stars[i].y - stars[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < 120) {
+              ctx.beginPath();
+              ctx.moveTo(stars[i].x, stars[i].y);
+              ctx.lineTo(stars[j].x, stars[j].y);
+              ctx.globalAlpha = (120 - dist) / 120 * 0.3;
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Dessiner et animer les étoiles
+        stars.forEach(star => {
+          // Mouvement
+          star.x += star.vx;
+          star.y += star.vy;
+
+          // Rebond aux bords
+          if (star.x < 0 || star.x > width) star.vx *= -1;
+          if (star.y < 0 || star.y > height) star.vy *= -1;
+
+          // Effet de scintillement
+          star.alpha += (Math.random() - 0.5) * 0.02;
+          star.alpha = Math.max(0.2, Math.min(0.8, star.alpha));
+
+          // Dessiner l'étoile
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+          ctx.fillStyle = star.color + star.alpha + ')';
+          ctx.globalAlpha = 1;
+          ctx.fill();
+
+          // Effet de halo
+          if (star.radius > 1) {
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.radius * 3, 0, Math.PI * 2);
+            ctx.fillStyle = star.color + '0.1)';
+            ctx.fill();
+          }
+        });
+
+        // Interaction avec la souris
+        if (mouse.x !== null) {
+          stars.forEach(star => {
+            const dx = mouse.x - star.x;
+            const dy = mouse.y - star.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < 150) {
+              ctx.beginPath();
+              ctx.moveTo(star.x, star.y);
+              ctx.lineTo(mouse.x, mouse.y);
+              ctx.strokeStyle = `rgba(124, 77, 255, ${(150 - dist) / 150 * 0.5})`;
+              ctx.stroke();
+            }
+          });
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      // Event listeners
+      window.addEventListener('resize', resize);
+      
+      canvas.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        mouse.x = null;
+        mouse.y = null;
+      });
+
+      // Initialiser
+      resize();
+      animate();
+    }
+
+    // =====================================================
+    // INITIALISATION DE L'APPLICATION
+    // =====================================================
+    function initApp() {
+      console.log('🌍 Initialisation de Open World...');
+
+      // Initialiser le fond animé
+      initUniverseBackground();
+
+      // Charger la sauvegarde
+      const hasExistingSave = loadGame();
+
+      // Petite pause pour l'effet de chargement
+      setTimeout(() => {
+        if (hasExistingSave && GameState.player.profile) {
+          // Joueur existant - aller à la carte
+          showScreen('worldMap');
+          renderKnowledgeGrid();
+          updateHeaderStats();
+          showToast(`Bon retour, explorateur !`, 'success');
+        } else {
+          // Nouveau joueur - écran d'accueil
+          showScreen('welcome');
+        }
+
+        console.log('✅ Open World prêt !');
+      }, 800);
+    }
+
+    // Lancer l'application
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
+
+    // =====================================================
+    // GESTION DE LA PAGE (VISIBILITÉ, FERMETURE)
+    // =====================================================
+    
+    // Sauvegarder quand la page est cachée
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        saveGame();
+      }
+    });
+
+    // Sauvegarder avant de quitter
+    window.addEventListener('beforeunload', () => {
+      saveGame();
+    });
+
+    // Support du mode sombre système (déjà en mode sombre)
+    if (window.matchMedia) {
+      // Le jeu est déjà en mode sombre par défaut
+    }
+
+    // Réduire les animations si préféré par l'utilisateur
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      GameState.settings.animations = false;
+      document.body.classList.add('no-animations');
+    }
+
+  </script>
+</body>
+</html>
+

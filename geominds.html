@@ -1,0 +1,3203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>🎮 GéoMinds - Géométrie & Logique Spatiale</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Palette douce et géométrique */
+      --bg-primary: #f8f9fa;
+      --bg-secondary: #ffffff;
+      --bg-accent: #e9ecef;
+      
+      /* Couleurs des formes */
+      --shape-blue: #4dabf7;
+      --shape-blue-dark: #339af0;
+      --shape-pink: #f783ac;
+      --shape-pink-dark: #e64980;
+      --shape-yellow: #ffd43b;
+      --shape-yellow-dark: #fab005;
+      --shape-green: #69db7c;
+      --shape-green-dark: #40c057;
+      --shape-purple: #b197fc;
+      --shape-purple-dark: #845ef7;
+      --shape-orange: #ffa94d;
+      --shape-orange-dark: #fd7e14;
+      --shape-cyan: #66d9e8;
+      --shape-cyan-dark: #22b8cf;
+      
+      /* Texte */
+      --text-primary: #212529;
+      --text-secondary: #495057;
+      --text-muted: #868e96;
+      --text-light: #adb5bd;
+      
+      /* Accents */
+      --accent-success: #51cf66;
+      --accent-warning: #fcc419;
+      --accent-error: #ff6b6b;
+      --accent-info: #74c0fc;
+      
+      /* Ombres douces */
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
+      
+      /* Transitions */
+      --transition-fast: 0.15s ease;
+      --transition-medium: 0.3s ease;
+      --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      /* Border radius */
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+      --radius-full: 50%;
+    }
+
+    /* ===== BASE ===== */
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ===== MOTIFS DE FOND ===== */
+    .background-pattern {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    .bg-shape {
+      position: absolute;
+      opacity: 0.15;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-20px) rotate(5deg); }
+      50% { transform: translateY(0) rotate(0deg); }
+      75% { transform: translateY(20px) rotate(-5deg); }
+    }
+
+    /* ===== ÉCRANS ===== */
+    .screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 10;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--transition-slow), visibility var(--transition-slow);
+    }
+
+    .screen.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ===== MENU PRINCIPAL ===== */
+    .main-menu {
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .logo-container {
+      margin-bottom: 40px;
+      animation: logoFloat 4s ease-in-out infinite;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .logo-shapes {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .logo-shape {
+      width: 50px;
+      height: 50px;
+      animation: shapeRotate 8s ease-in-out infinite;
+    }
+
+    .logo-shape:nth-child(1) { animation-delay: 0s; }
+    .logo-shape:nth-child(2) { animation-delay: 0.5s; }
+    .logo-shape:nth-child(3) { animation-delay: 1s; }
+    .logo-shape:nth-child(4) { animation-delay: 1.5s; }
+
+    @keyframes shapeRotate {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(90deg) scale(1.1); }
+      50% { transform: rotate(180deg) scale(1); }
+      75% { transform: rotate(270deg) scale(1.1); }
+    }
+
+    .game-title {
+      font-family: 'Comfortaa', sans-serif;
+      font-size: clamp(42px, 8vw, 64px);
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    .game-subtitle {
+      font-size: clamp(14px, 3vw, 18px);
+      color: var(--text-secondary);
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+
+    /* ===== BOUTONS ===== */
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 18px 32px;
+      border: none;
+      border-radius: var(--radius-lg);
+      font-family: 'Quicksand', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-medium);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--shape-blue) 0%, var(--shape-blue-dark) 100%);
+      color: white;
+      box-shadow: var(--shadow-md), 0 4px 20px rgba(77, 171, 247, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg), 0 8px 30px rgba(77, 171, 247, 0.4);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--shape-pink) 0%, var(--shape-pink-dark) 100%);
+      color: white;
+      box-shadow: var(--shadow-md), 0 4px 20px rgba(247, 131, 172, 0.3);
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg), 0 8px 30px rgba(247, 131, 172, 0.4);
+    }
+
+    .btn-tertiary {
+      background: linear-gradient(135deg, var(--shape-purple) 0%, var(--shape-purple-dark) 100%);
+      color: white;
+      box-shadow: var(--shadow-md), 0 4px 20px rgba(177, 151, 252, 0.3);
+    }
+
+    .btn-tertiary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg), 0 8px 30px rgba(177, 151, 252, 0.4);
+    }
+
+    .btn-outline {
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      border: 2px solid var(--bg-accent);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-accent);
+      border-color: var(--text-light);
+    }
+
+    .btn-icon {
+      font-size: 24px;
+    }
+
+    .btn-small {
+      padding: 12px 24px;
+      font-size: 14px;
+    }
+
+    .btn-round {
+      width: 56px;
+      height: 56px;
+      padding: 0;
+      border-radius: var(--radius-full);
+    }
+
+    /* ===== EN-TÊTE DE JEU ===== */
+    .game-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+    }
+
+    .header-left, .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .level-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--bg-accent);
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .level-number {
+      font-size: 20px;
+      color: var(--shape-blue-dark);
+    }
+
+    .progress-bar {
+      width: 120px;
+      height: 6px;
+      background: var(--bg-accent);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--shape-blue) 0%, var(--shape-cyan) 100%);
+      border-radius: 3px;
+      transition: width var(--transition-medium);
+    }
+
+    .header-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-accent);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      font-size: 20px;
+    }
+
+    .header-btn:hover {
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow-md);
+      transform: scale(1.05);
+    }
+
+    /* ===== ZONE DE JEU ===== */
+    .game-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 90px 20px 20px;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .puzzle-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .puzzle-instruction {
+      text-align: center;
+      margin-bottom: 30px;
+      animation: fadeInUp 0.5s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .instruction-text {
+      font-size: clamp(18px, 4vw, 24px);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .instruction-hint {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ===== CANVAS DE RENDU 3D ===== */
+    .render-canvas {
+      background: linear-gradient(180deg, #f1f3f5 0%, #e9ecef 100%);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg), inset 0 2px 10px rgba(255,255,255,0.5);
+      touch-action: none;
+      cursor: grab;
+    }
+
+    .render-canvas:active {
+      cursor: grabbing;
+    }
+
+    /* ===== OPTIONS DE RÉPONSE ===== */
+    .answer-options {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 30px;
+      padding: 20px;
+    }
+
+    .answer-option {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-secondary);
+      border: 3px solid transparent;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-medium);
+      box-shadow: var(--shadow-md);
+    }
+
+    .answer-option:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--shape-blue);
+    }
+
+    .answer-option.selected {
+      border-color: var(--shape-blue);
+      background: rgba(77, 171, 247, 0.1);
+    }
+
+    .answer-option.correct {
+      border-color: var(--accent-success);
+      background: rgba(81, 207, 102, 0.15);
+      animation: correctPulse 0.5s ease;
+    }
+
+    .answer-option.incorrect {
+      border-color: var(--accent-error);
+      background: rgba(255, 107, 107, 0.15);
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes correctPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+
+    .answer-option canvas {
+      border-radius: var(--radius-sm);
+    }
+
+    /* ===== DRAG & DROP ===== */
+    .drop-zone {
+      border: 3px dashed var(--text-light);
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,0.5);
+      transition: all var(--transition-medium);
+    }
+
+    .drop-zone.drag-over {
+      border-color: var(--shape-blue);
+      background: rgba(77, 171, 247, 0.1);
+      transform: scale(1.02);
+    }
+
+    .draggable-shape {
+      cursor: grab;
+      transition: transform var(--transition-fast);
+    }
+
+    .draggable-shape:active {
+      cursor: grabbing;
+    }
+
+    .draggable-shape.dragging {
+      opacity: 0.7;
+      transform: scale(1.1);
+    }
+
+    /* ===== FEEDBACK VISUEL ===== */
+    .feedback-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-medium);
+      pointer-events: none;
+    }
+
+    .feedback-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .feedback-content {
+      padding: 40px 60px;
+      border-radius: var(--radius-xl);
+      text-align: center;
+      transform: scale(0.8);
+      transition: transform var(--transition-medium);
+    }
+
+    .feedback-overlay.show .feedback-content {
+      transform: scale(1);
+    }
+
+    .feedback-success {
+      background: linear-gradient(135deg, #d3f9d8 0%, #b2f2bb 100%);
+    }
+
+    .feedback-encourage {
+      background: linear-gradient(135deg, #fff3bf 0%, #ffe066 100%);
+    }
+
+    .feedback-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      animation: bounceIn 0.5s ease;
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .feedback-text {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .feedback-subtext {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    /* ===== MODE LIBRE ===== */
+    .free-mode-toolbar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      padding: 16px 24px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .tool-btn {
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-accent);
+      border: 2px solid transparent;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      font-size: 24px;
+    }
+
+    .tool-btn:hover {
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .tool-btn.active {
+      border-color: var(--shape-blue);
+      background: rgba(77, 171, 247, 0.1);
+    }
+
+    .shape-palette {
+      position: fixed;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .palette-shape {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-accent);
+      border: 2px solid transparent;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .palette-shape:hover {
+      transform: scale(1.1);
+      box-shadow: var(--shadow-md);
+    }
+
+    .palette-shape.selected {
+      border-color: var(--shape-purple);
+      background: rgba(177, 151, 252, 0.1);
+    }
+
+    /* ===== MODE CRÉATIF ===== */
+    .creative-panel {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 280px;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .color-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .color-swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all var(--transition-fast);
+    }
+
+    .color-swatch:hover {
+      transform: scale(1.1);
+    }
+
+    .color-swatch.selected {
+      border-color: var(--text-primary);
+    }
+
+    .slider-group {
+      margin-bottom: 16px;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .slider {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-accent);
+      border-radius: 4px;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--shape-blue);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ===== MODALES ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-medium);
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+      transform: scale(0.9) translateY(20px);
+      transition: transform var(--transition-medium);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .modal-overlay.show .modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .modal-text {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    /* ===== STATISTIQUES ===== */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .stat-card {
+      background: var(--bg-accent);
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--shape-blue-dark);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    /* ===== SÉLECTION DE DIFFICULTÉ ===== */
+    .difficulty-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .difficulty-option {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: var(--bg-secondary);
+      border: 2px solid var(--bg-accent);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-medium);
+    }
+
+    .difficulty-option:hover {
+      border-color: var(--shape-blue);
+      background: rgba(77, 171, 247, 0.05);
+    }
+
+    .difficulty-option.selected {
+      border-color: var(--shape-blue);
+      background: rgba(77, 171, 247, 0.1);
+    }
+
+    .difficulty-icon {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-accent);
+      border-radius: var(--radius-md);
+      font-size: 24px;
+    }
+
+    .difficulty-info {
+      text-align: left;
+      flex: 1;
+    }
+
+    .difficulty-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .difficulty-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ===== TUTORIEL ===== */
+    .tutorial-step {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.98);
+      padding: 20px 30px;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      z-index: 150;
+    }
+
+    .tutorial-text {
+      font-size: 16px;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .tutorial-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tutorial-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--bg-accent);
+      border-radius: 50%;
+      transition: all var(--transition-fast);
+    }
+
+    .tutorial-dot.active {
+      background: var(--shape-blue);
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    /* ===== PARTICULES DE CÉLÉBRATION ===== */
+    .particles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 250;
+    }
+
+    .particle {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      animation: particleFall 2s ease-out forwards;
+    }
+
+    @keyframes particleFall {
+      0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(100vh) rotate(720deg) scale(0.5);
+      }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .game-header {
+        height: 60px;
+        padding: 0 12px;
+      }
+
+      .level-badge {
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+
+      .progress-bar {
+        width: 80px;
+      }
+
+      .header-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+      }
+
+      .game-container {
+        padding: 75px 12px 12px;
+      }
+
+      .answer-option {
+        width: 65px;
+        height: 65px;
+      }
+
+      .free-mode-toolbar {
+        padding: 12px 16px;
+        gap: 8px;
+      }
+
+      .tool-btn {
+        width: 46px;
+        height: 46px;
+        font-size: 20px;
+      }
+
+      .shape-palette {
+        left: 10px;
+        padding: 12px;
+        gap: 8px;
+      }
+
+      .palette-shape {
+        width: 40px;
+        height: 40px;
+      }
+
+      .creative-panel {
+        right: 10px;
+        width: 240px;
+        padding: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo-shapes {
+        gap: 10px;
+      }
+
+      .logo-shape {
+        width: 40px;
+        height: 40px;
+      }
+
+      .btn {
+        padding: 14px 24px;
+        font-size: 16px;
+      }
+
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ===== ACCESSIBILITÉ ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Focus visible pour accessibilité clavier */
+    .btn:focus-visible,
+    .tool-btn:focus-visible,
+    .answer-option:focus-visible {
+      outline: 3px solid var(--shape-blue);
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== MOTIFS DE FOND ===== -->
+  <div class="background-pattern" id="bgPattern"></div>
+
+  <!-- ===== ÉCRAN D'ACCUEIL ===== -->
+  <div class="screen active" id="menuScreen">
+    <div class="main-menu">
+      <div class="logo-container">
+        <div class="logo-shapes">
+          <svg class="logo-shape" viewBox="0 0 50 50">
+            <rect x="5" y="5" width="40" height="40" rx="5" fill="#4dabf7"/>
+          </svg>
+          <svg class="logo-shape" viewBox="0 0 50 50">
+            <circle cx="25" cy="25" r="20" fill="#f783ac"/>
+          </svg>
+          <svg class="logo-shape" viewBox="0 0 50 50">
+            <polygon points="25,5 45,45 5,45" fill="#ffd43b"/>
+          </svg>
+          <svg class="logo-shape" viewBox="0 0 50 50">
+            <polygon points="25,5 45,25 25,45 5,25" fill="#69db7c"/>
+          </svg>
+        </div>
+        <h1 class="game-title">GéoMinds</h1>
+        <p class="game-subtitle">Géométrie • Logique • Intuition</p>
+      </div>
+
+      <div class="menu-buttons">
+        <button class="btn btn-primary" onclick="game.startMode('challenge')">
+          <span class="btn-icon">🎯</span>
+          Mode Défi
+        </button>
+        <button class="btn btn-secondary" onclick="game.startMode('free')">
+          <span class="btn-icon">🔮</span>
+          Mode Libre
+        </button>
+        <button class="btn btn-tertiary" onclick="game.startMode('creative')">
+          <span class="btn-icon">✨</span>
+          Mode Créatif
+        </button>
+        <button class="btn btn-outline btn-small" onclick="game.showStats()">
+          <span class="btn-icon">📊</span>
+          Statistiques
+        </button>
+        <button class="btn btn-outline btn-small" onclick="game.showSettings()">
+          <span class="btn-icon">⚙️</span>
+          Paramètres
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ÉCRAN DE JEU ===== -->
+  <div class="screen" id="gameScreen">
+    <header class="game-header">
+      <div class="header-left">
+        <button class="header-btn" onclick="game.pauseGame()" title="Menu">
+          ☰
+        </button>
+      </div>
+      <div class="header-center">
+        <div class="level-badge">
+          <span>Niveau</span>
+          <span class="level-number" id="levelNumber">1</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="header-btn" onclick="game.showHint()" title="Indice">
+          💡
+        </button>
+        <button class="header-btn" onclick="game.skipPuzzle()" title="Passer">
+          ⏭️
+        </button>
+      </div>
+    </header>
+
+    <div class="game-container">
+      <div class="puzzle-area" id="puzzleArea">
+        <div class="puzzle-instruction">
+          <p class="instruction-text" id="instructionText">Combien de cubes composent cette structure ?</p>
+          <p class="instruction-hint" id="instructionHint">Touchez pour faire pivoter la vue</p>
+        </div>
+        <canvas class="render-canvas" id="renderCanvas" width="400" height="400"></canvas>
+        <div class="answer-options" id="answerOptions"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ÉCRAN MODE LIBRE ===== -->
+  <div class="screen" id="freeScreen">
+    <header class="game-header">
+      <div class="header-left">
+        <button class="header-btn" onclick="game.backToMenu()">
+          ←
+        </button>
+      </div>
+      <div class="header-center">
+        <div class="level-badge">
+          <span>Mode Libre</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="header-btn" onclick="game.clearCanvas()" title="Effacer">
+          🗑️
+        </button>
+      </div>
+    </header>
+
+    <canvas class="render-canvas" id="freeCanvas" width="600" height="500" style="margin: 90px auto 20px;"></canvas>
+
+    <div class="shape-palette" id="shapePalette"></div>
+
+    <div class="free-mode-toolbar">
+      <button class="tool-btn active" data-tool="select" title="Sélectionner">
+        👆
+      </button>
+      <button class="tool-btn" data-tool="move" title="Déplacer">
+        ✋
+      </button>
+      <button class="tool-btn" data-tool="rotate" title="Tourner">
+        🔄
+      </button>
+      <button class="tool-btn" data-tool="scale" title="Redimensionner">
+        📐
+      </button>
+      <button class="tool-btn" data-tool="delete" title="Supprimer">
+        ❌
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== ÉCRAN MODE CRÉATIF ===== -->
+  <div class="screen" id="creativeScreen">
+    <header class="game-header">
+      <div class="header-left">
+        <button class="header-btn" onclick="game.backToMenu()">
+          ←
+        </button>
+      </div>
+      <div class="header-center">
+        <div class="level-badge">
+          <span>Mode Créatif</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="header-btn" onclick="game.saveCreation()" title="Sauvegarder">
+          💾
+        </button>
+        <button class="header-btn" onclick="game.shareCreation()" title="Partager">
+          📤
+        </button>
+      </div>
+    </header>
+
+    <canvas class="render-canvas" id="creativeCanvas" width="500" height="450" style="margin: 90px auto 20px;"></canvas>
+
+    <div class="shape-palette" id="creativePalette"></div>
+
+    <div class="creative-panel">
+      <h3 class="panel-title">🎨 Personnalisation</h3>
+      
+      <div class="color-picker" id="colorPicker"></div>
+
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>Taille</span>
+          <span id="sizeValue">50</span>
+        </div>
+        <input type="range" class="slider" id="sizeSlider" min="20" max="100" value="50">
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>Rotation</span>
+          <span id="rotationValue">0°</span>
+        </div>
+        <input type="range" class="slider" id="rotationSlider" min="0" max="360" value="0">
+      </div>
+
+      <button class="btn btn-primary btn-small" style="width: 100%; margin-top: 16px;" onclick="game.testCreation()">
+        🎮 Tester mon puzzle
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== FEEDBACK OVERLAY ===== -->
+  <div class="feedback-overlay" id="feedbackOverlay">
+    <div class="feedback-content" id="feedbackContent">
+      <div class="feedback-icon" id="feedbackIcon">✨</div>
+      <div class="feedback-text" id="feedbackText">Bravo !</div>
+      <div class="feedback-subtext" id="feedbackSubtext">Tu progresses bien !</div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL PAUSE ===== -->
+  <div class="modal-overlay" id="pauseModal">
+    <div class="modal">
+      <div class="modal-icon">⏸️</div>
+      <h2 class="modal-title">Pause</h2>
+      <p class="modal-text">Prends ton temps, les formes t'attendent !</p>
+      <div class="modal-buttons">
+        <button class="btn btn-primary" onclick="game.resumeGame()">
+          ▶️ Continuer
+        </button>
+        <button class="btn btn-outline" onclick="game.backToMenu()">
+          🏠 Menu
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL STATISTIQUES ===== -->
+  <div class="modal-overlay" id="statsModal">
+    <div class="modal">
+      <div class="modal-icon">📊</div>
+      <h2 class="modal-title">Tes progrès</h2>
+      
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-value" id="statPuzzles">0</div>
+          <div class="stat-label">Puzzles résolus</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statStreak">0</div>
+          <div class="stat-label">Série en cours</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statLevel">1</div>
+          <div class="stat-label">Niveau actuel</div>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn btn-primary" onclick="game.hideStats()">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL PARAMÈTRES ===== -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <div class="modal-icon">⚙️</div>
+      <h2 class="modal-title">Paramètres</h2>
+      
+      <div class="difficulty-selector">
+        <div class="difficulty-option selected" data-difficulty="adaptive" onclick="game.setDifficulty('adaptive')">
+          <div class="difficulty-icon">🎯</div>
+          <div class="difficulty-info">
+            <div class="difficulty-name">Adaptatif</div>
+            <div class="difficulty-desc">La difficulté s'adapte à toi</div>
+          </div>
+        </div>
+        <div class="difficulty-option" data-difficulty="easy" onclick="game.setDifficulty('easy')">
+          <div class="difficulty-icon">🌱</div>
+          <div class="difficulty-info">
+            <div class="difficulty-name">Découverte</div>
+            <div class="difficulty-desc">Pour débuter tranquillement</div>
+          </div>
+        </div>
+        <div class="difficulty-option" data-difficulty="medium" onclick="game.setDifficulty('medium')">
+          <div class="difficulty-icon">🌿</div>
+          <div class="difficulty-info">
+            <div class="difficulty-name">Équilibré</div>
+            <div class="difficulty-desc">Un bon challenge</div>
+          </div>
+        </div>
+        <div class="difficulty-option" data-difficulty="hard" onclick="game.setDifficulty('hard')">
+          <div class="difficulty-icon">🌳</div>
+          <div class="difficulty-info">
+            <div class="difficulty-name">Expert</div>
+            <div class="difficulty-desc">Pour les as de la géométrie</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn btn-primary" onclick="game.hideSettings()">
+          Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CONTENEUR DE PARTICULES ===== -->
+  <div class="particles-container" id="particlesContainer"></div>
+
+  <!-- ===== TUTORIEL ===== -->
+  <div class="tutorial-step" id="tutorialStep" style="display: none;">
+    <p class="tutorial-text" id="tutorialText">Bienvenue dans GéoMinds !</p>
+    <div class="tutorial-dots">
+      <div class="tutorial-dot active"></div>
+      <div class="tutorial-dot"></div>
+      <div class="tutorial-dot"></div>
+    </div>
+    <button class="btn btn-primary btn-small" onclick="game.nextTutorialStep()">
+      Suivant →
+    </button>
+  </div>
+
+  <script>
+    // ================================================================
+    // GEOMINDS - JEU DE GÉOMÉTRIE ET LOGIQUE SPATIALE
+    // ================================================================
+
+    // ===== CONFIGURATION =====
+    const CONFIG = {
+      // Couleurs des formes
+      COLORS: {
+        blue: { main: '#4dabf7', dark: '#339af0', light: '#a5d8ff' },
+        pink: { main: '#f783ac', dark: '#e64980', light: '#fcc2d7' },
+        yellow: { main: '#ffd43b', dark: '#fab005', light: '#fff3bf' },
+        green: { main: '#69db7c', dark: '#40c057', light: '#b2f2bb' },
+        purple: { main: '#b197fc', dark: '#845ef7', light: '#d0bfff' },
+        orange: { main: '#ffa94d', dark: '#fd7e14', light: '#ffe8cc' },
+        cyan: { main: '#66d9e8', dark: '#22b8cf', light: '#c5f6fa' }
+      },
+      
+      // Types de puzzles
+      PUZZLE_TYPES: [
+        'countCubes',      // Compter les cubes dans une structure 3D
+        'findDifferent',   // Trouver la forme différente
+        'completePattern', // Compléter un motif
+        'rotateMatch',     // Trouver la rotation correcte
+        'mirrorShape',     // Trouver le symétrique
+        'buildStructure',  // Reconstruire une structure
+        'countFaces',      // Compter les faces visibles
+        'findMissing'      // Trouver la pièce manquante
+      ],
+      
+      // Messages d'encouragement
+      SUCCESS_MESSAGES: [
+        { text: 'Bravo !', subtext: 'Tu as l\'œil !' },
+        { text: 'Parfait !', subtext: 'Continue comme ça !' },
+        { text: 'Excellent !', subtext: 'Ta logique est au top !' },
+        { text: 'Super !', subtext: 'Tu progresses bien !' },
+        { text: 'Génial !', subtext: 'Tu maîtrises !' },
+        { text: 'Impressionnant !', subtext: 'Quelle intuition !' }
+      ],
+      
+      ENCOURAGE_MESSAGES: [
+        { text: 'Pas tout à fait', subtext: 'Observe bien la structure' },
+        { text: 'Presque !', subtext: 'Essaie encore' },
+        { text: 'Continue !', subtext: 'Tu y es presque' }
+      ],
+      
+      // Paramètres de difficulté
+      DIFFICULTY: {
+        easy: { cubeRange: [3, 6], optionsCount: 3, timeBonus: 0 },
+        medium: { cubeRange: [5, 10], optionsCount: 4, timeBonus: 0.2 },
+        hard: { cubeRange: [8, 15], optionsCount: 5, timeBonus: 0.4 },
+        adaptive: { cubeRange: [3, 15], optionsCount: 4, timeBonus: 0.2 }
+      }
+    };
+
+    // ===== GESTIONNAIRE DE SON =====
+    class SoundManager {
+      constructor() {
+        this.enabled = true;
+        this.context = null;
+      }
+
+      init() {
+        try {
+          this.context = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+          this.enabled = false;
+        }
+      }
+
+      play(type) {
+        if (!this.enabled || !this.context) return;
+        if (this.context.state === 'suspended') {
+          this.context.resume();
+        }
+
+        const osc = this.context.createOscillator();
+        const gain = this.context.createGain();
+        osc.connect(gain);
+        gain.connect(this.context.destination);
+
+        const now = this.context.currentTime;
+        gain.gain.setValueAtTime(0.1, now);
+
+        switch (type) {
+          case 'success':
+            osc.frequency.setValueAtTime(523.25, now); // C5
+            osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+            osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc.start(now);
+            osc.stop(now + 0.4);
+            break;
+
+          case 'click':
+            osc.frequency.setValueAtTime(800, now);
+            gain.gain.setValueAtTime(0.05, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+            osc.start(now);
+            osc.stop(now + 0.05);
+            break;
+
+          case 'encourage':
+            osc.frequency.setValueAtTime(349.23, now); // F4
+            osc.frequency.setValueAtTime(293.66, now + 0.1); // D4
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+            osc.start(now);
+            osc.stop(now + 0.25);
+            break;
+
+          case 'levelUp':
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.1);
+            osc.frequency.setValueAtTime(783.99, now + 0.2);
+            osc.frequency.setValueAtTime(1046.5, now + 0.3);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            osc.start(now);
+            osc.stop(now + 0.5);
+            break;
+        }
+      }
+    }
+
+    // ===== MOTEUR DE RENDU 3D SIMPLE =====
+    class Renderer3D {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.width = canvas.width;
+        this.height = canvas.height;
+        
+        // Paramètres de vue
+        this.rotationX = 0.5;
+        this.rotationY = 0.5;
+        this.zoom = 1;
+        
+        // Objets à rendre
+        this.objects = [];
+        
+        // Gestion des interactions
+        this.isDragging = false;
+        this.lastMouseX = 0;
+        this.lastMouseY = 0;
+        
+        this.setupInteractions();
+      }
+
+      setupInteractions() {
+        // Souris
+        this.canvas.addEventListener('mousedown', (e) => this.onPointerDown(e.clientX, e.clientY));
+        this.canvas.addEventListener('mousemove', (e) => this.onPointerMove(e.clientX, e.clientY));
+        this.canvas.addEventListener('mouseup', () => this.onPointerUp());
+        this.canvas.addEventListener('mouseleave', () => this.onPointerUp());
+        
+        // Touch
+        this.canvas.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          const touch = e.touches[0];
+          this.onPointerDown(touch.clientX, touch.clientY);
+        });
+        this.canvas.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+          const touch = e.touches[0];
+          this.onPointerMove(touch.clientX, touch.clientY);
+        });
+        this.canvas.addEventListener('touchend', () => this.onPointerUp());
+      }
+
+      onPointerDown(x, y) {
+        this.isDragging = true;
+        this.lastMouseX = x;
+        this.lastMouseY = y;
+      }
+
+      onPointerMove(x, y) {
+        if (!this.isDragging) return;
+        
+        const deltaX = x - this.lastMouseX;
+        const deltaY = y - this.lastMouseY;
+        
+        this.rotationY += deltaX * 0.01;
+        this.rotationX += deltaY * 0.01;
+        
+        // Limiter la rotation X
+        this.rotationX = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, this.rotationX));
+        
+        this.lastMouseX = x;
+        this.lastMouseY = y;
+        
+        this.render();
+      }
+
+      onPointerUp() {
+        this.isDragging = false;
+      }
+
+      // Projection 3D vers 2D (isométrique simplifiée)
+      project(x, y, z) {
+        // Rotation autour de Y
+        const cosY = Math.cos(this.rotationY);
+        const sinY = Math.sin(this.rotationY);
+        const x1 = x * cosY - z * sinY;
+        const z1 = x * sinY + z * cosY;
+        
+        // Rotation autour de X
+        const cosX = Math.cos(this.rotationX);
+        const sinX = Math.sin(this.rotationX);
+        const y1 = y * cosX - z1 * sinX;
+        const z2 = y * sinX + z1 * cosX;
+        
+        // Projection orthographique avec perspective légère
+        const scale = 30 * this.zoom;
+        const perspective = 1 + z2 * 0.01;
+        
+        return {
+          x: this.width / 2 + x1 * scale * perspective,
+          y: this.height / 2 - y1 * scale * perspective,
+          z: z2
+        };
+      }
+
+      // Créer un cube
+      createCube(x, y, z, color) {
+        const size = 1;
+        const half = size / 2;
+        
+        // Sommets du cube
+        const vertices = [
+          { x: x - half, y: y - half, z: z - half },
+          { x: x + half, y: y - half, z: z - half },
+          { x: x + half, y: y + half, z: z - half },
+          { x: x - half, y: y + half, z: z - half },
+          { x: x - half, y: y - half, z: z + half },
+          { x: x + half, y: y - half, z: z + half },
+          { x: x + half, y: y + half, z: z + half },
+          { x: x - half, y: y + half, z: z + half }
+        ];
+        
+        // Faces du cube (indices des sommets)
+        const faces = [
+          { vertices: [0, 1, 2, 3], normal: { x: 0, y: 0, z: -1 } }, // Avant
+          { vertices: [5, 4, 7, 6], normal: { x: 0, y: 0, z: 1 } },  // Arrière
+          { vertices: [4, 0, 3, 7], normal: { x: -1, y: 0, z: 0 } }, // Gauche
+          { vertices: [1, 5, 6, 2], normal: { x: 1, y: 0, z: 0 } },  // Droite
+          { vertices: [3, 2, 6, 7], normal: { x: 0, y: 1, z: 0 } },  // Haut
+          { vertices: [4, 5, 1, 0], normal: { x: 0, y: -1, z: 0 } }  // Bas
+        ];
+        
+        return { vertices, faces, color, position: { x, y, z } };
+      }
+
+      // Créer une sphère (approximée par un cercle 2D)
+      createSphere(x, y, z, color) {
+        return { 
+          type: 'sphere', 
+          position: { x, y, z }, 
+          color,
+          radius: 0.5
+        };
+      }
+
+      // Créer une pyramide
+      createPyramid(x, y, z, color) {
+        const base = 1;
+        const height = 1.2;
+        const half = base / 2;
+        
+        const vertices = [
+          { x: x - half, y: y, z: z - half },     // Base 0
+          { x: x + half, y: y, z: z - half },     // Base 1
+          { x: x + half, y: y, z: z + half },     // Base 2
+          { x: x - half, y: y, z: z + half },     // Base 3
+          { x: x, y: y + height, z: z }           // Sommet
+        ];
+        
+        const faces = [
+          { vertices: [0, 1, 2, 3], normal: { x: 0, y: -1, z: 0 } }, // Base
+          { vertices: [0, 1, 4], normal: { x: 0, y: 0.5, z: -1 } },  // Face avant
+          { vertices: [1, 2, 4], normal: { x: 1, y: 0.5, z: 0 } },   // Face droite
+          { vertices: [2, 3, 4], normal: { x: 0, y: 0.5, z: 1 } },   // Face arrière
+          { vertices: [3, 0, 4], normal: { x: -1, y: 0.5, z: 0 } }   // Face gauche
+        ];
+        
+        return { vertices, faces, color, position: { x, y, z }, type: 'pyramid' };
+      }
+
+      // Ajouter un objet
+      addObject(obj) {
+        this.objects.push(obj);
+      }
+
+      // Vider la scène
+      clear() {
+        this.objects = [];
+      }
+
+            // Calculer la luminosité d'une face
+      getFaceBrightness(normal) {
+        // Direction de la lumière (venant du haut-droit-avant)
+        const lightDir = { x: 0.3, y: 0.8, z: 0.5 };
+        
+        // Normaliser la direction de la lumière
+        const lightLen = Math.sqrt(lightDir.x ** 2 + lightDir.y ** 2 + lightDir.z ** 2);
+        lightDir.x /= lightLen;
+        lightDir.y /= lightLen;
+        lightDir.z /= lightLen;
+        
+        // Rotation de la normale selon la vue
+        const cosY = Math.cos(this.rotationY);
+        const sinY = Math.sin(this.rotationY);
+        const cosX = Math.cos(this.rotationX);
+        const sinX = Math.sin(this.rotationX);
+        
+        const nx1 = normal.x * cosY - normal.z * sinY;
+        const nz1 = normal.x * sinY + normal.z * cosY;
+        const ny1 = normal.y * cosX - nz1 * sinX;
+        const nz2 = normal.y * sinX + nz1 * cosX;
+        
+        // Produit scalaire (dot product) pour l'éclairage
+        const dot = nx1 * lightDir.x + ny1 * lightDir.y + nz2 * lightDir.z;
+        
+        // Mapper entre 0.3 (ombre) et 1.0 (pleine lumière)
+        return 0.3 + Math.max(0, dot) * 0.7;
+      }
+
+      // Ajuster la luminosité d'une couleur
+      adjustColor(color, brightness) {
+        // Convertir hex en RGB
+        const hex = color.replace('#', '');
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        
+        // Appliquer la luminosité
+        const newR = Math.round(r * brightness);
+        const newG = Math.round(g * brightness);
+        const newB = Math.round(b * brightness);
+        
+        return `rgb(${newR}, ${newG}, ${newB})`;
+      }
+
+      // Rendu d'un cube
+      renderCube(obj) {
+        const ctx = this.ctx;
+        const projectedVertices = obj.vertices.map(v => this.project(v.x, v.y, v.z));
+        
+        // Trier les faces par profondeur (Z moyen)
+        const facesWithDepth = obj.faces.map((face, index) => {
+          const avgZ = face.vertices.reduce((sum, vi) => sum + projectedVertices[vi].z, 0) / face.vertices.length;
+          return { face, index, avgZ };
+        }).sort((a, b) => a.avgZ - b.avgZ); // Du plus loin au plus proche
+        
+        // Dessiner chaque face
+        facesWithDepth.forEach(({ face }) => {
+          const points = face.vertices.map(vi => projectedVertices[vi]);
+          
+          // Vérifier si la face est visible (backface culling)
+          const v1 = { x: points[1].x - points[0].x, y: points[1].y - points[0].y };
+          const v2 = { x: points[2].x - points[0].x, y: points[2].y - points[0].y };
+          const cross = v1.x * v2.y - v1.y * v2.x;
+          
+          if (cross > 0) return; // Face cachée
+          
+          // Calculer la luminosité
+          const brightness = this.getFaceBrightness(face.normal);
+          const faceColor = this.adjustColor(obj.color.main, brightness);
+          
+          // Dessiner la face
+          ctx.beginPath();
+          ctx.moveTo(points[0].x, points[0].y);
+          for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x, points[i].y);
+          }
+          ctx.closePath();
+          
+          // Remplissage
+          ctx.fillStyle = faceColor;
+          ctx.fill();
+          
+          // Contour
+          ctx.strokeStyle = obj.color.dark;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        });
+      }
+
+      // Rendu d'une sphère
+      renderSphere(obj) {
+        const ctx = this.ctx;
+        const projected = this.project(obj.position.x, obj.position.y, obj.position.z);
+        const radius = obj.radius * 30 * this.zoom;
+        
+        // Dégradé radial pour effet 3D
+        const gradient = ctx.createRadialGradient(
+          projected.x - radius * 0.3, projected.y - radius * 0.3, 0,
+          projected.x, projected.y, radius
+        );
+        gradient.addColorStop(0, obj.color.light);
+        gradient.addColorStop(0.5, obj.color.main);
+        gradient.addColorStop(1, obj.color.dark);
+        
+        ctx.beginPath();
+        ctx.arc(projected.x, projected.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
+        // Contour subtil
+        ctx.strokeStyle = obj.color.dark;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Reflet
+        ctx.beginPath();
+        ctx.arc(projected.x - radius * 0.25, projected.y - radius * 0.25, radius * 0.15, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.fill();
+      }
+
+      // Rendu d'une pyramide
+      renderPyramid(obj) {
+        const ctx = this.ctx;
+        const projectedVertices = obj.vertices.map(v => this.project(v.x, v.y, v.z));
+        
+        // Trier les faces par profondeur
+        const facesWithDepth = obj.faces.map((face, index) => {
+          const avgZ = face.vertices.reduce((sum, vi) => sum + projectedVertices[vi].z, 0) / face.vertices.length;
+          return { face, index, avgZ };
+        }).sort((a, b) => a.avgZ - b.avgZ);
+        
+        facesWithDepth.forEach(({ face }) => {
+          const points = face.vertices.map(vi => projectedVertices[vi]);
+          
+          // Backface culling
+          if (points.length >= 3) {
+            const v1 = { x: points[1].x - points[0].x, y: points[1].y - points[0].y };
+            const v2 = { x: points[2].x - points[0].x, y: points[2].y - points[0].y };
+            const cross = v1.x * v2.y - v1.y * v2.x;
+            if (cross > 0) return;
+          }
+          
+          const brightness = this.getFaceBrightness(face.normal);
+          const faceColor = this.adjustColor(obj.color.main, brightness);
+          
+          ctx.beginPath();
+          ctx.moveTo(points[0].x, points[0].y);
+          for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x, points[i].y);
+          }
+          ctx.closePath();
+          
+          ctx.fillStyle = faceColor;
+          ctx.fill();
+          ctx.strokeStyle = obj.color.dark;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        });
+      }
+
+      // Rendu principal
+      render() {
+        const ctx = this.ctx;
+        
+        // Effacer le canvas
+        ctx.clearRect(0, 0, this.width, this.height);
+        
+        // Fond avec dégradé
+        const bgGradient = ctx.createLinearGradient(0, 0, 0, this.height);
+        bgGradient.addColorStop(0, '#f1f3f5');
+        bgGradient.addColorStop(1, '#e9ecef');
+        ctx.fillStyle = bgGradient;
+        ctx.fillRect(0, 0, this.width, this.height);
+        
+        // Grille de fond subtile
+        this.drawGrid();
+        
+        // Trier tous les objets par profondeur
+        const sortedObjects = [...this.objects].sort((a, b) => {
+          const zA = this.project(a.position.x, a.position.y, a.position.z).z;
+          const zB = this.project(b.position.x, b.position.y, b.position.z).z;
+          return zA - zB;
+        });
+        
+        // Rendre chaque objet
+        sortedObjects.forEach(obj => {
+          if (obj.type === 'sphere') {
+            this.renderSphere(obj);
+          } else if (obj.type === 'pyramid') {
+            this.renderPyramid(obj);
+          } else {
+            this.renderCube(obj);
+          }
+        });
+      }
+
+      // Dessiner une grille de fond
+      drawGrid() {
+        const ctx = this.ctx;
+        const gridSize = 10;
+        const cellSize = 1;
+        
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.lineWidth = 1;
+        
+        for (let i = -gridSize; i <= gridSize; i++) {
+          // Lignes X
+          const startX = this.project(i * cellSize, 0, -gridSize * cellSize);
+          const endX = this.project(i * cellSize, 0, gridSize * cellSize);
+          ctx.beginPath();
+          ctx.moveTo(startX.x, startX.y);
+          ctx.lineTo(endX.x, endX.y);
+          ctx.stroke();
+          
+          // Lignes Z
+          const startZ = this.project(-gridSize * cellSize, 0, i * cellSize);
+          const endZ = this.project(gridSize * cellSize, 0, i * cellSize);
+          ctx.beginPath();
+          ctx.moveTo(startZ.x, startZ.y);
+          ctx.lineTo(endZ.x, endZ.y);
+          ctx.stroke();
+        }
+      }
+
+      // Réinitialiser la vue
+      resetView() {
+        this.rotationX = 0.5;
+        this.rotationY = 0.5;
+        this.zoom = 1;
+        this.render();
+      }
+
+      // Animation de rotation automatique
+      autoRotate(duration = 2000) {
+        const startY = this.rotationY;
+        const startTime = Date.now();
+        
+        const animate = () => {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          // Easing ease-out
+          const eased = 1 - Math.pow(1 - progress, 3);
+          
+          this.rotationY = startY + eased * Math.PI * 0.5;
+          this.render();
+          
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          }
+        };
+        
+        animate();
+      }
+    }
+
+    // ===== GÉNÉRATEUR DE PUZZLES =====
+    class PuzzleGenerator {
+      constructor() {
+        this.colorKeys = Object.keys(CONFIG.COLORS);
+      }
+
+      // Obtenir une couleur aléatoire
+      getRandomColor() {
+        const key = this.colorKeys[Math.floor(Math.random() * this.colorKeys.length)];
+        return CONFIG.COLORS[key];
+      }
+
+      // Générer un puzzle "Compter les cubes"
+      generateCountCubes(difficulty) {
+        const settings = CONFIG.DIFFICULTY[difficulty];
+        const [minCubes, maxCubes] = settings.cubeRange;
+        const targetCount = Math.floor(Math.random() * (maxCubes - minCubes + 1)) + minCubes;
+        
+        // Générer une structure 3D
+        const cubes = this.generateStructure(targetCount);
+        
+        // Générer les options de réponse
+        const options = this.generateOptions(targetCount, settings.optionsCount);
+        
+        return {
+          type: 'countCubes',
+          instruction: 'Combien de cubes composent cette structure ?',
+          hint: 'Compte aussi les cubes cachés !',
+          cubes,
+          correctAnswer: targetCount,
+          options,
+          color: this.getRandomColor()
+        };
+      }
+
+      // Générer une structure 3D de cubes
+      generateStructure(count) {
+        const cubes = [];
+        const occupied = new Set();
+        
+        // Premier cube au centre
+        cubes.push({ x: 0, y: 0, z: 0 });
+        occupied.add('0,0,0');
+        
+        // Ajouter des cubes adjacents
+        while (cubes.length < count) {
+          // Choisir un cube existant aléatoirement
+          const baseCube = cubes[Math.floor(Math.random() * cubes.length)];
+          
+          // Directions possibles (6 faces)
+          const directions = [
+            { x: 1, y: 0, z: 0 },
+            { x: -1, y: 0, z: 0 },
+            { x: 0, y: 1, z: 0 },
+            { x: 0, y: -1, z: 0 },
+            { x: 0, y: 0, z: 1 },
+            { x: 0, y: 0, z: -1 }
+          ];
+          
+          // Filtrer les directions valides
+          const validDirs = directions.filter(d => {
+            const newX = baseCube.x + d.x;
+            const newY = baseCube.y + d.y;
+            const newZ = baseCube.z + d.z;
+            
+            // Vérifier si pas déjà occupé et si au-dessus du sol ou sur support
+            if (occupied.has(`${newX},${newY},${newZ}`)) return false;
+            if (newY < 0) return false;
+            if (newY > 0 && !occupied.has(`${newX},${newY - 1},${newZ}`)) return false;
+            
+            return true;
+          });
+          
+          if (validDirs.length > 0) {
+            const dir = validDirs[Math.floor(Math.random() * validDirs.length)];
+            const newCube = {
+              x: baseCube.x + dir.x,
+              y: baseCube.y + dir.y,
+              z: baseCube.z + dir.z
+            };
+            cubes.push(newCube);
+            occupied.add(`${newCube.x},${newCube.y},${newCube.z}`);
+          }
+        }
+        
+        // Centrer la structure
+        const avgX = cubes.reduce((sum, c) => sum + c.x, 0) / cubes.length;
+        const avgZ = cubes.reduce((sum, c) => sum + c.z, 0) / cubes.length;
+        
+        cubes.forEach(c => {
+          c.x -= Math.round(avgX);
+          c.z -= Math.round(avgZ);
+        });
+        
+        return cubes;
+      }
+
+      // Générer les options de réponse
+      generateOptions(correct, count) {
+        const options = new Set([correct]);
+        
+        while (options.size < count) {
+          // Générer des options proches de la bonne réponse
+          const offset = Math.floor(Math.random() * 5) - 2; // -2 à +2
+          const option = correct + offset;
+          if (option > 0 && option !== correct) {
+            options.add(option);
+          }
+        }
+        
+        // Convertir en tableau et mélanger
+        return Array.from(options).sort(() => Math.random() - 0.5);
+      }
+
+      // Générer un puzzle "Trouver l'intrus"
+      generateFindDifferent(difficulty) {
+        const settings = CONFIG.DIFFICULTY[difficulty];
+        const shapeTypes = ['cube', 'sphere', 'pyramid'];
+        
+        // Choisir le type dominant
+        const dominantType = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+        
+        // Choisir le type intrus
+        const intruderType = shapeTypes.filter(t => t !== dominantType)[Math.floor(Math.random() * 2)];
+        
+        // Nombre de formes (5-9)
+        const count = 5 + Math.floor(Math.random() * 5);
+        
+        // Position de l'intrus
+        const intruderIndex = Math.floor(Math.random() * count);
+        
+        // Générer les formes
+        const shapes = [];
+        const baseColor = this.getRandomColor();
+        
+        for (let i = 0; i < count; i++) {
+          shapes.push({
+            type: i === intruderIndex ? intruderType : dominantType,
+            color: baseColor
+          });
+        }
+        
+        return {
+          type: 'findDifferent',
+          instruction: 'Trouve la forme différente',
+          hint: 'Regarde bien la forme de chaque objet',
+          shapes,
+          correctAnswer: intruderIndex,
+          options: Array.from({ length: count }, (_, i) => i)
+        };
+      }
+
+      // Générer un puzzle "Rotation"
+      generateRotateMatch(difficulty) {
+        const rotations = [0, 90, 180, 270];
+        const correctRotation = rotations[Math.floor(Math.random() * rotations.length)];
+        
+        // Structure simple à faire pivoter
+        const structure = this.generateStructure(3 + Math.floor(Math.random() * 3));
+        
+        return {
+          type: 'rotateMatch',
+          instruction: 'Quelle rotation donne cette vue ?',
+          hint: 'Imagine la forme qui tourne',
+          structure,
+          correctAnswer: correctRotation,
+          options: rotations,
+          color: this.getRandomColor()
+        };
+      }
+
+      // Générer un puzzle "Compter les faces"
+      generateCountFaces(difficulty) {
+        const settings = CONFIG.DIFFICULTY[difficulty];
+        const [minCubes, maxCubes] = settings.cubeRange;
+        const cubeCount = Math.floor(Math.random() * (Math.min(maxCubes, 8) - minCubes + 1)) + minCubes;
+        
+        const cubes = this.generateStructure(cubeCount);
+        
+        // Calculer les faces visibles
+        const visibleFaces = this.countVisibleFaces(cubes);
+        
+        const options = this.generateOptions(visibleFaces, settings.optionsCount);
+        
+        return {
+          type: 'countFaces',
+          instruction: 'Combien de faces sont visibles ?',
+          hint: 'Les faces collées entre cubes ne comptent pas',
+          cubes,
+          correctAnswer: visibleFaces,
+          options,
+          color: this.getRandomColor()
+        };
+      }
+
+      // Compter les faces visibles d'une structure
+      countVisibleFaces(cubes) {
+        const occupied = new Set(cubes.map(c => `${c.x},${c.y},${c.z}`));
+        let visibleFaces = 0;
+        
+        const directions = [
+          { x: 1, y: 0, z: 0 },
+          { x: -1, y: 0, z: 0 },
+          { x: 0, y: 1, z: 0 },
+          { x: 0, y: -1, z: 0 },
+          { x: 0, y: 0, z: 1 },
+          { x: 0, y: 0, z: -1 }
+        ];
+        
+        cubes.forEach(cube => {
+          directions.forEach(dir => {
+            const neighborKey = `${cube.x + dir.x},${cube.y + dir.y},${cube.z + dir.z}`;
+            if (!occupied.has(neighborKey)) {
+              visibleFaces++;
+            }
+          });
+        });
+        
+        return visibleFaces;
+      }
+
+      // Générer un puzzle "Compléter le motif"
+      generateCompletePattern(difficulty) {
+        const patternSize = difficulty === 'easy' ? 3 : difficulty === 'medium' ? 4 : 5;
+        const colors = [
+          CONFIG.COLORS.blue,
+          CONFIG.COLORS.pink,
+          CONFIG.COLORS.yellow,
+          CONFIG.COLORS.green
+        ];
+        
+        // Créer un motif simple répétitif
+        const pattern = [];
+        const basePattern = colors.slice(0, 2 + Math.floor(Math.random() * 2));
+        
+        for (let i = 0; i < patternSize; i++) {
+          pattern.push(basePattern[i % basePattern.length]);
+        }
+        
+        // Position manquante
+        const missingIndex = Math.floor(Math.random() * patternSize);
+        const correctColor = pattern[missingIndex];
+        
+        // Options
+        const options = [...new Set([correctColor, ...colors])].slice(0, 4);
+        
+        return {
+          type: 'completePattern',
+          instruction: 'Quelle couleur complète le motif ?',
+          hint: 'Observe la répétition des couleurs',
+          pattern,
+          missingIndex,
+          correctAnswer: correctColor,
+          options: options.sort(() => Math.random() - 0.5)
+        };
+      }
+
+      // Générer un puzzle "Symétrie"
+      generateMirrorShape(difficulty) {
+        const structure = this.generateStructure(4 + Math.floor(Math.random() * 3));
+        
+        // Créer le symétrique (miroir sur l'axe X)
+        const mirrored = structure.map(c => ({ x: -c.x, y: c.y, z: c.z }));
+        
+        // Créer des options (dont une fausse)
+        const wrongMirror = structure.map(c => ({ x: -c.x, y: c.y, z: -c.z }));
+        
+        return {
+          type: 'mirrorShape',
+          instruction: 'Trouve le reflet symétrique',
+          hint: 'Imagine un miroir vertical',
+          original: structure,
+          correctAnswer: 0,
+          options: [mirrored, wrongMirror].sort(() => Math.random() - 0.5),
+          color: this.getRandomColor()
+        };
+      }
+
+      // Générer un puzzle aléatoire selon la difficulté
+      generate(difficulty = 'adaptive', preferredType = null) {
+        const types = preferredType ? [preferredType] : [
+          'countCubes',
+          'findDifferent',
+          'countFaces',
+          'completePattern'
+        ];
+        
+        const type = types[Math.floor(Math.random() * types.length)];
+        
+        switch (type) {
+          case 'countCubes':
+            return this.generateCountCubes(difficulty);
+          case 'findDifferent':
+            return this.generateFindDifferent(difficulty);
+          case 'countFaces':
+            return this.generateCountFaces(difficulty);
+          case 'completePattern':
+            return this.generateCompletePattern(difficulty);
+          case 'rotateMatch':
+            return this.generateRotateMatch(difficulty);
+          case 'mirrorShape':
+            return this.generateMirrorShape(difficulty);
+          default:
+            return this.generateCountCubes(difficulty);
+        }
+      }
+    }
+
+    // ===== SYSTÈME ADAPTATIF =====
+    class AdaptiveSystem {
+      constructor() {
+        this.history = [];
+        this.maxHistory = 20;
+        this.currentDifficulty = 'easy';
+        this.streakCorrect = 0;
+        this.streakWrong = 0;
+        this.skillLevel = 0.5; // 0 = débutant, 1 = expert
+      }
+
+      // Enregistrer une réponse
+      recordAnswer(correct, responseTime, puzzleType) {
+        this.history.push({
+          correct,
+          responseTime,
+          puzzleType,
+          difficulty: this.currentDifficulty,
+          timestamp: Date.now()
+        });
+        
+        // Limiter l'historique
+        if (this.history.length > this.maxHistory) {
+          this.history.shift();
+        }
+        
+        // Mettre à jour les séries
+        if (correct) {
+          this.streakCorrect++;
+          this.streakWrong = 0;
+        } else {
+          this.streakWrong++;
+          this.streakCorrect = 0;
+        }
+        
+        // Ajuster le niveau de compétence
+        this.updateSkillLevel();
+        
+        // Ajuster la difficulté
+        this.adjustDifficulty();
+      }
+
+      // Mettre à jour le niveau de compétence
+      updateSkillLevel() {
+        if (this.history.length < 3) return;
+        
+        // Calculer le taux de réussite récent
+        const recent = this.history.slice(-10);
+        const successRate = recent.filter(h => h.correct).length / recent.length;
+        
+        // Calculer le temps de réponse moyen
+        const avgTime = recent.reduce((sum, h) => sum + h.responseTime, 0) / recent.length;
+        
+        // Ajuster le skill level (moyenne pondérée)
+        const timeScore = Math.max(0, 1 - avgTime / 30000); // 30s max
+        const newSkill = successRate * 0.7 + timeScore * 0.3;
+        
+        // Lissage
+        this.skillLevel = this.skillLevel * 0.7 + newSkill * 0.3;
+      }
+
+      // Ajuster la difficulté automatiquement
+      adjustDifficulty() {
+        // Monter en difficulté après 3 bonnes réponses consécutives
+        if (this.streakCorrect >= 3 && this.skillLevel > 0.6) {
+          if (this.currentDifficulty === 'easy') {
+            this.currentDifficulty = 'medium';
+          } else if (this.currentDifficulty === 'medium') {
+            this.currentDifficulty = 'hard';
+          }
+          this.streakCorrect = 0;
+        }
+        
+        // Descendre après 2 erreurs consécutives
+        if (this.streakWrong >= 2 && this.skillLevel < 0.4) {
+          if (this.currentDifficulty === 'hard') {
+            this.currentDifficulty = 'medium';
+          } else if (this.currentDifficulty === 'medium') {
+            this.currentDifficulty = 'easy';
+          }
+          this.streakWrong = 0;
+        }
+      }
+
+      // Obtenir la difficulté actuelle
+      getDifficulty() {
+        return this.currentDifficulty;
+      }
+
+      // Obtenir des statistiques
+      getStats() {
+        const total = this.history.length;
+        const correct = this.history.filter(h => h.correct).length;
+        
+        return {
+          total,
+          correct,
+          accuracy: total > 0 ? Math.round((correct / total) * 100) : 0,
+          streak: this.streakCorrect,
+          skillLevel: Math.round(this.skillLevel * 100),
+          difficulty: this.currentDifficulty
+        };
+      }
+
+      // Réinitialiser
+      reset() {
+        this.history = [];
+        this.currentDifficulty = 'easy';
+        this.streakCorrect = 0;
+        this.streakWrong = 0;
+        this.skillLevel = 0.5;
+      }
+    }
+
+    // ===== JEU PRINCIPAL =====
+    class GeoMindsGame {
+      constructor() {
+        // Managers
+        this.sound = new SoundManager();
+        this.puzzleGenerator = new PuzzleGenerator();
+        this.adaptiveSystem = new AdaptiveSystem();
+        
+        // Renderers
+        this.renderer = null;
+        this.freeRenderer = null;
+        this.creativeRenderer = null;
+        
+        // État du jeu
+        this.currentMode = null;
+        this.currentPuzzle = null;
+        this.level = 1;
+        this.puzzlesSolved = 0;
+        this.puzzleStartTime = 0;
+        this.isPaused = false;
+        this.selectedAnswer = null;
+        
+        // Statistiques persistantes
+        this.stats = this.loadStats();
+        
+        // Mode créatif
+        this.creativeShapes = [];
+        this.selectedTool = 'select';
+        this.selectedColor = CONFIG.COLORS.blue;
+        this.selectedShapeType = 'cube';
+        
+        // Initialiser
+        this.init();
+      }
+
+      init() {
+        this.sound.init();
+        this.createBackgroundShapes();
+        this.showScreen('menuScreen');
+        this.setupEventListeners();
+      }
+
+      // Charger les statistiques
+      loadStats() {
+        try {
+          const saved = localStorage.getItem('geominds_stats');
+          return saved ? JSON.parse(saved) : {
+            totalPuzzles: 0,
+            totalCorrect: 0,
+            bestStreak: 0,
+            highestLevel: 1,
+            playTime: 0
+          };
+        } catch (e) {
+          return {
+            totalPuzzles: 0,
+            totalCorrect: 0,
+            bestStreak: 0,
+            highestLevel: 1,
+            playTime: 0
+          };
+        }
+      }
+
+      // Sauvegarder les statistiques
+      saveStats() {
+        try {
+          localStorage.setItem('geominds_stats', JSON.stringify(this.stats));
+        } catch (e) {
+          console.warn('Impossible de sauvegarder les stats');
+        }
+      }
+
+      // Créer les formes de fond
+      createBackgroundShapes() {
+        const container = document.querySelector('.background-pattern');
+        if (!container) return;
+        
+        const shapes = ['◆', '●', '▲', '■', '⬟', '⬢'];
+        const colors = ['#4dabf7', '#f783ac', '#ffd43b', '#69db7c', '#b197fc', '#ffa94d'];
+        
+        for (let i = 0; i < 15; i++) {
+          const shape = document.createElement('div');
+          shape.className = 'bg-shape';
+          shape.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+          shape.style.left = Math.random() * 100 + '%';
+          shape.style.top = Math.random() * 100 + '%';
+          shape.style.fontSize = (20 + Math.random() * 40) + 'px';
+          shape.style.color = colors[Math.floor(Math.random() * colors.length)];
+          shape.style.animationDelay = (Math.random() * 10) + 's';
+          shape.style.animationDuration = (15 + Math.random() * 10) + 's';
+          container.appendChild(shape);
+        }
+      }
+
+      // Configurer les écouteurs d'événements
+      setupEventListeners() {
+        // Clavier
+        document.addEventListener('keydown', (e) => this.handleKeydown(e));
+        
+        // Sliders mode créatif
+        const sizeSlider = document.getElementById('sizeSlider');
+        const rotationSlider = document.getElementById('rotationSlider');
+        
+        if (sizeSlider) {
+          sizeSlider.addEventListener('input', (e) => {
+            document.getElementById('sizeValue').textContent = e.target.value;
+          });
+        }
+        
+        if (rotationSlider) {
+          rotationSlider.addEventListener('input', (e) => {
+            document.getElementById('rotationValue').textContent = e.target.value + '°';
+          });
+        }
+        
+        // Outils mode libre
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            this.selectedTool = btn.dataset.tool;
+          });
+        });
+      }
+
+      // Gestion clavier
+      handleKeydown(e) {
+        if (e.key === 'Escape') {
+          if (this.currentMode && !this.isPaused) {
+            this.pauseGame();
+          } else if (this.isPaused) {
+            this.resumeGame();
+          }
+        }
+        
+        // Raccourcis numérotés pour les réponses
+        if (this.currentPuzzle && !this.isPaused) {
+          const num = parseInt(e.key);
+          if (num >= 1 && num <= this.currentPuzzle.options.length) {
+            this.selectAnswer(num - 1);
+          }
+        }
+      }
+
+      // Afficher un écran
+      showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const screen = document.getElementById(screenId);
+        if (screen) {
+          screen.classList.add('active');
+        }
+      }
+
+      // ===== DÉMARRAGE DES MODES =====
+
+      startMode(mode) {
+        this.currentMode = mode;
+        this.sound.play('click');
+        
+        switch (mode) {
+          case 'challenge':
+            this.startChallengeMode();
+            break;
+          case 'free':
+            this.startFreeMode();
+            break;
+          case 'creative':
+            this.startCreativeMode();
+            break;
+        }
+      }
+
+      // Mode Défi
+      startChallengeMode() {
+        this.showScreen('gameScreen');
+        this.level = 1;
+        this.puzzlesSolved = 0;
+        this.adaptiveSystem.reset();
+        
+        // Initialiser le renderer
+        const canvas = document.getElementById('renderCanvas');
+        this.renderer = new Renderer3D(canvas);
+        
+        // Charger le premier puzzle
+        this.loadNextPuzzle();
+      }
+
+      // Charger le puzzle suivant
+      loadNextPuzzle() {
+        const difficulty = this.adaptiveSystem.getDifficulty();
+        this.currentPuzzle = this.puzzleGenerator.generate(difficulty);
+        this.puzzleStartTime = Date.now();
+        this.selectedAnswer = null;
+        
+        // Mettre à jour l'UI
+        this.updateUI();
+        
+        // Rendre le puzzle
+        this.renderPuzzle();
+      }
+
+      // Mettre à jour l'interface
+      updateUI() {
+        document.getElementById('levelNumber').textContent = this.level;
+        document.getElementById('instructionText').textContent = this.currentPuzzle.instruction;
+        document.getElementById('instructionHint').textContent = this.currentPuzzle.hint;
+        
+        // Barre de progression (puzzles dans le niveau)
+        const progress = ((this.puzzlesSolved % 5) / 5) * 100;
+        document.getElementById('progressFill').style.width = progress + '%';
+        
+        // Générer les options de réponse
+        this.renderAnswerOptions();
+      }
+
+      // Rendre le puzzle actuel
+      renderPuzzle() {
+        this.renderer.clear();
+        
+        const puzzle = this.currentPuzzle;
+        const color = puzzle.color || CONFIG.COLORS.blue;
+        
+        switch (puzzle.type) {
+          case 'countCubes':
+          case 'countFaces':
+            puzzle.cubes.forEach(c => {
+              this.renderer.addObject(this.renderer.createCube(c.x, c.y, c.z, color));
+            });
+            break;
+            
+          case 'findDifferent':
+            this.renderFindDifferentPuzzle(puzzle);
+            break;
+            
+          case 'completePattern':
+            this.renderPatternPuzzle(puzzle);
+            break;
+            
+          default:
+            puzzle.cubes?.forEach(c => {
+              this.renderer.addObject(this.renderer.createCube(c.x, c.y, c.z, color));
+            });
+        }
+        
+        this.renderer.resetView();
+        this.renderer.render();
+        
+        // Animation d'entrée
+        this.renderer.autoRotate(1500);
+      }
+
+      // Rendre puzzle "Trouver l'intrus"
+      renderFindDifferentPuzzle(puzzle) {
+        const count = puzzle.shapes.length;
+        const cols = Math.ceil(Math.sqrt(count));
+        const spacing = 2.5;
+        
+        puzzle.shapes.forEach((shape, i) => {
+          const row = Math.floor(i / cols);
+          const col = i % cols;
+          const x = (col - (cols - 1) / 2) * spacing;
+          const z = (row - Math.floor(count / cols) / 2) * spacing;
+          
+          let obj;
+          switch (shape.type) {
+            case 'sphere':
+              obj = this.renderer.createSphere(x, 0.5, z, shape.color);
+              break;
+            case 'pyramid':
+              obj = this.renderer.createPyramid(x, 0, z, shape.color);
+              break;
+            default:
+              obj = this.renderer.createCube(x, 0.5, z, shape.color);
+          }
+          obj.index = i;
+          this.renderer.addObject(obj);
+        });
+      }
+
+      // Rendre puzzle "Motif"
+      renderPatternPuzzle(puzzle) {
+        const ctx = this.renderer.ctx;
+        const canvas = this.renderer.canvas;
+        
+        // Dessiner directement en 2D pour les motifs
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Fond
+        ctx.fillStyle = '#f1f3f5';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        const cellSize = 60;
+        const startX = (canvas.width - puzzle.pattern.length * cellSize) / 2;
+        const startY = canvas.height / 2 - cellSize / 2;
+        
+        puzzle.pattern.forEach((color, i) => {
+          const x = startX + i * cellSize;
+          const y = startY;
+          
+          if (i === puzzle.missingIndex) {
+            // Case manquante
+            ctx.strokeStyle = '#adb5bd';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([8, 4]);
+            ctx.strokeRect(x + 5, y + 5, cellSize - 10, cellSize - 10);
+            ctx.setLineDash([]);
+            
+            ctx.font = '24px Quicksand';
+            ctx.fillStyle = '#adb5bd';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('?', x + cellSize / 2, y + cellSize / 2);
+          } else {
+            // Case colorée
+            ctx.fillStyle = color.main;
+            ctx.beginPath();
+            ctx.roundRect(x + 5, y + 5, cellSize - 10, cellSize - 10, 10);
+            ctx.fill();
+            
+            ctx.strokeStyle = color.dark;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          }
+        });
+      }
+
+      // Générer les boutons de réponse
+      renderAnswerOptions() {
+        const container = document.getElementById('answerOptions');
+        container.innerHTML = '';
+        
+        const puzzle = this.currentPuzzle;
+        
+        puzzle.options.forEach((option, index) => {
+          const btn = document.createElement('div');
+          btn.className = 'answer-option';
+          btn.dataset.index = index;
+          
+          if (puzzle.type === 'completePattern') {
+            // Option couleur
+            const colorBox = document.createElement('div');
+            colorBox.style.width = '50px';
+            colorBox.style.height = '50px';
+            colorBox.style.borderRadius = '10px';
+            colorBox.style.background = option.main;
+            btn.appendChild(colorBox);
+          } else {
+            // Option numérique ou autre
+            const canvas = document.createElement('canvas');
+            canvas.width = 60;
+            canvas.height = 60;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#4dabf7';
+            ctx.font = 'bold 28px Comfortaa';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(option.toString(), 30, 30);
+            
+            btn.appendChild(canvas);
+          }
+          
+          btn.addEventListener('click', () => this.selectAnswer(index));
+          container.appendChild(btn);
+        });
+      }
+
+      // Sélectionner une réponse
+      selectAnswer(index) {
+        if (this.selectedAnswer !== null) return; // Déjà répondu
+        
+        this.selectedAnswer = index;
+        const puzzle = this.currentPuzzle;
+        const responseTime = Date.now() - this.puzzleStartTime;
+        
+        // Déterminer si correct
+        let isCorrect;
+        if (puzzle.type === 'completePattern') {
+          isCorrect = puzzle.options[index] === puzzle.correctAnswer;
+        } else {
+          isCorrect = puzzle.options[index] === puzzle.correctAnswer;
+        }
+        
+        // Enregistrer dans le système adaptatif
+        this.adaptiveSystem.recordAnswer(isCorrect, responseTime, puzzle.type);
+        
+        // Mettre à jour les stats
+        this.stats.totalPuzzles++;
+        if (isCorrect) {
+          this.stats.totalCorrect++;
+          this.puzzlesSolved++;
+          
+          if (this.adaptiveSystem.streakCorrect > this.stats.bestStreak) {
+            this.stats.bestStreak = this.adaptiveSystem.streakCorrect;
+          }
+        }
+        this.saveStats();
+        
+        // Feedback visuel
+        const options = document.querySelectorAll('.answer-option');
+        options[index].classList.add(isCorrect ? 'correct' : 'incorrect');
+        
+        // Montrer la bonne réponse si erreur
+        if (!isCorrect) {
+          const correctIndex = puzzle.options.indexOf(puzzle.correctAnswer);
+          if (correctIndex !== -1) {
+            setTimeout(() => {
+              options[correctIndex].classList.add('correct');
+            }, 500);
+          }
+        }
+        
+        // Afficher le feedback
+        this.showFeedback(isCorrect);
+        
+        // Jouer le son
+        this.sound.play(isCorrect ? 'success' : 'encourage');
+        
+        // Vérifier passage de niveau
+        if (this.puzzlesSolved > 0 && this.puzzlesSolved % 5 === 0) {
+          this.level++;
+          if (this.level > this.stats.highestLevel) {
+            this.stats.highestLevel = this.level;
+            this.saveStats();
+          }
+          this.sound.play('levelUp');
+        }
+        
+        // Puzzle suivant après délai
+        setTimeout(() => {
+          this.hideFeedback();
+          this.loadNextPuzzle();
+        }, isCorrect ? 1500 : 2500);
+      }
+
+      // Afficher feedback
+      showFeedback(isCorrect) {
+        const overlay = document.getElementById('feedbackOverlay');
+        const content = document.getElementById('feedbackContent');
+        const icon = document.getElementById('feedbackIcon');
+        const text = document.getElementById('feedbackText');
+        const subtext = document.getElementById('feedbackSubtext');
+        
+        const messages = isCorrect ? CONFIG.SUCCESS_MESSAGES : CONFIG.ENCOURAGE_MESSAGES;
+        const msg = messages[Math.floor(Math.random() * messages.length)];
+        
+        content.className = 'feedback-content ' + (isCorrect ? 'feedback-success' : 'feedback-encourage');
+        icon.textContent = isCorrect ? '✨' : '💭';
+        text.textContent = msg.text;
+        subtext.textContent = msg.subtext;
+        
+        overlay.classList.add('show');
+        
+        // Particules pour succès
+        if (isCorrect) {
+          this.createParticles();
+        }
+      }
+
+      // Cacher feedback
+      hideFeedback() {
+        document.getElementById('feedbackOverlay').classList.remove('show');
+      }
+
+      // Créer des particules de célébration
+      createParticles() {
+        const container = document.getElementById('particlesContainer');
+        const colors = ['#4dabf7', '#f783ac', '#ffd43b', '#69db7c', '#b197fc'];
+        
+        for (let i = 0; i < 30; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          particle.style.cssText = `
+            position: fixed;
+            width: ${6 + Math.random() * 8}px;
+            height: ${6 + Math.random() * 8}px;
+            background: ${colors[Math.floor(Math.random() * colors.length)]};
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            pointer-events: none;
+            z-index: 1000;
+          `;
+          
+          container.appendChild(particle);
+          
+          // Animation
+          const angle = (Math.PI * 2 / 30) * i + Math.random() * 0.5;
+          const velocity = 100 + Math.random() * 150;
+          const vx = Math.cos(angle) * velocity;
+          const vy = Math.sin(angle) * velocity;
+          
+          let x = 0, y = 0, opacity = 1;
+          const gravity = 200;
+          let startTime = Date.now();
+          
+          const animate = () => {
+            const elapsed = (Date.now() - startTime) / 1000;
+            x += vx * 0.016;
+            y += (vy + gravity * elapsed) * 0.016;
+            opacity -= 0.02;
+            
+            particle.style.transform = `translate(${x}px, ${y}px)`;
+            particle.style.opacity = opacity;
+            
+            if (opacity > 0) {
+              requestAnimationFrame(animate);
+            } else {
+              particle.remove();
+            }
+          };
+          
+          requestAnimationFrame(animate);
+        }
+      }
+
+      // Indice
+      showHint() {
+        if (!this.currentPuzzle) return;
+        
+        this.sound.play('click');
+        
+        // Animer l'instruction avec l'indice
+        const hint = document.getElementById('instructionHint');
+        hint.style.color = '#4dabf7';
+        hint.style.fontWeight = '600';
+        hint.textContent = '💡 ' + this.currentPuzzle.hint;
+        
+        setTimeout(() => {
+          hint.style.color = '';
+          hint.style.fontWeight = '';
+        }, 3000);
+      }
+
+      // Passer le puzzle
+      skipPuzzle() {
+        if (!this.currentPuzzle) return;
+        
+        this.sound.play('click');
+        
+        // Compter comme erreur
+        this.adaptiveSystem.recordAnswer(false, 0, this.currentPuzzle.type);
+        this.stats.totalPuzzles++;
+        this.saveStats();
+        
+        this.loadNextPuzzle();
+      }
+
+      // ===== MODE LIBRE =====
+      
+      startFreeMode() {
+        this.showScreen('freeScreen');
+        
+        const canvas = document.getElementById('freeCanvas');
+        this.freeRenderer = new Renderer3D(canvas);
+        
+        // Créer la palette de formes
+        this.createShapePalette('shapePalette');
+        
+        // Ajouter quelques formes de départ
+        this.freeRenderer.addObject(this.freeRenderer.createCube(0, 0.5, 0, CONFIG.COLORS.blue));
+        this.freeRenderer.render();
+      }
+
+      // Créer palette de formes
+      createShapePalette(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        const shapes = [
+          { type: 'cube', icon: '◼️', label: 'Cube' },
+          { type: 'sphere', icon: '⚪', label: 'Sphère' },
+          { type: 'pyramid', icon: '🔺', label: 'Pyramide' }
+        ];
+        
+        shapes.forEach(shape => {
+          const btn = document.createElement('button');
+          btn.className = 'palette-shape' + (shape.type === this.selectedShapeType ? ' selected' : '');
+          btn.innerHTML = `<span style="font-size: 24px">${shape.icon}</span>`;
+          btn.title = shape.label;
+          
+          btn.addEventListener('click', () => {
+            container.querySelectorAll('.palette-shape').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            this.selectedShapeType = shape.type;
+            this.sound.play('click');
+          });
+          
+          container.appendChild(btn);
+        });
+        
+        // Séparateur
+        const separator = document.createElement('div');
+        separator.style.cssText = 'height: 2px; background: #dee2e6; margin: 8px 0; border-radius: 1px;';
+        container.appendChild(separator);
+        
+        // Couleurs
+        Object.entries(CONFIG.COLORS).forEach(([name, color]) => {
+          const btn = document.createElement('button');
+          btn.className = 'palette-shape';
+          btn.style.background = color.main;
+          btn.title = name;
+          
+          if (color === this.selectedColor) {
+            btn.classList.add('selected');
+          }
+          
+          btn.addEventListener('click', () => {
+            container.querySelectorAll('.palette-shape').forEach(b => {
+              if (b.style.background) b.classList.remove('selected');
+            });
+            btn.classList.add('selected');
+            this.selectedColor = color;
+            this.sound.play('click');
+          });
+          
+          container.appendChild(btn);
+        });
+      }
+
+      // Effacer le canvas
+      clearCanvas() {
+        this.sound.play('click');
+        
+        if (this.currentMode === 'free' && this.freeRenderer) {
+          this.freeRenderer.clear();
+          this.freeRenderer.render();
+        } else if (this.currentMode === 'creative' && this.creativeRenderer) {
+          this.creativeRenderer.clear();
+          this.creativeShapes = [];
+          this.creativeRenderer.render();
+        }
+      }
+
+      // ===== MODE CRÉATIF =====
+      
+      startCreativeMode() {
+        this.showScreen('creativeScreen');
+        
+        const canvas = document.getElementById('creativeCanvas');
+        this.creativeRenderer = new Renderer3D(canvas);
+        this.creativeShapes = [];
+        
+        // Créer la palette
+        this.createShapePalette('creativePalette');
+        
+        // Créer le picker de couleurs
+        this.createColorPicker();
+        
+        this.creativeRenderer.render();
+      }
+
+      // Créer le sélecteur de couleurs
+      createColorPicker() {
+        const container = document.getElementById('colorPicker');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        Object.entries(CONFIG.COLORS).forEach(([name, color]) => {
+          const swatch = document.createElement('div');
+          swatch.className = 'color-swatch' + (color === this.selectedColor ? ' selected' : '');
+          swatch.style.background = color.main;
+          swatch.title = name;
+          
+          swatch.addEventListener('click', () => {
+            container.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+            swatch.classList.add('selected');
+            this.selectedColor = color;
+            this.sound.play('click');
+          });
+          
+          container.appendChild(swatch);
+        });
+      }
+
+      // Sauvegarder création
+      saveCreation() {
+        this.sound.play('click');
+        
+        // Convertir le canvas en image
+        const canvas = document.getElementById('creativeCanvas');
+        const dataURL = canvas.toDataURL('image/png');
+        
+        // Créer un lien de téléchargement
+        const link = document.createElement('a');
+        link.download = 'geominds-creation.png';
+        link.href = dataURL;
+        link.click();
+      }
+
+      // Partager création (simulé)
+      shareCreation() {
+        this.sound.play('click');
+        
+        // Copier les données dans le presse-papier (simplifié)
+        const creationData = JSON.stringify(this.creativeShapes);
+        
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(creationData).then(() => {
+            this.showToast('Création copiée !');
+          });
+        } else {
+          this.showToast('Partage non disponible');
+        }
+      }
+
+      // Tester la création comme puzzle
+      testCreation() {
+        this.sound.play('click');
+        this.showToast('Fonctionnalité à venir !');
+      }
+
+      // ===== NAVIGATION & UI =====
+
+      pauseGame() {
+        this.isPaused = true;
+        document.getElementById('pauseModal').classList.add('show');
+      }
+
+      resumeGame() {
+        this.isPaused = false;
+        document.getElementById('pauseModal').classList.remove('show');
+      }
+
+      backToMenu() {
+        this.currentMode = null;
+        this.currentPuzzle = null;
+        this.isPaused = false;
+        
+        // Fermer les modales
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+        
+        this.showScreen('menuScreen');
+        this.sound.play('click');
+      }
+
+      showStats() {
+        const modal = document.getElementById('statsModal');
+        
+        // Mettre à jour les stats
+        document.getElementById('statPuzzles').textContent = this.stats.totalPuzzles;
+        document.getElementById('statStreak').textContent = this.stats.bestStreak;
+        document.getElementById('statLevel').textContent = this.stats.highestLevel;
+        
+        modal.classList.add('show');
+        this.sound.play('click');
+      }
+
+      hideStats() {
+        document.getElementById('statsModal').classList.remove('show');
+      }
+
+      showSettings() {
+        document.getElementById('settingsModal').classList.add('show');
+        this.sound.play('click');
+      }
+
+      hideSettings() {
+        document.getElementById('settingsModal').classList.remove('show');
+      }
+
+      setDifficulty(difficulty) {
+        // Mettre à jour l'UI
+        document.querySelectorAll('.difficulty-option').forEach(opt => {
+          opt.classList.toggle('selected', opt.dataset.difficulty === difficulty);
+        });
+        
+        // Appliquer (sauf adaptatif qui s'ajuste seul)
+        if (difficulty !== 'adaptive') {
+          this.adaptiveSystem.currentDifficulty = difficulty;
+        }
+        
+        this.sound.play('click');
+      }
+
+      showToast(message) {
+        // Créer un toast simple
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+          position: fixed;
+          bottom: 100px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #212529;
+          color: white;
+          padding: 12px 24px;
+          border-radius: 25px;
+          font-weight: 600;
+          z-index: 1000;
+          animation: toastIn 0.3s ease, toastOut 0.3s ease 2s forwards;
+        `;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.remove(), 2500);
+      }
+
+      // Tutoriel
+      nextTutorialStep() {
+        // Simplifié - à développer
+        document.getElementById('tutorialStep').style.display = 'none';
+      }
+    }
+
+    // ===== STYLES DYNAMIQUES =====
+    const dynamicStyles = document.createElement('style');
+    dynamicStyles.textContent = `
+      @keyframes toastIn {
+        from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        to { opacity: 1; transform: translateX(-50%) translateY(0); }
+      }
+      @keyframes toastOut {
+        from { opacity: 1; transform: translateX(-50%) translateY(0); }
+        to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+      }
+      
+      /* Support pour roundRect dans les anciens navigateurs */
+      .answer-option { position: relative; }
+    `;
+    document.head.appendChild(dynamicStyles);
+
+    // ===== POLYFILL roundRect =====
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+        if (w < 2 * r) r = w / 2;
+        if (h < 2 * r) r = h / 2;
+        this.beginPath();
+        this.moveTo(x + r, y);
+        this.arcTo(x + w, y, x + w, y + h, r);
+        this.arcTo(x + w, y + h, x, y + h, r);
+        this.arcTo(x, y + h, x, y, r);
+        this.arcTo(x, y, x + w, y, r);
+        this.closePath();
+        return this;
+      };
+    }
+
+    // ===== INITIALISATION =====
+    let game;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      game = new GeoMindsGame();
+    });
+  </script>
+</body>
+</html>
+

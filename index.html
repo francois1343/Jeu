@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 Mini Jeux Arcade</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Couleurs principales */
+      --bg-primary: #0a0e1a;
+      --bg-secondary: #111827;
+      --bg-card: rgba(17, 24, 39, 0.8);
+
+      /* Couleurs néon */
+      --neon-cyan: #00ffff;
+      --neon-pink: #ff00ff;
+      --neon-green: #00ff88;
+      --neon-yellow: #ffff00;
+      --neon-orange: #ff8800;
+      --neon-blue: #4d7cff;
+      --neon-red: #ff4757;
+      
+      /* Nouvelles couleurs */
+      --neon-emerald: #10b981;
+      --neon-violet: #8b5cf6;
+      --neon-sky: #0ea5e9;
+      --neon-amber: #f97316;
+      --neon-fuchsia: #e879f9;
+
+      /* Texte */
+      --text-primary: #ffffff;
+      --text-secondary: #8892b0;
+      --text-muted: #4a5568;
+
+      /* Effets */
+      --glow-cyan: 0 0 20px rgba(0, 255, 255, 0.5);
+      --glow-pink: 0 0 20px rgba(255, 0, 255, 0.5);
+      --glow-green: 0 0 20px rgba(0, 255, 136, 0.5);
+
+      /* Transitions */
+      --transition-fast: 0.2s ease;
+      --transition-medium: 0.3s ease;
+      --transition-slow: 0.5s ease;
+
+      /* Border radius */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-xl: 30px;
+    }
+
+    /* ===== BODY & BACKGROUND ===== */
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      min-height: 100vh;
+      color: var(--text-primary);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Fond animé avec grille */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Gradient overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(ellipse at top, rgba(77, 124, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom left, rgba(0, 255, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===== CONTAINER PRINCIPAL ===== */
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      text-align: center;
+      padding: 40px 20px 60px;
+      position: relative;
+    }
+
+    .logo {
+      font-size: 18px;
+      color: var(--neon-cyan);
+      text-transform: uppercase;
+      letter-spacing: 8px;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-pink) 50%, var(--neon-cyan) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 3s ease infinite;
+      margin-bottom: 15px;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% center; }
+      50% { background-position: 200% center; }
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+    }
+
+    /* Ligne décorative */
+    .header-line {
+      width: 200px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+      margin: 30px auto 0;
+      position: relative;
+    }
+
+    .header-line::before {
+      content: '◆';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--neon-cyan);
+      font-size: 12px;
+      background: var(--bg-primary);
+      padding: 0 10px;
+    }
+
+    /* ===== GRILLE DE JEUX ===== */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      padding: 20px 0;
+    }
+
+    /* ===== CARTE DE JEU ===== */
+    .game-card {
+      --card-color: var(--neon-cyan);
+      --card-color-rgb: 0, 255, 255;
+      
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: all var(--transition-medium);
+      cursor: pointer;
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--card-color), transparent);
+      opacity: 0.8;
+    }
+
+    .game-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, var(--card-color) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity var(--transition-medium);
+      pointer-events: none;
+    }
+
+    .game-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--card-color);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(var(--card-color-rgb), 0.2);
+    }
+
+    .game-card:hover::after {
+      opacity: 0.05;
+    }
+
+    /* ========================================== */
+    /* ===== COULEURS PAR JEU (CLASSES) ===== */
+    /* ========================================== */
+    
+    /* 🪙 Pile ou Face - Jaune doré */
+    .game-card.coin { 
+      --card-color: var(--neon-yellow); 
+      --card-color-rgb: 255, 255, 0; 
+    }
+    
+    /* ✊ HiFuMi - Cyan */
+    .game-card.hifu { 
+      --card-color: #06b6d4; 
+      --card-color-rgb: 6, 182, 212; 
+    }
+    
+    /* 🎲 Dé Magique - Orange */
+    .game-card.dice { 
+      --card-color: var(--neon-orange); 
+      --card-color-rgb: 255, 136, 0; 
+    }
+    
+    /* ⏱️ Chrono Réflexe - Vert émeraude */
+    .game-card.reflexe { 
+      --card-color: var(--neon-emerald); 
+      --card-color-rgb: 16, 185, 129; 
+    }
+    
+    /* 🧱 Tetris - Violet */
+    .game-card.tetris { 
+      --card-color: var(--neon-violet); 
+      --card-color-rgb: 139, 92, 246; 
+    }
+    
+    /* 🐍 Snake - Vert néon */
+    .game-card.snake { 
+      --card-color: var(--neon-green); 
+      --card-color-rgb: 0, 255, 136; 
+    }
+    
+    /* 🏓 Pong - Rose magenta */
+    .game-card.pong { 
+      --card-color: var(--neon-pink); 
+      --card-color-rgb: 255, 0, 255; 
+    }
+    
+    /* 💣 Démineur - Rouge */
+    .game-card.minesweeper { 
+      --card-color: var(--neon-red); 
+      --card-color-rgb: 255, 71, 87; 
+    }
+    
+    /* 🚢 Bataille Navale - Bleu océan */
+    .game-card.battleship { 
+      --card-color: var(--neon-sky); 
+      --card-color-rgb: 14, 165, 233; 
+    }
+    
+    /* 🔢 2048 - Beige Néon */ 
+    .game-card.n2048 { 
+      --card-color: #fffbe6; 
+      --card-color-rgb: 255, 251, 230; 
+    }
+    
+    /* 🧱 Casse-Briques - Fuchsia */
+    .game-card.breakout { 
+      --card-color: var(--neon-fuchsia); 
+      --card-color-rgb: 232, 121, 249; 
+    }
+
+    /* 🧠 Memory - Bleu Clair */
+    .game-card.memory { 
+      --card-color: #3b82f6; 
+      --card-color-rgb: 59, 130, 246; 
+    }
+
+    /* 🌌 Enigme Cosmique - Violet Profond */
+    .game-card.cosmic { 
+      --card-color: #7c3aed; 
+      --card-color-rgb: 124, 58, 237; 
+    }
+
+    /* ⚡ Neon Runner - Rouge pâle Néon */  
+    .game-card.neon { 
+      --card-color: #ff00ff; 
+      --card-color-rgb: 255, 0, 255; 
+    }
+
+    /* 🧮 Calcul Mental - Orange Pâle Néon */
+    .game-card.calculation { 
+      --card-color: #ffb347; 
+      --card-color-rgb: 255, 179, 71; 
+    }
+
+    /*  Labyrinthe - Vert Clair Néon */
+    .game-card.maze { 
+      --card-color: #00ff88; 
+      --card-color-rgb: 0, 255, 136; 
+    }
+
+    /* Cyber Flux - Jaune Or Néon */
+    .game-card.cyberflux { 
+      --card-color: #ffff66; 
+      --card-color-rgb: 255, 255, 102; 
+    }
+
+    /* Crossy Turfu - Brun vif Néon */
+    .game-card.crossyturfu { 
+      --card-color: #8B4513; 
+      --card-color-rgb: 139, 69, 19; 
+    }
+
+    /* Open World - Rose clair Néon */
+    .game-card.openworld { 
+      --card-color: #ff69b4; 
+      --card-color-rgb: 255, 105, 180; 
+    }
+
+    /* ===== ICÔNE DU JEU ===== */
+    .game-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 1;
+    }
+
+    .game-card:hover .game-icon {
+      animation: iconBounce 0.5s ease;
+      border-color: rgba(var(--card-color-rgb), 0.5);
+      background: linear-gradient(135deg, rgba(var(--card-color-rgb), 0.2), rgba(var(--card-color-rgb), 0.1));
+    }
+
+    @keyframes iconBounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* ===== TITRE DU JEU ===== */
+    .game-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== DESCRIPTION ===== */
+    .game-description {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== ZONE INTERACTIVE ===== */
+    .game-interactive {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 20px;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== RÉSULTAT ANIMÉ ===== */
+    .result-display {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--card-color);
+      text-shadow: 0 0 20px var(--card-color);
+      transition: all var(--transition-fast);
+      letter-spacing: 3px;
+    }
+
+    .result-display.animate {
+      animation: resultPop 0.3s ease;
+    }
+
+    @keyframes resultPop {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ===== INPUT PERSONNALISÉ ===== */
+    .custom-input {
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      width: 80px;
+      text-align: center;
+      transition: all var(--transition-fast);
+    }
+
+    .custom-input:focus {
+      outline: none;
+      border-color: var(--card-color);
+      box-shadow: 0 0 15px rgba(var(--card-color-rgb), 0.3);
+    }
+
+    /* ===== INPUT GROUP ===== */
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .input-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* ===== BOUTONS ===== */
+    .btn {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 14px 28px;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-fast);
+      z-index: 1;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--card-color), rgba(var(--card-color-rgb), 0.7));
+      color: var(--bg-primary);
+      box-shadow: 0 4px 15px rgba(var(--card-color-rgb), 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(var(--card-color-rgb), 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    /* Effet de brillance */
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-launch {
+      width: 100%;
+      padding: 16px;
+      font-size: 1.1rem;
+    }
+
+    /* ===== TAGS ===== */
+    .game-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .tag.difficulty-easy { 
+      border-color: var(--neon-green); 
+      color: var(--neon-green); 
+    }
+    .tag.difficulty-medium { 
+      border-color: var(--neon-yellow); 
+      color: var(--neon-yellow); 
+    }
+    .tag.difficulty-hard { 
+      border-color: var(--neon-red); 
+      color: var(--neon-red); 
+    }
+
+    /* ===== MINI JEUX INLINE ===== */
+    .coin-display {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffd700, #ffaa00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #8B4513;
+      box-shadow: 
+        inset 0 -4px 8px rgba(0,0,0,0.3),
+        0 4px 15px rgba(255, 215, 0, 0.4);
+      transition: all var(--transition-fast);
+    }
+
+    .coin-display.flipping {
+      animation: coinFlip 0.6s ease-in-out;
+    }
+
+    @keyframes coinFlip {
+      0% { transform: rotateY(0deg) scale(1); }
+      50% { transform: rotateY(1800deg) scale(1.2); }
+      100% { transform: rotateY(3600deg) scale(1); }
+    }
+
+    .dice-display {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #fff, #e0e0e0);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--bg-primary);
+      box-shadow: 
+        inset 0 -4px 8px rgba(0,0,0,0.1),
+        0 4px 15px rgba(0, 0, 0, 0.3);
+      transition: all var(--transition-fast);
+    }
+
+    .dice-display.rolling {
+      animation: diceRoll 0.5s ease-in-out;
+    }
+
+    @keyframes diceRoll {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(-15deg) scale(1.1); }
+      50% { transform: rotate(15deg) scale(0.9); }
+      75% { transform: rotate(-10deg) scale(1.05); }
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 15px;
+    }
+
+    .footer-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    .footer-link:hover {
+      color: var(--neon-cyan);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .app-container {
+        padding: 15px;
+      }
+
+      .header {
+        padding: 30px 15px 40px;
+      }
+
+      .logo {
+        font-size: 14px;
+        letter-spacing: 4px;
+      }
+
+      .games-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .game-card {
+        padding: 25px;
+      }
+
+      .game-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+      }
+
+      .btn-launch {
+        padding: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .title {
+        font-size: 2rem;
+      }
+
+      .game-title {
+        font-size: 1.2rem;
+      }
+
+      .input-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .custom-input {
+        width: 100%;
+      }
+    }
+
+    /* ===== ANIMATIONS GLOBALES ===== */
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .game-card:nth-child(1) { animation-delay: 0.05s; }
+    .game-card:nth-child(2) { animation-delay: 0.1s; }
+    .game-card:nth-child(3) { animation-delay: 0.15s; }
+    .game-card:nth-child(4) { animation-delay: 0.2s; }
+    .game-card:nth-child(5) { animation-delay: 0.25s; }
+    .game-card:nth-child(6) { animation-delay: 0.3s; }
+    .game-card:nth-child(7) { animation-delay: 0.35s; }
+    .game-card:nth-child(8) { animation-delay: 0.4s; }
+    .game-card:nth-child(9) { animation-delay: 0.45s; }
+    .game-card:nth-child(10) { animation-delay: 0.5s; }
+    .game-card:nth-child(11) { animation-delay: 0.55s; }
+
+    /* ===== PARTICULES DÉCORATIVES ===== */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: float 15s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.3; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+
+</head>
+<body>
+
+  <!-- Particules décoratives -->
+  <div class="particles" id="particles"></div>
+
+  <div class="app-container">
+    
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">🎮 Arcade Station</div>
+      <h1 class="title">Mini Jeux</h1>
+      <p class="subtitle">Collection de jeux classiques revisités</p>
+      <div class="header-line"></div>
+    </header>
+
+    <!-- Grille de jeux -->
+    <main class="games-grid">
+
+      <!-- Pile ou Face -->
+<article class="game-card coin fade-in" onclick="focusCard(this)" data-game="pile-face">
+  <div class="game-icon">🪙</div>
+  <h2 class="game-title">Pile ou Face</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-easy">Facile</span>
+    <span class="tag">Chance</span>
+  </div>
+  <p class="game-description">Lancez la pièce et tentez votre chance ! Un classique intemporel.</p>
+  <div class="game-interactive">
+    <div class="coin-display" id="coinDisplay">?</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="playCoin(event)">
+    Lancer la pièce
+  </button>
+</article>
+
+<!-- Dé personnalisable -->
+<article class="game-card dice fade-in" onclick="focusCard(this)" data-game="de">
+  <div class="game-icon">🎲</div>
+  <h2 class="game-title">Dé Magique</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-easy">Facile</span>
+    <span class="tag">Personnalisable</span>
+  </div>
+  <p class="game-description">Un dé avec le nombre de faces de votre choix. De 2 à l'infini !</p>
+  <div class="game-interactive">
+    <div class="input-group">
+      <span class="input-label">Faces :</span>
+      <input type="number" id="diceFaces" class="custom-input" value="6" min="2" max="100">
+      <div class="dice-display" id="diceDisplay">?</div>
+    </div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="rollDice(event)">
+    Lancer le dé
+  </button>
+</article>
+
+<!-- Calcul Mental -->
+<article class="game-card calculation fade-in" onclick="focusCard(this)" data-game="calculation">
+  <div class="game-icon">🧮</div>
+  <h2 class="game-title">Calcul Mental</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-hard">Difficile</span>
+    <span class="tag">Maths</span>
+  </div>
+  <p class="game-description">Testez vos compétences en calcul mental. Répondez aux questions en temps limité.</p>
+  <div class="game-interactive">
+    <div class="result-display">?</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('calculation.html', event)">
+    Jouer au Calcul
+  </button>
+</article>
+
+
+<!-- HiFuMi -->
+<article class="game-card hifu fade-in" onclick="focusCard(this)" data-game="hifumi">
+  <div class="game-icon">🪨</div>
+  <h2 class="game-title">HiFuMi</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-medium">Moyen</span>
+    <span class="tag">Stratégie</span>
+  </div>
+  <p class="game-description">Le jeu de la Pierre, Feuille, Ciseaux avec une variante améliorée.</p>
+  <div class="game-interactive">
+    <div class="result-display">🪨 📄 ✂️</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('HiFuMi.html', event)">
+    Jouer à HiFuMi
+  </button>
+</article>
+
+<!-- Chrono Réflexe -->
+<article class="game-card reflexe fade-in" onclick="focusCard(this)" data-game="reflex">
+  <div class="game-icon">⏱️</div>
+  <h2 class="game-title">Chrono Réflexe</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-easy">Facile</span>
+    <span class="tag">Réflexes</span>
+  </div>
+  <p class="game-description">Testez vos réflexes ! Appuyez dès que le chrono atteint zéro.</p>
+  <div class="game-interactive">
+    <div class="result-display">3... 2... 1...</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('reflex.html', event)">
+    Jouer au Chrono
+  </button>
+</article>
+
+<!-- Memory -->
+<article class="game-card memory fade-in" onclick="focusCard(this)" data-game="memory">
+  <div class="game-icon">🧠</div>
+  <h2 class="game-title">Memory</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-medium">Moyen</span>
+    <span class="tag">Mémoire</span>
+    <span class="tag">Puzzle</span>
+  </div>
+  <p class="game-description">Retournez les cartes et trouvez toutes les paires le plus rapidement possible.</p>
+  <div class="game-interactive">
+    <div class="result-display">🂠 🂠 🂠 🂠</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('memory.html', event)">
+    Jouer au Memory
+  </button>
+</article>
+
+<!-- Enigme cosmique -->
+<article class="game-card enigme fade-in" onclick="focusCard(this)" data-game="enigme">
+  <div class="game-icon">🌌</div>
+  <h2 class="game-title">Enigme Cosmique</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-hard">Difficile</span>
+    <span class="tag">Énigmes</span>
+    <span class="tag">Science</span>
+  </div>
+  <p class="game-description">Résolvez des énigmes spatiales inspirées de l'univers cosmique.</p>
+  <div class="game-interactive">
+    <div class="result-display">❓ 🔍 🌌</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('enigme.html', event)">
+    Jouer à l'Enigme Cosmique
+  </button>
+</article>
+
+<!-- Tetris -->
+<article class="game-card tetris fade-in" onclick="focusCard(this)" data-game="tetris">
+  <div class="game-icon">⬛</div>
+  <h2 class="game-title">Tetris</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-medium">Moyen</span>
+    <span class="tag">Puzzle</span>
+    <span class="tag">Réflexes</span>
+  </div>
+  <p class="game-description">Le célèbre jeu de puzzle ! Empilez les blocs et faites des lignes.</p>
+  <div class="game-interactive">
+    <div class="result-display">▣ ▤ ▥ ▦</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('tetris.html', event)">
+    Jouer à Tetris
+  </button>
+</article>
+
+<!-- Snake -->
+<article class="game-card snake fade-in" onclick="focusCard(this)" data-game="snake">
+  <div class="game-icon">🐍</div>
+  <h2 class="game-title">Snake Néon</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-medium">Moyen</span>
+    <span class="tag">Arcade</span>
+    <span class="tag">Highscore</span>
+  </div>
+  <p class="game-description">Guidez le serpent, mangez les pommes et grandissez sans vous mordre !</p>
+  <div class="game-interactive">
+    <div class="result-display">🍎 → 🐍</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('snake.html', event)">
+    Jouer à Snake
+  </button>
+</article>
+
+<!-- Pong -->
+<article class="game-card pong fade-in" onclick="focusCard(this)" data-game="pong">
+  <div class="game-icon">🏓</div>
+  <h2 class="game-title">Pong Arcade</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-medium">Moyen</span>
+    <span class="tag">VS CPU</span>
+    <span class="tag">Sport</span>
+  </div>
+  <p class="game-description">Affrontez l'IA dans ce classique du jeu vidéo. Premier à 11 points !</p>
+  <div class="game-interactive">
+    <div class="result-display">| ● |</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('pong.html', event)">
+    Jouer à Pong
+  </button>
+</article>
+
+<!-- Démineur -->
+<article class="game-card minesweeper fade-in" onclick="focusCard(this)" data-game="demineur">
+  <div class="game-icon">💣</div>
+  <h2 class="game-title">Démineur</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-hard">Difficile</span>
+    <span class="tag">Logique</span>
+    <span class="tag">Stratégie</span>
+  </div>
+  <p class="game-description">Trouvez toutes les mines cachées sans en faire exploser une seule !</p>
+  <div class="game-interactive">
+    <div class="result-display">🚩 💣 🔢</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('demineur.html', event)">
+    Jouer au Démineur
+  </button>
+</article>
+
+<!-- Bataille Navale -->
+<article class="game-card battleship fade-in" onclick="focusCard(this)" data-game="bataille">
+  <div class="game-icon">🚢</div>
+  <h2 class="game-title">Bataille Navale</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-hard">Difficile</span>
+    <span class="tag">Stratégie</span>
+    <span class="tag">VS CPU</span>
+  </div>
+  <p class="game-description">Placez vos navires et coulez la flotte ennemie avant qu'il ne coule la vôtre !</p>
+  <div class="game-interactive">
+    <div class="result-display">⚓ 🎯 💥</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('bataillenavale.html', event)">
+    Jouer à la Bataille
+  </button>
+</article>
+
+<!-- 2048 -->
+<article class="game-card n2048 fade-in" onclick="focusCard(this)" data-game="2048">
+  <div class="game-icon">🔢</div>
+  <h2 class="game-title">2048</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-medium">Moyen</span>
+    <span class="tag">Puzzle</span>
+    <span class="tag">Réflexion</span>
+  </div>
+  <p class="game-description">Combinez les tuiles pour atteindre le nombre 2048. Un défi addictif !</p>
+  <div class="game-interactive">
+    <div class="result-display">2 4 8 16 ...</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('2048.html', event)">
+    Jouer à 2048
+  </button>
+</article>
+
+<!-- Casse-Briques -->
+<article class="game-card breakout fade-in" onclick="focusCard(this)" data-game="casse-blocs">
+  <div class="game-icon">🧱</div>
+  <h2 class="game-title">Casse-Briques</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-medium">Moyen</span>
+    <span class="tag">Arcade</span>
+    <span class="tag">Puzzle</span>
+  </div>
+  <p class="game-description">Détruisez toutes les briques sans laisser aucune !</p>
+  <div class="game-interactive">
+    <div class="result-display">🧱 → 💥</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('cassebloc.html', event)">
+    Jouer à Casse-Briques
+  </button>
+</article>
+
+<!-- Labyrinthe -->
+<article class="game-card maze fade-in" onclick="focusCard(this)" data-game="labyrinthe">
+  <div class="game-icon">🧭</div>
+  <h2 class="game-title">Labyrinthe</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-hard">Difficile</span>
+    <span class="tag">Aventure</span>
+    <span class="tag">Puzzle</span>
+  </div>
+  <p class="game-description">Trouvez la sortie du labyrinthe en évitant les obstacles !</p>
+  <div class="game-interactive">
+    <div class="result-display">🧭 → 🚪</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('labyrinthe.html', event)">
+    Jouer au Labyrinthe
+  </button>
+</article>
+
+<!-- Neon Runner -->
+<article class="game-card neon fade-in" onclick="focusCard(this)" data-game="neon">
+  <div class="game-icon">⚡</div>
+  <h2 class="game-title">Neon Runner</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-hard">Difficile</span>
+    <span class="tag">Puzzle</span>
+    <span class="tag">Mystère</span>
+  </div>
+  <p class="game-description">Déchiffrez les énigmes anciennes pour découvrir les secrets cachés !</p>
+  <div class="game-interactive">
+    <div class="result-display">🔮 🔍 🧩</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('neonrunner.html', event)">
+    Jouer au Puzzle Mystique
+  </button>
+</article>
+
+<!-- Cyber Flux -->
+<article class="game-card cyberflux fade-in" onclick="focusCard(this)" data-game="cyberflux">
+  <div class="game-icon">🌐</div>
+  <h2 class="game-title">Cyber Flux</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-hard">Difficile</span>
+    <span class="tag">Highscore</span>
+  </div>
+  <p class="game-description">Vous incarnez un néon poussin qui doit naviguer dans les flux cybernétiques pour ne pas se cogner à un obstacle !</p>
+  <div class="game-interactive">
+    <div class="result-display">🌐🐣</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('cyberflux.html', event)">
+    Jouer à Cyber Flux
+  </button>
+</article>
+
+<!-- Crossy Turfu -->
+<article class="game-card crossyturfu fade-in" onclick="focusCard(this)" data-game="crossyturfu">
+  <div class="game-icon">🐔</div>
+  <h2 class="game-title">Crossy Turfu</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-hard">Difficile</span>
+    <span class="tag">Puzzle</span>
+    <span class="tag">Réflexion</span>
+  </div>
+  <p class="game-description">Un jeu de réflexion où vous devez traverser un terrain en évitant les obstacles !</p>
+  <div class="game-interactive">
+    <div class="result-display">🐔 → 🚧</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('crossyturfu.html', event)">
+    Jouer à Crossy Turfu
+  </button>
+</article>
+
+<!-- Open World -->
+<article class="game-card openworld fade-in" onclick="focusCard(this)" data-game="openworld">
+  <div class="game-icon">🌍</div>
+  <h2 class="game-title">Open World</h2>
+  <div class="game-tags">
+    <span class="tag difficulty-hard">Difficile</span>
+    <span class="tag">Exploration</span>
+    <span class="tag">Aventure</span>
+  </div>
+  <p class="game-description">Explorez un monde ouvert et découvrez des secrets cachés !</p>
+  <div class="game-interactive">
+    <div class="result-display">🌍 → 🧭</div>
+  </div>
+  <button class="btn btn-primary btn-launch" onclick="launchGame('openworld.html', event)">
+    Jouer à Open World
+  </button>
+</article>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="#" class="footer-link">À propos</a>
+        <a href="#" class="footer-link">Paramètres</a>
+        <a href="#" class="footer-link">Crédits</a>
+      </div>
+      <p>© 2026 Francis Arcade • Fait avec 💜</p>
+    </footer>
+
+  </div>
+
+  <script>
+    // ===== GÉNÉRATION DES PARTICULES =====
+    function createParticles() {
+      const container = document.getElementById('particles');
+      const colors = ['#00ffff', '#ff00ff', '#00ff88', '#ffff00', '#4d7cff'];
+      
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        container.appendChild(particle);
+      }
+    }
+    createParticles();
+
+    // ===== PILE OU FACE =====
+    function playCoin(event) {
+      event.stopPropagation();
+      const display = document.getElementById('coinDisplay');
+      display.classList.add('flipping');
+      
+      // Son de flip (optionnel)
+      playSound(800, 0.1);
+      
+      setTimeout(() => {
+        const result = Math.random() < 0.5 ? 'P' : 'F';
+        display.textContent = result;
+        display.classList.remove('flipping');
+        
+        // Son de résultat
+        playSound(result === 'P' ? 600 : 400, 0.15);
+      }, 600);
+    }
+
+    // ===== DÉ PERSONNALISABLE =====
+    function rollDice(event) {
+      event.stopPropagation();
+      const faces = parseInt(document.getElementById('diceFaces').value) || 6;
+      const display = document.getElementById('diceDisplay');
+      
+      display.classList.add('rolling');
+      playSound(500, 0.1);
+      
+      // Animation de chiffres aléatoires
+      let rolls = 0;
+      const maxRolls = 10;
+      const interval = setInterval(() => {
+        display.textContent = Math.floor(Math.random() * faces) + 1;
+        rolls++;
+        
+        if (rolls >= maxRolls) {
+          clearInterval(interval);
+          const result = Math.floor(Math.random() * faces) + 1;
+          display.textContent = result;
+          display.classList.remove('rolling');
+          playSound(700, 0.15);
+        }
+      }, 50);
+    }
+
+    // ===== LANCEMENT DES JEUX =====
+    function launchGame(url, event) {
+      event.stopPropagation();
+      playSound(900, 0.1);
+      
+      // Animation de transition
+      document.body.style.opacity = '0';
+      document.body.style.transition = 'opacity 0.3s ease';
+      
+      setTimeout(() => {
+        window.location.href = url;
+      }, 300);
+    }
+
+    // ===== FOCUS SUR CARTE =====
+    function focusCard(card) {
+      // Effet visuel subtil au clic
+      card.style.transform = 'scale(0.98)';
+      setTimeout(() => {
+        card.style.transform = '';
+      }, 150);
+    }
+
+    // ===== SYSTÈME AUDIO SIMPLE =====
+    let audioContext = null;
+    
+    function playSound(frequency, duration) {
+      try {
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+      } catch (e) {
+        // Audio non supporté, on continue silencieusement
+      }
+    }
+
+    // ===== INITIALISATION =====
+    document.addEventListener('DOMContentLoaded', () => {
+      // Activation du contexte audio au premier clic
+      document.body.addEventListener('click', () => {
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      }, { once: true });
+    });
+
+    // ===== EMPÊCHER LE SCROLL HORIZONTAL =====
+    document.body.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+  </script>
+
+</body>
+</html>
+
