@@ -1,4 +1,4 @@
-// Système de progression avec localStorage
+// Système de progression avec localStorage.
 const gameStats = {
   save: (game, data) => {
     const stats = JSON.parse(localStorage.getItem("gameStats") || "{}");
