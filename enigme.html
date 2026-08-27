@@ -983,8 +983,10 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="arcade-home.css">
 </head>
 <body>
+  <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil"><span class="arcade-home-icon" aria-hidden="true">⌂</span><span class="arcade-home-label">Accueil</span></a>
 
   <!-- FOND SPATIAL -->
   <div class="space-bg">
@@ -1057,7 +1059,7 @@
           <div class="cat-name">Système Solaire</div>
           <div class="cat-desc">Planètes, lunes et astéroïdes</div>
         </div>
-        <span class="cat-count">15 Q</span>
+        <span class="cat-count">20 Q</span>
       </button>
 
       <button class="btn btn-category" onclick="selectCategory('universe', this)">
@@ -1066,7 +1068,7 @@
           <div class="cat-name">L'Univers</div>
           <div class="cat-desc">Galaxies, étoiles et phénomènes</div>
         </div>
-        <span class="cat-count">15 Q</span>
+        <span class="cat-count">20 Q</span>
       </button>
 
       <button class="btn btn-category" onclick="selectCategory('exploration', this)">
@@ -1075,7 +1077,7 @@
           <div class="cat-name">Exploration Spatiale</div>
           <div class="cat-desc">Missions, astronautes et technologies</div>
         </div>
-        <span class="cat-count">15 Q</span>
+        <span class="cat-count">20 Q</span>
       </button>
 
       <button class="btn btn-category" onclick="selectCategory('earth', this)">
@@ -1084,7 +1086,7 @@
           <div class="cat-name">Terre & Climat</div>
           <div class="cat-desc">Notre planète et son environnement</div>
         </div>
-        <span class="cat-count">15 Q</span>
+        <span class="cat-count">20 Q</span>
       </button>
 
       <button class="btn btn-category" onclick="selectCategory('mixed', this)">
@@ -1417,6 +1419,41 @@ const QUESTIONS = {
       correct: 1,
       hint: "Lancée en 1977, elle voyage toujours",
       explanation: "Voyager 1, lancée en 1977, est entrée dans l'espace interstellaire en 2012. Elle est l'objet humain le plus éloigné de la Terre."
+    },
+    {
+      question: "Quelle est la plus petite planète du système solaire ?",
+      answers: ["Mars", "Mercure", "Vénus", "Pluton"],
+      correct: 1,
+      hint: "Pluton est classée comme planète naine",
+      explanation: "Mercure est la plus petite des huit planètes. Son diamètre est d'environ 4 880 km, soit un peu plus d'un tiers de celui de la Terre."
+    },
+    {
+      question: "Quelle planète est la plus éloignée du Soleil ?",
+      answers: ["Uranus", "Saturne", "Neptune", "Jupiter"],
+      correct: 2,
+      hint: "Elle paraît bleue à cause du méthane de son atmosphère",
+      explanation: "Neptune est la huitième et la plus lointaine planète du Soleil, à environ 4,5 milliards de kilomètres en moyenne."
+    },
+    {
+      question: "Dans quelle direction pointe généralement la queue d'une comète ?",
+      answers: ["Vers le Soleil", "À l'opposé du Soleil", "Vers la Terre", "Dans le sens de son orbite"],
+      correct: 1,
+      hint: "Le vent solaire repousse les gaz et les poussières",
+      explanation: "La queue d'une comète pointe à l'opposé du Soleil sous l'effet du vent solaire et du rayonnement, même lorsque la comète s'en éloigne."
+    },
+    {
+      question: "Quelle planète a un axe de rotation presque couché ?",
+      answers: ["Neptune", "Mars", "Uranus", "Saturne"],
+      correct: 2,
+      hint: "Elle semble rouler autour du Soleil",
+      explanation: "Uranus possède une inclinaison d'environ 98 degrés. Elle tourne donc presque sur le côté, probablement à la suite d'une ancienne collision."
+    },
+    {
+      question: "Sur quelle planète a-t-on observé la Grande Tache Sombre ?",
+      answers: ["Jupiter", "Neptune", "Saturne", "Vénus"],
+      correct: 1,
+      hint: "Voyager 2 l'a photographiée en 1989",
+      explanation: "La Grande Tache Sombre était une immense tempête dans l'atmosphère de Neptune, observée par Voyager 2 lors de son survol."
     }
   ],
   
@@ -1525,6 +1562,41 @@ const QUESTIONS = {
       correct: 3,
       hint: "Le télescope Hubble a révélé bien plus qu'on ne pensait",
       explanation: "Les dernières estimations suggèrent plus de 2 000 milliards de galaxies ! Et chacune contient des milliards d'étoiles."
+    },
+    {
+      question: "De quel type est la Voie Lactée ?",
+      answers: ["Galaxie elliptique", "Galaxie spirale barrée", "Galaxie irrégulière", "Galaxie annulaire"],
+      correct: 1,
+      hint: "Des bras spiraux partent d'une barre centrale",
+      explanation: "La Voie Lactée est une galaxie spirale barrée : ses bras s'enroulent autour d'une structure allongée située au centre."
+    },
+    {
+      question: "Quelle réaction fournit l'énergie des étoiles comme le Soleil ?",
+      answers: ["La combustion", "La fission nucléaire", "La fusion nucléaire", "La radioactivité"],
+      correct: 2,
+      hint: "Des noyaux légers s'assemblent pour en former de plus lourds",
+      explanation: "Dans le cœur du Soleil, des noyaux d'hydrogène fusionnent pour former de l'hélium. Une petite partie de leur masse est convertie en énergie."
+    },
+    {
+      question: "Que deviendra principalement le Soleil à la fin de sa vie ?",
+      answers: ["Un trou noir", "Une étoile à neutrons", "Une naine blanche", "Une supernova"],
+      correct: 2,
+      hint: "Il n'est pas assez massif pour exploser en supernova",
+      explanation: "Après sa phase de géante rouge, le Soleil expulsera ses couches externes et laissera derrière lui un cœur dense appelé naine blanche."
+    },
+    {
+      question: "Comment s'appelle le trou noir supermassif au centre de la Voie Lactée ?",
+      answers: ["Cygnus X-1", "Sagittarius A*", "M87*", "Andromeda X"],
+      correct: 1,
+      hint: "Son nom reprend la constellation visible dans cette direction",
+      explanation: "Sagittarius A* se trouve au centre de notre galaxie. Sa masse est environ quatre millions de fois celle du Soleil."
+    },
+    {
+      question: "Que suggère le décalage vers le rouge d'une galaxie lointaine ?",
+      answers: ["Elle se rapproche", "Elle s'éloigne", "Elle ne contient plus d'étoiles", "Elle tourne plus lentement"],
+      correct: 1,
+      hint: "Ses longueurs d'onde lumineuses sont étirées",
+      explanation: "Un décalage vers le rouge indique généralement que la galaxie s'éloigne de nous, ce qui constitue une preuve majeure de l'expansion de l'Univers."
     }
   ],
   
@@ -1633,6 +1705,41 @@ const QUESTIONS = {
       correct: 3,
       hint: "Chaque mission a contribué à cette découverte",
       explanation: "Tous ces rovers ont trouvé des indices d'eau passée sur Mars : minéraux, roches sculptées par l'eau, et argiles formées en milieu aqueux."
+    },
+    {
+      question: "Qui a réalisé la première sortie dans l'espace ?",
+      answers: ["Youri Gagarine", "Alexeï Leonov", "Neil Armstrong", "John Glenn"],
+      correct: 1,
+      hint: "Ce cosmonaute soviétique est sorti de Voskhod 2 en 1965",
+      explanation: "Alexeï Leonov a effectué la première sortie extravéhiculaire le 18 mars 1965. Elle a duré un peu plus de douze minutes."
+    },
+    {
+      question: "Quelle mission a déposé le robot Philae sur une comète ?",
+      answers: ["Rosetta", "Galileo", "Juno", "Hayabusa"],
+      correct: 0,
+      hint: "La sonde portait le nom d'une célèbre pierre égyptienne",
+      explanation: "La mission européenne Rosetta a accompagné la comète 67P et son atterrisseur Philae s'est posé à sa surface en novembre 2014."
+    },
+    {
+      question: "Quelle sonde étudie Jupiter depuis son arrivée en 2016 ?",
+      answers: ["Cassini", "Juno", "New Horizons", "Voyager 1"],
+      correct: 1,
+      hint: "Elle porte le nom de l'épouse de Jupiter dans la mythologie romaine",
+      explanation: "La sonde Juno étudie l'atmosphère, la gravité et le champ magnétique de Jupiter depuis son insertion en orbite en juillet 2016."
+    },
+    {
+      question: "Comment s'appelait la première station spatiale ?",
+      answers: ["Mir", "Skylab", "Saliout 1", "ISS"],
+      correct: 2,
+      hint: "Elle a été lancée par l'Union soviétique en 1971",
+      explanation: "Saliout 1, lancée en avril 1971, fut la première station spatiale placée en orbite autour de la Terre."
+    },
+    {
+      question: "Quelle fusée a envoyé les astronautes d'Apollo vers la Lune ?",
+      answers: ["Saturn V", "Falcon 9", "Ariane 5", "Soyouz"],
+      correct: 0,
+      hint: "C'était la fusée la plus puissante de son époque",
+      explanation: "La fusée Saturn V a lancé les missions lunaires Apollo. Haute de 110 mètres, elle comportait trois étages."
     }
   ],
   
@@ -1741,6 +1848,41 @@ const QUESTIONS = {
       correct: 1,
       hint: "Le champ magnétique terrestre joue un rôle clé",
       explanation: "Les particules solaires, guidées par le champ magnétique vers les pôles, excitent les atomes d'oxygène et d'azote qui émettent de la lumière."
+    },
+    {
+      question: "Dans quelle couche de l'atmosphère se trouve l'essentiel de l'ozone ?",
+      answers: ["La troposphère", "La stratosphère", "La mésosphère", "La thermosphère"],
+      correct: 1,
+      hint: "Elle se situe au-dessus de la couche où nous vivons",
+      explanation: "L'essentiel de la couche d'ozone se trouve dans la stratosphère, généralement entre 15 et 35 km d'altitude."
+    },
+    {
+      question: "Quel astre provoque principalement les marées sur Terre ?",
+      answers: ["Le Soleil", "La Lune", "Jupiter", "Vénus"],
+      correct: 1,
+      hint: "C'est notre satellite naturel",
+      explanation: "L'attraction gravitationnelle de la Lune est la cause principale des marées. Le Soleil y contribue également, mais moins fortement."
+    },
+    {
+      question: "Quel est le plus grand océan de la Terre ?",
+      answers: ["L'océan Atlantique", "L'océan Indien", "L'océan Pacifique", "L'océan Arctique"],
+      correct: 2,
+      hint: "Il sépare notamment l'Asie des Amériques",
+      explanation: "L'océan Pacifique est le plus vaste et le plus profond des océans. Il couvre environ un tiers de la surface terrestre."
+    },
+    {
+      question: "Quel instrument enregistre les vibrations d'un séisme ?",
+      answers: ["Un baromètre", "Un sismomètre", "Un anémomètre", "Un altimètre"],
+      correct: 1,
+      hint: "Son nom vient du mot grec signifiant secousse",
+      explanation: "Le sismomètre mesure les mouvements du sol provoqués par les ondes sismiques et permet de produire un sismogramme."
+    },
+    {
+      question: "Quel mouvement interne contribue principalement au champ magnétique terrestre ?",
+      answers: ["Les marées océaniques", "La circulation du fer liquide dans le noyau externe", "La dérive des continents", "Les vents de haute altitude"],
+      correct: 1,
+      hint: "Il se produit profondément sous le manteau",
+      explanation: "Les mouvements du fer liquide conducteur dans le noyau externe alimentent une dynamo naturelle qui génère le champ magnétique terrestre."
     }
   ]
 };
@@ -1750,10 +1892,11 @@ const QUESTIONS = {
 // ============================================
 const state = {
   // Menu
-  selectedCategory: null,
+  selectedCategory: 'solar',
   
   // Partie en cours
   questions: [],
+  questionHistory: [],
   currentQuestion: 0,
   totalQuestions: 10,
   score: 0,
@@ -1856,6 +1999,7 @@ const elements = {
 // ============================================
 function init() {
   loadStats();
+  loadQuestionHistory();
   updateMenuStats();
   createStars();
   createShootingStars();
@@ -2035,18 +2179,39 @@ function startGame() {
 }
 
 function loadQuestions() {
-  let pool = [];
-  
   if (state.selectedCategory === 'mixed') {
-    // Mélanger toutes les catégories
-    Object.values(QUESTIONS).forEach(qs => pool.push(...qs));
+    const categories = shuffleArray(Object.keys(QUESTIONS));
+    const baseCount = Math.floor(state.totalQuestions / categories.length);
+    const extraCount = state.totalQuestions % categories.length;
+
+    state.questions = categories.flatMap((category, index) => {
+      const count = baseCount + (index < extraCount ? 1 : 0);
+      return selectLeastRecentQuestions(QUESTIONS[category], count);
+    });
+    shuffleArray(state.questions);
   } else {
-    pool = [...QUESTIONS[state.selectedCategory]];
+    state.questions = selectLeastRecentQuestions(
+      QUESTIONS[state.selectedCategory],
+      state.totalQuestions
+    );
   }
-  
-  // Mélanger et prendre 10 questions
-  shuffleArray(pool);
-  state.questions = pool.slice(0, state.totalQuestions);
+}
+
+function selectLeastRecentQuestions(pool, count) {
+  const historyPosition = new Map(
+    state.questionHistory.map((questionId, index) => [questionId, index])
+  );
+
+  const unseen = pool.filter(q => !historyPosition.has(q.question));
+  const seen = pool
+    .filter(q => historyPosition.has(q.question))
+    .sort((a, b) => historyPosition.get(a.question) - historyPosition.get(b.question));
+
+  shuffleArray(unseen);
+
+  // Priorité aux questions jamais vues, puis aux plus anciennes.
+  const selected = [...unseen, ...seen].slice(0, count);
+  return shuffleArray(selected);
 }
 
 // ============================================
@@ -2056,6 +2221,7 @@ function loadQuestion() {
   const q = state.questions[state.currentQuestion];
   state.answered = false;
   state.questionStartTime = Date.now();
+  rememberQuestion(q);
   
   // Catégorie
   const categoryInfo = getCategoryInfo(q);
@@ -2633,6 +2799,43 @@ function loadStats() {
       state.stats = { ...state.stats, ...JSON.parse(saved) };
     }
   } catch (e) {}
+}
+
+function rememberQuestion(question) {
+  const questionId = question.question;
+  state.questionHistory = state.questionHistory.filter(id => id !== questionId);
+  state.questionHistory.push(questionId);
+
+  const questionCount = Object.values(QUESTIONS)
+    .reduce((total, questions) => total + questions.length, 0);
+  state.questionHistory = state.questionHistory.slice(-questionCount);
+  saveQuestionHistory();
+}
+
+function saveQuestionHistory() {
+  try {
+    localStorage.setItem(
+      'cosmicRiddlesQuestionHistory',
+      JSON.stringify(state.questionHistory)
+    );
+  } catch (e) {}
+}
+
+function loadQuestionHistory() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem('cosmicRiddlesQuestionHistory') || '[]'
+    );
+    const validQuestionIds = new Set(
+      Object.values(QUESTIONS).flat().map(question => question.question)
+    );
+
+    state.questionHistory = Array.isArray(saved)
+      ? saved.filter(id => validQuestionIds.has(id)).slice(-validQuestionIds.size)
+      : [];
+  } catch (e) {
+    state.questionHistory = [];
+  }
 }
 
 // ============================================

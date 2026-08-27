@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <!-- 1. Meta tags essentiels pour mobile -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0a0e27">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Neon Overdrive">
+
+  <title>🌌 NEON OVERDRIVE 🌌</title>
+
+  <!-- 2. Lien vers la feuille de style -->
+  <link rel="stylesheet" href="neon-overdrive.css">
+  <link rel="stylesheet" href="arcade-home.css">
+</head>
+
+<body>
+  <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil"><span class="arcade-home-icon" aria-hidden="true">⌂</span><span class="arcade-home-label">Accueil</span></a>
+  <!-- ============================================================ -->
+  <!-- 3. ÉCRAN DE MENU (SPA - visible par défaut) -->
+  <!-- ============================================================ -->
+  <section id="menuScreen" class="screen screen-active">
+    <div class="menu-container">
+      <!-- 4. Logo du jeu -->
+      <h1 class="game-title">🌌 NEON OVERDRIVE 🌌</h1>
+      <p class="game-subtitle">Survive the Void</p>
+
+      <!-- 5. Bouton de démarrage -->
+      <button id="startButton" class="btn btn-start">
+        [ START GAME ]
+      </button>
+
+      <!-- 6. Affichage du Top 3 des meilleurs scores -->
+      <div class="leaderboard">
+        <h2 class="leaderboard-title">🏆 TOP 3 SCORES 🏆</h2>
+        <div id="topScores" class="scores-list">
+          <!-- Les scores seront injectés ici par JavaScript -->
+          <p class="no-scores">Pas encore de records...</p>
+        </div>
+        <button id="clearScoresButton" class="btn btn-clear-scores" type="button">
+          [ CLEAR LEADERBOARD ]
+        </button>
+      </div>
+
+      <!-- 7. Instructions de jeu -->
+      <div class="instructions">
+        <p class="instruction-text">🖱️ Desktop: Déplace ta souris</p>
+        <p class="instruction-text">📱 Mobile: Touche l'écran</p>
+        <p class="instruction-text">⚡ Le tir est automatique</p>
+        <p class="instruction-text">🔴 Esquive les projectiles!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 8. ÉCRAN DE JEU (SPA - hidden) -->
+  <!-- ============================================================ -->
+  <section id="gameScreen" class="screen">
+    <!-- 9. Barre d'infos en haut du canvas -->
+    <div class="game-hud">
+      <div class="hud-left">
+        <span id="levelDisplay" class="hud-label">NIVEAU: 1</span>
+      </div>
+      <div class="hud-center">
+        <span id="scoreDisplay" class="hud-label">SCORE: 0</span>
+      </div>
+      <div class="hud-right">
+        <span id="healthDisplay" class="hud-label">❤️ 3</span>
+      </div>
+      <button id="pauseButton" class="btn btn-pause" type="button" aria-label="Mettre le jeu en pause">
+        ❚❚ PAUSE
+      </button>
+    </div>
+
+    <!-- 10. Canvas - La zone de jeu (400x600 virtuel) -->
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+
+    <!-- 11. Indicateur de "Prêt ?" avant le démarrage -->
+    <div id="readyText" class="ready-text">
+      3
+    </div>
+
+    <!-- Menu de pause : le canvas reste visible en arrière-plan -->
+    <div id="pauseOverlay" class="pause-overlay" hidden>
+      <div class="pause-container">
+        <h2 class="pause-title">PAUSE</h2>
+        <button id="resumeButton" class="btn btn-resume" type="button">[ REPRENDRE ]</button>
+        <button id="quitToMenuButton" class="btn btn-menu" type="button">[ RETOUR AU MENU ]</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 12. ÉCRAN GAME OVER (SPA - hidden) -->
+  <!-- ============================================================ -->
+  <section id="gameOverScreen" class="screen">
+    <div class="game-over-container">
+      <!-- 13. Message de game over -->
+      <h2 class="game-over-title">MISSION FAILED</h2>
+      <p class="game-over-subtitle">⚠️ VESSEL DESTROYED ⚠️</p>
+
+      <!-- 14. Affichage du score final et du niveau atteint -->
+      <div class="game-over-stats">
+        <p class="stat-line">Final Score: <span id="finalScore">0</span></p>
+        <p class="stat-line">Level Reached: <span id="finalLevel">1</span></p>
+      </div>
+
+      <!-- 15. Affichage si nouveau record -->
+      <div id="newRecordBanner" class="new-record-banner" style="display: none;">
+        <p class="new-record-text">🎊 NEW HIGH SCORE! 🎊</p>
+      </div>
+
+      <!-- 16. Boutons d'action -->
+      <div class="game-over-buttons">
+        <button id="restartButton" class="btn btn-restart">
+          [ TRY AGAIN ]
+        </button>
+        <button id="menuButton" class="btn btn-menu">
+          [ MAIN MENU ]
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 17. SCRIPTS - Lien vers le fichier JavaScript -->
+  <!-- ============================================================ -->
+  <script src="neon-overdrive.js"></script>
+</body>
+
+</html>

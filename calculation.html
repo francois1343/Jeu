@@ -784,8 +784,10 @@
       .num-btn { padding: 12px; }
     }
   </style>
+  <link rel="stylesheet" href="arcade-home.css">
 </head>
 <body>
+  <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil"><span class="arcade-home-icon" aria-hidden="true">⌂</span><span class="arcade-home-label">Accueil</span></a>
 
 <!-- Fond animé -->
 <div class="bg-animation" id="bgAnimation"></div>
@@ -842,7 +844,7 @@
         </div>
         <div class="info-item">
           <div class="info-value timer" id="timerDisplay">60</div>
-          <div class="info-label">Temps</div>
+          <div class="info-label" id="timerLabel">Temps</div>
         </div>
         <div class="info-item">
           <div class="info-value" id="streakDisplay">0</div>
@@ -1010,7 +1012,10 @@ const game = {
   timer: null,
   lives: 3,
   responseTimes: [],
+  gameStartTime: 0,
+  blitzEndTime: 0,
   questionStartTime: 0,
+  answerLocked: false,
   isPlaying: false,
   highscores: { easy: [], medium: [], hard: [] }
 };
@@ -1156,6 +1161,9 @@ function startGame() {
   game.questionNum = 0;
   game.responseTimes = [];
   game.lives = MODE_CONFIG.survival.lives;
+  game.gameStartTime = Date.now();
+  game.blitzEndTime = 0;
+  game.answerLocked = false;
   game.isPlaying = true;
   
   const cfg = CONFIG[game.difficulty];
@@ -1168,14 +1176,19 @@ function startGame() {
     game.timeLeft = MODE_CONFIG.survival.timePerQ;
     game.totalTime = MODE_CONFIG.survival.timePerQ;
   } else if (game.mode === 'blitz') {
-    game.timeLeft = 999;
-    game.totalTime = 999;
+    game.timeLeft = 0;
+    game.totalTime = 0;
   }
+
+  document.getElementById('timerLabel').textContent = game.mode === 'blitz'
+    ? 'Temps écoulé'
+    : 'Temps';
   
   // Affichage
   updateDisplay();
   showScreen('gameScreen');
   nextQuestion();
+  updateTimerDisplay();
   
   // Timer
   if (game.timer) clearInterval(game.timer);
@@ -1185,12 +1198,15 @@ function startGame() {
 }
 
 function nextQuestion() {
+  game.answerLocked = false;
   game.questionNum++;
   game.currentQuestion = generateQuestion();
   game.currentAnswer = game.currentQuestion.answer;
   game.questionStartTime = Date.now();
   
-  document.getElementById('questionNumber').textContent = `Question ${game.questionNum}`;
+  document.getElementById('questionNumber').textContent = game.mode === 'blitz'
+    ? `Question ${game.questionNum} / ${MODE_CONFIG.blitz.questions}`
+    : `Question ${game.questionNum}`;
   document.getElementById('questionText').textContent = game.currentQuestion.text;
   document.getElementById('answerInput').value = '';
   document.getElementById('answerInput').classList.remove('correct', 'wrong');
@@ -1242,7 +1258,7 @@ function clearInput() {
 }
 
 function submitAnswer() {
-  if (!game.isPlaying) return;
+  if (!game.isPlaying || game.answerLocked) return;
   
   const input = document.getElementById('answerInput');
   const userAnswer = parseInt(input.value);
@@ -1254,6 +1270,8 @@ function submitAnswer() {
     return;
   }
   
+  game.answerLocked = true;
+
   const responseTime = Date.now() - game.questionStartTime;
   game.responseTimes.push(responseTime);
   
@@ -1299,8 +1317,8 @@ function handleCorrect(responseTime) {
   vibrate(30);
   
   // Vérifier fin blitz
-  if (game.mode === 'blitz' && game.questionNum >= MODE_CONFIG.blitz.questions) {
-    setTimeout(endGame, 500);
+  if (isBlitzComplete()) {
+    finishBlitz(500);
     return;
   }
   
@@ -1333,6 +1351,11 @@ function handleWrong() {
       return;
     }
   }
+
+  if (isBlitzComplete()) {
+    finishBlitz(800);
+    return;
+  }
   
   setTimeout(() => {
     if (game.isPlaying) nextQuestion();
@@ -1344,6 +1367,7 @@ function handleWrong() {
 // ============================================
 function tick() {
   if (!game.isPlaying) return;
+  if (game.mode === 'survival' && game.answerLocked) return;
   
   if (game.mode !== 'blitz') {
     game.timeLeft -= 0.1;
@@ -1352,6 +1376,7 @@ function tick() {
       game.timeLeft = 0;
       
       if (game.mode === 'survival') {
+        game.answerLocked = true;
         handleWrong();
       } else {
         endGame();
@@ -1368,9 +1393,15 @@ function updateTimerDisplay() {
   const barEl = document.getElementById('timerBar');
   
   if (game.mode === 'blitz') {
-    const elapsed = Math.floor((Date.now() - game.questionStartTime) / 1000);
-    timerEl.textContent = elapsed;
-    barEl.style.width = '100%';
+    const elapsedUntil = game.blitzEndTime || Date.now();
+    const elapsed = (elapsedUntil - game.gameStartTime) / 1000;
+    const answered = game.correct + game.wrong;
+    const progress = Math.min(answered / MODE_CONFIG.blitz.questions * 100, 100);
+
+    timerEl.textContent = elapsed.toFixed(1) + 's';
+    barEl.style.width = progress + '%';
+    timerEl.classList.remove('warning', 'danger');
+    barEl.classList.remove('warning', 'danger');
     return;
   }
   
@@ -1391,6 +1422,19 @@ function updateTimerDisplay() {
     timerEl.classList.add('warning');
     barEl.classList.add('warning');
   }
+}
+
+function isBlitzComplete() {
+  return game.mode === 'blitz'
+    && game.correct + game.wrong >= MODE_CONFIG.blitz.questions;
+}
+
+function finishBlitz(delay) {
+  game.blitzEndTime = Date.now();
+  game.isPlaying = false;
+  clearInterval(game.timer);
+  updateTimerDisplay();
+  setTimeout(endGame, delay);
 }
 
 function updateDisplay() {

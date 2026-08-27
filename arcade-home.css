@@ -1,0 +1,127 @@
+/* Bouton de retour commun à tous les jeux de l'Arcade Station. */
+.arcade-home-link {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  z-index: 2147483647;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 44px;
+  height: 42px;
+  padding: 0 15px 0 7px;
+  overflow: hidden;
+  color: #ffffff;
+  background: linear-gradient(135deg, rgba(13, 22, 38, 0.94), rgba(20, 32, 52, 0.88));
+  border: 1px solid rgba(113, 224, 255, 0.38);
+  border-radius: 999px;
+  box-shadow: 0 7px 24px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.09em;
+  text-decoration: none;
+  text-transform: uppercase;
+  opacity: 0.92;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  isolation: isolate;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.arcade-home-link:hover {
+  color: #ffffff;
+  border-color: rgba(113, 224, 255, 0.88);
+  box-shadow: 0 9px 28px rgba(0, 0, 0, 0.42), 0 0 20px rgba(0, 229, 255, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  opacity: 1;
+  transform: translateY(-2px) scale(1.02);
+}
+
+.arcade-home-link:active {
+  transform: scale(0.96);
+}
+
+.arcade-home-link:focus-visible {
+  outline: 3px solid #ffff66;
+  outline-offset: 3px;
+  opacity: 1;
+}
+
+.arcade-home-icon {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.22);
+  border-radius: 50%;
+  font-size: 0;
+  line-height: 1;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.arcade-home-icon::before {
+  content: "";
+  display: block;
+  width: 18px;
+  height: 18px;
+  background-color: #70e8ff;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 12H5m7-7-7 7 7 7' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px 18px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 12H5m7-7-7 7 7 7' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px 18px no-repeat;
+  filter: drop-shadow(0 0 5px rgba(0, 229, 255, 0.55));
+}
+
+.arcade-home-link:hover .arcade-home-icon {
+  background: rgba(0, 229, 255, 0.2);
+  transform: translateX(-2px);
+}
+
+.arcade-home-label {
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .arcade-home-link {
+    top: max(8px, env(safe-area-inset-top));
+    left: max(8px, env(safe-area-inset-left));
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  .arcade-home-icon {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 0;
+  }
+
+  .arcade-home-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arcade-home-link {
+    transition: none;
+  }
+}

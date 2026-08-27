@@ -1,0 +1,1418 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap');
+
+/* ============================================================ */
+/* SIMON NÉON - CSS                                            */
+/* Jeu de mémoire rétro-futuriste avec style néon 80s         */
+/* ============================================================ */
+
+/* ============================================================ */
+/* 1. VARIABLES CSS - Palette Néon 80s */
+/* ============================================================ */
+
+:root {
+    /* 2. Couleurs des 4 boutons Simon */
+    --color-green: #00ff00;         /* Vert électrique */
+    --color-red: #ff0000;           /* Rouge vif */
+    --color-yellow: #ffff00;        /* Jaune éclatant */
+    --color-blue: #0088ff;          /* Bleu électrique */
+    
+    /* 3. Couleurs accentuées */
+    --color-green-dark: #00aa00;
+    --color-red-dark: #aa0000;
+    --color-yellow-dark: #aaaa00;
+    --color-blue-dark: #0055aa;
+    
+    /* 4. Couleurs de fond */
+    --color-bg-dark: #0a0e27;
+    --color-bg-darker: #050810;
+    --color-bg-card: #1a1a2e;
+    
+    /* 5. Texte */
+    --color-text-light: #ffffff;
+    --color-text-dim: #9ca3af;
+    
+    /* 6. Timing */
+    --trans-fast: 100ms;
+    --trans-normal: 200ms;
+    --trans-slow: 400ms;
+}
+
+/* ============================================================ */
+/* 7. IMPORT POLICE */
+/* ============================================================ */
+
+/* ============================================================ */
+/* 8. RESET & BASE */
+/* ============================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    /* 9. Fond sombre avec dégradé synthwave */
+    background: linear-gradient(135deg, var(--color-bg-darker) 0%, #1a0a3a 50%, var(--color-bg-darker) 100%);
+    color: var(--color-text-light);
+    font-family: 'Orbitron', 'Courier New', monospace;
+    font-size: 14px;
+    
+    /* 10. Anti-aliasing */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+    /* 11. Désactiver selections */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    
+    /* 12. Texture scanlines */
+    background-image: 
+        linear-gradient(135deg, var(--color-bg-darker) 0%, #1a0a3a 50%, var(--color-bg-darker) 100%),
+        repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.08) 0px,
+            rgba(0, 0, 0, 0.08) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+}
+
+/* ============================================================ */
+/* 13. SYSTÈME DE SCREENS (SPA) */
+/* ============================================================ */
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* 14. Hidden par défaut */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--trans-slow);
+    
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.screen-active {
+    /* 15. Visible */
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ============================================================ */
+/* 16. ÉCRAN DE MENU */
+/* ============================================================ */
+
+#menuScreen {
+    background:
+        radial-gradient(ellipse 75% 50% at 50% -8%, rgba(0, 255, 153, 0.18), transparent 72%),
+        radial-gradient(circle at 8% 88%, rgba(45, 93, 255, 0.18), transparent 38%),
+        radial-gradient(circle at 92% 72%, rgba(226, 55, 190, 0.12), transparent 35%),
+        linear-gradient(135deg, #060918 0%, #10183a 48%, #160d34 100%);
+    background-attachment: fixed;
+}
+
+#gameScreen {
+    background:
+        radial-gradient(circle at 50% 56%, rgba(35, 109, 255, 0.2), transparent 34%),
+        radial-gradient(ellipse 70% 42% at 50% 100%, rgba(0, 255, 153, 0.08), transparent 72%),
+        linear-gradient(rgba(101, 143, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(101, 143, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(160deg, #070b1c 0%, #0c1634 52%, #100d27 100%);
+    background-size: auto, auto, 36px 36px, 36px 36px, auto;
+    background-attachment: fixed;
+}
+
+.menu-container {
+    text-align: center;
+    max-width: 90%;
+    animation: menuFadeIn 0.8s ease-out;
+}
+
+/* 17. Titre */
+.game-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 36px;
+    background: linear-gradient(90deg, #00ff00, #ff0000, #ffff00, #0088ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(0, 255, 0, 0.5), 0 0 60px rgba(255, 0, 0, 0.3);
+    margin-bottom: 12px;
+    letter-spacing: 3px;
+    animation: titleRainbow 3s ease-in-out infinite;
+    line-height: 1.2;
+    filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.4));
+}
+
+.game-subtitle {
+    font-size: 12px;
+    color: #00ff00;
+    text-shadow: 0 0 10px #00ff00;
+    margin-bottom: 32px;
+    letter-spacing: 2px;
+}
+
+/* ============================================================ */
+/* 18. INSTRUCTIONS */
+/* ============================================================ */
+
+.instructions {
+    margin: 24px 0;
+    padding: 16px;
+    border: 2px solid #00ff00;
+    border-radius: 4px;
+    background: rgba(0, 255, 0, 0.05);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+}
+
+.instruction-text {
+    font-size: 9px;
+    color: var(--color-text-light);
+    margin: 6px 0;
+    font-family: 'Orbitron', monospace;
+}
+
+/* ============================================================ */
+/* 19. SÉLECTEURS (Mode, Vitesse) */
+/* ============================================================ */
+
+.mode-selector,
+.speed-selector {
+    margin: 24px 0;
+}
+
+.selector-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.mode-option {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 8px auto;
+    padding: 12px;
+    border: 2px solid #0088ff;
+    background: rgba(0, 136, 255, 0.1);
+    color: #0088ff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all var(--trans-normal);
+    
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mode-option:hover {
+    background: rgba(0, 136, 255, 0.2);
+    box-shadow: 0 0 15px #0088ff;
+    transform: translateY(-2px);
+}
+
+.mode-option.active {
+    background: rgba(0, 136, 255, 0.3);
+    border-color: #00ff00;
+    color: #00ff00;
+    box-shadow: 0 0 20px #00ff00, 0 0 40px rgba(0, 255, 0, 0.3);
+}
+
+.mode-label {
+    display: block;
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.mode-desc {
+    display: block;
+    font-size: 7px;
+    opacity: 0.8;
+}
+
+/* 20. Speed selector */
+.speed-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.speed-btn {
+    padding: 8px;
+    border: 2px solid #ffff00;
+    background: rgba(255, 255, 0, 0.05);
+    color: #ffff00;
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all var(--trans-normal);
+    
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.speed-btn:hover {
+    background: rgba(255, 255, 0, 0.15);
+    box-shadow: 0 0 10px #ffff00;
+}
+
+.speed-btn.speed-active {
+    background: rgba(255, 255, 0, 0.3);
+    color: #00ff00;
+    border-color: #00ff00;
+    box-shadow: 0 0 15px #00ff00;
+}
+
+/* ============================================================ */
+/* 21. BOUTONS */
+/* ============================================================ */
+
+.btn {
+    padding: 10px 20px;
+    border: 2px solid #00ff00;
+    background: rgba(0, 255, 0, 0.1);
+    color: #00ff00;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all var(--trans-normal);
+    
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn:hover {
+    box-shadow: 0 0 20px #00ff00;
+    background: rgba(0, 255, 0, 0.2);
+    transform: scale(1.05);
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn-primary {
+    border-color: #00ff00;
+    color: #00ff00;
+    background: rgba(0, 255, 0, 0.1);
+    margin: 16px 0;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0 30px #00ff00, 0 0 60px rgba(0, 255, 0, 0.3);
+}
+
+.btn-secondary {
+    border-color: #0088ff;
+    color: #0088ff;
+    background: rgba(0, 136, 255, 0.05);
+}
+
+.btn-secondary:hover {
+    box-shadow: 0 0 20px #0088ff;
+    background: rgba(0, 136, 255, 0.15);
+}
+
+.btn-large {
+    padding: 14px 28px;
+    font-size: 10px;
+}
+
+/* ============================================================ */
+/* 22. HUD IN-GAME */
+/* ============================================================ */
+
+.game-hud {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 16px 20px;
+    background: rgba(10, 14, 39, 0.9);
+    border-bottom: 3px solid #00ff00;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.hud-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.hud-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: #ffff00;
+    text-shadow: 0 0 8px #ffff00;
+    letter-spacing: 1px;
+}
+
+.hud-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: bold;
+    color: #00ff00;
+    text-shadow: 0 0 10px #00ff00;
+}
+
+/* ============================================================ */
+/* 23. GAME WRAPPER */
+/* ============================================================ */
+
+.game-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: 20px;
+    gap: 20px;
+    overflow-y: auto;
+}
+
+/* ============================================================ */
+/* 24. BOÎTIER SIMON CIRCULAIRE */
+/* ============================================================ */
+
+.simon-box {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1;
+    
+    /* 25. Bordure circulaire */
+    border-radius: 50%;
+    border: 4px solid #00ff00;
+    background: radial-gradient(circle, rgba(0, 255, 0, 0.05) 0%, rgba(0, 0, 0, 0.8) 100%);
+    box-shadow: 
+        0 0 30px rgba(0, 255, 0, 0.5),
+        0 0 60px rgba(0, 255, 0, 0.2),
+        inset 0 0 30px rgba(0, 255, 0, 0.1);
+    
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0;
+    overflow: hidden;
+}
+
+/* ============================================================ */
+/* 26. BOUTONS SIMON (4 QUADRANTS) */
+/* ============================================================ */
+
+.simon-btn {
+    border: 2px solid;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent 70%);
+    cursor: pointer;
+    transition: all var(--trans-fast);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    overflow: hidden;
+}
+
+.btn-label {
+    position: absolute;
+    opacity: 0;
+    transition: opacity var(--trans-normal);
+    text-shadow: 0 0 10px currentColor;
+}
+
+.simon-btn:hover .btn-label {
+    opacity: 0.8;
+}
+
+/* 27. Vert (haut-gauche) */
+.simon-green {
+    grid-column: 1;
+    grid-row: 1;
+    border-radius: 50% 0 0 0;
+    border-color: var(--color-green);
+    color: var(--color-green);
+    box-shadow: 
+        inset -5px -5px 15px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+.simon-green:hover {
+    box-shadow: 
+        inset -5px -5px 15px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(0, 255, 0, 0.6);
+}
+
+.simon-green.active {
+    background: radial-gradient(circle at 30% 30%, rgba(0, 255, 0, 0.6), var(--color-green-dark) 70%);
+    box-shadow: 
+        inset -5px -5px 15px rgba(0, 0, 0, 0.2),
+        0 0 50px rgba(0, 255, 0, 0.8),
+        0 0 100px rgba(0, 255, 0, 0.5);
+}
+
+/* 28. Rouge (haut-droite) */
+.simon-red {
+    grid-column: 2;
+    grid-row: 1;
+    border-radius: 0 50% 0 0;
+    border-color: var(--color-red);
+    color: var(--color-red);
+    box-shadow: 
+        inset 5px -5px 15px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(255, 0, 0, 0.3);
+}
+
+.simon-red:hover {
+    box-shadow: 
+        inset 5px -5px 15px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(255, 0, 0, 0.6);
+}
+
+.simon-red.active {
+    background: radial-gradient(circle at 30% 30%, rgba(255, 0, 0, 0.6), var(--color-red-dark) 70%);
+    box-shadow: 
+        inset 5px -5px 15px rgba(0, 0, 0, 0.2),
+        0 0 50px rgba(255, 0, 0, 0.8),
+        0 0 100px rgba(255, 0, 0, 0.5);
+}
+
+/* 29. Jaune (bas-gauche) */
+.simon-yellow {
+    grid-column: 1;
+    grid-row: 2;
+    border-radius: 0 0 0 50%;
+    border-color: var(--color-yellow);
+    color: var(--color-yellow);
+    box-shadow: 
+        inset -5px 5px 15px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(255, 255, 0, 0.3);
+}
+
+.simon-yellow:hover {
+    box-shadow: 
+        inset -5px 5px 15px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(255, 255, 0, 0.6);
+}
+
+.simon-yellow.active {
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 0, 0.6), var(--color-yellow-dark) 70%);
+    box-shadow: 
+        inset -5px 5px 15px rgba(0, 0, 0, 0.2),
+        0 0 50px rgba(255, 255, 0, 0.8),
+        0 0 100px rgba(255, 255, 0, 0.5);
+}
+
+/* 30. Bleu (bas-droite) */
+.simon-blue {
+    grid-column: 2;
+    grid-row: 2;
+    border-radius: 0 0 50% 0;
+    border-color: var(--color-blue);
+    color: var(--color-blue);
+    box-shadow: 
+        inset 5px 5px 15px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(0, 136, 255, 0.3);
+}
+
+.simon-blue:hover {
+    box-shadow: 
+        inset 5px 5px 15px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(0, 136, 255, 0.6);
+}
+
+.simon-blue.active {
+    background: radial-gradient(circle at 30% 30%, rgba(0, 136, 255, 0.6), var(--color-blue-dark) 70%);
+    box-shadow: 
+        inset 5px 5px 15px rgba(0, 0, 0, 0.2),
+        0 0 50px rgba(0, 136, 255, 0.8),
+        0 0 100px rgba(0, 136, 255, 0.5);
+}
+
+/* ============================================================ */
+/* 31. CENTRE DU BOÎTIER (LED + Contrôles) */
+/* ============================================================ */
+
+.center-panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(0, 0, 0, 0.6), #000000);
+    border: 3px solid #00ff00;
+    box-shadow: 
+        0 0 25px rgba(0, 255, 0, 0.6),
+        inset 0 0 20px rgba(0, 255, 0, 0.2),
+        inset 0 0 40px rgba(0, 0, 0, 0.8);
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    z-index: 10;
+}
+
+/* 32. Écran LED 7-segments */
+.led-display {
+    font-family: 'Orbitron', monospace;
+    font-size: 24px;
+    font-weight: 900;
+    color: #00ff00;
+    text-shadow: 0 0 10px #00ff00, 0 0 20px rgba(0, 255, 0, 0.6);
+    letter-spacing: 3px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #00ff00;
+    padding: 2px 6px;
+    border-radius: 2px;
+}
+
+/* 33. Compteur de séquence */
+.counter-display {
+    text-align: center;
+    font-size: 7px;
+    color: #ffff00;
+}
+
+.counter-label {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+    font-weight: bold;
+}
+
+.counter-value {
+    font-size: 12px;
+    font-weight: bold;
+    color: #00ff00;
+    text-shadow: 0 0 8px #00ff00;
+}
+
+/* 34. Indicateur de statut */
+.status-light {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 7px;
+    color: #00ff00;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00ff00;
+    box-shadow: 0 0 8px #00ff00;
+    animation: statusPulse 1s ease-in-out infinite;
+}
+
+.status-dot.playing {
+    animation: statusPulseIntense 0.3s ease-in-out;
+}
+
+/* ============================================================ */
+/* 36. CONTRÔLES BAS DE PAGE */
+/* ============================================================ */
+
+.game-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.control-btn {
+    padding: 10px;
+    border: 2px solid #0088ff;
+    background: rgba(0, 136, 255, 0.1);
+    color: #0088ff;
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all var(--trans-normal);
+    
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.control-btn:hover {
+    background: rgba(0, 136, 255, 0.2);
+    box-shadow: 0 0 15px #0088ff;
+    transform: translateY(-2px);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+}
+
+/* ============================================================ */
+/* 37. ÉCRAN GAME OVER */
+/* ============================================================ */
+
+#gameOverScreen {
+    background: linear-gradient(135deg, 
+        rgba(255, 0, 0, 0.2) 0%, 
+        var(--color-bg-darker) 50%, 
+        #1a0a3a 100%);
+}
+
+.game-over-container {
+    text-align: center;
+    max-width: 90%;
+    animation: gameOverSlideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.game-over-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 32px;
+    color: #ff0000;
+    text-shadow: 0 0 30px #ff0000;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+    animation: errorPulse 0.5s ease-in-out infinite;
+}
+
+.game-over-subtitle {
+    font-size: 11px;
+    color: var(--color-text-dim);
+    margin-bottom: 24px;
+    animation: warningBlink 0.4s infinite;
+}
+
+.game-over-stats {
+    margin: 20px 0;
+}
+
+.stat-line {
+    font-size: 11px;
+    color: var(--color-text-light);
+    margin: 8px 0;
+    font-family: 'Orbitron', monospace;
+}
+
+.new-record-banner {
+    padding: 12px;
+    background: rgba(0, 255, 0, 0.2);
+    border: 2px solid #00ff00;
+    border-radius: 4px;
+    margin: 20px 0;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+}
+
+.new-record-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #00ff00;
+    text-shadow: 0 0 10px #00ff00;
+    animation: recordPulse 0.5s ease-in-out infinite;
+}
+
+.game-over-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.game-over-buttons .btn {
+    min-width: 200px;
+    margin: 0 auto;
+}
+
+/* ============================================================ */
+/* 38. ÉCRAN LEADERBOARD */
+/* ============================================================ */
+
+#leaderboardScreen {
+    background: linear-gradient(135deg, var(--color-bg-darker) 0%, #1a0a3a 100%);
+}
+
+.leaderboard-container {
+    text-align: center;
+    max-width: 90%;
+    max-height: 90%;
+    animation: menuFadeIn 0.6s ease-out;
+}
+
+.leaderboard-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 24px;
+    color: #ffff00;
+    text-shadow: 0 0 20px #ffff00;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.leaderboard-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+    max-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tab-btn {
+    padding: 8px;
+    border: 2px solid #0088ff;
+    background: transparent;
+    color: var(--color-text-dim);
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all var(--trans-normal);
+}
+
+.tab-btn:hover {
+    color: #0088ff;
+    border-color: #0088ff;
+}
+
+.tab-btn.tab-active {
+    background: #0088ff;
+    color: var(--color-bg-darker);
+    border-color: #0088ff;
+    box-shadow: 0 0 15px #0088ff;
+}
+
+.leaderboard-list {
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #00ff00;
+    border-radius: 4px;
+    padding: 12px;
+    margin: 20px 0;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
+.leaderboard-entry {
+    display: grid;
+    grid-template-columns: 30px 1fr 60px;
+    gap: 12px;
+    padding: 8px;
+    border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+    align-items: center;
+    font-size: 10px;
+}
+
+.leaderboard-entry:last-child {
+    border-bottom: none;
+}
+
+.rank-medal {
+    font-size: 16px;
+    text-align: center;
+}
+
+.entry-name {
+    text-align: left;
+    color: var(--color-text-light);
+    font-family: 'Orbitron', monospace;
+}
+
+.entry-score {
+    text-align: right;
+    color: #00ff00;
+    font-weight: bold;
+    text-shadow: 0 0 8px #00ff00;
+}
+
+.empty-leaderboard {
+    padding: 24px;
+    color: var(--color-text-dim);
+    font-size: 10px;
+}
+
+/* ============================================================ */
+/* 39. MODAL DE VICTOIRE */
+/* ============================================================ */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    animation: modalFadeIn var(--trans-normal);
+}
+
+.modal-content {
+    background: linear-gradient(135deg, rgba(0, 255, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+    border: 3px solid #00ff00;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    max-width: 80%;
+    animation: modalSlideIn var(--trans-normal);
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+}
+
+.modal-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: #00ff00;
+    text-shadow: 0 0 15px #00ff00;
+    margin-bottom: 12px;
+}
+
+.modal-message {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    color: var(--color-text-light);
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+/* ============================================================ */
+/* 40. ANIMATIONS */
+/* ============================================================ */
+
+@keyframes menuFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes titleRainbow {
+    0%, 100% {
+        filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.4));
+    }
+    50% {
+        filter: drop-shadow(0 0 30px rgba(255, 0, 0, 0.6));
+    }
+}
+
+@keyframes errorPulse {
+    0%, 100% {
+        text-shadow: 0 0 30px #ff0000;
+    }
+    50% {
+        text-shadow: 0 0 50px #ff0000, 0 0 70px rgba(255, 0, 0, 0.6);
+    }
+}
+
+@keyframes statusPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes statusPulseIntense {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 8px #00ff00;
+    }
+    50% {
+        transform: scale(1.3);
+        box-shadow: 0 0 15px #00ff00, 0 0 30px rgba(0, 255, 0, 0.6);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 8px #00ff00;
+    }
+}
+
+@keyframes gameOverSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.7) translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes warningBlink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes recordPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) rotateZ(-5deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) rotateZ(0deg);
+    }
+}
+
+/* ============================================================ */
+/* 41. RESPONSIVE */
+/* ============================================================ */
+
+@media (max-width: 360px) {
+    .game-title {
+        font-size: 28px;
+    }
+    
+    .simon-box {
+        max-width: 320px;
+    }
+    
+    .center-panel {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .led-display {
+        font-size: 20px;
+    }
+    
+    .game-controls {
+        max-width: 320px;
+    }
+}
+
+@media (min-width: 361px) and (max-width: 768px) {
+    .simon-box {
+        max-width: 360px;
+    }
+    
+    .game-controls {
+        max-width: 360px;
+    }
+}
+
+@media (min-width: 769px) {
+    .simon-box {
+        max-width: 450px;
+    }
+    
+    .center-panel {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .led-display {
+        font-size: 28px;
+    }
+    
+    .game-title {
+        font-size: 40px;
+    }
+    
+    .game-controls {
+        max-width: 450px;
+    }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+    .game-hud {
+        padding: 8px 12px;
+        gap: 12px;
+    }
+    
+    .hud-value {
+        font-size: 14px;
+    }
+    
+    .simon-box {
+        max-width: 300px;
+    }
+    
+    .game-container {
+        padding: 8px;
+        gap: 12px;
+    }
+}
+
+/* ============================================================ */
+/* 42. SAFE AREA (iPhone avec encoche) */
+/* ============================================================ */
+
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+        padding-top: max(0px, env(safe-area-inset-top));
+        padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+}
+
+/* ============================================================ */
+/* 43. SCROLLBAR PERSONNALISÉE */
+/* ============================================================ */
+
+.screen::-webkit-scrollbar {
+    width: 6px;
+}
+
+.screen::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.screen::-webkit-scrollbar-thumb {
+    background: #00ff00;
+    border-radius: 3px;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.screen::-webkit-scrollbar-thumb:hover {
+    background: #ffff00;
+}
+
+/* ============================================================ */
+/* 44. RAFRAÎCHISSEMENT UI — lisibilité & plateau lumineux      */
+/* ============================================================ */
+
+:root {
+    --panel-surface: rgba(15, 21, 50, 0.78);
+    --panel-border: rgba(151, 180, 255, 0.3);
+}
+
+body {
+    font-size: 16px;
+    line-height: 1.45;
+}
+
+/* Zones de navigation plus confortables, avec un contraste plus net. */
+.menu-container,
+.game-over-container,
+.leaderboard-container {
+    width: min(560px, calc(100% - 32px));
+    max-width: 560px;
+}
+
+.game-subtitle {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.instructions {
+    padding: 20px 24px;
+    border-color: rgba(0, 255, 153, 0.65);
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(0, 255, 153, 0.13), rgba(47, 111, 255, 0.08));
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.instruction-text {
+    font-size: 13px;
+    line-height: 1.65;
+    margin: 7px 0;
+}
+
+.selector-title {
+    font-size: 12px;
+    margin-bottom: 14px;
+}
+
+.mode-option {
+    max-width: 420px;
+    padding: 16px 18px;
+    border-radius: 12px;
+    text-align: left;
+}
+
+.mode-label { font-size: 14px; margin-bottom: 6px; }
+.mode-desc { font-size: 11px; line-height: 1.45; }
+
+.speed-options { max-width: 420px; gap: 10px; }
+.speed-btn { min-height: 48px; padding: 10px 6px; border-radius: 10px; font-size: 12px; }
+
+.btn {
+    min-height: 48px;
+    padding: 13px 22px;
+    border-radius: 10px;
+    font-size: 10px;
+}
+
+.btn-large { min-height: 58px; padding: 16px 30px; font-size: 12px; }
+
+button:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+}
+
+/* HUD plus lisible et mieux ancré au plateau. */
+.game-hud {
+    gap: 12px;
+    padding: 18px max(20px, env(safe-area-inset-left));
+    border-bottom-color: rgba(0, 255, 153, 0.75);
+    background: linear-gradient(180deg, rgba(15, 21, 50, 0.97), rgba(9, 13, 33, 0.9));
+}
+
+.hud-info { gap: 7px; }
+.hud-label { font-size: 9px; }
+.hud-value { font-size: clamp(19px, 5vw, 25px); line-height: 1; }
+
+.game-container { padding: 24px 20px; gap: 22px; }
+
+/* Un boîtier plus dense : couronne métallisée, séparation nette des pads et halo ambiant. */
+.simon-box {
+    width: min(520px, calc(100vw - 40px), calc(100svh - 245px));
+    max-width: none;
+    min-width: 260px;
+    padding: 10px;
+    gap: 8px;
+    border: 2px solid rgba(226, 238, 255, 0.8);
+    background:
+        radial-gradient(circle at 50% 50%, #1d2a51 0 22%, #080b1d 23% 100%),
+        #090d23;
+    box-shadow:
+        0 0 0 7px rgba(72, 105, 189, 0.25),
+        0 0 40px rgba(66, 117, 255, 0.35),
+        0 0 90px rgba(0, 255, 190, 0.13),
+        inset 0 0 28px rgba(255, 255, 255, 0.13),
+        inset 0 -18px 30px rgba(0, 0, 0, 0.55);
+}
+
+.simon-box::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    z-index: 2;
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 50%;
+    box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.08);
+}
+
+.simon-btn {
+    z-index: 1;
+    border-width: 0;
+    font-size: 11px;
+    isolation: isolate;
+    transform: translateZ(0);
+}
+
+.simon-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.85;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), transparent 35%, rgba(0, 0, 0, 0.48) 78%);
+    transition: opacity var(--trans-fast);
+}
+
+.simon-btn:hover,
+.simon-btn:focus-visible { filter: brightness(1.25) saturate(1.15); }
+.simon-btn:hover .btn-label,
+.simon-btn:focus-visible .btn-label,
+.simon-btn.active .btn-label { opacity: 1; }
+.simon-btn.active { transform: scale(0.985); }
+.simon-btn.active::after { opacity: 0.2; }
+
+.simon-green { background: radial-gradient(circle at 28% 22%, #78ffb3, #009c5b 52%, #00472e 100%); }
+.simon-red { background: radial-gradient(circle at 72% 22%, #ff959c, #dc244c 52%, #650b2d 100%); }
+.simon-yellow { background: radial-gradient(circle at 28% 78%, #fff0a3, #e2a421 52%, #75500a 100%); }
+.simon-blue { background: radial-gradient(circle at 72% 78%, #87dfff, #176de1 52%, #112d79 100%); }
+
+.simon-green.active { background: radial-gradient(circle at 28% 22%, #e1ffef, #00ff8f 55%, #008c52 100%); }
+.simon-red.active { background: radial-gradient(circle at 72% 22%, #ffe6e8, #ff315b 55%, #bd0038 100%); }
+.simon-yellow.active { background: radial-gradient(circle at 28% 78%, #fffde2, #ffe54d 55%, #d38b00 100%); }
+.simon-blue.active { background: radial-gradient(circle at 72% 78%, #e0f8ff, #24b4ff 55%, #1253d1 100%); }
+
+.center-panel {
+    width: clamp(126px, 32%, 158px);
+    height: clamp(126px, 32%, 158px);
+    gap: 7px;
+    border: 2px solid rgba(221, 236, 255, 0.92);
+    background: radial-gradient(circle at 32% 24%, #35436a, #10152d 46%, #03050e 100%);
+    box-shadow:
+        0 0 0 7px rgba(7, 10, 29, 0.96),
+        0 0 32px rgba(89, 143, 255, 0.68),
+        inset 0 2px 10px rgba(255, 255, 255, 0.22),
+        inset 0 -14px 24px rgba(0, 0, 0, 0.7);
+}
+
+.led-display {
+    min-width: 74px;
+    height: 36px;
+    padding: 2px 8px;
+    border-color: rgba(0, 255, 153, 0.7);
+    border-radius: 6px;
+    font-size: clamp(23px, 6vw, 29px);
+}
+
+.counter-display { font-size: 9px; }
+.counter-value { font-size: 15px; }
+
+.status-light { gap: 6px; font-size: 9px; font-weight: 700; }
+.status-dot { width: 9px; height: 9px; }
+
+.game-controls { max-width: 520px; gap: 14px; }
+.control-btn { min-height: 50px; padding: 12px; border-radius: 10px; font-size: 12px; }
+
+.game-over-subtitle,
+.stat-line,
+.modal-message { font-size: 14px; line-height: 1.6; }
+.leaderboard-entry,
+.empty-leaderboard { font-size: 13px; }
+.tab-btn { min-height: 42px; font-size: 11px; border-radius: 8px; }
+
+@media (max-width: 360px) {
+    .game-title { font-size: 26px; }
+    .game-subtitle { font-size: 12px; }
+    .instructions { padding: 14px; }
+    .instruction-text { font-size: 11px; }
+    .mode-selector, .speed-selector { margin: 18px 0; }
+    .simon-box { width: min(320px, calc(100vw - 28px), calc(100svh - 220px)); min-width: 0; padding: 7px; gap: 6px; }
+    .center-panel { width: 108px; height: 108px; gap: 4px; }
+    .led-display { height: 29px; min-width: 62px; font-size: 21px; }
+    .counter-display, .status-light { font-size: 7px; }
+    .counter-value { font-size: 12px; }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+    .simon-box { width: min(310px, calc(100svh - 162px)); }
+    .center-panel { width: 112px; height: 112px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Ajustement : un plateau plus sobre et sans double compteur central. */
+.simon-box {
+    padding: 7px;
+    gap: 6px;
+    border-color: rgba(181, 202, 240, 0.55);
+    background: radial-gradient(circle at 50% 50%, #192344 0 21%, #090d20 22% 100%);
+    box-shadow:
+        0 0 0 4px rgba(72, 105, 189, 0.16),
+        0 0 25px rgba(66, 117, 255, 0.2),
+        inset 0 0 20px rgba(255, 255, 255, 0.08),
+        inset 0 -14px 25px rgba(0, 0, 0, 0.5);
+}
+
+.simon-box::before {
+    inset: 3px;
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: none;
+}
+
+.simon-btn::after { opacity: 0.55; }
+.simon-btn:hover,
+.simon-btn:focus-visible { filter: brightness(1.12) saturate(1.05); }
+
+.simon-green { background: radial-gradient(circle at 28% 22%, #57ce91, #087c50 52%, #063c2b 100%); }
+.simon-red { background: radial-gradient(circle at 72% 22%, #dc7683, #b22143 52%, #560e2b 100%); }
+.simon-yellow { background: radial-gradient(circle at 28% 78%, #e7cd7c, #bd891d 52%, #60430b 100%); }
+.simon-blue { background: radial-gradient(circle at 72% 78%, #70b9db, #1e63bb 52%, #152d6b 100%); }
+
+/* Le niveau est déjà affiché en haut : on évite un second écran "11" au centre. */
+.led-display { display: none; }
+
+/* Sécurité pour les pages déjà ouvertes avant la suppression du bouton Play. */
+#playPauseBtn,
+.center-btn { display: none !important; }
+
+.center-panel {
+    width: clamp(96px, 25%, 118px);
+    height: clamp(96px, 25%, 118px);
+    gap: 7px;
+    border-color: rgba(221, 236, 255, 0.7);
+    box-shadow:
+        0 0 0 5px rgba(7, 10, 29, 0.94),
+        0 0 20px rgba(89, 143, 255, 0.38),
+        inset 0 2px 8px rgba(255, 255, 255, 0.16),
+        inset 0 -12px 20px rgba(0, 0, 0, 0.6);
+}
+
+.counter-display { font-size: 8px; }
+.counter-value { font-size: 14px; }
+@media (max-width: 360px) {
+    .center-panel { width: 92px; height: 92px; }
+}

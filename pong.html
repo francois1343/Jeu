@@ -182,6 +182,22 @@ body {
   box-shadow: 0 4px 15px rgba(100, 100, 100, 0.3);
 }
 
+.menu-btn.settings-back {
+  color: #f5e9ff;
+  border: 1px solid rgba(255, 0, 255, 0.62);
+  background: linear-gradient(135deg, rgba(15, 28, 58, 0.96), rgba(72, 18, 104, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 4px 18px rgba(136, 0, 255, 0.28);
+}
+
+.menu-btn.settings-back:hover {
+  color: #ffffff;
+  border-color: #00ffff;
+  background: linear-gradient(135deg, rgba(0, 96, 128, 0.96), rgba(118, 24, 156, 0.94));
+  box-shadow: 0 6px 25px rgba(255, 0, 255, 0.35), 0 0 16px rgba(0, 255, 255, 0.24);
+}
+
 /* ===== PARAMÈTRES ===== */
 .setting-group {
   margin: 20px 0;
@@ -206,6 +222,47 @@ body {
   border-radius: 8px;
   color: #fff;
   font-size: 14px;
+}
+
+.setting-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  color-scheme: dark;
+  cursor: pointer;
+  padding-right: 42px;
+  color: #ecfeff;
+  background-color: #071522;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #00ffff 50%),
+    linear-gradient(135deg, #00ffff 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  box-shadow: inset 0 0 18px rgba(0, 255, 255, 0.06);
+}
+
+.setting-group select:hover {
+  border-color: #ff00ff;
+  box-shadow: 0 0 14px rgba(255, 0, 255, 0.22);
+}
+
+.setting-group select:focus,
+.setting-group select:focus-visible {
+  outline: none;
+  border-color: #00ffff;
+  box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.16), 0 0 18px rgba(0, 255, 255, 0.24);
+}
+
+.setting-group select option {
+  color: #ecfeff;
+  background-color: #071522;
+}
+
+.setting-group select option:checked {
+  color: #ffffff;
+  background-color: #0e7490;
 }
 
 .setting-group input[type="range"] {
@@ -396,8 +453,10 @@ body {
   background: linear-gradient(180deg, #00ff9f, #00ffff);
 }
 </style>
+  <link rel="stylesheet" href="arcade-home.css">
 </head>
 <body>
+  <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil"><span class="arcade-home-icon" aria-hidden="true">⌂</span><span class="arcade-home-label">Accueil</span></a>
 
 <!-- HUD -->
 <div id="game-container">
@@ -531,7 +590,7 @@ body {
     </div>
     
     <button class="menu-btn" onclick="saveSettings()">✅ Sauvegarder</button>
-    <button class="menu-btn tertiary" onclick="hideSettings()">← Retour</button>
+    <button class="menu-btn settings-back" onclick="hideSettings()">← Retour</button>
   </div>
 </div>
 

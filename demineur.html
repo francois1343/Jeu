@@ -19,7 +19,7 @@ body {
   justify-content: center;
   align-items: center;
   font-family: 'Segoe UI', Arial, sans-serif;
-  overflow: hidden;
+  overflow: auto;
   color: #fff;
 }
 
@@ -116,8 +116,8 @@ body {
 }
 
 .cell {
-  width: 35px;
-  height: 35px;
+  width: var(--cell-size, 35px);
+  height: var(--cell-size, 35px);
   background: linear-gradient(135deg, #2d3561, #1f2847);
   border: 2px solid #3d4872;
   border-radius: 5px;
@@ -358,6 +358,37 @@ body {
   box-shadow: 0 4px 15px rgba(100, 100, 100, 0.3);
 }
 
+#board.large-board .cell {
+  font-size: 15px;
+  transition: background-color 0.08s, border-color 0.08s;
+}
+
+#board.large-board .cell:hover:not(.revealed):not(.flagged) {
+  box-shadow: none;
+  transform: none;
+}
+
+#board.large-board .cell.revealed,
+#board.large-board .cell.flagged {
+  animation: none;
+}
+
+.menu-btn.settings-back {
+  color: #eefcff;
+  border: 1px solid rgba(168, 85, 247, 0.68);
+  background: linear-gradient(135deg, rgba(12, 31, 58, 0.97), rgba(76, 29, 149, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 4px 18px rgba(124, 58, 237, 0.3);
+}
+
+.menu-btn.settings-back:hover {
+  color: #ffffff;
+  border-color: #00d4ff;
+  background: linear-gradient(135deg, rgba(0, 111, 145, 0.97), rgba(109, 40, 217, 0.94));
+  box-shadow: 0 6px 25px rgba(124, 58, 237, 0.38), 0 0 16px rgba(0, 212, 255, 0.26);
+}
+
 /* ===== STATS ===== */
 .stats-grid {
   display: grid;
@@ -388,84 +419,199 @@ body {
 }
 
 /* ===== RECORDS ===== */
+.records-menu-card {
+  position: relative;
+  overflow: hidden;
+  max-width: 620px;
+  border-color: rgba(0, 212, 255, 0.75);
+  background:
+    radial-gradient(circle at 85% 5%, rgba(124, 58, 237, 0.22), transparent 34%),
+    linear-gradient(150deg, rgba(22, 37, 72, 0.98), rgba(8, 16, 38, 0.98));
+  box-shadow: 0 0 60px rgba(0, 212, 255, 0.28), 0 25px 70px rgba(0, 0, 0, 0.52);
+}
+
+.records-menu-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12%;
+  width: 76%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00d4ff, #a855f7, transparent);
+  box-shadow: 0 0 18px #00d4ff;
+}
+
 .records-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 7px;
+  border: 1px solid rgba(0, 212, 255, 0.13);
+  border-radius: 13px;
+  background: rgba(3, 9, 25, 0.5);
 }
 
 .tab-btn {
-  flex: 1;
-  padding: 12px;
-  background: rgba(0, 212, 255, 0.1);
-  border: 2px solid rgba(0, 212, 255, 0.3);
-  border-radius: 10px;
-  color: #888;
+  min-width: 0;
+  padding: 11px 8px;
+  color: #b7c9dc;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid rgba(0, 212, 255, 0.18);
+  border-radius: 9px;
+  background: linear-gradient(145deg, rgba(21, 39, 72, 0.82), rgba(10, 18, 42, 0.82));
   cursor: pointer;
-  transition: all 0.3s;
-  font-weight: bold;
+  transition: transform 0.18s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
+}
+
+.tab-btn:hover {
+  color: #ffffff;
+  border-color: rgba(168, 85, 247, 0.72);
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.18);
+  transform: translateY(-1px);
 }
 
 .tab-btn.active {
-  background: rgba(0, 212, 255, 0.2);
+  color: #ffffff;
   border-color: #00d4ff;
-  color: #00d4ff;
+  background: linear-gradient(135deg, rgba(0, 153, 204, 0.88), rgba(91, 33, 182, 0.9));
+  box-shadow: 0 0 18px rgba(0, 212, 255, 0.3);
+}
+
+.records-note {
+  min-height: 18px;
+  color: #8fb8ce;
+  font-size: 11px;
+  letter-spacing: 0.25px;
 }
 
 .records-list {
-  max-height: 350px;
+  min-height: 130px;
+  max-height: 360px;
   overflow-y: auto;
-  margin: 20px 0;
+  margin: 14px 0 18px;
+  padding: 8px;
+  border: 1px solid rgba(0, 212, 255, 0.12);
+  border-radius: 14px;
+  background: rgba(2, 8, 23, 0.48);
+  scrollbar-color: #00d4ff rgba(2, 8, 23, 0.6);
+  scrollbar-width: thin;
 }
 
 .record-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  margin: 10px 0;
-  background: rgba(0, 212, 255, 0.1);
-  border-radius: 10px;
+  gap: 12px;
+  padding: 14px;
+  margin: 8px 0;
+  border: 1px solid rgba(0, 212, 255, 0.15);
   border-left: 4px solid #00d4ff;
+  border-radius: 11px;
+  background: linear-gradient(105deg, rgba(18, 40, 70, 0.84), rgba(10, 17, 40, 0.84));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: transform 0.18s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.record-item:hover {
+  border-color: rgba(0, 212, 255, 0.45);
+  box-shadow: 0 7px 22px rgba(0, 0, 0, 0.26), 0 0 16px rgba(0, 212, 255, 0.08);
+  transform: translateX(2px);
 }
 
 .record-item.gold {
   border-left-color: #ffd700;
-  background: rgba(255, 215, 0, 0.1);
+  background: linear-gradient(105deg, rgba(113, 83, 8, 0.28), rgba(14, 20, 41, 0.88));
 }
 
 .record-item.silver {
   border-left-color: #c0c0c0;
+  background: linear-gradient(105deg, rgba(148, 163, 184, 0.18), rgba(14, 20, 41, 0.88));
 }
 
 .record-item.bronze {
   border-left-color: #cd7f32;
+  background: linear-gradient(105deg, rgba(146, 76, 29, 0.2), rgba(14, 20, 41, 0.88));
 }
 
 .record-rank {
-  font-size: 24px;
-  font-weight: bold;
+  flex: 0 0 42px;
+  font-size: 21px;
+  font-weight: 900;
   color: #00d4ff;
-  width: 40px;
+  text-shadow: 0 0 12px rgba(0, 212, 255, 0.45);
 }
 
 .record-info {
   flex: 1;
+  min-width: 0;
   text-align: left;
-  margin-left: 15px;
 }
 
 .record-time {
-  font-size: 22px;
-  color: #00d4ff;
-  font-weight: bold;
+  color: #73e8ff;
+  font-size: 20px;
+  font-weight: 900;
   font-family: 'Courier New', monospace;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
 }
 
-.record-date {
-  font-size: 12px;
-  color: #888;
-  margin-top: 3px;
+.record-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.record-meta span {
+  padding: 3px 7px;
+  color: #a8c3d6;
+  font-size: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.records-empty {
+  display: grid;
+  place-items: center;
+  min-height: 112px;
+  color: #7895aa;
+  font-size: 13px;
+}
+
+.records-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.records-actions .menu-btn {
+  margin: 0;
+  padding: 13px 12px;
+  font-size: 13px;
+}
+
+.menu-btn.records-clear {
+  color: #ffd7df;
+  border: 1px solid rgba(255, 71, 87, 0.5);
+  background: linear-gradient(135deg, rgba(90, 21, 38, 0.92), rgba(76, 29, 91, 0.92));
+  box-shadow: 0 4px 16px rgba(255, 71, 87, 0.18);
+}
+
+.menu-btn.records-clear:hover {
+  box-shadow: 0 6px 24px rgba(255, 71, 87, 0.34);
+}
+
+.menu-btn.records-back {
+  color: #effcff;
+  border: 1px solid rgba(0, 212, 255, 0.5);
+  background: linear-gradient(135deg, rgba(0, 90, 120, 0.9), rgba(76, 29, 149, 0.9));
+  box-shadow: 0 4px 16px rgba(0, 212, 255, 0.2);
+}
+
+.menu-btn.records-back:hover {
+  box-shadow: 0 6px 24px rgba(0, 212, 255, 0.34), 0 0 14px rgba(168, 85, 247, 0.2);
 }
 
 /* ===== PARAMÈTRES ===== */
@@ -486,12 +632,47 @@ body {
 .setting-group select {
   width: 100%;
   padding: 12px;
-  background: rgba(0, 212, 255, 0.1);
+  padding-right: 42px;
+  appearance: none;
+  -webkit-appearance: none;
+  color-scheme: dark;
+  background-color: #071522;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #00d4ff 50%),
+    linear-gradient(135deg, #00d4ff 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
   border: 2px solid #00d4ff;
   border-radius: 8px;
-  color: #fff;
+  color: #ecfeff;
   font-size: 14px;
   cursor: pointer;
+  box-shadow: inset 0 0 18px rgba(0, 212, 255, 0.06);
+}
+
+.setting-group select:hover {
+  border-color: #a855f7;
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.24);
+}
+
+.setting-group select:focus,
+.setting-group select:focus-visible {
+  outline: none;
+  border-color: #00d4ff;
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.16), 0 0 18px rgba(0, 212, 255, 0.24);
+}
+
+.setting-group select option {
+  color: #ecfeff;
+  background-color: #071522;
+}
+
+.setting-group select option:checked {
+  color: #ffffff;
+  background-color: #075985;
 }
 
 .checkbox-group {
@@ -571,6 +752,18 @@ body {
   text-align: center;
 }
 
+.custom-limit-info {
+  margin: -6px 0 18px;
+  padding: 10px 12px;
+  color: #b8eaff;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(0, 212, 255, 0.06);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .menu {
@@ -585,11 +778,7 @@ body {
     grid-template-columns: 1fr;
   }
   
-  .cell {
-    width: 30px;
-    height: 30px;
-    font-size: 16px;
-  }
+  .cell { font-size: 16px; }
   
   .stats-grid {
     grid-template-columns: 1fr;
@@ -597,6 +786,11 @@ body {
   
   .custom-inputs {
     grid-template-columns: 1fr;
+  }
+
+  .records-tabs,
+  .records-actions {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -630,8 +824,10 @@ body {
   z-index: 999;
 }
 </style>
+  <link rel="stylesheet" href="arcade-home.css">
 </head>
 <body>
+  <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil"><span class="arcade-home-icon" aria-hidden="true">⌂</span><span class="arcade-home-label">Accueil</span></a>
 
 <canvas id="particles-canvas"></canvas>
 
@@ -710,22 +906,26 @@ body {
     <div class="custom-inputs">
       <div class="input-group">
         <label>Largeur</label>
-        <input type="number" id="custom-width" value="16" min="8" max="30">
+        <input type="number" id="custom-width" value="16" min="8" max="30" oninput="updateCustomLimits()">
       </div>
       
       <div class="input-group">
         <label>Hauteur</label>
-        <input type="number" id="custom-height" value="16" min="8" max="24">
+        <input type="number" id="custom-height" value="16" min="8" max="20" oninput="updateCustomLimits()">
       </div>
       
       <div class="input-group">
         <label>Mines</label>
-        <input type="number" id="custom-mines" value="40" min="10" max="200">
+        <input type="number" id="custom-mines" value="40" min="10" max="89" oninput="updateCustomLimits()">
       </div>
     </div>
+
+    <p class="custom-limit-info" id="custom-limit-info" aria-live="polite">
+      Maximum : 30 × 20 (600 cases) · 89 mines pour cette grille
+    </p>
     
     <button class="menu-btn" onclick="startCustomGame()">✅ Lancer la partie</button>
-    <button class="menu-btn tertiary" onclick="hideCustom()">← Retour</button>
+    <button class="menu-btn settings-back" onclick="hideCustom()">← Retour</button>
   </div>
 </div>
 
@@ -739,7 +939,10 @@ body {
     <div id="new-record" style="display:none; color:#ffd700; font-size:22px; margin:20px 0; font-weight:bold;">
       🏆 NOUVEAU RECORD ! 🏆
     </div>
-    
+
+    <button id="view-custom-record" class="menu-btn secondary" style="display:none;" onclick="showRecords('custom')">
+      🏆 Voir mon classement personnalisé
+    </button>
     <button class="menu-btn" onclick="resetGame()">🔄 Rejouer</button>
     <button class="menu-btn tertiary" onclick="quitToMenu()">🏠 Menu Principal</button>
   </div>
@@ -747,19 +950,24 @@ body {
 
 <!-- Menu Records -->
 <div id="records-menu" class="overlay hidden">
-  <div class="menu">
+  <div class="menu records-menu-card">
     <h2>🏆 RECORDS</h2>
     
     <div class="records-tabs">
-      <button class="tab-btn active" onclick="showRecordTab('beginner')">Débutant</button>
-      <button class="tab-btn" onclick="showRecordTab('intermediate')">Inter.</button>
-      <button class="tab-btn" onclick="showRecordTab('expert')">Expert</button>
+      <button class="tab-btn active" data-record-tab="beginner" onclick="showRecordTab('beginner', this)">Débutant</button>
+      <button class="tab-btn" data-record-tab="intermediate" onclick="showRecordTab('intermediate', this)">Inter.</button>
+      <button class="tab-btn" data-record-tab="expert" onclick="showRecordTab('expert', this)">Expert</button>
+      <button class="tab-btn" data-record-tab="custom" onclick="showRecordTab('custom', this)">Perso.</button>
     </div>
+
+    <div class="records-note" id="records-note">Classement au meilleur temps.</div>
     
     <div class="records-list" id="records-list"></div>
-    
-    <button class="menu-btn tertiary" onclick="clearAllRecords()">🗑️ Effacer tout</button>
-    <button class="menu-btn tertiary" onclick="hideRecords()">← Retour</button>
+
+    <div class="records-actions">
+      <button class="menu-btn records-clear" onclick="clearAllRecords()">🗑️ Effacer tout</button>
+      <button class="menu-btn records-back" onclick="hideRecords()">← Retour</button>
+    </div>
   </div>
 </div>
 
@@ -804,7 +1012,7 @@ body {
     </div>
     
     <button class="menu-btn" onclick="saveSettings()">✅ Sauvegarder</button>
-    <button class="menu-btn tertiary" onclick="hideSettings()">← Retour</button>
+    <button class="menu-btn settings-back" onclick="hideSettings()">← Retour</button>
   </div>
 </div>
 
@@ -812,9 +1020,20 @@ body {
 // ============================================
 // CLASSE PRINCIPALE DU JEU
 // ============================================
+const CUSTOM_LIMITS = {
+  minWidth: 8,
+  maxWidth: 30,
+  minHeight: 8,
+  maxHeight: 20,
+  minMines: 10,
+  maxMines: 180,
+  maxCells: 600
+};
+
 class MinesweeperGame {
   constructor() {
     this.board = [];
+    this.cellElements = [];
     this.revealed = new Set();
     this.flagged = new Set();
     this.mines = new Set();
@@ -886,10 +1105,17 @@ class MinesweeperGame {
   createBoard() {
     const boardEl = document.getElementById('board');
     boardEl.innerHTML = '';
-    boardEl.style.gridTemplateColumns = `repeat(${this.width}, 35px)`;
-    
+    const totalCells = this.width * this.height;
+    const cellSize = totalCells > 480 ? 30 : 35;
+    boardEl.style.setProperty('--cell-size', `${cellSize}px`);
+    boardEl.style.gridTemplateColumns = `repeat(${this.width}, var(--cell-size))`;
+    boardEl.classList.toggle('large-board', totalCells > 480);
+
+    const fragment = document.createDocumentFragment();
+    this.cellElements = [];
     for (let y = 0; y < this.height; y++) {
       this.board[y] = [];
+      this.cellElements[y] = [];
       for (let x = 0; x < this.width; x++) {
         this.board[y][x] = {
           x, y,
@@ -901,9 +1127,11 @@ class MinesweeperGame {
         cell.className = 'cell';
         cell.dataset.x = x;
         cell.dataset.y = y;
-        boardEl.appendChild(cell);
+        this.cellElements[y][x] = cell;
+        fragment.appendChild(cell);
       }
     }
+    boardEl.appendChild(fragment);
   }
   
   placeMines(safeX, safeY) {
@@ -920,17 +1148,22 @@ class MinesweeperGame {
       }
     }
     
-    let placed = 0;
-    while (placed < this.mineCount) {
-      const x = Math.floor(Math.random() * this.width);
-      const y = Math.floor(Math.random() * this.height);
-      const key = `${x},${y}`;
-      
-      if (!this.mines.has(key) && !safeCells.has(key)) {
-        this.mines.add(key);
-        this.board[y][x].mine = true;
-        placed++;
+    const availableCells = [];
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const key = `${x},${y}`;
+        if (!safeCells.has(key)) availableCells.push({ x, y, key });
       }
+    }
+
+    // Mélange partiel : temps prévisible même avec beaucoup de mines.
+    for (let i = 0; i < this.mineCount; i++) {
+      const randomIndex = i + Math.floor(Math.random() * (availableCells.length - i));
+      [availableCells[i], availableCells[randomIndex]] = [availableCells[randomIndex], availableCells[i]];
+
+      const { x, y, key } = availableCells[i];
+      this.mines.add(key);
+      this.board[y][x].mine = true;
     }
     
     // Calculer les numéros
@@ -956,6 +1189,10 @@ class MinesweeperGame {
       }
     }
     return count;
+  }
+
+  getCellElement(x, y) {
+    return this.cellElements[y]?.[x] || null;
   }
   
   initAudio() {
@@ -1202,7 +1439,7 @@ class MinesweeperGame {
       this.stopTimer();
       
       // Particules d'explosion
-      const cellEl = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+      const cellEl = this.getCellElement(x, y);
       const rect = cellEl.getBoundingClientRect();
       this.particles.spawn(
         rect.left + rect.width / 2,
@@ -1215,14 +1452,16 @@ class MinesweeperGame {
       setTimeout(() => this.endGame(), 1000);
       return;
     }
-    
-    // Révéler
-    this.revealed.add(key);
-    this.renderCell(x, y);
+
+    // Révéler la zone en un seul parcours, sans récursion ni effets par case.
+    const revealedCells = this.revealSafeArea(x, y);
+    revealedCells.forEach(position => this.renderCell(position.x, position.y));
+    if (revealedCells.length === 0) return;
+
     this.audio.playReveal();
-    
-    // Particules
-    const cellEl = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+
+    // Un seul effet visuel au point de départ, même pour une grande cascade.
+    const cellEl = this.getCellElement(x, y);
     const rect = cellEl.getBoundingClientRect();
     this.particles.spawn(
       rect.left + rect.width / 2,
@@ -1230,23 +1469,48 @@ class MinesweeperGame {
       5,
       '#00d4ff'
     );
-    
-    // Si 0, révéler les voisins
-    if (cell.count === 0) {
+
+    // Vérifier victoire
+    this.checkWin();
+  }
+
+  revealSafeArea(startX, startY) {
+    const pending = [[startX, startY]];
+    const queued = new Set([`${startX},${startY}`]);
+    const revealedCells = [];
+
+    while (pending.length > 0) {
+      const [x, y] = pending.pop();
+      const key = `${x},${y}`;
+      const cell = this.board[y][x];
+
+      if (this.revealed.has(key) || this.flagged.has(key) || cell.mine) continue;
+
+      this.revealed.add(key);
+      revealedCells.push({ x, y });
+
+      if (cell.count !== 0) continue;
+
       for (let dy = -1; dy <= 1; dy++) {
         for (let dx = -1; dx <= 1; dx++) {
           if (dx === 0 && dy === 0) continue;
           const nx = x + dx;
           const ny = y + dy;
-          if (nx >= 0 && nx < this.width && ny >= 0 && ny < this.height) {
-            this.revealCell(nx, ny);
+          const neighborKey = `${nx},${ny}`;
+
+          if (
+            nx >= 0 && nx < this.width &&
+            ny >= 0 && ny < this.height &&
+            !queued.has(neighborKey)
+          ) {
+            queued.add(neighborKey);
+            pending.push([nx, ny]);
           }
         }
       }
     }
-    
-    // Vérifier victoire
-    this.checkWin();
+
+    return revealedCells;
   }
   
   toggleFlag(x, y) {
@@ -1304,7 +1568,7 @@ class MinesweeperGame {
   }
   
   revealMine(x, y) {
-    const cellEl = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+    const cellEl = this.getCellElement(x, y);
     cellEl.classList.add('mine', 'mine-hit', 'revealed');
     cellEl.textContent = '💣';
   }
@@ -1312,7 +1576,7 @@ class MinesweeperGame {
   showAllMines() {
     this.mines.forEach(key => {
       const [x, y] = key.split(',').map(Number);
-      const cellEl = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+      const cellEl = this.getCellElement(x, y);
       
       if (this.flagged.has(key)) {
         // Drapeau correct
@@ -1329,7 +1593,7 @@ class MinesweeperGame {
     this.flagged.forEach(key => {
       if (!this.mines.has(key)) {
         const [x, y] = key.split(',').map(Number);
-        const cellEl = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+        const cellEl = this.getCellElement(x, y);
         cellEl.classList.add('wrong-flag', 'revealed');
         cellEl.textContent = '❌';
       }
@@ -1393,7 +1657,7 @@ class MinesweeperGame {
   
   renderCell(x, y) {
     const cell = this.board[y][x];
-    const cellEl = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+    const cellEl = this.getCellElement(x, y);
     const key = `${x},${y}`;
     
     // Reset
@@ -1490,29 +1754,67 @@ class MinesweeperGame {
   }
   
   loadRecords() {
-    const saved = localStorage.getItem('minesweeper-records');
-    return saved ? JSON.parse(saved) : {
+    const emptyRecords = {
       beginner: [],
       intermediate: [],
-      expert: []
+      expert: [],
+      custom: []
     };
+
+    try {
+      const saved = JSON.parse(localStorage.getItem('minesweeper-records') || '{}');
+
+      Object.keys(emptyRecords).forEach(difficulty => {
+        if (Array.isArray(saved[difficulty])) {
+          emptyRecords[difficulty] = saved[difficulty];
+        }
+      });
+    } catch (error) {
+      console.warn('Les records sauvegardés sont illisibles, une liste vide est utilisée.', error);
+    }
+
+    return emptyRecords;
+  }
+
+  calculateCustomScore() {
+    const gridDifficulty = (this.width * this.height) + (this.mineCount * 4);
+    return Math.max(1, Math.round((gridDifficulty * 1000) / Math.max(this.elapsedTime, 1)));
   }
   
   saveRecord() {
-    if (!this.won || this.difficulty === 'custom') return false;
+    if (!this.won) return false;
     
     const record = {
       time: this.elapsedTime,
       date: Date.now()
     };
-    
+
+    if (this.difficulty === 'custom') {
+      Object.assign(record, {
+        width: this.width,
+        height: this.height,
+        mines: this.mineCount,
+        score: this.calculateCustomScore()
+      });
+    }
+
+    if (!Array.isArray(this.records[this.difficulty])) {
+      this.records[this.difficulty] = [];
+    }
+
     this.records[this.difficulty].push(record);
-    this.records[this.difficulty].sort((a, b) => a.time - b.time);
+    this.records[this.difficulty].sort((a, b) => {
+      if (this.difficulty === 'custom') {
+        return b.score - a.score || a.time - b.time;
+      }
+      return a.time - b.time;
+    });
     this.records[this.difficulty] = this.records[this.difficulty].slice(0, 10);
     
     localStorage.setItem('minesweeper-records', JSON.stringify(this.records));
-    
-    return this.records[this.difficulty].indexOf(record) < 3;
+
+    const recordRank = this.records[this.difficulty].indexOf(record);
+    return recordRank >= 0 && recordRank < 3;
   }
 }
 
@@ -1552,6 +1854,7 @@ function quitToMenu() {
 }
 
 function showCustom() {
+  updateCustomLimits();
   document.getElementById('main-menu').classList.add('hidden');
   document.getElementById('custom-menu').classList.remove('hidden');
 }
@@ -1561,15 +1864,70 @@ function hideCustom() {
   document.getElementById('main-menu').classList.remove('hidden');
 }
 
+function getCustomMaxMines(width, height) {
+  const cells = width * height;
+  return Math.min(
+    CUSTOM_LIMITS.maxMines,
+    Math.floor(cells * 0.35),
+    cells - 9
+  );
+}
+
+function updateCustomLimits() {
+  const widthInput = document.getElementById('custom-width');
+  const heightInput = document.getElementById('custom-height');
+  const minesInput = document.getElementById('custom-mines');
+  const info = document.getElementById('custom-limit-info');
+  const width = parseInt(widthInput.value);
+  const height = parseInt(heightInput.value);
+
+  if (!Number.isInteger(width) || !Number.isInteger(height)) {
+    info.textContent = 'Renseigne une largeur et une hauteur valides.';
+    return;
+  }
+
+  const safeWidth = Math.min(Math.max(width, CUSTOM_LIMITS.minWidth), CUSTOM_LIMITS.maxWidth);
+  const safeHeight = Math.min(Math.max(height, CUSTOM_LIMITS.minHeight), CUSTOM_LIMITS.maxHeight);
+  const maxMines = getCustomMaxMines(safeWidth, safeHeight);
+  minesInput.max = maxMines;
+
+  const mines = parseInt(minesInput.value);
+  if (Number.isInteger(mines) && mines > maxMines) minesInput.value = maxMines;
+
+  info.textContent = `${safeWidth} × ${safeHeight} = ${safeWidth * safeHeight} cases · maximum ${maxMines} mines`;
+}
+
 function startCustomGame() {
   const width = parseInt(document.getElementById('custom-width').value);
   const height = parseInt(document.getElementById('custom-height').value);
   const mines = parseInt(document.getElementById('custom-mines').value);
-  
-  // Validation
-  const maxMines = (width * height) - 9; // Laisser espace pour premier clic
-  if (mines > maxMines) {
-    alert(`Trop de mines ! Maximum : ${maxMines}`);
+
+  if (
+    !Number.isInteger(width) ||
+    width < CUSTOM_LIMITS.minWidth ||
+    width > CUSTOM_LIMITS.maxWidth
+  ) {
+    alert(`La largeur doit être comprise entre ${CUSTOM_LIMITS.minWidth} et ${CUSTOM_LIMITS.maxWidth}.`);
+    return;
+  }
+
+  if (
+    !Number.isInteger(height) ||
+    height < CUSTOM_LIMITS.minHeight ||
+    height > CUSTOM_LIMITS.maxHeight
+  ) {
+    alert(`La hauteur doit être comprise entre ${CUSTOM_LIMITS.minHeight} et ${CUSTOM_LIMITS.maxHeight}.`);
+    return;
+  }
+
+  if (width * height > CUSTOM_LIMITS.maxCells) {
+    alert(`La grille est limitée à ${CUSTOM_LIMITS.maxCells} cases.`);
+    return;
+  }
+
+  const maxMines = getCustomMaxMines(width, height);
+  if (!Number.isInteger(mines) || mines < CUSTOM_LIMITS.minMines || mines > maxMines) {
+    alert(`Le nombre de mines doit être compris entre ${CUSTOM_LIMITS.minMines} et ${maxMines}.`);
     return;
   }
   
@@ -1589,6 +1947,10 @@ function showGameOver(isRecord) {
     expert: 'Expert',
     custom: 'Personnalisé'
   };
+
+  const customScore = game.won && game.difficulty === 'custom'
+    ? game.calculateCustomScore()
+    : null;
   
   stats.innerHTML = `
     <div class="stat-item">
@@ -1607,16 +1969,32 @@ function showGameOver(isRecord) {
       <div class="label">Mines</div>
       <div class="value">${game.mineCount}</div>
     </div>
+    ${customScore !== null ? `
+      <div class="stat-item">
+        <div class="label">Score</div>
+        <div class="value">${customScore.toLocaleString('fr-FR')}</div>
+      </div>
+    ` : ''}
   `;
   
   document.getElementById('new-record').style.display = isRecord && game.won ? 'block' : 'none';
+  document.getElementById('view-custom-record').style.display = game.won && game.difficulty === 'custom'
+    ? 'block'
+    : 'none';
   document.getElementById('gameover-menu').classList.remove('hidden');
 }
 
-function showRecords() {
+function showRecords(difficulty = null) {
+  const availableDifficulties = ['beginner', 'intermediate', 'expert', 'custom'];
+  const requestedDifficulty = difficulty || game.difficulty;
+  const initialDifficulty = availableDifficulties.includes(requestedDifficulty)
+    ? requestedDifficulty
+    : 'beginner';
+
   document.getElementById('main-menu').classList.add('hidden');
+  document.getElementById('gameover-menu').classList.add('hidden');
   document.getElementById('records-menu').classList.remove('hidden');
-  showRecordTab('beginner');
+  showRecordTab(initialDifficulty);
 }
 
 function hideRecords() {
@@ -1624,29 +2002,43 @@ function hideRecords() {
   document.getElementById('main-menu').classList.remove('hidden');
 }
 
-function showRecordTab(difficulty) {
-  // Mettre à jour tabs
-  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
-    btn.classList.remove('active');
+function showRecordTab(difficulty, activeButton = null) {
+  document.querySelectorAll('#records-menu [data-record-tab]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.recordTab === difficulty);
   });
-  event.target.classList.add('active');
+
+  if (activeButton) {
+    activeButton.classList.add('active');
+  }
   
   const list = document.getElementById('records-list');
-  const records = game.records[difficulty];
+  const note = document.getElementById('records-note');
+  const records = Array.isArray(game.records[difficulty]) ? game.records[difficulty] : [];
+
+  note.textContent = difficulty === 'custom'
+    ? 'Le score récompense les grandes grilles, le nombre de mines et la rapidité.'
+    : 'Classement au meilleur temps.';
   
   if (records.length === 0) {
-    list.innerHTML = '<p style="text-align:center;color:#888;padding:40px;">Aucun record</p>';
+    list.innerHTML = '<div class="records-empty">Aucun record pour ce mode</div>';
   } else {
     list.innerHTML = records.map((r, i) => {
       const className = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
       const date = new Date(r.date).toLocaleDateString('fr-FR');
+      const isCustom = difficulty === 'custom';
+      const title = isCustom
+        ? `${Number(r.score || 0).toLocaleString('fr-FR')} pts`
+        : `${r.time}s`;
+      const details = isCustom
+        ? `<span>${r.width}×${r.height}</span><span>${r.mines} mines</span><span>${r.time}s</span><span>${date}</span>`
+        : `<span>${date}</span>`;
       
       return `
         <div class="record-item ${className}">
           <div class="record-rank">#${i + 1}</div>
           <div class="record-info">
-            <div class="record-time">${r.time}s</div>
-            <div class="record-date">${date}</div>
+            <div class="record-time">${title}</div>
+            <div class="record-meta">${details}</div>
           </div>
         </div>
       `;
@@ -1660,7 +2052,8 @@ function clearAllRecords() {
     game.records = {
       beginner: [],
       intermediate: [],
-      expert: []
+      expert: [],
+      custom: []
     };
     showRecordTab('beginner');
   }

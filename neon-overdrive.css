@@ -1,0 +1,626 @@
+/* ============================================================ */
+/* NEON OVERDRIVE - CSS */
+/* Shmup Rétro-Futuriste sur Canvas */
+/* ============================================================ */
+
+/* ============================================================ */
+/* 1. VARIABLES CSS - Thème Synthwave Néon */
+/* ============================================================ */
+
+:root {
+    /* 2. Couleurs principales */
+    --color-primary: #ff0080;      /* Rose néon */
+    --color-secondary: #00ffff;    /* Cyan néon */
+    --color-accent: #ffff00;       /* Jaune électrique */
+    --color-danger: #ff3333;       /* Rouge danger */
+    --color-success: #00ff00;      /* Vert succès */
+    
+    /* 3. Couleurs de fond */
+    --color-bg-dark: #0a0e27;
+    --color-bg-darker: #050810;
+    
+    /* 4. Texte */
+    --color-text-light: #ffffff;
+    --color-text-dim: #aaaaaa;
+    
+    /* 5. Glow effects */
+    --glow-primary: rgba(255, 0, 128, 0.6);
+    --glow-secondary: rgba(0, 255, 255, 0.6);
+    
+    /* 6. Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    
+    /* 7. Timing */
+    --trans-fast: 100ms;
+    --trans-normal: 200ms;
+    --trans-slow: 400ms;
+}
+
+/* ============================================================ */
+/* 8. RESET & BASE STYLES */
+/* ============================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    /* 9. Fond sombre arcade */
+    background: var(--color-bg-darker);
+    color: var(--color-text-light);
+    
+    /* 10. Polices rétro */
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    font-size: 16px;
+    
+    /* 11. Anti-aliasing */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+    /* 12. Désactiver interactions indésirables */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    
+    /* 13. Texture de scanlines subtile */
+    background-image: 
+        repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.05) 0px,
+            rgba(0, 0, 0, 0.05) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+}
+
+/* 14. Importer la police Press Start 2P */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* ============================================================ */
+/* 15. SYSTÈME DE SCREENS (SPA) */
+/* ============================================================ */
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* 16. Hidden par défaut */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--trans-slow);
+}
+
+.screen-active {
+    /* 17. Visible et interactive */
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ============================================================ */
+/* 18. ÉCRAN DE MENU */
+/* ============================================================ */
+
+#menuScreen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(
+        135deg,
+        var(--color-bg-darker) 0%,
+        #1a0a3a 50%,
+        var(--color-bg-darker) 100%
+    );
+}
+
+.menu-container {
+    text-align: center;
+    max-width: 90%;
+    animation: menuFadeIn 0.8s ease-out;
+}
+
+/* 19. Titre du jeu */
+.game-title {
+    font-size: 28px;
+    color: var(--color-primary);
+    text-shadow: 
+        0 0 10px var(--color-primary),
+        0 0 20px var(--color-primary),
+        0 0 30px var(--glow-primary);
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 2px;
+    animation: titlePulse 2s ease-in-out infinite;
+}
+
+.game-subtitle {
+    font-size: 14px;
+    color: var(--color-secondary);
+    text-shadow: 0 0 10px var(--color-secondary);
+    margin-bottom: var(--spacing-lg);
+    letter-spacing: 1px;
+}
+
+/* ============================================================ */
+/* 20. BOUTONS GÉNÉRAUX */
+/* ============================================================ */
+
+.btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 2px solid currentColor;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--color-primary);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all var(--trans-normal);
+    
+    appearance: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn:hover {
+    box-shadow: 0 0 20px var(--color-primary);
+    transform: scale(1.05);
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+/* 21. Variant Start */
+.btn-start {
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 16px;
+    text-shadow: 0 0 10px var(--color-primary);
+    animation: startBtnPulse 1s ease-in-out infinite;
+}
+
+/* 22. Variant Restart & Menu */
+.btn-restart,
+.btn-menu {
+    margin: var(--spacing-sm);
+    min-width: 150px;
+}
+
+/* ============================================================ */
+/* 23. LEADERBOARD (Top 3) */
+/* ============================================================ */
+
+.leaderboard {
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md);
+    border: 2px solid var(--color-secondary);
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+}
+
+.leaderboard-title {
+    font-size: 14px;
+    color: var(--color-secondary);
+    text-shadow: 0 0 10px var(--color-secondary);
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 1px;
+}
+
+.scores-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.score-item {
+    font-size: 13px;
+    color: var(--color-accent);
+    text-shadow: 0 0 5px var(--color-accent);
+    font-family: 'Courier New', monospace;
+}
+
+.score-rank {
+    color: var(--color-primary);
+    margin-right: var(--spacing-sm);
+}
+
+.no-scores {
+    font-size: 13px;
+    color: var(--color-text-dim);
+}
+
+.btn-clear-scores {
+    margin-top: var(--spacing-md);
+    color: var(--color-danger);
+    font-size: 11px;
+}
+
+/* ============================================================ */
+/* 24. INSTRUCTIONS */
+/* ============================================================ */
+
+.instructions {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--color-text-dim);
+}
+
+.instruction-text {
+    font-size: 11px;
+    color: var(--color-text-light);
+    margin: var(--spacing-xs) 0;
+}
+
+/* ============================================================ */
+/* 25. ÉCRAN DE JEU */
+/* ============================================================ */
+
+#gameScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: var(--color-bg-darker);
+    padding: 0;
+}
+
+/* ============================================================ */
+/* 26. HUD (Head-Up Display) - Barre d'infos */
+/* ============================================================ */
+
+.game-hud {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: rgba(0, 0, 0, 0.8);
+    border-bottom: 2px solid var(--color-secondary);
+    box-shadow: 0 0 15px var(--glow-secondary);
+}
+
+.hud-label {
+    font-size: 15px;
+    color: var(--color-secondary);
+    text-shadow: 0 0 10px var(--color-secondary);
+    letter-spacing: 1px;
+    font-family: 'Courier New', monospace;
+}
+
+.hud-left, .hud-right {
+    flex: 1;
+}
+
+.hud-center {
+    flex: 2;
+    text-align: center;
+}
+
+.btn-pause {
+    flex: 0 0 auto;
+    margin-left: var(--spacing-sm);
+    padding: 7px 9px;
+    color: var(--color-accent);
+    font-size: 10px;
+}
+
+/* ============================================================ */
+/* 27. CANVAS - Zone de jeu */
+/* ============================================================ */
+
+#gameCanvas {
+    /* 28. Responsive : pixel-perfect scaling */
+    width: 100vw;
+    height: 100vh;
+    max-width: 400px;
+    max-height: 600px;
+    
+    object-fit: contain;
+    background: linear-gradient(
+        180deg,
+        #0a0e27 0%,
+        #1a0a3a 50%,
+        #0a0e27 100%
+    );
+    
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    
+    /* 29. Flex pour centrer */
+    flex: 1;
+    align-self: center;
+}
+
+/* ============================================================ */
+/* 30. READY TEXT (Countdown avant jeu) */
+/* ============================================================ */
+
+.ready-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    font-size: 80px;
+    color: var(--color-primary);
+    text-shadow: 
+        0 0 20px var(--color-primary),
+        0 0 40px var(--glow-primary);
+    
+    opacity: 0;
+    pointer-events: none;
+    animation: readyTextShow 0.5s ease-out;
+}
+
+/* Menu de pause superposé au jeu */
+.pause-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 8, 16, 0.8);
+    backdrop-filter: blur(3px);
+}
+
+.pause-overlay[hidden] {
+    display: none;
+}
+
+.pause-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    min-width: min(90vw, 300px);
+    padding: var(--spacing-lg);
+    border: 2px solid var(--color-secondary);
+    background: rgba(10, 14, 39, 0.95);
+    box-shadow: 0 0 25px var(--glow-secondary);
+}
+
+.pause-title {
+    color: var(--color-secondary);
+    font-size: 28px;
+    text-shadow: 0 0 15px var(--color-secondary);
+}
+
+.pause-container .btn {
+    min-width: 230px;
+}
+
+/* ============================================================ */
+/* 31. ÉCRAN GAME OVER */
+/* ============================================================ */
+
+#gameOverScreen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(
+        135deg,
+        var(--color-danger) 0%,
+        var(--color-bg-darker) 50%,
+        var(--color-danger) 100%
+    );
+}
+
+.game-over-container {
+    text-align: center;
+    max-width: 90%;
+    animation: gameOverSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 32. Titre Game Over */
+.game-over-title {
+    font-size: 28px;
+    color: var(--color-danger);
+    text-shadow: 
+        0 0 20px var(--color-danger),
+        0 0 40px rgba(255, 51, 51, 0.5);
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 2px;
+}
+
+.game-over-subtitle {
+    font-size: 15px;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-lg);
+    animation: warningBlink 0.5s infinite;
+}
+
+/* 33. Stats */
+.game-over-stats {
+    margin: var(--spacing-lg) 0;
+}
+
+.stat-line {
+    font-size: 15px;
+    color: var(--color-text-light);
+    margin: var(--spacing-sm) 0;
+    font-family: 'Courier New', monospace;
+}
+
+/* 34. New Record Banner */
+.new-record-banner {
+    padding: var(--spacing-md);
+    background: rgba(0, 255, 0, 0.1);
+    border: 2px solid var(--color-success);
+    border-radius: 4px;
+    margin: var(--spacing-lg) 0;
+}
+
+.new-record-text {
+    font-size: 16px;
+    color: var(--color-success);
+    text-shadow: 0 0 15px var(--color-success);
+    animation: recordPulse 0.6s ease-in-out infinite;
+}
+
+/* 35. Boutons Game Over */
+.game-over-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.game-over-buttons .btn {
+    min-width: 180px;
+    margin: 0 auto;
+}
+
+/* ============================================================ */
+/* 36. ANIMATIONS PRINCIPALES */
+/* ============================================================ */
+
+/* 37. Menu Animations */
+@keyframes menuFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes titlePulse {
+    0%, 100% {
+        text-shadow: 
+            0 0 10px var(--color-primary),
+            0 0 20px var(--color-primary),
+            0 0 30px var(--glow-primary);
+        transform: scale(1);
+    }
+    50% {
+        text-shadow: 
+            0 0 20px var(--color-primary),
+            0 0 40px var(--color-primary),
+            0 0 60px var(--glow-primary);
+        transform: scale(1.05);
+    }
+}
+
+@keyframes startBtnPulse {
+    0%, 100% {
+        box-shadow: 0 0 10px var(--color-primary);
+    }
+    50% {
+        box-shadow: 0 0 30px var(--color-primary), 0 0 50px var(--glow-primary);
+    }
+}
+
+/* 38. Ready Text Animation */
+@keyframes readyTextShow {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+}
+
+/* 39. Game Over Animations */
+@keyframes gameOverSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.7) translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes warningBlink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes recordPulse {
+    0%, 100% {
+        transform: scale(1);
+        text-shadow: 0 0 10px var(--color-success);
+    }
+    50% {
+        transform: scale(1.05);
+        text-shadow: 0 0 20px var(--color-success);
+    }
+}
+
+/* ============================================================ */
+/* 40. RESPONSIVE - Mobile First */
+/* ============================================================ */
+
+/* 41. Très petits écrans (320px) */
+@media (max-width: 360px) {
+    .game-title {
+        font-size: 22px;
+    }
+    
+    .game-over-title {
+        font-size: 22px;
+    }
+    
+    .btn-start {
+        font-size: 13px;
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+}
+
+/* 42. Smartphones standards (360px - 768px) */
+@media (min-width: 361px) {
+    body {
+        font-size: 12px;
+    }
+    
+    .game-title {
+        font-size: 32px;
+    }
+}
+
+/* 43. Tablettes et paysage (768px+) */
+@media (min-width: 769px) or (orientation: landscape) {
+    .game-title {
+        font-size: 40px;
+    }
+    
+    #gameCanvas {
+        max-width: 600px;
+        max-height: 900px;
+    }
+}
+
+/* ============================================================ */
+/* 44. SAFE AREA INSETS (iPhone avec encoche) */
+/* ============================================================ */
+
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+        padding-top: max(0px, env(safe-area-inset-top));
+        padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+}

@@ -1,0 +1,2354 @@
+/* ============================================================ */
+/* IMPORTS - Doit rester au tout début du fichier                */
+/* ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+/* ============================================================ */
+/* DESIGN TOKENS - Thèmes des 4 ères technologiques              */
+/* ============================================================ */
+
+:root {
+  /* Le jeu garde toujours le gabarit d'un grand smartphone. */
+  --mobile-app-width: 430px;
+
+  /* Ère 8-BITS (terminal monochrome vert) */
+  --era-8bits-primary: #00ff00;
+  --era-8bits-secondary: #00aa00;
+  --era-8bits-dark: #001a00;
+  --era-8bits-glow: rgba(0, 255, 0, 0.6);
+
+  /* Ère 16-BITS (Megadrive - couleurs criardes) */
+  --era-16bits-primary: #ff00ff;
+  --era-16bits-secondary: #00ffff;
+  --era-16bits-dark: #1a001a;
+  --era-16bits-glow: rgba(255, 0, 255, 0.6);
+
+  /* Ère 32/64-BITS (bleu/violet début 3D) */
+  --era-32bits-primary: #00d4ff;
+  --era-32bits-secondary: #9d00ff;
+  --era-32bits-dark: #0a001f;
+  --era-32bits-glow: rgba(157, 0, 255, 0.6);
+
+  /* Ère CYBER-RETRO (Synthwave néon maximal) */
+  --era-cyber-primary: #ff0080;
+  --era-cyber-secondary: #00ffff;
+  --era-cyber-dark: #0a0e27;
+  --era-cyber-glow: rgba(255, 0, 128, 0.8);
+
+  /* Couleurs actives (8-BITS au démarrage, écrasées par body.era-*) */
+  --color-primary: var(--era-8bits-primary);
+  --color-secondary: var(--era-8bits-secondary);
+  --color-dark: var(--era-8bits-dark);
+  --color-glow: var(--era-8bits-glow);
+
+  /* Couleurs neutres */
+  --color-bg-dark: #0a0e27;
+  --color-text-light: #ffffff;
+  --color-text-dim: #aaaaaa;
+  --color-success: #00ff00;
+  --color-danger: #ff3333;
+  --color-warning: #ffaa00;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Timing */
+  --transition-fast: 100ms;
+  --transition-normal: 200ms;
+  --transition-slow: 400ms;
+
+  /* Radii */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* Z-index scale */
+  --z-scanline: 5;
+  --z-modal: 1000;
+}
+
+/* ============================================================ */
+/* ANIMATABLE CUSTOM PROPERTIES                                  */
+/* Enregistre les couleurs d'ère comme <color> pour permettre    */
+/* une transition fluide lors du changement d'ère (voir plus bas)*/
+/* Sans @property, un changement de --color-primary "saute"      */
+/* instantanément : c'était l'un des bugs visuels du fichier.    */
+/* ============================================================ */
+
+@property --color-primary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #00ff00;
+}
+
+@property --color-secondary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #00aa00;
+}
+
+@property --color-dark {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #001a00;
+}
+
+@property --color-glow {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(0, 255, 0, 0.6);
+}
+
+/* ============================================================ */
+/* RESET & BASE STYLES */
+/* ============================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  /* Fallback puis unité dynamique (évite le redimensionnement */
+  /* brutal causé par la barre d'adresse mobile) */
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+html {
+  /* Fond visible uniquement autour du jeu sur tablette/desktop. */
+  background:
+    radial-gradient(circle at 50% 35%, #151c4a 0%, #050711 55%, #010208 100%);
+}
+
+body {
+  width: min(100%, var(--mobile-app-width));
+  margin-inline: auto;
+  position: relative;
+
+  /* Fond sombre arcade */
+  background: var(--color-bg-dark);
+  color: var(--color-text-light);
+
+  /* Polices rétro */
+  font-family: "Press Start 2P", "Courier New", monospace;
+  font-size: 12px;
+
+  /* Anti-aliasing + accélération matérielle */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform: translate3d(0, 0, 0);
+
+  /* Désactiver interactions indésirables */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+
+  /* Transition fluide des couleurs lors du changement d'ère */
+  /* (fonctionne grâce aux @property déclarés plus haut)      */
+  transition:
+    --color-primary var(--transition-slow) ease,
+    --color-secondary var(--transition-slow) ease,
+    --color-dark var(--transition-slow) ease,
+    --color-glow var(--transition-slow) ease;
+
+  /* Délimite discrètement l'écran mobile sur un grand affichage. */
+  box-shadow: 0 0 45px rgba(0, 0, 0, 0.85);
+}
+
+/* ============================================================ */
+/* ACCESSIBILITÉ - Focus clavier & mouvement réduit              */
+/* ============================================================ */
+
+/* Le jeu retire l'outline par défaut sur les boutons (voir plus */
+/* bas) : on le restitue proprement au clavier pour ne pas casser*/
+/* l'accessibilité tout en gardant un rendu propre à la souris.  */
+.btn:focus-visible,
+.click-button:focus-visible,
+.upgrade-buy-btn:focus-visible,
+.setting-toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================ */
+/* SYSTÈME DE SCREENS (SPA) */
+/* ============================================================ */
+
+.screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  /* Masqué par défaut */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-slow);
+}
+
+.screen-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Texture "scanline" CRT, au-dessus du contenu de chaque écran. */
+/* NB : avant, ce motif était appliqué en background-image sur   */
+/* <body>, mais les écrans opaques le recouvraient entièrement — */
+/* il n'était donc jamais visible. Il vit maintenant ici, avec   */
+/* un z-index dédié et pointer-events:none pour rester purement  */
+/* décoratif (les clics et le tactile le traversent normalement).*/
+.screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-scanline);
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.5) 0px,
+    rgba(0, 0, 0, 0.5) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.06;
+}
+
+/* Zones à l'abri des encoches / de la barre d'accueil iOS.      */
+/* Avant, ce padding était posé sur <body> : or les écrans sont  */
+/* en position:absolute, leur bloc de référence est le viewport, */
+/* pas le padding-box de <body> — le padding n'avait donc aucun  */
+/* effet. Il est maintenant posé directement sur .screen.        */
+@supports (padding: max(0px)) {
+  .screen {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-top: max(0px, env(safe-area-inset-top));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
+
+/* ============================================================ */
+/* ÉCRAN DE MENU */
+/* ============================================================ */
+
+#menuScreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--color-dark) 0%,
+    var(--color-bg-dark) 50%,
+    var(--color-dark) 100%
+  );
+}
+
+.menu-container {
+  text-align: center;
+  animation: menuFadeIn 1s ease-in-out;
+}
+
+.logo-container {
+  margin-bottom: var(--spacing-lg);
+}
+
+.logo-title {
+  font-size: 32px;
+  color: var(--color-primary);
+  text-shadow:
+    0 0 10px var(--color-primary),
+    0 0 20px var(--color-primary),
+    0 0 30px var(--color-glow);
+  animation: logoPulse 2s ease-in-out infinite;
+  letter-spacing: 4px;
+}
+
+.logo-subtitle {
+  font-size: 10px;
+  color: var(--color-secondary);
+  margin-top: var(--spacing-sm);
+  animation: subtitleGlow 3s ease-in-out infinite;
+}
+
+.press-start-container {
+  margin: var(--spacing-lg) 0;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.press-start-text {
+  font-size: 12px;
+  color: var(--color-primary);
+  text-shadow:
+    0 0 10px var(--color-primary),
+    0 0 20px var(--color-glow);
+  animation: textBlink 0.6s infinite;
+  letter-spacing: 2px;
+}
+
+.menu-info {
+  margin: var(--spacing-lg) 0;
+}
+
+.menu-description {
+  font-size: 8px;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-sm);
+  animation: descFadeInUp 1.2s ease-in-out;
+}
+
+.menu-version {
+  font-size: 6px;
+  color: var(--color-text-dim);
+  animation: descFadeInUp 1.4s ease-in-out;
+}
+
+/* ============================================================ */
+/* ÉCRAN DE JEU */
+/* ============================================================ */
+
+#gameScreen {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(
+    180deg,
+    var(--color-dark) 0%,
+    var(--color-bg-dark) 100%
+  );
+}
+
+/* Barre supérieure - Infos de l'ère */
+.game-header {
+  padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm);
+  text-align: center;
+  border-bottom: 2px solid var(--color-primary);
+  box-shadow: 0 0 15px var(--color-glow);
+  animation: headerGlow 2s ease-in-out infinite;
+}
+
+.era-badge {
+  display: inline-block;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--color-primary);
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+}
+
+.era-label {
+  font-size: 10px;
+  color: var(--color-primary);
+  text-shadow: 0 0 10px var(--color-primary);
+  display: block;
+  letter-spacing: 2px;
+}
+
+.era-progress {
+  font-size: 8px;
+  color: var(--color-secondary);
+  display: block;
+  margin-top: var(--spacing-xs);
+}
+
+/* Zone principale du jeu */
+.game-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--spacing-md);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Affichage du score */
+.score-display {
+  text-align: center;
+  margin: var(--spacing-md) 0 var(--spacing-lg);
+  animation: scoreSlideDown 0.6s ease-out;
+}
+
+.score-label {
+  font-size: 8px;
+  color: var(--color-secondary);
+  margin-bottom: var(--spacing-xs);
+  letter-spacing: 1px;
+}
+
+.score-value {
+  font-size: 24px;
+  color: var(--color-primary);
+  text-shadow:
+    0 0 10px var(--color-primary),
+    0 0 20px var(--color-glow);
+  font-weight: bold;
+  font-family: "Courier New", monospace;
+  transition: all var(--transition-fast);
+}
+
+.cps-label {
+  font-size: 8px;
+  color: var(--color-text-dim);
+  margin-top: var(--spacing-sm);
+  animation: cpsPulse 1.5s ease-in-out infinite;
+}
+
+/* ============================================================ */
+/* LE BIG BUTTON CLICKABLE - CŒUR DU JEU */
+/* ============================================================ */
+
+.click-button {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+
+  border: 4px solid var(--color-primary);
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.1) 0%,
+    var(--color-dark) 100%
+  );
+  color: var(--color-primary);
+  font-size: 50px;
+  cursor: pointer;
+
+  box-shadow:
+    0 0 20px var(--color-primary),
+    0 0 40px var(--color-glow),
+    inset 0 0 20px rgba(0, 0, 0, 0.5);
+
+  transition: all var(--transition-fast) cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  animation: clickButtonPulse 1.2s ease-in-out infinite;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.click-button-inner {
+  display: block;
+  animation: innerBounce 0.8s ease-in-out infinite;
+}
+
+.click-button:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 0 30px var(--color-primary),
+    0 0 60px var(--color-glow),
+    inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.click-button:active {
+  transform: scale(0.92);
+  box-shadow:
+    0 0 10px var(--color-primary),
+    0 0 20px var(--color-glow),
+    inset 0 0 30px rgba(0, 0, 0, 0.8);
+  animation: none;
+}
+
+/* ============================================================ */
+/* FLOATING NUMBERS (Les "+1" qui flottent) */
+/* ============================================================ */
+
+.floating-numbers-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+}
+
+.floating-number {
+  position: absolute;
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--color-primary);
+  text-shadow: 0 0 10px var(--color-primary);
+  pointer-events: none;
+  animation: floatUp 1s ease-out forwards;
+  font-family: "Courier New", monospace;
+}
+
+/* ============================================================ */
+/* SECTION DES UPGRADES */
+/* ============================================================ */
+
+.upgrades-section {
+  width: 100%;
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md) 0;
+}
+
+.upgrades-title {
+  font-size: 10px;
+  color: var(--color-secondary);
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--color-secondary);
+}
+
+.upgrades-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-md);
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Carte d'upgrade */
+.upgrade-card {
+  padding: var(--spacing-md);
+  border: 2px solid var(--color-secondary);
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-md);
+
+  transition: all var(--transition-normal);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  animation: upgradeSlideIn 0.5s ease-out;
+}
+
+.upgrade-card:hover {
+  border-color: var(--color-primary);
+  box-shadow:
+    0 0 15px var(--color-secondary),
+    inset 0 0 10px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.upgrade-card.disabled {
+  /* Seul le bouton BUY est cliquable : pas de cursor:pointer   */
+  /* ici, pour ne pas laisser croire que toute la carte l'est.  */
+  opacity: 0.5;
+  border-color: var(--color-text-dim);
+}
+
+.upgrade-card.disabled:hover {
+  border-color: var(--color-text-dim);
+  box-shadow: none;
+  transform: none;
+}
+
+/* Détails de l'upgrade */
+.upgrade-info {
+  text-align: left;
+  flex: 1;
+}
+
+.upgrade-name {
+  font-size: 8px;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+  letter-spacing: 1px;
+}
+
+.upgrade-effect {
+  font-size: 6px;
+  color: var(--color-text-dim);
+  margin-bottom: var(--spacing-xs);
+}
+
+.upgrade-cost {
+  font-size: 8px;
+  color: var(--color-secondary);
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+}
+
+.upgrade-owned {
+  font-size: 6px;
+  color: var(--color-success);
+  margin-top: var(--spacing-xs);
+}
+
+/* Bouton d'achat */
+.upgrade-buy-btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-left: var(--spacing-md);
+  border: 2px solid var(--color-primary);
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--color-primary);
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+.upgrade-buy-btn:hover:not(:disabled) {
+  box-shadow: 0 0 15px var(--color-primary);
+  transform: scale(1.05);
+}
+
+.upgrade-buy-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.upgrade-buy-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: var(--color-text-dim);
+  border-color: var(--color-text-dim);
+}
+
+/* ============================================================ */
+/* BARRE DE FOOTER */
+/* ============================================================ */
+
+.game-footer {
+  padding: var(--spacing-md);
+  border-top: 2px solid var(--color-primary);
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ============================================================ */
+/* BOUTONS GÉNÉRAUX */
+/* ============================================================ */
+
+.btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--color-primary);
+  background: rgba(0, 0, 0, 0.9);
+  color: var(--color-primary);
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal);
+  white-space: nowrap;
+
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.btn:hover {
+  box-shadow: 0 0 20px var(--color-primary);
+  transform: scale(1.05);
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-primary {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  text-shadow: 0 0 10px var(--color-primary);
+}
+
+.btn-primary:hover {
+  box-shadow:
+    0 0 20px var(--color-primary),
+    0 0 40px var(--color-glow);
+}
+
+.btn-icon {
+  padding: var(--spacing-sm);
+  min-width: 40px;
+  min-height: 40px;
+  font-size: 18px;
+}
+
+.btn-prestige {
+  border-color: var(--color-success);
+  color: var(--color-success);
+  text-shadow: 0 0 10px var(--color-success);
+  animation: prestigePulse 1s ease-in-out infinite;
+}
+
+.btn-prestige:hover {
+  box-shadow:
+    0 0 20px var(--color-success),
+    0 0 40px var(--color-success);
+}
+
+.btn-secondary {
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+}
+
+.btn-secondary:hover {
+  box-shadow: 0 0 20px var(--color-secondary);
+}
+
+.btn-danger {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+  text-shadow: 0 0 10px var(--color-danger);
+}
+
+.btn-danger:hover {
+  box-shadow:
+    0 0 20px var(--color-danger),
+    0 0 40px rgba(255, 51, 51, 0.5);
+}
+
+/* ============================================================ */
+/* MODALS */
+/* ============================================================ */
+
+.modal {
+  /* Reste dans le gabarit mobile centré, y compris sur desktop. */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+  z-index: var(--z-modal);
+}
+
+.modal.modal-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: linear-gradient(
+    135deg,
+    var(--color-dark) 0%,
+    var(--color-bg-dark) 100%
+  );
+  border: 3px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  box-shadow:
+    0 0 30px var(--color-primary),
+    0 0 60px var(--color-glow),
+    inset 0 0 20px rgba(0, 0, 0, 0.5);
+
+  animation: modalSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-title {
+  font-size: 12px;
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+  text-shadow: 0 0 15px var(--color-primary);
+  letter-spacing: 2px;
+}
+
+/* Prestige Modal */
+.prestige-info {
+  margin: var(--spacing-lg) 0;
+  text-align: center;
+}
+
+.prestige-description {
+  font-size: 8px;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.6;
+}
+
+.prestige-calculation {
+  padding: var(--spacing-md);
+  border: 2px solid var(--color-secondary);
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.prestige-calculation p {
+  font-size: 8px;
+  color: var(--color-secondary);
+  line-height: 1.8;
+  font-family: "Courier New", monospace;
+}
+
+/* Settings Modal */
+.settings-options {
+  margin: var(--spacing-lg) 0;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-secondary);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.setting-label {
+  font-size: 8px;
+  color: var(--color-text-light);
+  flex: 1;
+  text-align: left;
+}
+
+/* Interrupteur "pixel" custom.                                  */
+/* Avant : une simple <input type="checkbox"> redimensionnée via */
+/* width/height sans appearance:none, ce qui donne un rendu       */
+/* incohérent selon les navigateurs (case déformée). Remplacé par */
+/* un vrai toggle stylé à la main, dans l'esprit rétro du reste.  */
+.setting-toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border: 2px solid var(--color-secondary);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
+  transition: all var(--transition-normal);
+}
+
+.setting-toggle::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: var(--color-text-dim);
+  border-radius: 1px;
+  transition: all var(--transition-fast);
+}
+
+.setting-toggle:checked {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 10px var(--color-glow);
+}
+
+.setting-toggle:checked::before {
+  left: 22px;
+  background: var(--color-primary);
+  box-shadow: 0 0 8px var(--color-primary);
+}
+
+.settings-danger-zone {
+  margin: var(--spacing-lg) 0;
+  padding: var(--spacing-md);
+  border: 2px solid var(--color-danger);
+  background: rgba(255, 51, 51, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.danger-label {
+  font-size: 8px;
+  color: var(--color-danger);
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+  letter-spacing: 1px;
+}
+
+/* Modal Buttons */
+.modal-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--spacing-lg);
+}
+
+.modal-buttons .btn {
+  flex: 1;
+  min-width: 100px;
+}
+
+/* ============================================================ */
+/* KEYFRAME ANIMATIONS - LE CŒUR DE LA VIE VISUELLE */
+/* ============================================================ */
+
+/* Menu Animations */
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes logoPulse {
+  0%,
+  100% {
+    text-shadow:
+      0 0 10px var(--color-primary),
+      0 0 20px var(--color-primary),
+      0 0 30px var(--color-glow);
+    transform: scale(1);
+  }
+  50% {
+    text-shadow:
+      0 0 20px var(--color-primary),
+      0 0 40px var(--color-primary),
+      0 0 60px var(--color-glow);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes subtitleGlow {
+  0%,
+  100% {
+    text-shadow: 0 0 5px var(--color-secondary);
+    opacity: 0.8;
+  }
+  50% {
+    text-shadow: 0 0 15px var(--color-secondary);
+    opacity: 1;
+  }
+}
+
+@keyframes textBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes descFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Game Screen Animations */
+@keyframes headerGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 15px var(--color-glow);
+  }
+  50% {
+    box-shadow: 0 0 25px var(--color-glow);
+  }
+}
+
+/* NB : cette animation est rejouée par game.js à chaque tick de  */
+/* l'auto-clicker (10x/seconde), pas seulement au clic — elle a   */
+/* donc été volontairement rendue très discrète pour ne pas       */
+/* clignoter en permanence à l'écran. Le vrai correctif (ne       */
+/* déclencher l'animation qu'au moment d'un gain réel) se fera    */
+/* côté game.js.                                                  */
+@keyframes scoreSlideDown {
+  from {
+    opacity: 0.6;
+    transform: translateY(-3px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cpsPulse {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Click Button Animations */
+@keyframes clickButtonPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px var(--color-primary),
+      0 0 40px var(--color-glow),
+      inset 0 0 20px rgba(0, 0, 0, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 30px var(--color-primary),
+      0 0 60px var(--color-glow),
+      inset 0 0 20px rgba(0, 0, 0, 0.5);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes innerBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-3px);
+  }
+  75% {
+    transform: translateY(3px);
+  }
+}
+
+/* Floating Numbers Animation */
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60px) scale(0.8);
+  }
+}
+
+/* Upgrade Animations */
+@keyframes upgradeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Button Animations */
+@keyframes prestigePulse {
+  0%,
+  100% {
+    box-shadow: 0 0 10px var(--color-success);
+  }
+  50% {
+    box-shadow:
+      0 0 20px var(--color-success),
+      0 0 30px var(--color-success);
+  }
+}
+
+/* Modal Animations */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.7) translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ============================================================ */
+/* SIGNATURE D'ÈRE - CYBER-RETRO                                 */
+/* Un unique moment fort réservé à la dernière ère : horizon      */
+/* synthwave (soleil + lignes de grille) posé en couche de fond   */
+/* sur #gameScreen. Ajouté en background (et non en ::after       */
+/* positionné) pour rester garanti sous tout le contenu, sans      */
+/* risque de recouvrir les boutons ou le texte.                   */
+/* ============================================================ */
+
+body.era-cyber #gameScreen {
+  background:
+    radial-gradient(
+      ellipse 70% 45% at 50% 105%,
+      rgba(255, 0, 128, 0.3),
+      transparent 70%
+    ),
+    repeating-linear-gradient(
+      to top,
+      rgba(0, 255, 255, 0.12) 0px,
+      rgba(0, 255, 255, 0.12) 1px,
+      transparent 1px,
+      transparent 26px
+    ),
+    linear-gradient(180deg, var(--color-dark) 0%, var(--color-bg-dark) 100%);
+}
+
+/* ============================================================ */
+/* THÈMES PAR ÈRE - appliqués via body.era-* (défini en JS)      */
+/* ============================================================ */
+
+body.era-8bits {
+  --color-primary: var(--era-8bits-primary);
+  --color-secondary: var(--era-8bits-secondary);
+  --color-dark: var(--era-8bits-dark);
+  --color-glow: var(--era-8bits-glow);
+}
+
+body.era-16bits {
+  --color-primary: var(--era-16bits-primary);
+  --color-secondary: var(--era-16bits-secondary);
+  --color-dark: var(--era-16bits-dark);
+  --color-glow: var(--era-16bits-glow);
+}
+
+body.era-32bits {
+  --color-primary: var(--era-32bits-primary);
+  --color-secondary: var(--era-32bits-secondary);
+  --color-dark: var(--era-32bits-dark);
+  --color-glow: var(--era-32bits-glow);
+}
+
+body.era-cyber {
+  --color-primary: var(--era-cyber-primary);
+  --color-secondary: var(--era-cyber-secondary);
+  --color-dark: var(--era-cyber-dark);
+  --color-glow: var(--era-cyber-glow);
+}
+
+/* ============================================================ */
+/* SCROLLBAR STYLING (Mobile + Desktop) */
+/* ============================================================ */
+
+.game-main::-webkit-scrollbar,
+.upgrades-section::-webkit-scrollbar {
+  width: 4px;
+}
+
+.game-main::-webkit-scrollbar-track,
+.upgrades-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.game-main::-webkit-scrollbar-thumb,
+.upgrades-section::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: var(--radius-sm);
+}
+
+.game-main::-webkit-scrollbar-thumb:hover,
+.upgrades-section::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
+}
+
+/* ============================================================ */
+/* RESPONSIVE - MOBILE FIRST */
+/* ============================================================ */
+
+/* Écrans très petits (≤360px) */
+@media (max-width: 360px) {
+  .logo-title {
+    font-size: 24px;
+  }
+  .click-button {
+    width: 100px;
+    height: 100px;
+    font-size: 40px;
+  }
+  .score-value {
+    font-size: 18px;
+  }
+  .upgrades-list {
+    max-width: 100%;
+  }
+}
+
+/* Gabarit mobile standard, quelle que soit la largeur du viewport. */
+@media (min-width: 361px) {
+  body {
+    font-size: 11px;
+  }
+  .game-main {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* ============================================================ */
+/* IMMERSIVE ARCADE SHELL                                       */
+/* ============================================================ */
+
+html {
+  position: relative;
+  isolation: isolate;
+}
+
+html::before,
+html::after {
+  content: "";
+  position: fixed;
+  pointer-events: none;
+}
+
+html::before {
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 16% 22%, rgba(0, 212, 255, 0.2) 0 1px, transparent 2px),
+    radial-gradient(circle at 78% 16%, rgba(255, 0, 128, 0.24) 0 1px, transparent 2px),
+    radial-gradient(circle at 24% 68%, rgba(157, 0, 255, 0.2) 0 1px, transparent 2px),
+    radial-gradient(circle at 85% 72%, rgba(0, 255, 255, 0.16) 0 1px, transparent 2px),
+    radial-gradient(ellipse at 50% 38%, rgba(22, 30, 88, 0.72), transparent 52%);
+  background-size: 180px 180px, 230px 230px, 290px 290px, 340px 340px, 100% 100%;
+  animation: ambientStars 14s ease-in-out infinite alternate;
+}
+
+html::after {
+  z-index: 0;
+  left: -20vw;
+  right: -20vw;
+  bottom: -35vh;
+  height: 76vh;
+  opacity: 0.28;
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.38) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 128, 0.32) 1px, transparent 1px);
+  background-size: 58px 34px;
+  transform: perspective(360px) rotateX(62deg);
+  transform-origin: center top;
+  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 72%, transparent);
+  animation: gridDrift 4s linear infinite;
+}
+
+body {
+  isolation: isolate;
+  z-index: 1;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: calc(var(--z-modal) + 10);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    inset 0 0 0 2px rgba(0, 0, 0, 0.48),
+    inset 0 0 34px rgba(0, 0, 0, 0.46);
+  pointer-events: none;
+}
+
+.screen {
+  isolation: isolate;
+}
+
+#gameScreen {
+  background:
+    radial-gradient(circle at 50% 25%, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 38%),
+    linear-gradient(180deg, var(--color-dark) 0%, #060917 58%, var(--color-bg-dark) 100%);
+}
+
+#gameScreen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.42;
+  background-image:
+    radial-gradient(circle, var(--color-primary) 0 1px, transparent 1.5px),
+    radial-gradient(circle, var(--color-secondary) 0 1px, transparent 1.5px);
+  background-position: 0 0, 19px 27px;
+  background-size: 47px 47px, 71px 71px;
+  mask-image: linear-gradient(to bottom, #000, transparent 68%);
+  animation: gameDust 18s linear infinite;
+}
+
+/* Menu */
+.menu-container {
+  width: min(100%, 390px);
+  padding: 28px 22px;
+  position: relative;
+}
+
+.menu-container::before,
+.menu-container::after {
+  content: "";
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  border-color: var(--color-primary);
+  opacity: 0.55;
+}
+
+.menu-container::before {
+  top: 0;
+  left: 0;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+
+.menu-container::after {
+  right: 0;
+  bottom: 0;
+  border-right: 2px solid;
+  border-bottom: 2px solid;
+}
+
+.menu-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  color: var(--color-text-dim);
+  font-size: 6px;
+  letter-spacing: 1.8px;
+}
+
+.menu-eyebrow span,
+.click-hint span {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-secondary));
+}
+
+.menu-eyebrow span:last-child,
+.click-hint span:last-child {
+  transform: rotate(180deg);
+}
+
+.logo-container {
+  margin-bottom: 18px;
+}
+
+.logo-core {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  border: 2px solid var(--color-primary);
+  border-radius: 22px;
+  color: var(--color-primary);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.09), transparent 45%),
+    rgba(0, 0, 0, 0.52);
+  font-size: 19px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 12px var(--color-primary);
+  box-shadow:
+    0 0 0 7px color-mix(in srgb, var(--color-primary) 8%, transparent),
+    0 0 28px var(--color-glow),
+    inset 0 0 22px color-mix(in srgb, var(--color-primary) 12%, transparent);
+  animation: coreHover 3s ease-in-out infinite;
+}
+
+.logo-core::before,
+.logo-core::after {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  border: 1px dashed color-mix(in srgb, var(--color-secondary) 62%, transparent);
+  border-radius: 28px;
+  animation: slowSpin 13s linear infinite;
+}
+
+.logo-core::after {
+  inset: 9px;
+  border-style: solid;
+  border-color: transparent var(--color-secondary);
+  border-radius: 50%;
+  animation-direction: reverse;
+  animation-duration: 7s;
+}
+
+.logo-title {
+  font-size: 29px;
+  line-height: 1.25;
+  letter-spacing: 2px;
+}
+
+.logo-title span {
+  color: var(--color-secondary);
+}
+
+.logo-subtitle {
+  margin-top: 9px;
+  font-size: 6px;
+  letter-spacing: 1.4px;
+}
+
+.press-start-container {
+  min-height: auto;
+  margin: 15px 0;
+}
+
+.press-start-text {
+  padding: 7px 10px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 7%, transparent);
+  font-size: 7px;
+  letter-spacing: 1.2px;
+  animation: statusPulse 1.6s ease-in-out infinite;
+}
+
+.menu-info {
+  margin: 15px 0;
+}
+
+.menu-description {
+  line-height: 1.8;
+}
+
+.menu-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 17px 0;
+}
+
+.menu-features span {
+  min-height: 43px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--color-text-dim);
+  font-size: 5px;
+  letter-spacing: 0.6px;
+}
+
+.menu-features strong {
+  color: var(--color-primary);
+  font-size: 11px;
+}
+
+.menu-features i,
+.system-online i,
+.shop-status i,
+.save-status i {
+  width: 6px;
+  height: 6px;
+  display: inline-block;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--color-success);
+  box-shadow: 0 0 9px var(--color-success);
+  animation: onlineBlink 1.8s ease-in-out infinite;
+}
+
+#startButton {
+  width: 100%;
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+  border-width: 2px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.88), color-mix(in srgb, var(--color-primary) 12%, #000), rgba(0, 0, 0, 0.88));
+}
+
+#startButton::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 22%, rgba(255, 255, 255, 0.16) 47%, transparent 72%);
+  transform: translateX(-120%);
+  animation: buttonSweep 3.2s ease-in-out infinite;
+}
+
+#startButton span,
+#startButton small {
+  position: relative;
+  z-index: 1;
+}
+
+#startButton small {
+  color: var(--color-text-dim);
+  font: 5px "Press Start 2P", monospace;
+  letter-spacing: 0.8px;
+}
+
+/* HUD */
+.game-header {
+  padding: 9px 13px 11px;
+  text-align: left;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 62%, transparent);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--color-primary) 9%, transparent), transparent 35%),
+    rgba(2, 5, 17, 0.9);
+  backdrop-filter: blur(10px);
+}
+
+.system-status,
+.era-heading,
+.score-rates,
+.upgrades-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.system-status {
+  margin-bottom: 9px;
+  color: var(--color-text-dim);
+  font-size: 5px;
+  letter-spacing: 0.8px;
+}
+
+.system-online,
+.shop-status,
+.save-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.core-status {
+  color: var(--color-secondary);
+}
+
+.era-kicker,
+.section-kicker {
+  display: block;
+  color: var(--color-text-dim);
+  font-size: 5px;
+  letter-spacing: 1.1px;
+}
+
+.era-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 72%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 7%, rgba(0, 0, 0, 0.65));
+}
+
+.era-label,
+.era-progress {
+  display: inline-block;
+  margin: 0;
+}
+
+.era-label {
+  font-size: 8px;
+}
+
+.era-progress {
+  min-width: 31px;
+  color: var(--color-secondary);
+  font: bold 8px "Courier New", monospace;
+  text-align: right;
+}
+
+.era-track {
+  height: 5px;
+  margin-top: 9px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 32%, transparent);
+  background: rgba(0, 0, 0, 0.62);
+}
+
+.era-progress-fill {
+  width: 0;
+  height: 100%;
+  display: block;
+  position: relative;
+  background: linear-gradient(90deg, var(--color-secondary), var(--color-primary));
+  box-shadow: 0 0 10px var(--color-primary);
+  transition: width 350ms ease-out;
+}
+
+.era-progress-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, transparent 0 8px, rgba(255, 255, 255, 0.38) 8px 9px);
+}
+
+.era-objective {
+  margin-top: 5px;
+  color: var(--color-text-dim);
+  font-size: 5px;
+  letter-spacing: 0.6px;
+  text-align: right;
+}
+
+/* Score + reactor */
+.game-main {
+  position: relative;
+  gap: 0;
+  scrollbar-gutter: stable;
+}
+
+.score-display {
+  width: 100%;
+  margin: 5px 0 9px;
+  padding: 10px 13px;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  background:
+    linear-gradient(115deg, color-mix(in srgb, var(--color-primary) 9%, transparent), transparent 54%),
+    rgba(0, 0, 0, 0.28);
+}
+
+.score-display::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 34px;
+  height: 2px;
+  background: var(--color-primary);
+  box-shadow: 0 0 9px var(--color-primary);
+}
+
+.score-label {
+  font-size: 6px;
+  letter-spacing: 1.4px;
+}
+
+.score-value {
+  margin: 3px 0 5px;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.score-rates {
+  justify-content: center;
+  gap: 8px;
+}
+
+.cps-label,
+.click-rate {
+  margin: 0;
+  padding: 4px 7px;
+  border-radius: 20px;
+  font-size: 6px;
+}
+
+.cps-label {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.click-rate {
+  color: var(--color-text-dim);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.reactor-zone {
+  width: 166px;
+  height: 166px;
+  margin: 2px auto 0;
+  display: grid;
+  place-items: center;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.reactor-zone::before {
+  content: "";
+  position: absolute;
+  inset: 23px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-primary) 23%, transparent), transparent 67%);
+  filter: blur(7px);
+  animation: reactorAura 1.7s ease-in-out infinite;
+}
+
+.reactor-orbit {
+  position: absolute;
+  inset: 9px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 42%, transparent);
+  border-right-color: transparent;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: slowSpin 9s linear infinite;
+}
+
+.reactor-orbit::before,
+.reactor-orbit::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 9px var(--color-primary);
+}
+
+.reactor-orbit::before {
+  top: 16px;
+  right: 15px;
+}
+
+.reactor-orbit::after {
+  bottom: 5px;
+  left: 45px;
+}
+
+.reactor-orbit-two {
+  inset: 18px;
+  border-color: transparent var(--color-secondary) color-mix(in srgb, var(--color-secondary) 35%, transparent);
+  animation-duration: 6s;
+  animation-direction: reverse;
+}
+
+.click-button {
+  width: 116px;
+  height: 116px;
+  position: relative;
+  overflow: hidden;
+  touch-action: manipulation;
+  border-width: 3px;
+  background:
+    radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--color-primary) 25%, transparent), transparent 43%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.82));
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--color-primary) 7%, transparent),
+    0 0 22px var(--color-primary),
+    0 0 46px var(--color-glow),
+    inset 0 0 25px rgba(0, 0, 0, 0.65);
+}
+
+.click-button::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px dashed color-mix(in srgb, var(--color-secondary) 65%, transparent);
+  border-radius: 50%;
+  animation: slowSpin 7s linear infinite;
+}
+
+.click-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(115deg, transparent 25%, rgba(255, 255, 255, 0.19) 48%, transparent 70%);
+  transform: translateX(-110%);
+  animation: coreSweep 3s ease-in-out infinite;
+}
+
+.click-button-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  background-image:
+    linear-gradient(var(--color-primary) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-primary) 1px, transparent 1px);
+  background-size: 11px 11px;
+  mask-image: radial-gradient(circle, #000, transparent 72%);
+}
+
+.click-button-inner {
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 0 8px var(--color-primary));
+}
+
+.reactor-zone.reactor-hit .reactor-orbit-one {
+  animation: orbitHit 180ms ease-out;
+}
+
+.reactor-zone.reactor-hit::before {
+  animation: auraHit 220ms ease-out;
+}
+
+.streak-badge {
+  min-width: 78px;
+  padding: 5px 8px;
+  position: absolute;
+  right: -14px;
+  top: 11px;
+  z-index: 4;
+  opacity: 0;
+  transform: translateY(5px) scale(0.9);
+  border: 1px solid var(--color-secondary);
+  background: rgba(2, 5, 17, 0.92);
+  color: var(--color-secondary);
+  font-size: 6px;
+  text-align: center;
+  letter-spacing: 0.7px;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-secondary) 45%, transparent);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.streak-badge.is-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.click-hint {
+  width: min(100%, 270px);
+  margin: 1px auto 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-dim);
+  font-size: 5px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.click-hint span {
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-primary) 52%, transparent));
+}
+
+.floating-number {
+  z-index: 8;
+  padding: 3px 5px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 45%, transparent);
+  background: rgba(0, 0, 0, 0.7);
+  font-size: 14px;
+}
+
+.click-spark {
+  width: 5px;
+  height: 5px;
+  position: absolute;
+  z-index: 7;
+  border-radius: 1px;
+  background: var(--color-primary);
+  box-shadow: 0 0 8px var(--color-primary);
+  pointer-events: none;
+  animation: sparkBurst 520ms ease-out forwards;
+}
+
+/* Upgrade workshop */
+.upgrades-section {
+  margin-top: 11px;
+  padding: 11px 0 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.upgrades-heading {
+  margin-bottom: 11px;
+  padding: 0 2px;
+  text-align: left;
+}
+
+.upgrades-title {
+  margin: 4px 0 0;
+  font-size: 9px;
+  text-align: left;
+}
+
+.shop-status {
+  padding: 5px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--color-text-dim);
+  font-size: 5px;
+}
+
+.shop-status i {
+  width: 5px;
+  height: 5px;
+}
+
+.upgrades-list {
+  gap: 9px;
+}
+
+.upgrade-card {
+  min-height: 110px;
+  padding: 11px;
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-secondary) 52%, transparent);
+  background:
+    linear-gradient(125deg, color-mix(in srgb, var(--color-secondary) 7%, transparent), transparent 48%),
+    rgba(1, 4, 14, 0.78);
+}
+
+.upgrade-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--color-secondary);
+  box-shadow: 0 0 10px var(--color-secondary);
+  opacity: 0.7;
+}
+
+.upgrade-card:not(.disabled) {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 22px color-mix(in srgb, var(--color-primary) 5%, transparent);
+}
+
+.upgrade-card:not(.disabled)::before {
+  background: var(--color-primary);
+  box-shadow: 0 0 12px var(--color-primary);
+}
+
+.upgrade-card-top,
+.upgrade-card-bottom {
+  display: flex;
+  align-items: center;
+}
+
+.upgrade-card-top {
+  gap: 9px;
+}
+
+.upgrade-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--color-secondary) 62%, transparent);
+  background: color-mix(in srgb, var(--color-secondary) 7%, rgba(0, 0, 0, 0.5));
+  color: var(--color-secondary);
+  font: 20px "Courier New", monospace;
+  text-shadow: 0 0 9px var(--color-secondary);
+}
+
+.upgrade-info {
+  min-width: 0;
+}
+
+.upgrade-name {
+  overflow: hidden;
+  color: var(--color-primary);
+  font-size: 7px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upgrade-effect {
+  margin: 5px 0 0;
+  color: var(--color-text-dim);
+  font-size: 6px;
+}
+
+.upgrade-owned {
+  margin: 0 0 0 auto;
+  padding: 4px 5px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-secondary);
+  font-size: 5px;
+}
+
+.upgrade-card-bottom {
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.upgrade-cost {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  color: var(--color-secondary);
+  font-size: 9px;
+}
+
+.upgrade-cost span {
+  color: var(--color-text-dim);
+  font: 5px "Press Start 2P", monospace;
+  letter-spacing: 0.7px;
+}
+
+.upgrade-buy-btn {
+  min-height: 33px;
+  margin: 0;
+  padding: 7px 9px;
+  font-size: 5px;
+}
+
+.afford-meter {
+  height: 2px;
+  margin-top: 7px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.065);
+}
+
+.afford-meter-fill {
+  width: var(--afford-progress, 0%);
+  height: 100%;
+  display: block;
+  background: linear-gradient(90deg, var(--color-secondary), var(--color-primary));
+  box-shadow: 0 0 7px var(--color-primary);
+  transition: width 250ms ease-out;
+}
+
+/* Footer, overlays and modals */
+.game-footer {
+  min-height: 52px;
+  padding: 7px 11px;
+  gap: 8px;
+  border-top-width: 1px;
+  flex-wrap: nowrap;
+  background: rgba(1, 4, 13, 0.94);
+  backdrop-filter: blur(10px);
+}
+
+.footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.save-status {
+  margin-right: auto;
+  color: var(--color-text-dim);
+  font-size: 5px;
+}
+
+.save-status i {
+  width: 5px;
+  height: 5px;
+}
+
+.save-status.is-saved {
+  color: var(--color-primary);
+}
+
+.save-status.is-saved i {
+  background: var(--color-primary);
+  box-shadow: 0 0 10px var(--color-primary);
+}
+
+.footer-build {
+  margin-left: auto;
+  color: var(--color-text-dim);
+  font-size: 5px;
+}
+
+.btn-icon {
+  min-width: 38px;
+  min-height: 38px;
+  display: grid;
+  place-items: center;
+  border-color: color-mix(in srgb, var(--color-primary) 65%, transparent);
+  font-size: 15px;
+}
+
+.modal {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 2, 11, 0.82);
+}
+
+.modal-content {
+  width: min(90%, 360px);
+  border-width: 1px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 10%, transparent), transparent 50%),
+    #060918;
+}
+
+.toast-container {
+  position: absolute;
+  top: 132px;
+  left: 50%;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.game-toast {
+  min-width: 190px;
+  padding: 9px 12px;
+  border: 1px solid var(--color-primary);
+  background: rgba(1, 5, 16, 0.94);
+  color: var(--color-primary);
+  font-size: 6px;
+  letter-spacing: 0.6px;
+  text-align: center;
+  box-shadow: 0 0 18px var(--color-glow);
+  animation: toastIn 1.65s ease both;
+}
+
+.era-transition {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--color-primary) 28%, transparent), rgba(1, 3, 13, 0.96) 57%);
+  transition: opacity 220ms ease;
+}
+
+.era-transition::before,
+.era-transition::after {
+  content: "";
+  width: 70%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+  box-shadow: 0 0 14px var(--color-primary);
+  transform: scaleX(0);
+}
+
+.era-transition.is-active {
+  opacity: 1;
+}
+
+.era-transition.is-active::before,
+.era-transition.is-active::after {
+  animation: eraLine 1.5s ease both;
+}
+
+.era-transition span {
+  color: var(--color-text-light);
+  font-size: 6px;
+  letter-spacing: 1.5px;
+}
+
+.era-transition strong {
+  color: var(--color-primary);
+  font-size: 21px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 24px var(--color-primary);
+}
+
+@media (min-width: 600px) {
+  body {
+    border: 1px solid rgba(114, 201, 255, 0.2);
+    border-radius: 22px;
+    box-shadow:
+      0 0 0 7px rgba(3, 6, 21, 0.9),
+      0 0 0 8px rgba(255, 0, 128, 0.18),
+      0 0 55px rgba(0, 212, 255, 0.18),
+      0 28px 90px rgba(0, 0, 0, 0.82);
+  }
+
+  /* Le cadre garde sa taille mobile, mais les textes gagnent en
+     lisibilité sur un écran de PC. */
+  .menu-eyebrow,
+  .system-status,
+  .era-kicker,
+  .section-kicker,
+  .era-objective,
+  .click-hint,
+  .shop-status,
+  .save-status,
+  .footer-build {
+    font-size: 6px;
+  }
+
+  .logo-title {
+    font-size: 32px;
+  }
+
+  .logo-subtitle,
+  .press-start-text,
+  .menu-features span,
+  #startButton small {
+    font-size: 6px;
+  }
+
+  .era-label,
+  .era-progress,
+  .score-label,
+  .cps-label,
+  .click-rate,
+  .upgrade-name,
+  .upgrade-effect,
+  .upgrade-owned,
+  .upgrade-buy-btn,
+  .game-toast {
+    font-size: 7px;
+  }
+
+  .score-value {
+    font-size: 35px;
+  }
+
+  .upgrades-title {
+    font-size: 10px;
+  }
+
+  .upgrade-cost {
+    font-size: 10px;
+  }
+
+  .upgrade-cost span {
+    font-size: 6px;
+  }
+
+  body::before,
+  .screen {
+    border-radius: 21px;
+  }
+}
+
+@media (max-width: 360px) {
+  .menu-container {
+    padding: 18px 14px;
+  }
+
+  .logo-core {
+    width: 62px;
+    height: 62px;
+    margin-bottom: 14px;
+  }
+
+  .logo-title {
+    font-size: 23px;
+  }
+
+  .reactor-zone {
+    width: 145px;
+    height: 145px;
+  }
+
+  .click-button {
+    width: 102px;
+    height: 102px;
+  }
+
+  .score-value {
+    font-size: 26px;
+  }
+
+  .save-status span,
+  .footer-build {
+    display: none;
+  }
+}
+
+@keyframes ambientStars {
+  from { opacity: 0.52; transform: scale(1); }
+  to { opacity: 0.92; transform: scale(1.025); }
+}
+
+@keyframes gridDrift {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 34px, 58px 0; }
+}
+
+@keyframes gameDust {
+  to { background-position: 47px 94px, -52px 98px; }
+}
+
+@keyframes coreHover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes slowSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 0.72; }
+  50% { opacity: 1; box-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 24%, transparent); }
+}
+
+@keyframes onlineBlink {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+@keyframes buttonSweep {
+  0%, 52% { transform: translateX(-120%); }
+  78%, 100% { transform: translateX(120%); }
+}
+
+@keyframes reactorAura {
+  0%, 100% { opacity: 0.55; transform: scale(0.94); }
+  50% { opacity: 1; transform: scale(1.12); }
+}
+
+@keyframes coreSweep {
+  0%, 58% { transform: translateX(-110%); }
+  82%, 100% { transform: translateX(110%); }
+}
+
+@keyframes orbitHit {
+  from { transform: rotate(0) scale(0.86); opacity: 1; }
+  to { transform: rotate(90deg) scale(1.18); opacity: 0.2; }
+}
+
+@keyframes auraHit {
+  from { transform: scale(0.75); opacity: 1; }
+  to { transform: scale(1.7); opacity: 0; }
+}
+
+@keyframes sparkBurst {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--spark-x)), calc(-50% + var(--spark-y))) scale(0); }
+}
+
+@keyframes toastIn {
+  0% { opacity: 0; transform: translateY(-8px) scale(0.94); }
+  15%, 76% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-5px) scale(0.98); }
+}
+
+@keyframes eraLine {
+  0% { transform: scaleX(0); opacity: 0; }
+  25%, 75% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(0); opacity: 0; }
+}

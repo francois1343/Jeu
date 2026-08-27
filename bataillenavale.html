@@ -5,133 +5,1103 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bataille Navale</title>
   <style>
-    /* Style minimal pour que le jeu soit jouable */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Arial, sans-serif; background: #1a1a2e; color: white; min-height: 100vh; padding: 20px; }
-    .hidden { display: none !important; }
-    
-    /* Menus */
-    .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 100; }
-    .menu-content { background: #16213e; padding: 40px; border-radius: 15px; text-align: center; max-width: 500px; }
-    .menu-content h1, .menu-content h2 { margin-bottom: 20px; }
-    .menu-btn { display: block; width: 100%; padding: 15px 30px; margin: 10px 0; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-    .menu-btn.primary { background: #4d7cff; color: white; }
-    .menu-btn.secondary { background: #333; color: white; }
-    .menu-btn:hover { transform: scale(1.05); }
-    
-    /* HUD */
-    .hud { display: flex; justify-content: space-around; padding: 15px; background: #16213e; border-radius: 10px; margin-bottom: 20px; }
-    .hud-item { text-align: center; }
-    .hud-label { font-size: 12px; color: #888; }
-    .hud-value { font-size: 24px; font-weight: bold; color: #4d7cff; }
-    
-    /* Grilles */
-    .boards-container { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
-    .board-wrapper { text-align: center; }
-    .board-title { font-size: 18px; margin-bottom: 10px; padding: 10px; background: #16213e; border-radius: 8px; }
-    .grid { display: inline-grid; gap: 2px; background: #333; padding: 2px; border-radius: 5px; }
-    .cell { width: 35px; height: 35px; background: #1a1a2e; border: 1px solid #333; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 14px; transition: 0.2s; }
-    .cell:hover { background: #2a2a4e; }
-    .cell.ship { background: #4d7cff; }
-    .cell.hit { background: #ff4757; color: white; }
-    .cell.miss { background: #333; color: #888; }
-    .cell.sunk { background: #8b0000; }
-    .cell.preview { background: rgba(77, 124, 255, 0.5); }
-    .cell.preview-invalid { background: rgba(255, 71, 87, 0.5); }
-    
-    /* Sélecteur de navires */
-    .ship-selector { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0; padding: 20px; background: #16213e; border-radius: 10px; }
-    .ship-option { padding: 10px 20px; background: #333; border: 2px solid #4d7cff; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-    .ship-option:hover { background: #4d7cff; }
-    .ship-option.selected { background: #4d7cff; }
-    .ship-option.placed { opacity: 0.5; border-color: #00ff88; background: #00ff88; cursor: not-allowed; }
-    
-    /* Contrôles */
-    .controls { display: flex; justify-content: center; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
-    .control-btn { padding: 12px 24px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-    .control-btn:hover { transform: scale(1.05); }
-    .control-btn.primary { background: #4d7cff; color: white; }
-    .control-btn.secondary { background: #333; color: white; }
-    .control-btn.danger { background: #ff4757; color: white; }
-    .control-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    
-    /* Status flotte */
-    .fleet-status { display: flex; justify-content: center; gap: 40px; margin: 20px 0; padding: 20px; background: #16213e; border-radius: 10px; flex-wrap: wrap; }
-    .fleet-column { text-align: center; }
-    .fleet-column h3 { margin-bottom: 10px; }
-    .ship-status { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
-    .ship-status.sunk { text-decoration: line-through; opacity: 0.5; }
-    .ship-cells { display: flex; gap: 2px; }
-    .ship-cell { width: 15px; height: 15px; background: #4d7cff; border-radius: 2px; }
-    .ship-status.sunk .ship-cell { background: #ff4757; }
-    
-    /* Turn indicator */
-    .turn-indicator { text-align: center; padding: 15px; margin: 10px 0; border-radius: 10px; font-size: 18px; font-weight: bold; }
-    .turn-indicator.player { background: #00ff88; color: #000; }
-    .turn-indicator.enemy { background: #ff4757; color: #fff; }
-    
-    /* Messages */
-    .message { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 15px 30px; border-radius: 10px; font-weight: bold; z-index: 200; animation: fadeInOut 2.5s forwards; }
-    .message.success { background: #00ff88; color: #000; }
-    .message.danger { background: #ff4757; color: #fff; }
-    .message.info { background: #4d7cff; color: #fff; }
-    @keyframes fadeInOut { 0% { opacity: 0; top: 0; } 15% { opacity: 1; top: 20px; } 85% { opacity: 1; top: 20px; } 100% { opacity: 0; top: 0; } }
-    
-    /* Game over stats */
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-    .stat-item { background: #1a1a2e; padding: 15px; border-radius: 8px; }
-    .stat-label { font-size: 12px; color: #888; }
-    .stat-value { font-size: 24px; font-weight: bold; color: #4d7cff; }
-    
-    /* Responsive */
-    @media (max-width: 800px) {
-      .boards-container { flex-direction: column; align-items: center; }
-      .cell { width: 30px; height: 30px; }
+    :root {
+      --bg-0: #030713;
+      --bg-1: #071426;
+      --panel: rgba(8, 22, 43, 0.88);
+      --panel-strong: rgba(7, 18, 38, 0.97);
+      --line: rgba(69, 215, 255, 0.2);
+      --cyan: #45d7ff;
+      --cyan-soft: #98ecff;
+      --violet: #8b5cf6;
+      --green: #35f2a1;
+      --red: #ff5678;
+      --gold: #ffc857;
+      --text: #edfaff;
+      --muted: #89a6ba;
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg-0);
+    }
+
+    body {
+      position: relative;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: clamp(12px, 2vw, 26px);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 16% 8%, rgba(0, 194, 255, 0.16), transparent 31%),
+        radial-gradient(circle at 86% 18%, rgba(139, 92, 246, 0.14), transparent 28%),
+        linear-gradient(145deg, var(--bg-0), var(--bg-1) 54%, #040915);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.22;
+      background-image:
+        linear-gradient(rgba(69, 215, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(69, 215, 255, 0.08) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, black, transparent 78%);
+    }
+
+    button {
+      color: inherit;
+      font: inherit;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ===== MENUS ===== */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      overflow-y: auto;
+      padding: 22px;
+      background: rgba(1, 5, 15, 0.8);
+      backdrop-filter: blur(14px);
+    }
+
+    .menu-content {
+      position: relative;
+      width: min(100%, 560px);
+      overflow: hidden;
+      padding: clamp(26px, 5vw, 44px);
+      text-align: center;
+      border: 1px solid rgba(69, 215, 255, 0.34);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 84% 0%, rgba(139, 92, 246, 0.2), transparent 34%),
+        linear-gradient(150deg, rgba(13, 34, 62, 0.98), rgba(5, 15, 33, 0.98));
+      box-shadow: 0 0 60px rgba(0, 195, 255, 0.17), 0 28px 80px rgba(0, 0, 0, 0.52);
+    }
+
+    .menu-content::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 12%;
+      width: 76%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
+      box-shadow: 0 0 18px var(--cyan);
+    }
+
+    .menu-content.rules-card {
+      width: min(100%, 680px);
+    }
+
+    .menu-kicker,
+    .phase-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: var(--cyan);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+    }
+
+    .menu-kicker::before,
+    .menu-kicker::after {
+      content: "";
+      width: 22px;
+      height: 1px;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .menu-emblem {
+      display: grid;
+      place-items: center;
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 14px;
+      font-size: 32px;
+      border: 1px solid rgba(69, 215, 255, 0.45);
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(69, 215, 255, 0.15), rgba(139, 92, 246, 0.16));
+      box-shadow: inset 0 0 24px rgba(69, 215, 255, 0.08), 0 0 28px rgba(69, 215, 255, 0.13);
+    }
+
+    .menu-content h1 {
+      font-size: clamp(34px, 7vw, 52px);
+      line-height: 0.98;
+      letter-spacing: -2px;
+    }
+
+    .menu-content h1 span,
+    .menu-content h2 span {
+      color: var(--cyan);
+      text-shadow: 0 0 20px rgba(69, 215, 255, 0.38);
+    }
+
+    .menu-content h2 {
+      margin-bottom: 12px;
+      font-size: clamp(28px, 5vw, 38px);
+    }
+
+    .menu-subtitle {
+      max-width: 390px;
+      margin: 14px auto 28px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      color: #b9d4e3;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    .section-label span {
+      color: var(--cyan);
+    }
+
+    .difficulty-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .difficulty-card {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 10px;
+      align-items: center;
+      min-height: 76px;
+      padding: 13px;
+      text-align: left;
+      border: 1px solid rgba(137, 166, 186, 0.18);
+      border-radius: 13px;
+      background: rgba(4, 14, 30, 0.58);
+      cursor: pointer;
+      transition: transform 0.18s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+
+    .difficulty-card:hover,
+    .difficulty-card:focus-visible {
+      outline: none;
+      border-color: var(--level-color, var(--cyan));
+      background: rgba(13, 37, 65, 0.8);
+      box-shadow: 0 0 20px color-mix(in srgb, var(--level-color, var(--cyan)) 22%, transparent);
+      transform: translateY(-2px);
+    }
+
+    .difficulty-card[data-level="easy"] { --level-color: var(--green); }
+    .difficulty-card[data-level="medium"] { --level-color: var(--gold); }
+    .difficulty-card[data-level="hard"] { --level-color: var(--red); }
+    .difficulty-card[data-level="impossible"] { --level-color: #c58cff; }
+
+    .difficulty-icon {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      font-size: 17px;
+      border: 1px solid color-mix(in srgb, var(--level-color) 46%, transparent);
+      border-radius: 11px;
+      background: color-mix(in srgb, var(--level-color) 10%, transparent);
+    }
+
+    .difficulty-copy strong,
+    .difficulty-copy small {
+      display: block;
+    }
+
+    .difficulty-copy strong {
+      color: #f4fcff;
+      font-size: 14px;
+    }
+
+    .difficulty-copy small {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.3;
+    }
+
+    .menu-btn,
+    .control-btn,
+    .ghost-btn {
+      border-radius: 11px;
+      cursor: pointer;
+      transition: transform 0.18s, border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .menu-btn {
+      display: block;
+      width: 100%;
+      padding: 14px 24px;
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }
+
+    .menu-btn.primary,
+    .control-btn.primary {
+      color: #031019;
+      border-color: #77e7ff;
+      background: linear-gradient(135deg, #62e2ff, #35bdf2);
+      box-shadow: 0 7px 24px rgba(69, 215, 255, 0.24);
+    }
+
+    .menu-btn.secondary,
+    .control-btn.secondary {
+      color: #dff9ff;
+      border-color: rgba(69, 215, 255, 0.26);
+      background: linear-gradient(135deg, rgba(18, 48, 75, 0.9), rgba(40, 30, 85, 0.75));
+    }
+
+    .menu-btn:hover,
+    .menu-btn:focus-visible,
+    .control-btn:hover,
+    .control-btn:focus-visible,
+    .ghost-btn:hover,
+    .ghost-btn:focus-visible {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 8px 26px rgba(69, 215, 255, 0.23);
+      transform: translateY(-2px);
+    }
+
+    .menu-footnote {
+      margin-top: 16px;
+      color: #648297;
+      font-size: 10px;
+      letter-spacing: 0.4px;
+    }
+
+    /* ===== RÈGLES ===== */
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 22px 0;
+      text-align: left;
+    }
+
+    .rule-step {
+      padding: 15px;
+      border: 1px solid rgba(69, 215, 255, 0.14);
+      border-radius: 13px;
+      background: rgba(3, 13, 29, 0.58);
+    }
+
+    .rule-number {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 12px;
+      color: var(--cyan);
+      font-size: 11px;
+      font-weight: 900;
+      border: 1px solid rgba(69, 215, 255, 0.34);
+      border-radius: 8px;
+      background: rgba(69, 215, 255, 0.08);
+    }
+
+    .rule-step strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    .rule-step p {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .fleet-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 7px;
+      margin-bottom: 20px;
+    }
+
+    .fleet-legend span {
+      padding: 6px 9px;
+      color: #a9c2d1;
+      font-size: 10px;
+      border: 1px solid rgba(137, 166, 186, 0.15);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    /* ===== STRUCTURE DU JEU ===== */
+    #game-screen {
+      width: min(100%, 1180px);
+      margin: 0 auto;
+    }
+
+    .game-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .mini-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .mini-brand-icon {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(69, 215, 255, 0.34);
+      border-radius: 11px;
+      background: rgba(69, 215, 255, 0.08);
+    }
+
+    .mini-brand strong,
+    .mini-brand small {
+      display: block;
+    }
+
+    .mini-brand strong {
+      color: var(--cyan);
+      font-size: 12px;
+      letter-spacing: 1.5px;
+    }
+
+    .mini-brand small {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .ghost-btn {
+      padding: 9px 13px;
+      color: #b9d7e6;
+      font-size: 11px;
+      font-weight: 800;
+      border: 1px solid rgba(137, 166, 186, 0.2);
+      background: rgba(5, 16, 34, 0.62);
+    }
+
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 8px;
+      border: 1px solid rgba(69, 215, 255, 0.15);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(12px);
+    }
+
+    .hud-item {
+      position: relative;
+      min-width: 0;
+      padding: 12px 14px;
+      text-align: left;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .hud-item + .hud-item::before {
+      content: "";
+      position: absolute;
+      top: 16%;
+      bottom: 16%;
+      left: -4px;
+      width: 1px;
+      background: rgba(69, 215, 255, 0.12);
+    }
+
+    .hud-label {
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.7px;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .hud-value {
+      margin-top: 3px;
+      color: var(--cyan-soft);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: 900;
+      text-shadow: 0 0 14px rgba(69, 215, 255, 0.25);
+    }
+
+    .phase-card {
+      position: relative;
+      margin-bottom: 12px;
+      padding: 17px 20px;
+      text-align: center;
+      border: 1px solid rgba(139, 92, 246, 0.24);
+      border-radius: var(--radius);
+      background: linear-gradient(120deg, rgba(12, 30, 54, 0.84), rgba(36, 24, 72, 0.58));
+    }
+
+    .phase-card h2 {
+      font-size: clamp(19px, 4vw, 25px);
+    }
+
+    .phase-card p {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .phase-kicker {
+      margin-bottom: 5px;
+      font-size: 8px;
+    }
+
+    /* ===== SÉLECTEUR ET ACTIONS ===== */
+    .ship-selector {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+      padding: 11px;
+      border: 1px solid rgba(69, 215, 255, 0.15);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .selector-heading {
+      display: flex;
+      grid-column: 1 / -1;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 2px 3px 8px;
+      text-align: left;
+    }
+
+    .selector-heading strong,
+    .selector-heading small {
+      display: block;
+    }
+
+    .selector-heading strong {
+      font-size: 12px;
+    }
+
+    .selector-heading small {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .orientation-badge {
+      flex: 0 0 auto;
+      padding: 6px 9px;
+      color: var(--cyan-soft);
+      font-size: 9px;
+      font-weight: 800;
+      border: 1px solid rgba(69, 215, 255, 0.22);
+      border-radius: 999px;
+      background: rgba(69, 215, 255, 0.07);
+    }
+
+    .ship-option {
+      min-width: 0;
+      padding: 11px 9px;
+      text-align: left;
+      border: 1px solid rgba(137, 166, 186, 0.16);
+      border-radius: 11px;
+      background: rgba(3, 13, 29, 0.65);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.18s, box-shadow 0.2s;
+    }
+
+    .ship-option:hover,
+    .ship-option:focus-visible,
+    .ship-option.selected {
+      outline: none;
+      border-color: var(--cyan);
+      background: rgba(18, 55, 82, 0.76);
+      box-shadow: 0 0 17px rgba(69, 215, 255, 0.14);
+      transform: translateY(-1px);
+    }
+
+    .ship-option.placed {
+      border-color: rgba(53, 242, 161, 0.28);
+      background: rgba(20, 71, 56, 0.32);
+      cursor: default;
+      opacity: 0.62;
+    }
+
+    .ship-name,
+    .ship-state {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ship-name {
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .ship-state {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 8px;
+    }
+
+    .mini-ship {
+      display: flex;
+      gap: 2px;
+      margin-top: 8px;
+    }
+
+    .mini-ship i {
+      display: block;
+      width: 11px;
+      height: 5px;
+      border-radius: 2px;
+      background: var(--ship-color, var(--cyan));
+      box-shadow: 0 0 7px color-mix(in srgb, var(--ship-color, var(--cyan)) 50%, transparent);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 10px 0 14px;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      padding: 10px 15px;
+      font-size: 11px;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }
+
+    .control-btn.primary {
+      min-width: 210px;
+    }
+
+    .control-btn.danger {
+      color: #ffd9e1;
+      border-color: rgba(255, 86, 120, 0.36);
+      background: rgba(83, 21, 41, 0.74);
+    }
+
+    .control-btn:disabled {
+      color: #688092;
+      border-color: rgba(137, 166, 186, 0.12);
+      background: rgba(17, 33, 51, 0.72);
+      box-shadow: none;
+      cursor: not-allowed;
+      opacity: 0.7;
+      transform: none;
+    }
+
+    /* ===== GRILLES ===== */
+    .boards-container {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: clamp(14px, 3vw, 30px);
+      flex-wrap: wrap;
+    }
+
+    .board-wrapper {
+      min-width: 0;
+      padding: 11px;
+      text-align: center;
+      border: 1px solid rgba(69, 215, 255, 0.17);
+      border-radius: var(--radius);
+      background: var(--panel-strong);
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.035);
+    }
+
+    #enemy-board-wrapper {
+      border-color: rgba(139, 92, 246, 0.26);
+    }
+
+    .board-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 8px;
+      padding: 4px 5px 9px;
+      text-align: left;
+      border-bottom: 1px solid rgba(69, 215, 255, 0.1);
+    }
+
+    .board-title strong {
+      font-size: 12px;
+    }
+
+    .board-title small {
+      color: var(--muted);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+    }
+
+    .grid {
+      --cell-size: 32px;
+      display: inline-grid;
+      grid-template-columns: repeat(11, var(--cell-size));
+      gap: 3px;
+      padding: 7px;
+      border: 1px solid rgba(69, 215, 255, 0.14);
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 35% 25%, rgba(0, 174, 229, 0.08), transparent 38%),
+        rgba(1, 9, 21, 0.82);
+    }
+
+    .grid-label,
+    .cell {
+      display: grid;
+      place-items: center;
+      width: var(--cell-size);
+      height: var(--cell-size);
+    }
+
+    .grid-label {
+      color: #668ca3;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 8px;
+      font-weight: 800;
+    }
+
+    .grid-label.corner {
+      opacity: 0.35;
+    }
+
+    .cell {
+      position: relative;
+      overflow: hidden;
+      color: #fff;
+      font-size: 12px;
+      border: 1px solid rgba(69, 215, 255, 0.12);
+      border-radius: 5px;
+      background: linear-gradient(145deg, rgba(17, 45, 70, 0.78), rgba(5, 22, 42, 0.86));
+      cursor: default;
+      transition: transform 0.12s, border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    }
+
+    .cell::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.18;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent 45%);
+      pointer-events: none;
+    }
+
+    .cell.placement-cell,
+    .cell.targetable {
+      cursor: crosshair;
+    }
+
+    .cell.placement-cell:hover,
+    .cell.targetable:hover {
+      z-index: 2;
+      border-color: var(--cyan);
+      background: rgba(27, 91, 119, 0.9);
+      box-shadow: 0 0 13px rgba(69, 215, 255, 0.35);
+      transform: scale(1.08);
+    }
+
+    .cell.ship {
+      border-color: rgba(69, 215, 255, 0.64);
+      background: linear-gradient(135deg, #16799e, #3253a4);
+      box-shadow: inset 0 0 12px rgba(141, 235, 255, 0.2);
+    }
+
+    .cell.hit {
+      border-color: #ff8ba3;
+      background: radial-gradient(circle, #ff7a95, #a81740 72%);
+      box-shadow: 0 0 14px rgba(255, 86, 120, 0.5);
+      animation: impact 0.28s ease-out;
+    }
+
+    .cell.miss {
+      color: #8ee9ff;
+      border-color: rgba(69, 215, 255, 0.2);
+      background: rgba(10, 37, 59, 0.72);
+    }
+
+    .cell.sunk {
+      border-color: #ff476e;
+      background: linear-gradient(145deg, #651329, #2c0a18);
+      box-shadow: inset 0 0 13px rgba(255, 71, 110, 0.28);
+    }
+
+    .cell.preview {
+      border-color: var(--green);
+      background: rgba(53, 242, 161, 0.42);
+      box-shadow: 0 0 12px rgba(53, 242, 161, 0.3);
+    }
+
+    .cell.preview-invalid {
+      border-color: var(--red);
+      background: rgba(255, 86, 120, 0.42);
+      box-shadow: 0 0 12px rgba(255, 86, 120, 0.3);
+    }
+
+    @keyframes impact {
+      50% { transform: scale(1.22); }
+    }
+
+    /* ===== TOUR ET FLOTTE ===== */
+    .turn-indicator {
+      width: fit-content;
+      min-width: 230px;
+      margin: 10px auto 14px;
+      padding: 10px 18px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 900;
+      border: 1px solid;
+      border-radius: 999px;
+      backdrop-filter: blur(10px);
+    }
+
+    .turn-indicator.player {
+      color: #a8ffd8;
+      border-color: rgba(53, 242, 161, 0.42);
+      background: rgba(12, 77, 56, 0.56);
+      box-shadow: 0 0 19px rgba(53, 242, 161, 0.14);
+    }
+
+    .turn-indicator.enemy {
+      color: #ffd2dc;
+      border-color: rgba(255, 86, 120, 0.42);
+      background: rgba(91, 22, 43, 0.58);
+      box-shadow: 0 0 19px rgba(255, 86, 120, 0.14);
+    }
+
+    .fleet-status {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: min(100%, 820px);
+      margin: 14px auto 0;
+      padding: 10px;
+      border: 1px solid rgba(69, 215, 255, 0.14);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .fleet-column {
+      min-width: 0;
+      padding: 12px;
+      text-align: left;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.022);
+    }
+
+    .fleet-column h3 {
+      margin-bottom: 8px;
+      color: #c9edf7;
+      font-size: 11px;
+    }
+
+    .ship-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 5px 0;
+      color: #9db8c8;
+      font-size: 9px;
+      border-bottom: 1px solid rgba(137, 166, 186, 0.07);
+    }
+
+    .ship-status:last-child {
+      border-bottom: 0;
+    }
+
+    .ship-status.sunk {
+      color: #687989;
+      text-decoration: line-through;
+      opacity: 0.56;
+    }
+
+    .ship-cells {
+      display: flex;
+      gap: 2px;
+    }
+
+    .ship-cell {
+      width: 9px;
+      height: 5px;
+      border-radius: 2px;
+      background: var(--cyan);
+      box-shadow: 0 0 5px rgba(69, 215, 255, 0.35);
+    }
+
+    .ship-status.sunk .ship-cell {
+      background: var(--red);
+      box-shadow: none;
+    }
+
+    /* ===== MESSAGES ET RÉSULTATS ===== */
+    .message {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      z-index: 200;
+      width: max-content;
+      max-width: calc(100vw - 30px);
+      padding: 12px 20px;
+      font-size: 12px;
+      font-weight: 900;
+      border: 1px solid;
+      border-radius: 999px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(12px);
+      animation: fadeInOut 2.5s forwards;
+    }
+
+    .message.success {
+      color: #b9ffe1;
+      border-color: rgba(53, 242, 161, 0.55);
+      background: rgba(9, 72, 50, 0.93);
+    }
+
+    .message.danger {
+      color: #ffd9e1;
+      border-color: rgba(255, 86, 120, 0.55);
+      background: rgba(89, 17, 41, 0.94);
+    }
+
+    .message.info {
+      color: #dff9ff;
+      border-color: rgba(69, 215, 255, 0.5);
+      background: rgba(10, 55, 79, 0.94);
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translate(-50%, -16px); }
+      15%, 85% { opacity: 1; transform: translate(-50%, 0); }
+      100% { opacity: 0; transform: translate(-50%, -16px); }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin: 22px 0;
+    }
+
+    .stat-item {
+      padding: 14px;
+      text-align: left;
+      border: 1px solid rgba(69, 215, 255, 0.13);
+      border-radius: 12px;
+      background: rgba(2, 12, 28, 0.62);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      margin-top: 4px;
+      color: var(--cyan-soft);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 23px;
+      font-weight: 900;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .ship-selector {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .boards-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    @media (max-width: 620px) {
+      body {
+        padding: 10px;
+      }
+
+      .menu-overlay {
+        padding: 12px;
+      }
+
+      .menu-content {
+        padding: 25px 18px;
+        border-radius: 19px;
+      }
+
+      .difficulty-options,
+      .rules-grid,
+      .fleet-status {
+        grid-template-columns: 1fr;
+      }
+
+      .hud {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hud-item:nth-child(3)::before {
+        display: none;
+      }
+
+      .ship-selector {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .selector-heading {
+        align-items: flex-start;
+      }
+
+      .grid {
+        --cell-size: clamp(22px, calc((100vw - 70px) / 11), 32px);
+        gap: 2px;
+        padding: 6px;
+      }
+
+      .board-wrapper {
+        width: 100%;
+        padding: 8px;
+      }
+
+      .control-btn {
+        flex: 1 1 calc(50% - 8px);
+      }
+
+      .control-btn.primary {
+        flex-basis: 100%;
+      }
+
+      .game-topbar {
+        margin: 2px 2px 12px;
+      }
     }
   </style>
+  <link rel="stylesheet" href="arcade-home.css">
 </head>
 <body>
+  <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil"><span class="arcade-home-icon" aria-hidden="true">⌂</span><span class="arcade-home-label">Accueil</span></a>
 
   <!-- Menu Principal -->
   <div id="main-menu" class="menu-overlay">
     <div class="menu-content">
-      <h1>🚢 Bataille Navale</h1>
-      <p style="margin-bottom: 30px; color: #888;">Coulez tous les navires ennemis pour gagner !</p>
-      
-      <h3 style="margin-bottom: 15px;">Choisissez la difficulté :</h3>
-      <button class="menu-btn primary" onclick="game.start('easy')">🟢 Facile</button>
-      <button class="menu-btn primary" onclick="game.start('medium')">🟡 Moyen</button>
-      <button class="menu-btn primary" onclick="game.start('hard')">🔴 Difficile</button>
-      <button class="menu-btn primary" onclick="game.start('impossible')">💀 Impossible</button>
-      
-      <button class="menu-btn secondary" onclick="showRules()" style="margin-top: 20px;">📖 Règles du jeu</button>
+      <div class="menu-kicker">Neon Fleet</div>
+      <div class="menu-emblem" aria-hidden="true">⚓</div>
+      <h1>Bataille <span>Navale</span></h1>
+      <p class="menu-subtitle">Déployez votre flotte, anticipez les tirs ennemis et prenez le contrôle de l'océan.</p>
+
+      <div class="section-label"><span>01</span> Choisissez votre adversaire</div>
+      <div class="difficulty-options">
+        <button class="difficulty-card" data-level="easy" onclick="game.start('easy')">
+          <span class="difficulty-icon">🌊</span>
+          <span class="difficulty-copy"><strong>Facile</strong><small>Tirs aléatoires</small></span>
+        </button>
+        <button class="difficulty-card" data-level="medium" onclick="game.start('medium')">
+          <span class="difficulty-icon">⚓</span>
+          <span class="difficulty-copy"><strong>Normal</strong><small>Poursuite basique</small></span>
+        </button>
+        <button class="difficulty-card" data-level="hard" onclick="game.start('hard')">
+          <span class="difficulty-icon">🎯</span>
+          <span class="difficulty-copy"><strong>Difficile</strong><small>Stratégie en damier</small></span>
+        </button>
+        <button class="difficulty-card" data-level="impossible" onclick="game.start('impossible')">
+          <span class="difficulty-icon">☠️</span>
+          <span class="difficulty-copy"><strong>Expert</strong><small>Analyse probabiliste</small></span>
+        </button>
+      </div>
+
+      <button class="menu-btn secondary" onclick="showRules()">📖 Consulter les règles</button>
+      <p class="menu-footnote">Clic droit ou touche R pour pivoter un navire</p>
     </div>
   </div>
 
   <!-- Menu Règles -->
   <div id="rules-menu" class="menu-overlay hidden">
-    <div class="menu-content">
-      <h2>📖 Règles du jeu</h2>
-      <div style="text-align: left; margin: 20px 0; line-height: 1.8;">
-        <p><strong>🎯 Objectif :</strong> Couler tous les navires ennemis avant qu'il ne coule les vôtres.</p>
-        <br>
-        <p><strong>🚢 Vos navires :</strong></p>
-        <ul style="margin-left: 20px;">
-          <li>Porte-avions (5 cases)</li>
-          <li>Croiseur (4 cases)</li>
-          <li>Destroyer (3 cases)</li>
-          <li>Sous-marin (3 cases)</li>
-          <li>Torpilleur (2 cases)</li>
-        </ul>
-        <br>
-        <p><strong>🎮 Comment jouer :</strong></p>
-        <ul style="margin-left: 20px;">
-          <li>Placez vos navires sur votre grille</li>
-          <li>Clic gauche pour placer, clic droit pour pivoter</li>
-          <li>Cliquez sur la grille ennemie pour attaquer</li>
-          <li>Rouge = Touché, Gris = Manqué</li>
-          <li>Si vous touchez, vous rejouez !</li>
-        </ul>
+    <div class="menu-content rules-card">
+      <div class="menu-kicker">Briefing</div>
+      <h2>Règles de <span>mission</span></h2>
+      <p class="menu-subtitle">Une partie se déroule en trois étapes simples.</p>
+
+      <div class="rules-grid">
+        <article class="rule-step">
+          <span class="rule-number">01</span>
+          <strong>Déployez</strong>
+          <p>Placez vos cinq navires. Utilisez R ou le clic droit pour les pivoter.</p>
+        </article>
+        <article class="rule-step">
+          <span class="rule-number">02</span>
+          <strong>Localisez</strong>
+          <p>Visez une coordonnée de la flotte ennemie. Un tir réussi vous permet de rejouer.</p>
+        </article>
+        <article class="rule-step">
+          <span class="rule-number">03</span>
+          <strong>Dominez</strong>
+          <p>Coulez les cinq navires adverses avant que votre flotte ne soit détruite.</p>
+        </article>
+      </div>
+
+      <div class="fleet-legend" aria-label="Composition de la flotte">
+        <span>Porte-avions · 5</span>
+        <span>Croiseur · 4</span>
+        <span>Destroyer · 3</span>
+        <span>Sous-marin · 3</span>
+        <span>Torpilleur · 2</span>
       </div>
       <button class="menu-btn secondary" onclick="hideRules()">← Retour</button>
     </div>
@@ -140,6 +1110,7 @@
   <!-- Menu Game Over -->
   <div id="gameover-menu" class="menu-overlay hidden">
     <div class="menu-content">
+      <div class="menu-kicker">Rapport de mission</div>
       <h2 id="gameover-title">🎉 Victoire !</h2>
       <div id="gameover-stats" class="stats-grid"></div>
       <button class="menu-btn primary" onclick="game.restart()">🔄 Rejouer</button>
@@ -149,7 +1120,14 @@
 
   <!-- Écran de jeu -->
   <div id="game-screen" class="hidden">
-    
+    <div class="game-topbar">
+      <div class="mini-brand">
+        <span class="mini-brand-icon" aria-hidden="true">⚓</span>
+        <span><strong>NEON FLEET</strong><small>Bataille navale</small></span>
+      </div>
+      <button class="ghost-btn" onclick="game.requestBackToMenu()">← Menu</button>
+    </div>
+
     <!-- HUD -->
     <div class="hud">
       <div class="hud-item">
@@ -171,9 +1149,10 @@
     </div>
 
     <!-- Phase indicator -->
-    <div id="phase-indicator" style="text-align: center; margin-bottom: 20px;">
+    <div id="phase-indicator" class="phase-card">
+      <div class="phase-kicker">Mission active</div>
       <h2 id="phase-title">Placement des navires</h2>
-      <p id="phase-subtitle" style="color: #888;">Sélectionnez un navire et cliquez sur la grille pour le placer</p>
+      <p id="phase-subtitle">Sélectionnez un navire et cliquez sur la grille pour le placer</p>
     </div>
 
     <!-- Ship selector (placement phase) -->
@@ -193,11 +1172,11 @@
     <!-- Grilles -->
     <div class="boards-container">
       <div class="board-wrapper">
-        <div class="board-title">🛡️ Votre flotte</div>
+        <div class="board-title"><strong>🛡️ Votre flotte</strong><small>Zone alliée</small></div>
         <div id="player-grid" class="grid"></div>
       </div>
-      <div class="board-wrapper" id="enemy-board-wrapper" class="hidden">
-        <div class="board-title">🎯 Flotte ennemie</div>
+      <div class="board-wrapper hidden" id="enemy-board-wrapper">
+        <div class="board-title"><strong>🎯 Flotte ennemie</strong><small>Zone de tir</small></div>
         <div id="enemy-grid" class="grid"></div>
       </div>
     </div>
@@ -818,22 +1797,45 @@ class Game {
 
     this.renderPlayerGrid();
     this.renderShipSelector();
+    this.updatePlacementStatus();
     this.updateHUD();
+  }
+
+  appendGridCoordinates(fragment) {
+    const corner = document.createElement('div');
+    corner.className = 'grid-label corner';
+    corner.textContent = '·';
+    fragment.appendChild(corner);
+
+    for (let x = 0; x < CONFIG.GRID_SIZE; x++) {
+      const label = document.createElement('div');
+      label.className = 'grid-label';
+      label.textContent = String.fromCharCode(65 + x);
+      fragment.appendChild(label);
+    }
   }
 
   // Render la grille du joueur
   renderPlayerGrid() {
     const container = document.getElementById('player-grid');
     container.innerHTML = '';
-    container.style.gridTemplateColumns = `repeat(${CONFIG.GRID_SIZE}, 1fr)`;
+    container.style.gridTemplateColumns = `repeat(${CONFIG.GRID_SIZE + 1}, var(--cell-size))`;
+    const fragment = document.createDocumentFragment();
+    this.appendGridCoordinates(fragment);
 
     for (let y = 0; y < CONFIG.GRID_SIZE; y++) {
+      const rowLabel = document.createElement('div');
+      rowLabel.className = 'grid-label';
+      rowLabel.textContent = y + 1;
+      fragment.appendChild(rowLabel);
+
       for (let x = 0; x < CONFIG.GRID_SIZE; x++) {
         const cell = this.playerGrid.getCell(x, y);
         const div = document.createElement('div');
         div.className = 'cell';
         div.dataset.x = x;
         div.dataset.y = y;
+        div.setAttribute('aria-label', `Case ${String.fromCharCode(65 + x)}${y + 1}`);
 
         if (cell.isHit) {
           div.classList.add('hit');
@@ -849,29 +1851,40 @@ class Game {
 
         // Events pour placement
         if (this.phase === 'placement') {
+          div.classList.add('placement-cell');
           div.addEventListener('click', () => this.handlePlacementClick(x, y));
           div.addEventListener('mouseenter', () => this.showPreview(x, y));
           div.addEventListener('mouseleave', () => this.clearPreview());
         }
 
-        container.appendChild(div);
+        fragment.appendChild(div);
       }
     }
+
+    container.appendChild(fragment);
   }
 
   // Render la grille ennemie
   renderEnemyGrid() {
     const container = document.getElementById('enemy-grid');
     container.innerHTML = '';
-    container.style.gridTemplateColumns = `repeat(${CONFIG.GRID_SIZE}, 1fr)`;
+    container.style.gridTemplateColumns = `repeat(${CONFIG.GRID_SIZE + 1}, var(--cell-size))`;
+    const fragment = document.createDocumentFragment();
+    this.appendGridCoordinates(fragment);
 
     for (let y = 0; y < CONFIG.GRID_SIZE; y++) {
+      const rowLabel = document.createElement('div');
+      rowLabel.className = 'grid-label';
+      rowLabel.textContent = y + 1;
+      fragment.appendChild(rowLabel);
+
       for (let x = 0; x < CONFIG.GRID_SIZE; x++) {
         const cell = this.enemyGrid.getCell(x, y);
         const div = document.createElement('div');
         div.className = 'cell';
         div.dataset.x = x;
         div.dataset.y = y;
+        div.setAttribute('aria-label', `Cible ${String.fromCharCode(65 + x)}${y + 1}`);
 
         if (cell.isHit) {
           const ship = this.enemyGrid.getShipById(cell.shipId);
@@ -888,31 +1901,53 @@ class Game {
         }
 
         // Event pour attaque
-        if (this.phase === 'battle' && this.isPlayerTurn) {
+        if (this.phase === 'battle' && this.isPlayerTurn && !cell.isHit && !cell.isMiss) {
+          div.classList.add('targetable');
           div.addEventListener('click', () => this.handleAttack(x, y));
         }
 
-        container.appendChild(div);
+        fragment.appendChild(div);
       }
     }
+
+    container.appendChild(fragment);
   }
 
   // Render le sélecteur de navires
   renderShipSelector() {
     const container = document.getElementById('ship-selector');
-    container.innerHTML = '<strong style="width:100%;text-align:center;margin-bottom:10px;">Sélectionnez un navire :</strong>';
+    const orientation = this.isHorizontal ? 'Horizontal' : 'Vertical';
+    container.innerHTML = `
+      <div class="selector-heading">
+        <div>
+          <strong>Votre flotte</strong>
+          <small>Sélectionnez un navire puis une case de départ</small>
+        </div>
+        <span class="orientation-badge">${orientation}</span>
+      </div>
+    `;
 
     CONFIG.SHIPS.forEach((ship, index) => {
-      const div = document.createElement('div');
+      const div = document.createElement('button');
+      div.type = 'button';
       div.className = 'ship-option';
+      div.style.setProperty('--ship-color', ship.color);
       
       if (this.placedShips.includes(ship.id)) {
         div.classList.add('placed');
+        div.disabled = true;
       } else if (index === this.selectedShipIndex) {
         div.classList.add('selected');
+        div.setAttribute('aria-pressed', 'true');
       }
 
-      div.innerHTML = `${ship.name} <small>(${ship.size})</small>`;
+      div.innerHTML = `
+        <span class="ship-name">${ship.name}</span>
+        <span class="mini-ship" aria-hidden="true">
+          ${Array(ship.size).fill('<i></i>').join('')}
+        </span>
+        <span class="ship-state">${this.placedShips.includes(ship.id) ? 'Placée ✓' : `${ship.size} cases`}</span>
+      `;
       
       if (!this.placedShips.includes(ship.id)) {
         div.addEventListener('click', () => this.selectShip(index));
@@ -934,6 +1969,7 @@ class Game {
     if (this.phase !== 'placement') return;
     this.isHorizontal = !this.isHorizontal;
     this.clearPreview();
+    this.renderShipSelector();
   }
 
   // Afficher la prévisualisation du placement
@@ -984,11 +2020,7 @@ class Game {
       // Re-render
       this.renderPlayerGrid();
       this.renderShipSelector();
-
-      // Activer le bouton si tous placés
-      if (this.placedShips.length === CONFIG.SHIPS.length) {
-        document.getElementById('start-battle-btn').disabled = false;
-      }
+      this.updatePlacementStatus();
     } else {
       this.audio.play('error');
     }
@@ -1002,6 +2034,20 @@ class Game {
         return;
       }
     }
+  }
+
+  updatePlacementStatus() {
+    if (this.phase !== 'placement') return;
+
+    const totalShips = CONFIG.SHIPS.length;
+    const remainingShips = totalShips - this.placedShips.length;
+    const subtitle = document.getElementById('phase-subtitle');
+    const startButton = document.getElementById('start-battle-btn');
+
+    startButton.disabled = remainingShips !== 0;
+    subtitle.textContent = remainingShips === 0
+      ? 'Flotte prête · lancez la bataille lorsque vous êtes satisfait du placement'
+      : `${this.placedShips.length} / ${totalShips} navires placés · ${remainingShips} restant${remainingShips > 1 ? 's' : ''}`;
   }
 
   // Placement aléatoire
@@ -1030,7 +2076,7 @@ class Game {
     this.audio.play('place');
     this.renderPlayerGrid();
     this.renderShipSelector();
-    document.getElementById('start-battle-btn').disabled = false;
+    this.updatePlacementStatus();
   }
 
   // Réinitialiser le placement
@@ -1041,7 +2087,7 @@ class Game {
 
     this.renderPlayerGrid();
     this.renderShipSelector();
-    document.getElementById('start-battle-btn').disabled = true;
+    this.updatePlacementStatus();
   }
 
   // Commencer la bataille
@@ -1129,6 +2175,7 @@ class Game {
     if (!result.hit) {
       this.isPlayerTurn = false;
       this.updateTurnIndicator();
+      this.renderEnemyGrid();
       setTimeout(() => this.aiTurn(), CONFIG.AI_DELAY);
     }
   }
@@ -1291,6 +2338,17 @@ class Game {
     if (confirm('Êtes-vous sûr de vouloir abandonner ?')) {
       this.endGame(false);
     }
+  }
+
+  requestBackToMenu() {
+    if (
+      (this.phase === 'placement' || this.phase === 'battle') &&
+      !confirm('Quitter cette partie et revenir au menu ?')
+    ) {
+      return;
+    }
+
+    this.backToMenu();
   }
 
   // Rejouer
