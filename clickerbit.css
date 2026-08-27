@@ -125,8 +125,12 @@ body {
 
 html {
   /* Fond visible uniquement autour du jeu sur tablette/desktop. */
-  background:
-    radial-gradient(circle at 50% 35%, #151c4a 0%, #050711 55%, #010208 100%);
+  background: radial-gradient(
+    circle at 50% 35%,
+    #151c4a 0%,
+    #050711 55%,
+    #010208 100%
+  );
 }
 
 body {
@@ -1237,12 +1241,33 @@ html::before {
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(circle at 16% 22%, rgba(0, 212, 255, 0.2) 0 1px, transparent 2px),
-    radial-gradient(circle at 78% 16%, rgba(255, 0, 128, 0.24) 0 1px, transparent 2px),
-    radial-gradient(circle at 24% 68%, rgba(157, 0, 255, 0.2) 0 1px, transparent 2px),
-    radial-gradient(circle at 85% 72%, rgba(0, 255, 255, 0.16) 0 1px, transparent 2px),
+    radial-gradient(
+      circle at 16% 22%,
+      rgba(0, 212, 255, 0.2) 0 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 78% 16%,
+      rgba(255, 0, 128, 0.24) 0 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 24% 68%,
+      rgba(157, 0, 255, 0.2) 0 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 85% 72%,
+      rgba(0, 255, 255, 0.16) 0 1px,
+      transparent 2px
+    ),
     radial-gradient(ellipse at 50% 38%, rgba(22, 30, 88, 0.72), transparent 52%);
-  background-size: 180px 180px, 230px 230px, 290px 290px, 340px 340px, 100% 100%;
+  background-size:
+    180px 180px,
+    230px 230px,
+    290px 290px,
+    340px 340px,
+    100% 100%;
   animation: ambientStars 14s ease-in-out infinite alternate;
 }
 
@@ -1259,7 +1284,13 @@ html::after {
   background-size: 58px 34px;
   transform: perspective(360px) rotateX(62deg);
   transform-origin: center top;
-  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 72%, transparent);
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 22%,
+    #000 72%,
+    transparent
+  );
   animation: gridDrift 4s linear infinite;
 }
 
@@ -1286,8 +1317,17 @@ body::before {
 
 #gameScreen {
   background:
-    radial-gradient(circle at 50% 25%, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 38%),
-    linear-gradient(180deg, var(--color-dark) 0%, #060917 58%, var(--color-bg-dark) 100%);
+    radial-gradient(
+      circle at 50% 25%,
+      color-mix(in srgb, var(--color-primary) 12%, transparent),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      var(--color-dark) 0%,
+      #060917 58%,
+      var(--color-bg-dark) 100%
+    );
 }
 
 #gameScreen::after {
@@ -1300,8 +1340,12 @@ body::before {
   background-image:
     radial-gradient(circle, var(--color-primary) 0 1px, transparent 1.5px),
     radial-gradient(circle, var(--color-secondary) 0 1px, transparent 1.5px);
-  background-position: 0 0, 19px 27px;
-  background-size: 47px 47px, 71px 71px;
+  background-position:
+    0 0,
+    19px 27px;
+  background-size:
+    47px 47px,
+    71px 71px;
   mask-image: linear-gradient(to bottom, #000, transparent 68%);
   animation: gameDust 18s linear infinite;
 }
@@ -1495,14 +1539,24 @@ body::before {
   position: relative;
   overflow: hidden;
   border-width: 2px;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.88), color-mix(in srgb, var(--color-primary) 12%, #000), rgba(0, 0, 0, 0.88));
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.88),
+    color-mix(in srgb, var(--color-primary) 12%, #000),
+    rgba(0, 0, 0, 0.88)
+  );
 }
 
 #startButton::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(110deg, transparent 22%, rgba(255, 255, 255, 0.16) 47%, transparent 72%);
+  background: linear-gradient(
+    110deg,
+    transparent 22%,
+    rgba(255, 255, 255, 0.16) 47%,
+    transparent 72%
+  );
   transform: translateX(-120%);
   animation: buttonSweep 3.2s ease-in-out infinite;
 }
@@ -1515,7 +1569,9 @@ body::before {
 
 #startButton small {
   color: var(--color-text-dim);
-  font: 5px "Press Start 2P", monospace;
+  font:
+    5px "Press Start 2P",
+    monospace;
   letter-spacing: 0.8px;
 }
 
@@ -1523,9 +1579,14 @@ body::before {
 .game-header {
   padding: 9px 13px 11px;
   text-align: left;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 62%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-primary) 62%, transparent);
   background:
-    linear-gradient(90deg, color-mix(in srgb, var(--color-primary) 9%, transparent), transparent 35%),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-primary) 9%, transparent),
+      transparent 35%
+    ),
     rgba(2, 5, 17, 0.9);
   backdrop-filter: blur(10px);
 }
@@ -1588,7 +1649,9 @@ body::before {
 .era-progress {
   min-width: 31px;
   color: var(--color-secondary);
-  font: bold 8px "Courier New", monospace;
+  font:
+    bold 8px "Courier New",
+    monospace;
   text-align: right;
 }
 
@@ -1606,7 +1669,11 @@ body::before {
   height: 100%;
   display: block;
   position: relative;
-  background: linear-gradient(90deg, var(--color-secondary), var(--color-primary));
+  background: linear-gradient(
+    90deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
   box-shadow: 0 0 10px var(--color-primary);
   transition: width 350ms ease-out;
 }
@@ -1615,7 +1682,11 @@ body::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(90deg, transparent 0 8px, rgba(255, 255, 255, 0.38) 8px 9px);
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 8px,
+    rgba(255, 255, 255, 0.38) 8px 9px
+  );
 }
 
 .era-objective {
@@ -1640,7 +1711,11 @@ body::before {
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.075);
   background:
-    linear-gradient(115deg, color-mix(in srgb, var(--color-primary) 9%, transparent), transparent 54%),
+    linear-gradient(
+      115deg,
+      color-mix(in srgb, var(--color-primary) 9%, transparent),
+      transparent 54%
+    ),
     rgba(0, 0, 0, 0.28);
 }
 
@@ -1704,7 +1779,11 @@ body::before {
   position: absolute;
   inset: 23px;
   border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--color-primary) 23%, transparent), transparent 67%);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-primary) 23%, transparent),
+    transparent 67%
+  );
   filter: blur(7px);
   animation: reactorAura 1.7s ease-in-out infinite;
 }
@@ -1742,7 +1821,8 @@ body::before {
 
 .reactor-orbit-two {
   inset: 18px;
-  border-color: transparent var(--color-secondary) color-mix(in srgb, var(--color-secondary) 35%, transparent);
+  border-color: transparent var(--color-secondary)
+    color-mix(in srgb, var(--color-secondary) 35%, transparent);
   animation-duration: 6s;
   animation-direction: reverse;
 }
@@ -1755,7 +1835,11 @@ body::before {
   touch-action: manipulation;
   border-width: 3px;
   background:
-    radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--color-primary) 25%, transparent), transparent 43%),
+    radial-gradient(
+      circle at 50% 46%,
+      color-mix(in srgb, var(--color-primary) 25%, transparent),
+      transparent 43%
+    ),
     linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.82));
   box-shadow:
     0 0 0 5px color-mix(in srgb, var(--color-primary) 7%, transparent),
@@ -1778,7 +1862,12 @@ body::before {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: linear-gradient(115deg, transparent 25%, rgba(255, 255, 255, 0.19) 48%, transparent 70%);
+  background: linear-gradient(
+    115deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.19) 48%,
+    transparent 70%
+  );
   transform: translateX(-110%);
   animation: coreSweep 3s ease-in-out infinite;
 }
@@ -1823,8 +1912,11 @@ body::before {
   font-size: 6px;
   text-align: center;
   letter-spacing: 0.7px;
-  box-shadow: 0 0 12px color-mix(in srgb, var(--color-secondary) 45%, transparent);
-  transition: opacity 150ms ease, transform 150ms ease;
+  box-shadow: 0 0 12px
+    color-mix(in srgb, var(--color-secondary) 45%, transparent);
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
 }
 
 .streak-badge.is-active {
@@ -1845,7 +1937,11 @@ body::before {
 }
 
 .click-hint span {
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-primary) 52%, transparent));
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-primary) 52%, transparent)
+  );
 }
 
 .floating-number {
@@ -1912,7 +2008,11 @@ body::before {
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--color-secondary) 52%, transparent);
   background:
-    linear-gradient(125deg, color-mix(in srgb, var(--color-secondary) 7%, transparent), transparent 48%),
+    linear-gradient(
+      125deg,
+      color-mix(in srgb, var(--color-secondary) 7%, transparent),
+      transparent 48%
+    ),
     rgba(1, 4, 14, 0.78);
 }
 
@@ -1930,7 +2030,8 @@ body::before {
 
 .upgrade-card:not(.disabled) {
   border-color: var(--color-primary);
-  box-shadow: inset 0 0 22px color-mix(in srgb, var(--color-primary) 5%, transparent);
+  box-shadow: inset 0 0 22px
+    color-mix(in srgb, var(--color-primary) 5%, transparent);
 }
 
 .upgrade-card:not(.disabled)::before {
@@ -1957,7 +2058,9 @@ body::before {
   border: 1px solid color-mix(in srgb, var(--color-secondary) 62%, transparent);
   background: color-mix(in srgb, var(--color-secondary) 7%, rgba(0, 0, 0, 0.5));
   color: var(--color-secondary);
-  font: 20px "Courier New", monospace;
+  font:
+    20px "Courier New",
+    monospace;
   text-shadow: 0 0 9px var(--color-secondary);
 }
 
@@ -2006,7 +2109,9 @@ body::before {
 
 .upgrade-cost span {
   color: var(--color-text-dim);
-  font: 5px "Press Start 2P", monospace;
+  font:
+    5px "Press Start 2P",
+    monospace;
   letter-spacing: 0.7px;
 }
 
@@ -2028,7 +2133,11 @@ body::before {
   width: var(--afford-progress, 0%);
   height: 100%;
   display: block;
-  background: linear-gradient(90deg, var(--color-secondary), var(--color-primary));
+  background: linear-gradient(
+    90deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
   box-shadow: 0 0 7px var(--color-primary);
   transition: width 250ms ease-out;
 }
@@ -2094,7 +2203,11 @@ body::before {
   width: min(90%, 360px);
   border-width: 1px;
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 10%, transparent), transparent 50%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-primary) 10%, transparent),
+      transparent 50%
+    ),
     #060918;
 }
 
@@ -2135,8 +2248,11 @@ body::before {
   gap: 13px;
   opacity: 0;
   pointer-events: none;
-  background:
-    radial-gradient(circle, color-mix(in srgb, var(--color-primary) 28%, transparent), rgba(1, 3, 13, 0.96) 57%);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-primary) 28%, transparent),
+    rgba(1, 3, 13, 0.96) 57%
+  );
   transition: opacity 220ms ease;
 }
 
@@ -2145,7 +2261,12 @@ body::before {
   content: "";
   width: 70%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-primary),
+    transparent
+  );
   box-shadow: 0 0 14px var(--color-primary);
   transform: scaleX(0);
 }
@@ -2279,76 +2400,174 @@ body::before {
 }
 
 @keyframes ambientStars {
-  from { opacity: 0.52; transform: scale(1); }
-  to { opacity: 0.92; transform: scale(1.025); }
+  from {
+    opacity: 0.52;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.92;
+    transform: scale(1.025);
+  }
 }
 
 @keyframes gridDrift {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 0 34px, 58px 0; }
+  from {
+    background-position:
+      0 0,
+      0 0;
+  }
+  to {
+    background-position:
+      0 34px,
+      58px 0;
+  }
 }
 
 @keyframes gameDust {
-  to { background-position: 47px 94px, -52px 98px; }
+  to {
+    background-position:
+      47px 94px,
+      -52px 98px;
+  }
 }
 
 @keyframes coreHover {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 @keyframes slowSpin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes statusPulse {
-  0%, 100% { opacity: 0.72; }
-  50% { opacity: 1; box-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 24%, transparent); }
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 12px
+      color-mix(in srgb, var(--color-primary) 24%, transparent);
+  }
 }
 
 @keyframes onlineBlink {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 @keyframes buttonSweep {
-  0%, 52% { transform: translateX(-120%); }
-  78%, 100% { transform: translateX(120%); }
+  0%,
+  52% {
+    transform: translateX(-120%);
+  }
+  78%,
+  100% {
+    transform: translateX(120%);
+  }
 }
 
 @keyframes reactorAura {
-  0%, 100% { opacity: 0.55; transform: scale(0.94); }
-  50% { opacity: 1; transform: scale(1.12); }
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
 }
 
 @keyframes coreSweep {
-  0%, 58% { transform: translateX(-110%); }
-  82%, 100% { transform: translateX(110%); }
+  0%,
+  58% {
+    transform: translateX(-110%);
+  }
+  82%,
+  100% {
+    transform: translateX(110%);
+  }
 }
 
 @keyframes orbitHit {
-  from { transform: rotate(0) scale(0.86); opacity: 1; }
-  to { transform: rotate(90deg) scale(1.18); opacity: 0.2; }
+  from {
+    transform: rotate(0) scale(0.86);
+    opacity: 1;
+  }
+  to {
+    transform: rotate(90deg) scale(1.18);
+    opacity: 0.2;
+  }
 }
 
 @keyframes auraHit {
-  from { transform: scale(0.75); opacity: 1; }
-  to { transform: scale(1.7); opacity: 0; }
+  from {
+    transform: scale(0.75);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.7);
+    opacity: 0;
+  }
 }
 
 @keyframes sparkBurst {
-  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  100% { opacity: 0; transform: translate(calc(-50% + var(--spark-x)), calc(-50% + var(--spark-y))) scale(0); }
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+        calc(-50% + var(--spark-x)),
+        calc(-50% + var(--spark-y))
+      )
+      scale(0);
+  }
 }
 
 @keyframes toastIn {
-  0% { opacity: 0; transform: translateY(-8px) scale(0.94); }
-  15%, 76% { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(-5px) scale(0.98); }
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.94);
+  }
+  15%,
+  76% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.98);
+  }
 }
 
 @keyframes eraLine {
-  0% { transform: scaleX(0); opacity: 0; }
-  25%, 75% { transform: scaleX(1); opacity: 1; }
-  100% { transform: scaleX(0); opacity: 0; }
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  25%,
+  75% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
 }

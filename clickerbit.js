@@ -415,7 +415,10 @@ function createFloatingNumber(x, y, value) {
 // Projection de quelques pixels depuis le point de contact.
 function createClickBurst(x, y) {
   const container = document.getElementById("floatingContainer");
-  if (!container || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if (
+    !container ||
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
     return;
   }
 
@@ -1178,9 +1181,7 @@ document.getElementById("saveButton")?.addEventListener("click", () => {
   }
 });
 
-document
-  .getElementById("menuButton")
-  ?.addEventListener("click", returnToMenu);
+document.getElementById("menuButton")?.addEventListener("click", returnToMenu);
 
 document
   .getElementById("closeSettingsButton")
