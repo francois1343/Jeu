@@ -1,2584 +1,2892 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>🎮 Neon Runner</title>
-  <style>
-
-    /* Un seul écran visible à la fois */
-.screen {
-  display: none !important;
-  opacity: 0;
-  visibility: hidden;
-}
-
-.screen.active {
-  display: flex !important;
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Modals au-dessus de tout */
-.modal-overlay {
-  display: none;
-  z-index: 1000;
-}
-
-.modal-overlay.show {
-  display: flex;
-}
-
-    /* ============================================ */
-    /* RESET & VARIABLES */
-    /* ============================================ */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    :root {
-      --bg-dark: #0a0a0f;
-      --bg-panel: rgba(10, 10, 20, 0.95);
-      --cyber-cyan: #00ffff;
-      --cyber-pink: #ff00ff;
-      --cyber-green: #00ff88;
-      --cyber-orange: #ff8800;
-      --cyber-red: #ff3366;
-      --cyber-purple: #b44dff;
-      --cyber-yellow: #ffff00;
-      --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.6);
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    body {
-      font-family: 'Courier New', monospace;
-      background: var(--bg-dark);
-      color: var(--text-primary);
-    }
-
-    /* ============================================ */
-    /* FOND CYBERPUNK */
-    /* ============================================ */
-    .cyber-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: -1;
-      background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1a2e 100%);
-    }
-
-    .grid-overlay {
-      position: absolute;
-      width: 200%;
-      height: 200%;
-      top: -50%;
-      left: -50%;
-      background-image: 
-        linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px);
-      background-size: 50px 50px;
-      transform: perspective(500px) rotateX(60deg);
-      animation: gridMove 20s linear infinite;
-    }
-
-    @keyframes gridMove {
-      0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-      100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
-    }
-
-    /* ============================================ */
-    /* ÉCRANS */
-    /* ============================================ */
-    .screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      transition: opacity 0.3s, visibility 0.3s;
-    }
-
-    .screen.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    /* ============================================ */
-    /* MENU PRINCIPAL */
-    /* ============================================ */
-    .main-title {
-      font-size: clamp(36px, 8vw, 72px);
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 10px;
-      background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-pink), var(--cyber-cyan));
-      background-size: 200% 100%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: shimmer 3s linear infinite;
-      text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-    }
-
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-
-    .subtitle {
-      font-size: clamp(14px, 3vw, 20px);
-      color: var(--text-secondary);
-      margin-bottom: 40px;
-      text-align: center;
-    }
-
-    /* ============================================ */
-    /* BOUTONS */
-    /* ============================================ */
-    .btn {
-      padding: 15px 40px;
-      font-size: 16px;
-      font-weight: bold;
-      font-family: inherit;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin: 8px;
-      min-width: 200px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--cyber-cyan), var(--cyber-pink));
-      color: #000;
-      box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 30px rgba(0, 255, 255, 0.6);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--cyber-cyan);
-      border: 2px solid var(--cyber-cyan);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(0, 255, 255, 0.1);
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, var(--cyber-red), var(--cyber-orange));
-      color: #fff;
-    }
-
-    .menu-buttons {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* ============================================ */
-    /* SÉLECTION DE NIVEAU */
-    /* ============================================ */
-    .level-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 15px;
-      max-width: 500px;
-      margin: 30px auto;
-      padding: 20px;
-    }
-
-    .level-btn {
-      width: 70px;
-      height: 70px;
-      border-radius: 12px;
-      border: 2px solid var(--cyber-cyan);
-      background: rgba(0, 255, 255, 0.1);
-      color: var(--cyber-cyan);
-      font-size: 24px;
-      font-weight: bold;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .level-btn:hover:not(:disabled) {
-      background: rgba(0, 255, 255, 0.3);
-      transform: scale(1.1);
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
-    }
-
-    .level-btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-      border-color: #333;
-      color: #333;
-    }
-
-    .level-btn.completed {
-      background: rgba(0, 255, 136, 0.2);
-      border-color: var(--cyber-green);
-      color: var(--cyber-green);
-    }
-
-    /* ============================================ */
-    /* ÉCRAN DE JEU */
-    /* ============================================ */
-    #gameScreen {
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* HUD en haut */
-    .game-hud {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 80%, transparent 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      padding: 10px 20px;
-      z-index: 100;
-    }
-
-    .hud-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 8px 16px;
-      border-radius: 20px;
-      border: 1px solid rgba(0, 255, 255, 0.3);
-    }
-
-    .hud-icon {
-      font-size: 18px;
-    }
-
-    .hud-value {
-      font-size: 16px;
-      font-weight: bold;
-      color: var(--cyber-cyan);
-      min-width: 50px;
-      text-align: center;
-    }
-
-    /* Barre de santé */
-    .health-bar {
-      width: 120px;
-      height: 20px;
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 10px;
-      border: 1px solid var(--cyber-red);
-      overflow: hidden;
-    }
-
-    .health-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--cyber-red), var(--cyber-orange));
-      transition: width 0.3s;
-      border-radius: 10px;
-    }
-
-    /* Bouton pause */
-    .pause-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      border: 2px solid var(--cyber-orange);
-      background: rgba(255, 136, 0, 0.2);
-      color: var(--cyber-orange);
-      font-size: 20px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .pause-btn:hover {
-      background: rgba(255, 136, 0, 0.4);
-    }
-
-    /* Zone de jeu - AGRANDI */
-    .game-area {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 70px 20px 120px 20px;
-      width: 100%;
-      height: 100%;
-    }
-
-    .canvas-container {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      max-width: 100%;
-      max-height: 100%;
-    }
-
-    #gameCanvas {
-      border: 3px solid var(--cyber-cyan);
-      border-radius: 8px;
-      box-shadow: 
-        0 0 30px rgba(0, 255, 255, 0.3),
-        inset 0 0 30px rgba(0, 255, 255, 0.1);
-      max-width: 100%;
-      max-height: 100%;
-    }
-
-    /* Minimap */
-    .minimap-container {
-      position: fixed;
-      top: 70px;
-      right: 15px;
-      z-index: 90;
-    }
-
-    #minimapCanvas {
-      border: 2px solid var(--cyber-pink);
-      border-radius: 8px;
-      background: rgba(0, 0, 0, 0.8);
-    }
-
-    /* Barre de hacks en bas */
-    .hacks-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 100px;
-      background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 80%, transparent 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      padding: 15px 20px;
-      z-index: 100;
-    }
-
-    .hack-btn {
-      width: 75px;
-      height: 75px;
-      border-radius: 12px;
-      border: 2px solid var(--cyber-purple);
-      background: rgba(180, 77, 255, 0.2);
-      color: #fff;
-      font-size: 12px;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-    }
-
-    .hack-btn:hover:not(:disabled) {
-      background: rgba(180, 77, 255, 0.4);
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(180, 77, 255, 0.5);
-    }
-
-    .hack-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .hack-btn.active {
-      background: rgba(0, 255, 136, 0.4);
-      border-color: var(--cyber-green);
-      animation: pulse 1s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
-      50% { box-shadow: 0 0 25px rgba(0, 255, 136, 0.8); }
-    }
-
-    .hack-icon {
-      font-size: 24px;
-    }
-
-    .hack-name {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .hack-key {
-      font-size: 9px;
-      color: var(--text-secondary);
-    }
-
-    /* ============================================ */
-    /* MODALES */
-    /* ============================================ */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.85);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s;
-      padding: 20px;
-    }
-
-    .modal-overlay.show {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-content {
-      background: var(--bg-panel);
-      border: 2px solid var(--cyber-cyan);
-      border-radius: 20px;
-      padding: 30px;
-      max-width: 450px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
-      transform: scale(0.9);
-      transition: transform 0.3s;
-    }
-
-    .modal-overlay.show .modal-content {
-      transform: scale(1);
-    }
-
-    .modal-title {
-      font-size: 28px;
-      margin-bottom: 20px;
-      background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-pink));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .modal-text {
-      color: var(--text-secondary);
-      margin-bottom: 20px;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    /* Stats dans modal */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      margin: 25px 0;
-    }
-
-    .stat-item {
-      background: rgba(0, 255, 255, 0.1);
-      padding: 15px;
-      border-radius: 12px;
-      border: 1px solid rgba(0, 255, 255, 0.2);
-    }
-
-    .stat-label {
-      font-size: 11px;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .stat-value {
-      font-size: 24px;
-      font-weight: bold;
-      color: var(--cyber-cyan);
-      margin-top: 5px;
-    }
-
-    .stat-value.gold {
-      color: var(--cyber-yellow);
-    }
-
-    .stat-value.green {
-      color: var(--cyber-green);
-    }
-
-    .stat-value.red {
-      color: var(--cyber-red);
-    }
-
-    /* Instructions */
-    .instructions {
-      text-align: left;
-      margin: 20px 0;
-    }
-
-    .instruction-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 15px;
-      margin: 15px 0;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-    }
-
-    .instruction-icon {
-      font-size: 28px;
-      flex-shrink: 0;
-    }
-
-    .instruction-text {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
-    .instruction-text strong {
-      color: var(--cyber-cyan);
-    }
-
-    /* Modal boutons */
-    .modal-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    /* ============================================ */
-    /* ALERTES */
-    /* ============================================ */
-    .alert-popup {
-      position: fixed;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.9);
-      color: var(--cyber-cyan);
-      padding: 12px 25px;
-      border-radius: 30px;
-      border: 1px solid var(--cyber-cyan);
-      font-size: 14px;
-      font-weight: bold;
-      z-index: 2000;
-      animation: alertIn 0.3s ease, alertOut 0.3s ease 2s forwards;
-      white-space: nowrap;
-    }
-
-    @keyframes alertIn {
-      from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-
-    @keyframes alertOut {
-      from { opacity: 1; }
-      to { opacity: 0; }
-    }
-
-    /* ============================================ */
-    /* CONTRÔLES TACTILES */
-    /* ============================================ */
-    .touch-controls {
-      display: none;
-      position: fixed;
-      bottom: 110px;
-      left: 20px;
-      z-index: 90;
-    }
-
-    @media (hover: none) and (pointer: coarse) {
-      .touch-controls {
-        display: grid;
-        grid-template-columns: repeat(3, 60px);
-        grid-template-rows: repeat(3, 60px);
-        gap: 5px;
-      }
-    }
-
-    .touch-btn {
-      width: 60px;
-      height: 60px;
-      border-radius: 12px;
-      border: 2px solid var(--cyber-cyan);
-      background: rgba(0, 255, 255, 0.2);
-      color: var(--cyber-cyan);
-      font-size: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.1s;
-    }
-
-    .touch-btn:active {
-      background: rgba(0, 255, 255, 0.5);
-      transform: scale(0.95);
-    }
-
-    .touch-btn.empty {
-      visibility: hidden;
-    }
-
-    /* ============================================ */
-    /* RESPONSIVE */
-    /* ============================================ */
-    @media (max-width: 600px) {
-      .game-hud {
-        gap: 8px;
-        padding: 8px 10px;
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>🎮 Neon Runner</title>
+    <style>
+      /* Un seul écran visible à la fois */
+      .screen {
+        display: none !important;
+        opacity: 0;
+        visibility: hidden;
       }
 
-      .hud-item {
-        padding: 6px 10px;
+      .screen.active {
+        display: flex !important;
+        opacity: 1;
+        visibility: visible;
       }
 
-      .hud-value {
-        font-size: 14px;
-        min-width: 40px;
+      /* Modals au-dessus de tout */
+      .modal-overlay {
+        display: none;
+        z-index: 1000;
       }
 
-      .health-bar {
-        width: 80px;
+      .modal-overlay.show {
+        display: flex;
       }
 
-      .hacks-bar {
-        gap: 8px;
-        padding: 10px;
-        height: 90px;
+      /* ============================================ */
+      /* RESET & VARIABLES */
+      /* ============================================ */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
       }
 
-      .hack-btn {
-        width: 65px;
-        height: 65px;
+      :root {
+        --bg-dark: #0a0a0f;
+        --bg-panel: rgba(10, 10, 20, 0.95);
+        --cyber-cyan: #00ffff;
+        --cyber-pink: #ff00ff;
+        --cyber-green: #00ff88;
+        --cyber-orange: #ff8800;
+        --cyber-red: #ff3366;
+        --cyber-purple: #b44dff;
+        --cyber-yellow: #ffff00;
+        --text-primary: #ffffff;
+        --text-secondary: rgba(255, 255, 255, 0.6);
       }
 
-      .level-grid {
-        grid-template-columns: repeat(4, 1fr);
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: "Courier New", monospace;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+      }
+
+      /* ============================================ */
+      /* FOND CYBERPUNK */
+      /* ============================================ */
+      .cyber-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        background: linear-gradient(
+          135deg,
+          #0a0a1a 0%,
+          #1a0a2e 50%,
+          #0a1a2e 100%
+        );
+      }
+
+      .grid-overlay {
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        top: -50%;
+        left: -50%;
+        background-image:
+          linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+        transform: perspective(500px) rotateX(60deg);
+        animation: gridMove 20s linear infinite;
+      }
+
+      @keyframes gridMove {
+        0% {
+          transform: perspective(500px) rotateX(60deg) translateY(0);
+        }
+        100% {
+          transform: perspective(500px) rotateX(60deg) translateY(50px);
+        }
+      }
+
+      /* ============================================ */
+      /* ÉCRANS */
+      /* ============================================ */
+      .screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        transition:
+          opacity 0.3s,
+          visibility 0.3s;
+      }
+
+      .screen.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      /* ============================================ */
+      /* MENU PRINCIPAL */
+      /* ============================================ */
+      .main-title {
+        font-size: clamp(36px, 8vw, 72px);
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 10px;
+        background: linear-gradient(
+          90deg,
+          var(--cyber-cyan),
+          var(--cyber-pink),
+          var(--cyber-cyan)
+        );
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: shimmer 3s linear infinite;
+        text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+
+      .subtitle {
+        font-size: clamp(14px, 3vw, 20px);
+        color: var(--text-secondary);
+        margin-bottom: 40px;
+        text-align: center;
+      }
+
+      /* ============================================ */
+      /* BOUTONS */
+      /* ============================================ */
+      .btn {
+        padding: 15px 40px;
+        font-size: 16px;
+        font-weight: bold;
+        font-family: inherit;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin: 8px;
+        min-width: 200px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--cyber-cyan),
+          var(--cyber-pink)
+        );
+        color: #000;
+        box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0, 255, 255, 0.6);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: var(--cyber-cyan);
+        border: 2px solid var(--cyber-cyan);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(0, 255, 255, 0.1);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      }
+
+      .btn-danger {
+        background: linear-gradient(
+          135deg,
+          var(--cyber-red),
+          var(--cyber-orange)
+        );
+        color: #fff;
+      }
+
+      .menu-buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         gap: 10px;
       }
 
+      /* ============================================ */
+      /* SÉLECTION DE NIVEAU */
+      /* ============================================ */
+      .level-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 15px;
+        max-width: 500px;
+        margin: 30px auto;
+        padding: 20px;
+      }
+
       .level-btn {
+        width: 70px;
+        height: 70px;
+        border-radius: 12px;
+        border: 2px solid var(--cyber-cyan);
+        background: rgba(0, 255, 255, 0.1);
+        color: var(--cyber-cyan);
+        font-size: 24px;
+        font-weight: bold;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .level-btn:hover:not(:disabled) {
+        background: rgba(0, 255, 255, 0.3);
+        transform: scale(1.1);
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+      }
+
+      .level-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        border-color: #333;
+        color: #333;
+      }
+
+      .level-btn.completed {
+        background: rgba(0, 255, 136, 0.2);
+        border-color: var(--cyber-green);
+        color: var(--cyber-green);
+      }
+
+      /* ============================================ */
+      /* ÉCRAN DE JEU */
+      /* ============================================ */
+      #gameScreen {
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* HUD en haut */
+      .game-hud {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.9) 0%,
+          rgba(0, 0, 0, 0.5) 80%,
+          transparent 100%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        padding: 10px 20px;
+        z-index: 100;
+      }
+
+      .hud-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(0, 255, 255, 0.3);
+      }
+
+      .hud-icon {
+        font-size: 18px;
+      }
+
+      .hud-value {
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--cyber-cyan);
+        min-width: 50px;
+        text-align: center;
+      }
+
+      /* Barre de santé */
+      .health-bar {
+        width: 120px;
+        height: 20px;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        border: 1px solid var(--cyber-red);
+        overflow: hidden;
+      }
+
+      .health-fill {
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          var(--cyber-red),
+          var(--cyber-orange)
+        );
+        transition: width 0.3s;
+        border-radius: 10px;
+      }
+
+      /* Bouton pause */
+      .pause-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        border: 2px solid var(--cyber-orange);
+        background: rgba(255, 136, 0, 0.2);
+        color: var(--cyber-orange);
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .pause-btn:hover {
+        background: rgba(255, 136, 0, 0.4);
+      }
+
+      /* Zone de jeu - AGRANDI */
+      .game-area {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 70px 20px 120px 20px;
+        width: 100%;
+        height: 100%;
+      }
+
+      .canvas-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+      }
+
+      #gameCanvas {
+        border: 3px solid var(--cyber-cyan);
+        border-radius: 8px;
+        box-shadow:
+          0 0 30px rgba(0, 255, 255, 0.3),
+          inset 0 0 30px rgba(0, 255, 255, 0.1);
+        max-width: 100%;
+        max-height: 100%;
+      }
+
+      /* Minimap */
+      .minimap-container {
+        position: fixed;
+        top: 70px;
+        right: 15px;
+        z-index: 90;
+      }
+
+      #minimapCanvas {
+        border: 2px solid var(--cyber-pink);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.8);
+      }
+
+      /* Barre de hacks en bas */
+      .hacks-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100px;
+        background: linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.95) 0%,
+          rgba(0, 0, 0, 0.7) 80%,
+          transparent 100%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        padding: 15px 20px;
+        z-index: 100;
+      }
+
+      .hack-btn {
+        width: 75px;
+        height: 75px;
+        border-radius: 12px;
+        border: 2px solid var(--cyber-purple);
+        background: rgba(180, 77, 255, 0.2);
+        color: #fff;
+        font-size: 12px;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+
+      .hack-btn:hover:not(:disabled) {
+        background: rgba(180, 77, 255, 0.4);
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(180, 77, 255, 0.5);
+      }
+
+      .hack-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .hack-btn.active {
+        background: rgba(0, 255, 136, 0.4);
+        border-color: var(--cyber-green);
+        animation: pulse 1s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 25px rgba(0, 255, 136, 0.8);
+        }
+      }
+
+      .hack-icon {
+        font-size: 24px;
+      }
+
+      .hack-name {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .hack-key {
+        font-size: 9px;
+        color: var(--text-secondary);
+      }
+
+      /* ============================================ */
+      /* MODALES */
+      /* ============================================ */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.85);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+        padding: 20px;
+      }
+
+      .modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-content {
+        background: var(--bg-panel);
+        border: 2px solid var(--cyber-cyan);
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 450px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
+        transform: scale(0.9);
+        transition: transform 0.3s;
+      }
+
+      .modal-overlay.show .modal-content {
+        transform: scale(1);
+      }
+
+      .modal-title {
+        font-size: 28px;
+        margin-bottom: 20px;
+        background: linear-gradient(
+          90deg,
+          var(--cyber-cyan),
+          var(--cyber-pink)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .modal-text {
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      /* Stats dans modal */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin: 25px 0;
+      }
+
+      .stat-item {
+        background: rgba(0, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 255, 255, 0.2);
+      }
+
+      .stat-label {
+        font-size: 11px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--cyber-cyan);
+        margin-top: 5px;
+      }
+
+      .stat-value.gold {
+        color: var(--cyber-yellow);
+      }
+
+      .stat-value.green {
+        color: var(--cyber-green);
+      }
+
+      .stat-value.red {
+        color: var(--cyber-red);
+      }
+
+      /* Instructions */
+      .instructions {
+        text-align: left;
+        margin: 20px 0;
+      }
+
+      .instruction-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        margin: 15px 0;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+      }
+
+      .instruction-icon {
+        font-size: 28px;
+        flex-shrink: 0;
+      }
+
+      .instruction-text {
+        font-size: 14px;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .instruction-text strong {
+        color: var(--cyber-cyan);
+      }
+
+      /* Modal boutons */
+      .modal-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      /* ============================================ */
+      /* ALERTES */
+      /* ============================================ */
+      .alert-popup {
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.9);
+        color: var(--cyber-cyan);
+        padding: 12px 25px;
+        border-radius: 30px;
+        border: 1px solid var(--cyber-cyan);
+        font-size: 14px;
+        font-weight: bold;
+        z-index: 2000;
+        animation:
+          alertIn 0.3s ease,
+          alertOut 0.3s ease 2s forwards;
+        white-space: nowrap;
+      }
+
+      @keyframes alertIn {
+        from {
+          opacity: 0;
+          transform: translateX(-50%) translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+      }
+
+      @keyframes alertOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      /* ============================================ */
+      /* CONTRÔLES TACTILES */
+      /* ============================================ */
+      .touch-controls {
+        display: none;
+        position: fixed;
+        bottom: 110px;
+        left: 20px;
+        z-index: 90;
+      }
+
+      @media (hover: none) and (pointer: coarse) {
+        .touch-controls {
+          display: grid;
+          grid-template-columns: repeat(3, 60px);
+          grid-template-rows: repeat(3, 60px);
+          gap: 5px;
+        }
+      }
+
+      .touch-btn {
         width: 60px;
         height: 60px;
-        font-size: 20px;
+        border-radius: 12px;
+        border: 2px solid var(--cyber-cyan);
+        background: rgba(0, 255, 255, 0.2);
+        color: var(--cyber-cyan);
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.1s;
       }
-      
-      .game-area {
-        padding: 65px 10px 100px 10px;
+
+      .touch-btn:active {
+        background: rgba(0, 255, 255, 0.5);
+        transform: scale(0.95);
       }
-    }
-  </style>
-  <link rel="stylesheet" href="arcade-home.css">
-</head>
-<body>
-  <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil"><span class="arcade-home-icon" aria-hidden="true">⌂</span><span class="arcade-home-label">Accueil</span></a>
 
-<!-- ============================================ -->
-<!-- FOND CYBERPUNK -->
-<!-- ============================================ -->
-<div class="cyber-bg">
-  <div class="grid-overlay"></div>
-</div>
-
-<!-- ============================================ -->
-<!-- ÉCRAN MENU -->
-<!-- ============================================ -->
-<div id="menuScreen" class="screen active">
-  <div class="menu-container">
-    <h1 class="game-title">
-      <span class="title-icon">🏃</span>
-      NEON RUNNER
-      <span class="title-sub">🏃</span>
-    </h1>
-    
-    <div class="menu-buttons">
-      <button class="btn btn-primary btn-large" onclick="startGame(1)">
-        🎮 NOUVELLE PARTIE
-      </button>
-      
-      <button class="btn btn-secondary" onclick="showLevelSelect()">
-        📋 SÉLECTION NIVEAU
-      </button>
-      
-      <button class="btn btn-secondary" onclick="showHowToPlay()">
-        ❓ COMMENT JOUER
-      </button>
-      
-      <button class="btn btn-secondary" onclick="showStats()">
-        📊 STATISTIQUES
-      </button>
-    </div>
-    
-    <div class="menu-stats">
-      <div class="menu-stat">
-        <span class="menu-stat-value" id="menuBestScore">0</span>
-        <span class="menu-stat-label">Meilleur Score</span>
-      </div>
-      <div class="menu-stat">
-        <span class="menu-stat-value" id="menuLevelsCompleted">0</span>
-        <span class="menu-stat-label">Niveaux Complétés</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================ -->
-<!-- ÉCRAN SÉLECTION NIVEAU -->
-<!-- ============================================ -->
-<div id="levelSelectScreen" class="screen">
-  <div class="level-select-container">
-    <h2 class="section-title">📋 SÉLECTION DU NIVEAU</h2>
-    
-    <div class="level-grid" id="levelGrid">
-      <!-- Généré par JS -->
-    </div>
-    
-    <button class="btn btn-danger" onclick="showScreen('menuScreen')">
-      ← RETOUR
-    </button>
-  </div>
-</div>
-
-<!-- ============================================ -->
-<!-- ÉCRAN DE JEU -->
-<!-- ============================================ -->
-<div id="gameScreen" class="screen">
-  <!-- Header Stats -->
-  <div class="game-header">
-    <div class="header-stat">
-      <span class="stat-icon">🎯</span>
-      <span>Nv. <span id="currentLevel">1</span></span>
-    </div>
-    
-    <div class="header-stat">
-      <span class="stat-icon">💎</span>
-      <span id="dataCount">0/3</span>
-    </div>
-    
-    <div class="header-stat">
-      <span class="stat-icon">⏱️</span>
-      <span id="timeDisplay">02:00</span>
-    </div>
-    
-    <div class="header-stat health-bar-container">
-      <span class="stat-icon">❤️</span>
-      <div class="health-bar">
-        <div class="health-fill" id="healthBar"></div>
-      </div>
-    </div>
-    
-    <button class="btn-icon" onclick="togglePause()">⏸️</button>
-  </div>
-  
-  <!-- Zone de jeu -->
-  <div class="game-area">
-    <canvas id="gameCanvas"></canvas>
-    
-    <!-- Minimap -->
-    <div class="minimap-container">
-      <canvas id="minimap" width="120" height="120"></canvas>
-    </div>
-  </div>
-  
-  <!-- Hacks -->
-  <div class="hacks-bar">
-    <button class="hack-btn" onclick="activateHack(0)">
-      <span class="hack-icon">👻</span>
-      <span class="hack-name">FANTÔME</span>
-      <span class="hack-key">[1]</span>
-    </button>
-    
-    <button class="hack-btn" onclick="activateHack(1)">
-      <span class="hack-icon">❄️</span>
-      <span class="hack-name">GEL</span>
-      <span class="hack-key">[2]</span>
-    </button>
-    
-    <button class="hack-btn" onclick="activateHack(2)">
-      <span class="hack-icon">⚡</span>
-      <span class="hack-name">TURBO</span>
-      <span class="hack-key">[3]</span>
-    </button>
-    
-    <button class="hack-btn" onclick="activateHack(3)">
-      <span class="hack-icon">🌀</span>
-      <span class="hack-name">CHAOS</span>
-      <span class="hack-key">[4]</span>
-    </button>
-  </div>
-  
-  <!-- Contrôles tactiles -->
-  <div class="touch-controls" id="touchControls">
-    <button class="touch-btn" data-dir="up">▲</button>
-    <button class="touch-btn" data-dir="left">◄</button>
-    <button class="touch-btn" data-dir="right">►</button>
-    <button class="touch-btn" data-dir="down">▼</button>
-  </div>
-</div>
-
-<!-- ============================================ -->
-<!-- ALERTES -->
-<!-- ============================================ -->
-<div id="alertContainer" class="alert-container"></div>
-
-<!-- ============================================ -->
-<!-- MODAL PAUSE -->
-<!-- ============================================ -->
-<div id="pauseModal" class="modal-overlay">
-  <div class="modal-content">
-    <h2 class="modal-title">⏸️ PAUSE</h2>
-    
-    <div class="modal-buttons">
-      <button class="btn btn-primary" onclick="resumeGame()">▶️ REPRENDRE</button>
-      <button class="btn btn-secondary" onclick="retryLevel()">🔄 RECOMMENCER</button>
-      <button class="btn btn-danger" onclick="quitToMenu()">🏠 MENU PRINCIPAL</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================ -->
-<!-- MODAL VICTOIRE -->
-<!-- ============================================ -->
-<div id="winModal" class="modal-overlay">
-  <div class="modal-content">
-    <h2 class="modal-title">🎉 NIVEAU TERMINÉ !</h2>
-    
-    <div class="stats-grid">
-      <div class="stat-item">
-        <div class="stat-label">Niveau</div>
-        <div class="stat-value" id="winLevel">1</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-label">Données</div>
-        <div class="stat-value green" id="winData">3/3</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-label">Temps</div>
-        <div class="stat-value" id="winTime">01:30</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-label">Santé</div>
-        <div class="stat-value" id="winHealth">75%</div>
-      </div>
-    </div>
-    
-    <div class="stat-item" style="margin: 20px 0;">
-      <div class="stat-label">Score Total</div>
-      <div class="stat-value gold" style="font-size: 32px;" id="winScore">2500</div>
-    </div>
-    
-    <div class="modal-buttons">
-      <button class="btn btn-primary" id="nextLevelBtn" onclick="nextLevel()">➡️ NIVEAU SUIVANT</button>
-      <button class="btn btn-secondary" onclick="retryLevel()">🔄 REJOUER</button>
-      <button class="btn btn-danger" onclick="quitToMenu()">🏠 MENU</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================ -->
-<!-- MODAL GAME OVER -->
-<!-- ============================================ -->
-<div id="loseModal" class="modal-overlay">
-  <div class="modal-content">
-    <h2 class="modal-title" style="color: #ff3366;">💀 GAME OVER</h2>
-    
-    <p class="modal-text" id="loseReason">Santé épuisée !</p>
-    
-    <div class="stats-grid">
-      <div class="stat-item">
-        <div class="stat-label">Niveau</div>
-        <div class="stat-value red" id="loseLevel">1</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-label">Données</div>
-        <div class="stat-value" id="loseData">1/3</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-label">Temps</div>
-        <div class="stat-value" id="loseTime">00:45</div>
-      </div>
-    </div>
-    
-    <div class="modal-buttons">
-      <button class="btn btn-primary" onclick="retryLevel()">🔄 RÉESSAYER</button>
-      <button class="btn btn-danger" onclick="quitToMenu()">🏠 MENU</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================ -->
-<!-- MODAL COMMENT JOUER -->
-<!-- ============================================ -->
-<div id="howToPlayModal" class="modal-overlay">
-  <div class="modal-content">
-    <h2 class="modal-title">❓ COMMENT JOUER</h2>
-    
-    <div class="instructions">
-      <div class="instruction-item">
-        <span class="instruction-icon">🎯</span>
-        <div class="instruction-text">
-          <strong>Objectif :</strong> Collectez les données 💎 et atteignez la sortie 🚪
-        </div>
-      </div>
-      
-      <div class="instruction-item">
-        <span class="instruction-icon">🎮</span>
-        <div class="instruction-text">
-          <strong>Déplacement :</strong> Flèches / ZQSD / Tactile
-        </div>
-      </div>
-      
-      <div class="instruction-item">
-        <span class="instruction-icon">👁️</span>
-        <div class="instruction-text">
-          <strong>Sentinelles :</strong> Évitez les ennemis rouges !
-        </div>
-      </div>
-      
-      <div class="instruction-item">
-        <span class="instruction-icon">🔧</span>
-        <div class="instruction-text">
-          <strong>Hacks [1-4] :</strong><br>
-          👻 Traverse murs | ❄️ Fige ennemis<br>
-          ⚡ Vitesse x2 | 🌀 Confusion
-        </div>
-      </div>
-    </div>
-    
-    <button class="btn btn-primary" onclick="closeHowToPlay()">✅ COMPRIS !</button>
-  </div>
-</div>
-
-<!-- ============================================ -->
-<!-- MODAL STATISTIQUES -->
-<!-- ============================================ -->
-<div id="statsModal" class="modal-overlay">
-  <div class="modal-content">
-    <h2 class="modal-title">📊 STATISTIQUES</h2>
-    
-    <div class="stats-grid">
-      <div class="stat-item">
-        <div class="stat-label">Niveaux complétés</div>
-        <div class="stat-value green" id="statsLevels">0</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-label">Meilleur score</div>
-        <div class="stat-value gold" id="statsBestScore">0</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-label">Parties jouées</div>
-        <div class="stat-value" id="statsGames">0</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-label">Niveau max débloqué</div>
-        <div class="stat-value" id="statsMaxLevel">1</div>
-      </div>
-    </div>
-    
-    <div class="modal-buttons">
-      <button class="btn btn-secondary" onclick="resetProgress()">🗑️ RÉINITIALISER</button>
-      <button class="btn btn-primary" onclick="closeStats()">✅ FERMER</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ============================================
-// CONFIGURATION
-// ============================================
-const CONFIG = {
-  MAX_LEVELS: 50,
-  BASE_TIME: 120,
-  MIN_TIME: 45,
-  TIME_DECREASE_PER_LEVEL: 3,
-  
-  BASE_SIZE: 11,
-  MAX_SIZE: 31,
-  SIZE_INCREASE_PER_LEVEL: 1,
-  
-  BASE_DATA: 3,
-  DATA_INCREASE_RATE: 0.3,
-  
-  BASE_SENTINELS: 1,
-  SENTINEL_INCREASE_RATE: 0.4,
-  
-  HACKS: [
-    { id: 'ghost', name: 'FANTÔME', icon: '👻', duration: 5000, cooldown: 25000 },
-    { id: 'freeze', name: 'GEL', icon: '❄️', duration: 6000, cooldown: 30000 },
-    { id: 'speed', name: 'TURBO', icon: '⚡', duration: 4000, cooldown: 20000 },
-    { id: 'chaos', name: 'CHAOS', icon: '🌀', duration: 5000, cooldown: 35000 }
-  ]
-};
-
-// ============================================
-// ÉTAT DU JEU
-// ============================================
-let game = {
-  isPlaying: false,
-  isPaused: false,
-  level: 1,
-  score: 0,
-  
-  // Grille
-  grid: [],
-  rows: 0,
-  cols: 0,
-  cellSize: 0,
-  
-  // Entités
-  player: { x: 1, y: 1, health: 100 },
-  exit: { x: 0, y: 0 },
-  dataPoints: [],
-  sentinels: [],
-  walls: [],
-  
-  // Stats niveau
-  collectedData: 0,
-  timeRemaining: 0,
-  timeLimit: 0,
-  hacksUsed: 0,
-  
-  // Hacks
-  activeHacks: {},
-  hackCooldowns: {},
-  
-  // Timers
-  timerInterval: null,
-  gameLoop: null,
-  
-  // Progression
-  progress: {
-    completedLevels: [],
-    levelsCompleted: 0,
-    maxLevel: 1,
-    bestScore: 0,
-    gamesPlayed: 0
-  }
-};
-
-// ============================================
-// ÉLÉMENTS DOM
-// ============================================
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const minimap = document.getElementById('minimap');
-const minimapCtx = minimap.getContext('2d');
-
-// ============================================
-// INITIALISATION
-// ============================================
-function init() {
-  loadProgress();
-  updateMenuStats();
-  generateLevelGrid();
-  setupTouchControls();
-  setupKeyboardControls();
-}
-
-function loadProgress() {
-  try {
-    const saved = localStorage.getItem('neonRunnerProgress');
-    if (saved) {
-      game.progress = { ...game.progress, ...JSON.parse(saved) };
-    }
-  } catch (e) {
-    console.log('Erreur chargement progression');
-  }
-}
-
-function saveProgress() {
-  try {
-    localStorage.setItem('neonRunnerProgress', JSON.stringify(game.progress));
-  } catch (e) {
-    console.log('Erreur sauvegarde progression');
-  }
-}
-
-function updateMenuStats() {
-  document.getElementById('menuBestScore').textContent = game.progress.bestScore.toLocaleString();
-  document.getElementById('menuLevelsCompleted').textContent = game.progress.levelsCompleted;
-}
-
-// ============================================
-// NAVIGATION ÉCRANS
-// ============================================
-function showScreen(screenId) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(screenId).classList.add('active');
-}
-
-function hideAllModals() {
-  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
-}
-
-function showLevelSelect() {
-  generateLevelGrid();
-  showScreen('levelSelectScreen');
-}
-
-function showHowToPlay() {
-  document.getElementById('howToPlayModal').classList.add('show');
-}
-
-function closeHowToPlay() {
-  document.getElementById('howToPlayModal').classList.remove('show');
-}
-
-function showStats() {
-  document.getElementById('statsLevels').textContent = game.progress.levelsCompleted;
-  document.getElementById('statsBestScore').textContent = game.progress.bestScore.toLocaleString();
-  document.getElementById('statsGames').textContent = game.progress.gamesPlayed;
-  document.getElementById('statsMaxLevel').textContent = game.progress.maxLevel;
-  document.getElementById('statsModal').classList.add('show');
-}
-
-function closeStats() {
-  document.getElementById('statsModal').classList.remove('show');
-}
-
-function resetProgress() {
-  if (confirm('Voulez-vous vraiment réinitialiser toute la progression ?')) {
-    game.progress = {
-      completedLevels: [],
-      levelsCompleted: 0,
-      maxLevel: 1,
-      bestScore: 0,
-      gamesPlayed: 0
-    };
-    saveProgress();
-    updateMenuStats();
-    generateLevelGrid();
-    closeStats();
-    showAlert('Progression réinitialisée');
-  }
-}
-
-// ============================================
-// GRILLE DE NIVEAUX
-// ============================================
-function generateLevelGrid() {
-  const grid = document.getElementById('levelGrid');
-  grid.innerHTML = '';
-  
-  for (let i = 1; i <= CONFIG.MAX_LEVELS; i++) {
-    const btn = document.createElement('button');
-    btn.className = 'level-btn';
-    
-    const isCompleted = game.progress.completedLevels.includes(i);
-    const isUnlocked = i <= game.progress.maxLevel;
-    
-    if (isCompleted) {
-      btn.classList.add('completed');
-      btn.innerHTML = `<span class="level-num">${i}</span><span class="level-check">✓</span>`;
-    } else if (isUnlocked) {
-      btn.classList.add('unlocked');
-      btn.innerHTML = `<span class="level-num">${i}</span>`;
-    } else {
-      btn.classList.add('locked');
-      btn.innerHTML = `<span class="level-num">🔒</span>`;
-      btn.disabled = true;
-    }
-    
-    if (isUnlocked) {
-      btn.onclick = () => startGame(i);
-    }
-    
-    grid.appendChild(btn);
-  }
-}
-
-// ============================================
-// ALERTES
-// ============================================
-function showAlert(message) {
-  const container = document.getElementById('alertContainer');
-  const alert = document.createElement('div');
-  alert.className = 'alert';
-  alert.textContent = message;
-  container.appendChild(alert);
-  
-  setTimeout(() => {
-    alert.classList.add('fade-out');
-    setTimeout(() => alert.remove(), 300);
-  }, 2000);
-}
-
-// ============================================
-// DÉMARRAGE PARTIE
-// ============================================
-function startGame(level) {
-  // Reset complet de l'état du jeu
-  game.level = level;
-  game.isPlaying = true;
-  game.isPaused = false;
-  game.collectedData = 0;
-  game.hacksUsed = 0;
-  game.activeHacks = {};
-  game.hackCooldowns = {};
-  game.score = 0;
-  
-  game.progress.gamesPlayed++;
-  saveProgress();
-  
-  hideAllModals();
-  showScreen('gameScreen');
-  
-  generateLevel(level);
-  resizeCanvas();
-  
-  startTimer();
-  startGameLoop();
-  resetHacksUI();
-  
-  playSound('start');
-  showAlert(`Niveau ${level}`);
-}
-
-// ============================================
-// GÉNÉRATION DE NIVEAU
-// ============================================
-function generateLevel(level) {
-  // Calculer taille
-  const size = Math.min(CONFIG.MAX_SIZE, CONFIG.BASE_SIZE + Math.floor(level * CONFIG.SIZE_INCREASE_PER_LEVEL));
-  game.rows = size;
-  game.cols = size;
-  
-  // Temps
-  game.timeLimit = Math.max(CONFIG.MIN_TIME, CONFIG.BASE_TIME - level * CONFIG.TIME_DECREASE_PER_LEVEL);
-  game.timeRemaining = game.timeLimit;
-  
-  // Générer labyrinthe
-  generateMaze();
-  
-  // Placer joueur
-  game.player = { x: 1, y: 1, health: 100 };
-  
-  // Placer sortie
-  game.exit = { x: game.cols - 2, y: game.rows - 2 };
-  game.grid[game.exit.y][game.exit.x] = 0;
-  
-  // Data points
-  const numData = Math.min(10, CONFIG.BASE_DATA + Math.floor(level * CONFIG.DATA_INCREASE_RATE));
-  game.dataPoints = [];
-  placeDataPoints(numData);
-  
-  // Sentinelles
-  const numSentinels = Math.min(8, CONFIG.BASE_SENTINELS + Math.floor(level * CONFIG.SENTINEL_INCREASE_RATE));
-  game.sentinels = [];
-  placeSentinels(numSentinels);
-  
-  // Murs mobiles (à partir niveau 5)
-  game.walls = [];
-  if (level >= 5) {
-    const numWalls = Math.min(3, Math.floor((level - 5) / 5) + 1);
-    placeMovingWalls(numWalls);
-  }
-  
-  updateUI();
-}
-
-function generateMaze() {
-  // Initialiser avec des murs
-  game.grid = [];
-  for (let y = 0; y < game.rows; y++) {
-    game.grid[y] = [];
-    for (let x = 0; x < game.cols; x++) {
-      game.grid[y][x] = 1;
-    }
-  }
-  
-  // Algorithme de génération (Recursive Backtracking)
-  const stack = [];
-  const startX = 1;
-  const startY = 1;
-  
-  game.grid[startY][startX] = 0;
-  stack.push({ x: startX, y: startY });
-  
-  while (stack.length > 0) {
-    const current = stack[stack.length - 1];
-    const neighbors = getUnvisitedNeighbors(current.x, current.y);
-    
-    if (neighbors.length > 0) {
-      const next = neighbors[Math.floor(Math.random() * neighbors.length)];
-      
-      // Casser le mur entre les deux
-      const wallX = current.x + (next.x - current.x) / 2;
-      const wallY = current.y + (next.y - current.y) / 2;
-      
-      game.grid[wallY][wallX] = 0;
-      game.grid[next.y][next.x] = 0;
-      
-      stack.push(next);
-    } else {
-      stack.pop();
-    }
-  }
-  
-  // Ouvrir quelques passages supplémentaires
-  const extraPaths = Math.floor(game.rows * game.cols * 0.03);
-  for (let i = 0; i < extraPaths; i++) {
-    const x = 1 + Math.floor(Math.random() * (game.cols - 2));
-    const y = 1 + Math.floor(Math.random() * (game.rows - 2));
-    if (game.grid[y][x] === 1) {
-      const adjacent = countAdjacentPaths(x, y);
-      if (adjacent >= 1 && adjacent <= 3) {
-        game.grid[y][x] = 0;
+      .touch-btn.empty {
+        visibility: hidden;
       }
-    }
-  }
-}
 
-function getUnvisitedNeighbors(x, y) {
-  const neighbors = [];
-  const directions = [
-    { dx: 0, dy: -2 },
-    { dx: 2, dy: 0 },
-    { dx: 0, dy: 2 },
-    { dx: -2, dy: 0 }
-  ];
-  
-  for (const dir of directions) {
-    const nx = x + dir.dx;
-    const ny = y + dir.dy;
-    
-    if (nx > 0 && nx < game.cols - 1 && ny > 0 && ny < game.rows - 1) {
-      if (game.grid[ny][nx] === 1) {
-        neighbors.push({ x: nx, y: ny });
-      }
-    }
-  }
-  
-  return neighbors;
-}
+      /* ============================================ */
+      /* RESPONSIVE */
+      /* ============================================ */
+      @media (max-width: 600px) {
+        .game-hud {
+          gap: 8px;
+          padding: 8px 10px;
+        }
 
-function countAdjacentPaths(x, y) {
-  let count = 0;
-  const dirs = [[0, -1], [1, 0], [0, 1], [-1, 0]];
-  
-  for (const [dx, dy] of dirs) {
-    const nx = x + dx;
-    const ny = y + dy;
-    if (nx >= 0 && nx < game.cols && ny >= 0 && ny < game.rows) {
-      if (game.grid[ny][nx] === 0) count++;
-    }
-  }
-  
-  return count;
-}
+        .hud-item {
+          padding: 6px 10px;
+        }
 
-function getEmptyCells() {
-  const cells = [];
-  for (let y = 1; y < game.rows - 1; y++) {
-    for (let x = 1; x < game.cols - 1; x++) {
-      if (game.grid[y][x] === 0) {
-        // Pas sur le joueur ni la sortie
-        if (!(x === game.player.x && y === game.player.y) &&
-            !(x === game.exit.x && y === game.exit.y)) {
-          cells.push({ x, y });
+        .hud-value {
+          font-size: 14px;
+          min-width: 40px;
+        }
+
+        .health-bar {
+          width: 80px;
+        }
+
+        .hacks-bar {
+          gap: 8px;
+          padding: 10px;
+          height: 90px;
+        }
+
+        .hack-btn {
+          width: 65px;
+          height: 65px;
+        }
+
+        .level-grid {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 10px;
+        }
+
+        .level-btn {
+          width: 60px;
+          height: 60px;
+          font-size: 20px;
+        }
+
+        .game-area {
+          padding: 65px 10px 100px 10px;
         }
       }
-    }
-  }
-  return cells;
-}
+    </style>
+    <link rel="stylesheet" href="arcade-home.css" />
+  </head>
+  <body>
+    <a
+      class="arcade-home-link"
+      href="index.html"
+      aria-label="Retour à l'accueil"
+      title="Retour à l'accueil"
+      ><span class="arcade-home-icon" aria-hidden="true">⌂</span
+      ><span class="arcade-home-label">Accueil</span></a
+    >
 
-function placeDataPoints(count) {
-  const cells = getEmptyCells();
-  
-  for (let i = 0; i < count && cells.length > 0; i++) {
-    const idx = Math.floor(Math.random() * cells.length);
-    const cell = cells.splice(idx, 1)[0];
-    
-    // Pas trop près du joueur
-    const dist = Math.abs(cell.x - game.player.x) + Math.abs(cell.y - game.player.y);
-    if (dist >= 3) {
-      game.dataPoints.push({ x: cell.x, y: cell.y, collected: false });
-    } else {
-      i--;
-    }
-  }
-}
+    <!-- ============================================ -->
+    <!-- FOND CYBERPUNK -->
+    <!-- ============================================ -->
+    <div class="cyber-bg">
+      <div class="grid-overlay"></div>
+    </div>
 
-function placeSentinels(count) {
-  const cells = getEmptyCells();
-  const colors = ['#ff3366', '#ff6633', '#ff3399'];
-  
-  for (let i = 0; i < count && cells.length > 0; i++) {
-    const idx = Math.floor(Math.random() * cells.length);
-    const cell = cells.splice(idx, 1)[0];
-    
-    // Pas trop près du joueur
-    const dist = Math.abs(cell.x - game.player.x) + Math.abs(cell.y - game.player.y);
-    if (dist >= 5) {
-      game.sentinels.push({
-        x: cell.x,
-        y: cell.y,
-        color: colors[i % colors.length],
-        direction: Math.floor(Math.random() * 4),
-        frozen: false,
-        moveTimer: 0
-      });
-    } else {
-      i--;
-    }
-  }
-}
+    <!-- ============================================ -->
+    <!-- ÉCRAN MENU -->
+    <!-- ============================================ -->
+    <div id="menuScreen" class="screen active">
+      <div class="menu-container">
+        <h1 class="game-title">
+          <span class="title-icon">🏃</span>
+          NEON RUNNER
+          <span class="title-sub">🏃</span>
+        </h1>
 
-function placeMovingWalls(count) {
-  for (let i = 0; i < count; i++) {
-    const horizontal = Math.random() < 0.5;
-    const length = 2 + Math.floor(Math.random() * 2);
-    
-    let x, y, valid = false;
-    let attempts = 0;
-    
-    while (!valid && attempts < 50) {
-      x = 2 + Math.floor(Math.random() * (game.cols - 4));
-      y = 2 + Math.floor(Math.random() * (game.rows - 4));
-      
-      valid = true;
-      for (let j = 0; j < length; j++) {
-        const wx = horizontal ? x + j : x;
-        const wy = horizontal ? y : y + j;
-        
-        if (wx >= game.cols - 1 || wy >= game.rows - 1) {
-          valid = false;
-          break;
+        <div class="menu-buttons">
+          <button class="btn btn-primary btn-large" onclick="startGame(1)">
+            🎮 NOUVELLE PARTIE
+          </button>
+
+          <button class="btn btn-secondary" onclick="showLevelSelect()">
+            📋 SÉLECTION NIVEAU
+          </button>
+
+          <button class="btn btn-secondary" onclick="showHowToPlay()">
+            ❓ COMMENT JOUER
+          </button>
+
+          <button class="btn btn-secondary" onclick="showStats()">
+            📊 STATISTIQUES
+          </button>
+        </div>
+
+        <div class="menu-stats">
+          <div class="menu-stat">
+            <span class="menu-stat-value" id="menuBestScore">0</span>
+            <span class="menu-stat-label">Meilleur Score</span>
+          </div>
+          <div class="menu-stat">
+            <span class="menu-stat-value" id="menuLevelsCompleted">0</span>
+            <span class="menu-stat-label">Niveaux Complétés</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ÉCRAN SÉLECTION NIVEAU -->
+    <!-- ============================================ -->
+    <div id="levelSelectScreen" class="screen">
+      <div class="level-select-container">
+        <h2 class="section-title">📋 SÉLECTION DU NIVEAU</h2>
+
+        <div class="level-grid" id="levelGrid">
+          <!-- Généré par JS -->
+        </div>
+
+        <button class="btn btn-danger" onclick="showScreen('menuScreen')">
+          ← RETOUR
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ÉCRAN DE JEU -->
+    <!-- ============================================ -->
+    <div id="gameScreen" class="screen">
+      <!-- Header Stats -->
+      <div class="game-header">
+        <div class="header-stat">
+          <span class="stat-icon">🎯</span>
+          <span>Nv. <span id="currentLevel">1</span></span>
+        </div>
+
+        <div class="header-stat">
+          <span class="stat-icon">💎</span>
+          <span id="dataCount">0/3</span>
+        </div>
+
+        <div class="header-stat">
+          <span class="stat-icon">⏱️</span>
+          <span id="timeDisplay">02:00</span>
+        </div>
+
+        <div class="header-stat health-bar-container">
+          <span class="stat-icon">❤️</span>
+          <div class="health-bar">
+            <div class="health-fill" id="healthBar"></div>
+          </div>
+        </div>
+
+        <button class="btn-icon" onclick="togglePause()">⏸️</button>
+      </div>
+
+      <!-- Zone de jeu -->
+      <div class="game-area">
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Minimap -->
+        <div class="minimap-container">
+          <canvas id="minimap" width="120" height="120"></canvas>
+        </div>
+      </div>
+
+      <!-- Hacks -->
+      <div class="hacks-bar">
+        <button class="hack-btn" onclick="activateHack(0)">
+          <span class="hack-icon">👻</span>
+          <span class="hack-name">FANTÔME</span>
+          <span class="hack-key">[1]</span>
+        </button>
+
+        <button class="hack-btn" onclick="activateHack(1)">
+          <span class="hack-icon">❄️</span>
+          <span class="hack-name">GEL</span>
+          <span class="hack-key">[2]</span>
+        </button>
+
+        <button class="hack-btn" onclick="activateHack(2)">
+          <span class="hack-icon">⚡</span>
+          <span class="hack-name">TURBO</span>
+          <span class="hack-key">[3]</span>
+        </button>
+
+        <button class="hack-btn" onclick="activateHack(3)">
+          <span class="hack-icon">🌀</span>
+          <span class="hack-name">CHAOS</span>
+          <span class="hack-key">[4]</span>
+        </button>
+      </div>
+
+      <!-- Contrôles tactiles -->
+      <div class="touch-controls" id="touchControls">
+        <button class="touch-btn" data-dir="up">▲</button>
+        <button class="touch-btn" data-dir="left">◄</button>
+        <button class="touch-btn" data-dir="right">►</button>
+        <button class="touch-btn" data-dir="down">▼</button>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ALERTES -->
+    <!-- ============================================ -->
+    <div id="alertContainer" class="alert-container"></div>
+
+    <!-- ============================================ -->
+    <!-- MODAL PAUSE -->
+    <!-- ============================================ -->
+    <div id="pauseModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2 class="modal-title">⏸️ PAUSE</h2>
+
+        <div class="modal-buttons">
+          <button class="btn btn-primary" onclick="resumeGame()">
+            ▶️ REPRENDRE
+          </button>
+          <button class="btn btn-secondary" onclick="retryLevel()">
+            🔄 RECOMMENCER
+          </button>
+          <button class="btn btn-danger" onclick="quitToMenu()">
+            🏠 MENU PRINCIPAL
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL VICTOIRE -->
+    <!-- ============================================ -->
+    <div id="winModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2 class="modal-title">🎉 NIVEAU TERMINÉ !</h2>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Niveau</div>
+            <div class="stat-value" id="winLevel">1</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Données</div>
+            <div class="stat-value green" id="winData">3/3</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Temps</div>
+            <div class="stat-value" id="winTime">01:30</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Santé</div>
+            <div class="stat-value" id="winHealth">75%</div>
+          </div>
+        </div>
+
+        <div class="stat-item" style="margin: 20px 0">
+          <div class="stat-label">Score Total</div>
+          <div class="stat-value gold" style="font-size: 32px" id="winScore">
+            2500
+          </div>
+        </div>
+
+        <div class="modal-buttons">
+          <button
+            class="btn btn-primary"
+            id="nextLevelBtn"
+            onclick="nextLevel()"
+          >
+            ➡️ NIVEAU SUIVANT
+          </button>
+          <button class="btn btn-secondary" onclick="retryLevel()">
+            🔄 REJOUER
+          </button>
+          <button class="btn btn-danger" onclick="quitToMenu()">🏠 MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL GAME OVER -->
+    <!-- ============================================ -->
+    <div id="loseModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2 class="modal-title" style="color: #ff3366">💀 GAME OVER</h2>
+
+        <p class="modal-text" id="loseReason">Santé épuisée !</p>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Niveau</div>
+            <div class="stat-value red" id="loseLevel">1</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Données</div>
+            <div class="stat-value" id="loseData">1/3</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Temps</div>
+            <div class="stat-value" id="loseTime">00:45</div>
+          </div>
+        </div>
+
+        <div class="modal-buttons">
+          <button class="btn btn-primary" onclick="retryLevel()">
+            🔄 RÉESSAYER
+          </button>
+          <button class="btn btn-danger" onclick="quitToMenu()">🏠 MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL COMMENT JOUER -->
+    <!-- ============================================ -->
+    <div id="howToPlayModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2 class="modal-title">❓ COMMENT JOUER</h2>
+
+        <div class="instructions">
+          <div class="instruction-item">
+            <span class="instruction-icon">🎯</span>
+            <div class="instruction-text">
+              <strong>Objectif :</strong> Collectez les données 💎 et atteignez
+              la sortie 🚪
+            </div>
+          </div>
+
+          <div class="instruction-item">
+            <span class="instruction-icon">🎮</span>
+            <div class="instruction-text">
+              <strong>Déplacement :</strong> Flèches / ZQSD / Tactile
+            </div>
+          </div>
+
+          <div class="instruction-item">
+            <span class="instruction-icon">👁️</span>
+            <div class="instruction-text">
+              <strong>Sentinelles :</strong> Évitez les ennemis rouges !
+            </div>
+          </div>
+
+          <div class="instruction-item">
+            <span class="instruction-icon">🔧</span>
+            <div class="instruction-text">
+              <strong>Hacks [1-4] :</strong><br />
+              👻 Traverse murs | ❄️ Fige ennemis<br />
+              ⚡ Vitesse x2 | 🌀 Confusion
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="closeHowToPlay()">
+          ✅ COMPRIS !
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL STATISTIQUES -->
+    <!-- ============================================ -->
+    <div id="statsModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2 class="modal-title">📊 STATISTIQUES</h2>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Niveaux complétés</div>
+            <div class="stat-value green" id="statsLevels">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Meilleur score</div>
+            <div class="stat-value gold" id="statsBestScore">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Parties jouées</div>
+            <div class="stat-value" id="statsGames">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Niveau max débloqué</div>
+            <div class="stat-value" id="statsMaxLevel">1</div>
+          </div>
+        </div>
+
+        <div class="modal-buttons">
+          <button class="btn btn-secondary" onclick="resetProgress()">
+            🗑️ RÉINITIALISER
+          </button>
+          <button class="btn btn-primary" onclick="closeStats()">
+            ✅ FERMER
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ============================================
+      // CONFIGURATION
+      // ============================================
+      const CONFIG = {
+        MAX_LEVELS: 50,
+        BASE_TIME: 120,
+        MIN_TIME: 45,
+        TIME_DECREASE_PER_LEVEL: 3,
+
+        BASE_SIZE: 11,
+        MAX_SIZE: 31,
+        SIZE_INCREASE_PER_LEVEL: 1,
+
+        BASE_DATA: 3,
+        DATA_INCREASE_RATE: 0.3,
+
+        BASE_SENTINELS: 1,
+        SENTINEL_INCREASE_RATE: 0.4,
+
+        HACKS: [
+          {
+            id: "ghost",
+            name: "FANTÔME",
+            icon: "👻",
+            duration: 5000,
+            cooldown: 25000,
+          },
+          {
+            id: "freeze",
+            name: "GEL",
+            icon: "❄️",
+            duration: 6000,
+            cooldown: 30000,
+          },
+          {
+            id: "speed",
+            name: "TURBO",
+            icon: "⚡",
+            duration: 4000,
+            cooldown: 20000,
+          },
+          {
+            id: "chaos",
+            name: "CHAOS",
+            icon: "🌀",
+            duration: 5000,
+            cooldown: 35000,
+          },
+        ],
+      };
+
+      // ============================================
+      // ÉTAT DU JEU
+      // ============================================
+      let game = {
+        isPlaying: false,
+        isPaused: false,
+        level: 1,
+        score: 0,
+
+        // Grille
+        grid: [],
+        rows: 0,
+        cols: 0,
+        cellSize: 0,
+
+        // Entités
+        player: { x: 1, y: 1, health: 100 },
+        exit: { x: 0, y: 0 },
+        dataPoints: [],
+        sentinels: [],
+        walls: [],
+
+        // Stats niveau
+        collectedData: 0,
+        timeRemaining: 0,
+        timeLimit: 0,
+        hacksUsed: 0,
+
+        // Hacks
+        activeHacks: {},
+        hackCooldowns: {},
+
+        // Timers
+        timerInterval: null,
+        gameLoop: null,
+
+        // Progression
+        progress: {
+          completedLevels: [],
+          levelsCompleted: 0,
+          maxLevel: 1,
+          bestScore: 0,
+          gamesPlayed: 0,
+        },
+      };
+
+      // ============================================
+      // ÉLÉMENTS DOM
+      // ============================================
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+      const minimap = document.getElementById("minimap");
+      const minimapCtx = minimap.getContext("2d");
+
+      // ============================================
+      // INITIALISATION
+      // ============================================
+      function init() {
+        loadProgress();
+        updateMenuStats();
+        generateLevelGrid();
+        setupTouchControls();
+        setupKeyboardControls();
+      }
+
+      function loadProgress() {
+        try {
+          const saved = localStorage.getItem("neonRunnerProgress");
+          if (saved) {
+            game.progress = { ...game.progress, ...JSON.parse(saved) };
+          }
+        } catch (e) {
+          console.log("Erreur chargement progression");
         }
-        
-        // Pas sur joueur, sortie ou data
-        if ((wx === game.player.x && wy === game.player.y) ||
-            (wx === game.exit.x && wy === game.exit.y)) {
-          valid = false;
-          break;
+      }
+
+      function saveProgress() {
+        try {
+          localStorage.setItem(
+            "neonRunnerProgress",
+            JSON.stringify(game.progress),
+          );
+        } catch (e) {
+          console.log("Erreur sauvegarde progression");
         }
       }
-      
-      attempts++;
-    }
-    
-    if (valid) {
-      game.walls.push({
-        x,
-        y,
-        length,
-        horizontal,
-        direction: 1,
-        moveTimer: 0
-      });
-    }
-  }
-}
 
-// ============================================
-// CANVAS
-// ============================================
-function resizeCanvas() {
-  const gameArea = document.querySelector('.game-area');
-  const maxWidth = gameArea.clientWidth - 40;
-  const maxHeight = gameArea.clientHeight - 40;
-  
-  // Calculer taille cellule pour remplir l'espace
-  const cellW = Math.floor(maxWidth / game.cols);
-  const cellH = Math.floor(maxHeight / game.rows);
-  game.cellSize = Math.max(16, Math.min(cellW, cellH, 40));
-  
-  canvas.width = game.cols * game.cellSize;
-  canvas.height = game.rows * game.cellSize;
-  
-  // Minimap
-  const minimapScale = Math.min(120 / game.cols, 120 / game.rows);
-  minimap.width = game.cols * minimapScale;
-  minimap.height = game.rows * minimapScale;
-}
-
-// ============================================
-// CONTRÔLES
-// ============================================
-function setupKeyboardControls() {
-  document.addEventListener('keydown', (e) => {
-    if (!game.isPlaying) return;
-    
-    // Pause
-    if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') {
-      togglePause();
-      return;
-    }
-    
-    if (game.isPaused) return;
-    
-    // Hacks
-    if (e.key >= '1' && e.key <= '4') {
-      activateHack(parseInt(e.key) - 1);
-      return;
-    }
-    
-    // Déplacement
-    let dx = 0, dy = 0;
-    
-    switch (e.key) {
-      case 'ArrowUp':
-      case 'z':
-      case 'Z':
-      case 'w':
-      case 'W':
-        dy = -1;
-        break;
-      case 'ArrowDown':
-      case 's':
-      case 'S':
-        dy = 1;
-        break;
-      case 'ArrowLeft':
-      case 'q':
-      case 'Q':
-      case 'a':
-      case 'A':
-        dx = -1;
-        break;
-      case 'ArrowRight':
-      case 'd':
-      case 'D':
-        dx = 1;
-        break;
-    }
-    
-    if (dx !== 0 || dy !== 0) {
-      e.preventDefault();
-      movePlayer(dx, dy);
-    }
-  });
-}
-
-function setupTouchControls() {
-  const buttons = document.querySelectorAll('.touch-btn');
-  
-  buttons.forEach(btn => {
-    const dir = btn.dataset.dir;
-    let dx = 0, dy = 0;
-    
-    switch (dir) {
-      case 'up': dy = -1; break;
-      case 'down': dy = 1; break;
-      case 'left': dx = -1; break;
-      case 'right': dx = 1; break;
-    }
-    
-    btn.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      if (game.isPlaying && !game.isPaused) {
-        movePlayer(dx, dy);
+      function updateMenuStats() {
+        document.getElementById("menuBestScore").textContent =
+          game.progress.bestScore.toLocaleString();
+        document.getElementById("menuLevelsCompleted").textContent =
+          game.progress.levelsCompleted;
       }
-    });
-    
-    btn.addEventListener('click', () => {
-      if (game.isPlaying && !game.isPaused) {
-        movePlayer(dx, dy);
-      }
-    });
-  });
-}
 
-// ============================================
-// DÉPLACEMENT JOUEUR
-// ============================================
-function movePlayer(dx, dy) {
-  // Turbo = double mouvement
-  const steps = game.activeHacks.speed ? 2 : 1;
-  
-  for (let i = 0; i < steps; i++) {
-    const newX = game.player.x + dx;
-    const newY = game.player.y + dy;
-    
-    // Vérifier limites
-    if (newX < 0 || newX >= game.cols || newY < 0 || newY >= game.rows) {
-      playSound('wall');
-      return;
-    }
-    
-    // Vérifier mur (sauf fantôme)
-    if (game.grid[newY][newX] === 1 && !game.activeHacks.ghost) {
-      playSound('wall');
-      return;
-    }
-    
-    // Déplacer
-    game.player.x = newX;
-    game.player.y = newY;
-    playSound('step');
-    
-    // Collecter data
-    game.dataPoints.forEach(data => {
-      if (!data.collected && data.x === game.player.x && data.y === game.player.y) {
-        data.collected = true;
-        game.collectedData++;
-        playSound('collect');
-        showAlert(`💎 +1 Donnée !`);
+      // ============================================
+      // NAVIGATION ÉCRANS
+      // ============================================
+      function showScreen(screenId) {
+        document
+          .querySelectorAll(".screen")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(screenId).classList.add("active");
+      }
+
+      function hideAllModals() {
+        document
+          .querySelectorAll(".modal-overlay")
+          .forEach((m) => m.classList.remove("show"));
+      }
+
+      function showLevelSelect() {
+        generateLevelGrid();
+        showScreen("levelSelectScreen");
+      }
+
+      function showHowToPlay() {
+        document.getElementById("howToPlayModal").classList.add("show");
+      }
+
+      function closeHowToPlay() {
+        document.getElementById("howToPlayModal").classList.remove("show");
+      }
+
+      function showStats() {
+        document.getElementById("statsLevels").textContent =
+          game.progress.levelsCompleted;
+        document.getElementById("statsBestScore").textContent =
+          game.progress.bestScore.toLocaleString();
+        document.getElementById("statsGames").textContent =
+          game.progress.gamesPlayed;
+        document.getElementById("statsMaxLevel").textContent =
+          game.progress.maxLevel;
+        document.getElementById("statsModal").classList.add("show");
+      }
+
+      function closeStats() {
+        document.getElementById("statsModal").classList.remove("show");
+      }
+
+      function resetProgress() {
+        if (
+          confirm("Voulez-vous vraiment réinitialiser toute la progression ?")
+        ) {
+          game.progress = {
+            completedLevels: [],
+            levelsCompleted: 0,
+            maxLevel: 1,
+            bestScore: 0,
+            gamesPlayed: 0,
+          };
+          saveProgress();
+          updateMenuStats();
+          generateLevelGrid();
+          closeStats();
+          showAlert("Progression réinitialisée");
+        }
+      }
+
+      // ============================================
+      // GRILLE DE NIVEAUX
+      // ============================================
+      function generateLevelGrid() {
+        const grid = document.getElementById("levelGrid");
+        grid.innerHTML = "";
+
+        for (let i = 1; i <= CONFIG.MAX_LEVELS; i++) {
+          const btn = document.createElement("button");
+          btn.className = "level-btn";
+
+          const isCompleted = game.progress.completedLevels.includes(i);
+          const isUnlocked = i <= game.progress.maxLevel;
+
+          if (isCompleted) {
+            btn.classList.add("completed");
+            btn.innerHTML = `<span class="level-num">${i}</span><span class="level-check">✓</span>`;
+          } else if (isUnlocked) {
+            btn.classList.add("unlocked");
+            btn.innerHTML = `<span class="level-num">${i}</span>`;
+          } else {
+            btn.classList.add("locked");
+            btn.innerHTML = `<span class="level-num">🔒</span>`;
+            btn.disabled = true;
+          }
+
+          if (isUnlocked) {
+            btn.onclick = () => startGame(i);
+          }
+
+          grid.appendChild(btn);
+        }
+      }
+
+      // ============================================
+      // ALERTES
+      // ============================================
+      function showAlert(message) {
+        const container = document.getElementById("alertContainer");
+        const alert = document.createElement("div");
+        alert.className = "alert";
+        alert.textContent = message;
+        container.appendChild(alert);
+
+        setTimeout(() => {
+          alert.classList.add("fade-out");
+          setTimeout(() => alert.remove(), 300);
+        }, 2000);
+      }
+
+      // ============================================
+      // DÉMARRAGE PARTIE
+      // ============================================
+      function startGame(level) {
+        // Reset complet de l'état du jeu
+        game.level = level;
+        game.isPlaying = true;
+        game.isPaused = false;
+        game.collectedData = 0;
+        game.hacksUsed = 0;
+        game.activeHacks = {};
+        game.hackCooldowns = {};
+        game.score = 0;
+
+        game.progress.gamesPlayed++;
+        saveProgress();
+
+        hideAllModals();
+        showScreen("gameScreen");
+
+        generateLevel(level);
+        resizeCanvas();
+
+        startTimer();
+        startGameLoop();
+        resetHacksUI();
+
+        playSound("start");
+        showAlert(`Niveau ${level}`);
+      }
+
+      // ============================================
+      // GÉNÉRATION DE NIVEAU
+      // ============================================
+      function generateLevel(level) {
+        // Calculer taille
+        const size = Math.min(
+          CONFIG.MAX_SIZE,
+          CONFIG.BASE_SIZE + Math.floor(level * CONFIG.SIZE_INCREASE_PER_LEVEL),
+        );
+        game.rows = size;
+        game.cols = size;
+
+        // Temps
+        game.timeLimit = Math.max(
+          CONFIG.MIN_TIME,
+          CONFIG.BASE_TIME - level * CONFIG.TIME_DECREASE_PER_LEVEL,
+        );
+        game.timeRemaining = game.timeLimit;
+
+        // Générer labyrinthe
+        generateMaze();
+
+        // Placer joueur
+        game.player = { x: 1, y: 1, health: 100 };
+
+        // Placer sortie
+        game.exit = { x: game.cols - 2, y: game.rows - 2 };
+        game.grid[game.exit.y][game.exit.x] = 0;
+
+        // Data points
+        const numData = Math.min(
+          10,
+          CONFIG.BASE_DATA + Math.floor(level * CONFIG.DATA_INCREASE_RATE),
+        );
+        game.dataPoints = [];
+        placeDataPoints(numData);
+
+        // Sentinelles
+        const numSentinels = Math.min(
+          8,
+          CONFIG.BASE_SENTINELS +
+            Math.floor(level * CONFIG.SENTINEL_INCREASE_RATE),
+        );
+        game.sentinels = [];
+        placeSentinels(numSentinels);
+
+        // Murs mobiles (à partir niveau 5)
+        game.walls = [];
+        if (level >= 5) {
+          const numWalls = Math.min(3, Math.floor((level - 5) / 5) + 1);
+          placeMovingWalls(numWalls);
+        }
+
         updateUI();
       }
-    });
-    
-    // Vérifier sortie
-    if (game.player.x === game.exit.x && game.player.y === game.exit.y) {
-      if (game.collectedData >= game.dataPoints.length) {
-        levelComplete();
-        return;
-      } else {
-        showAlert(`⚠️ Collectez toutes les données d'abord !`);
+
+      function generateMaze() {
+        // Initialiser avec des murs
+        game.grid = [];
+        for (let y = 0; y < game.rows; y++) {
+          game.grid[y] = [];
+          for (let x = 0; x < game.cols; x++) {
+            game.grid[y][x] = 1;
+          }
+        }
+
+        // Algorithme de génération (Recursive Backtracking)
+        const stack = [];
+        const startX = 1;
+        const startY = 1;
+
+        game.grid[startY][startX] = 0;
+        stack.push({ x: startX, y: startY });
+
+        while (stack.length > 0) {
+          const current = stack[stack.length - 1];
+          const neighbors = getUnvisitedNeighbors(current.x, current.y);
+
+          if (neighbors.length > 0) {
+            const next =
+              neighbors[Math.floor(Math.random() * neighbors.length)];
+
+            // Casser le mur entre les deux
+            const wallX = current.x + (next.x - current.x) / 2;
+            const wallY = current.y + (next.y - current.y) / 2;
+
+            game.grid[wallY][wallX] = 0;
+            game.grid[next.y][next.x] = 0;
+
+            stack.push(next);
+          } else {
+            stack.pop();
+          }
+        }
+
+        // Ouvrir quelques passages supplémentaires
+        const extraPaths = Math.floor(game.rows * game.cols * 0.03);
+        for (let i = 0; i < extraPaths; i++) {
+          const x = 1 + Math.floor(Math.random() * (game.cols - 2));
+          const y = 1 + Math.floor(Math.random() * (game.rows - 2));
+          if (game.grid[y][x] === 1) {
+            const adjacent = countAdjacentPaths(x, y);
+            if (adjacent >= 1 && adjacent <= 3) {
+              game.grid[y][x] = 0;
+            }
+          }
+        }
       }
-    }
-  }
-  
-  checkCollisions();
-}
 
-// ============================================
-// COLLISIONS
-// ============================================
-function checkCollisions() {
-  if (game.activeHacks.ghost) return;
-  
-  // Collision sentinelles
-  game.sentinels.forEach(sentinel => {
-    if (sentinel.x === game.player.x && sentinel.y === game.player.y) {
-      takeDamage(25);
-    }
-  });
-  
-  // Collision murs mobiles
-  game.walls.forEach(wall => {
-    for (let i = 0; i < wall.length; i++) {
-      const wx = wall.horizontal ? wall.x + i : wall.x;
-      const wy = wall.horizontal ? wall.y : wall.y + i;
-      
-      if (game.player.x === wx && game.player.y === wy) {
-        takeDamage(10);
-        // Repousser
-        game.player.x = Math.max(1, Math.min(game.cols - 2, game.player.x + (wall.horizontal ? wall.direction : 0)));
-        game.player.y = Math.max(1, Math.min(game.rows - 2, game.player.y + (wall.horizontal ? 0 : wall.direction)));
+      function getUnvisitedNeighbors(x, y) {
+        const neighbors = [];
+        const directions = [
+          { dx: 0, dy: -2 },
+          { dx: 2, dy: 0 },
+          { dx: 0, dy: 2 },
+          { dx: -2, dy: 0 },
+        ];
+
+        for (const dir of directions) {
+          const nx = x + dir.dx;
+          const ny = y + dir.dy;
+
+          if (nx > 0 && nx < game.cols - 1 && ny > 0 && ny < game.rows - 1) {
+            if (game.grid[ny][nx] === 1) {
+              neighbors.push({ x: nx, y: ny });
+            }
+          }
+        }
+
+        return neighbors;
       }
-    }
-  });
-}
 
-function takeDamage(amount) {
-  game.player.health -= amount;
-  playSound('damage');
-  updateHealthBar();
-  
-  // Flash rouge
-  canvas.style.boxShadow = '0 0 50px rgba(255, 0, 0, 0.8)';
-  setTimeout(() => {
-    canvas.style.boxShadow = '';
-  }, 200);
-  
-  if (game.player.health <= 0) {
-    game.player.health = 0;
-    gameOver('Santé épuisée !');
-  }
-}
+      function countAdjacentPaths(x, y) {
+        let count = 0;
+        const dirs = [
+          [0, -1],
+          [1, 0],
+          [0, 1],
+          [-1, 0],
+        ];
 
-// ============================================
-// MISE À JOUR UI
-// ============================================
-function updateUI() {
-  document.getElementById('currentLevel').textContent = game.level;
-  document.getElementById('dataCount').textContent = `${game.collectedData}/${game.dataPoints.length}`;
-  updateHealthBar();
-  updateTimerDisplay();
-}
+        for (const [dx, dy] of dirs) {
+          const nx = x + dx;
+          const ny = y + dy;
+          if (nx >= 0 && nx < game.cols && ny >= 0 && ny < game.rows) {
+            if (game.grid[ny][nx] === 0) count++;
+          }
+        }
 
-function updateHealthBar() {
-  const bar = document.getElementById('healthBar');
-  const percent = Math.max(0, game.player.health);
-  bar.style.width = percent + '%';
-  
-  if (percent <= 25) {
-    bar.style.background = '#ff3366';
-  } else if (percent <= 50) {
-    bar.style.background = '#ff8800';
-  } else {
-    bar.style.background = '#00ff88';
-  }
-}
-
-function updateTimerDisplay() {
-  const display = document.getElementById('timeDisplay');
-  display.textContent = formatTime(game.timeRemaining);
-  
-  if (game.timeRemaining <= 10) {
-    display.style.color = '#ff3366';
-  } else if (game.timeRemaining <= 30) {
-    display.style.color = '#ff8800';
-  } else {
-    display.style.color = '';
-  }
-}
-
-// ============================================
-// TIMER
-// ============================================
-function startTimer() {
-  stopTimer();
-  
-  game.timerInterval = setInterval(() => {
-    if (!game.isPaused && game.isPlaying) {
-      game.timeRemaining--;
-      updateTimerDisplay();
-      
-      if (game.timeRemaining <= 0) {
-        gameOver('Temps écoulé !');
+        return count;
       }
-    }
-  }, 1000);
-}
 
-function stopTimer() {
-  if (game.timerInterval) {
-    clearInterval(game.timerInterval);
-    game.timerInterval = null;
-  }
-}
-
-// ============================================
-// BOUCLE DE JEU
-// ============================================
-function startGameLoop() {
-  stopGameLoop();
-  
-  let lastTime = 0;
-  
-  function loop(currentTime) {
-    if (!game.isPlaying) return;
-    
-    game.gameLoop = requestAnimationFrame(loop);
-    
-    if (game.isPaused) return;
-    
-    const delta = currentTime - lastTime;
-    
-    // Update toutes les 200ms
-    if (delta > 200) {
-      lastTime = currentTime;
-      updateSentinels();
-      updateMovingWalls();
-      updateHacksUI();
-    }
-    
-    // Render chaque frame
-    render();
-    renderMinimap();
-  }
-  
-  game.gameLoop = requestAnimationFrame(loop);
-}
-
-function stopGameLoop() {
-  if (game.gameLoop) {
-    cancelAnimationFrame(game.gameLoop);
-    game.gameLoop = null;
-  }
-}
-
-function stopGame() {
-  game.isPlaying = false;
-  stopTimer();
-  stopGameLoop();
-}
-
-// ============================================
-// MISE À JOUR ENTITÉS
-// ============================================
-function updateSentinels() {
-  game.sentinels.forEach(sentinel => {
-    if (sentinel.frozen) return;
-    
-    sentinel.moveTimer++;
-    if (sentinel.moveTimer < 3) return;
-    sentinel.moveTimer = 0;
-    
-    // Direction chaos
-    if (game.activeHacks.chaos) {
-      sentinel.direction = Math.floor(Math.random() * 4);
-    }
-    
-    const dirs = [[0, -1], [1, 0], [0, 1], [-1, 0]];
-    const [dx, dy] = dirs[sentinel.direction];
-    
-    const newX = sentinel.x + dx;
-    const newY = sentinel.y + dy;
-    
-    // Peut bouger ?
-    if (newX > 0 && newX < game.cols - 1 && newY > 0 && newY < game.rows - 1 &&
-        game.grid[newY][newX] === 0) {
-      sentinel.x = newX;
-      sentinel.y = newY;
-    } else {
-      // Changer direction
-      sentinel.direction = (sentinel.direction + 1) % 4;
-    }
-    
-    // Collision avec joueur
-    if (sentinel.x === game.player.x && sentinel.y === game.player.y && !game.activeHacks.ghost) {
-      takeDamage(25);
-    }
-  });
-}
-
-function updateMovingWalls() {
-  game.walls.forEach(wall => {
-    wall.moveTimer++;
-    if (wall.moveTimer < 5) return;
-    wall.moveTimer = 0;
-    
-    // Nouvelle position
-    const newX = wall.x + (wall.horizontal ? wall.direction : 0);
-    const newY = wall.y + (wall.horizontal ? 0 : wall.direction);
-    
-    // Vérifier collision avec bordures
-    let canMove = true;
-    
-    for (let i = 0; i < wall.length; i++) {
-      const wx = wall.horizontal ? newX + i : newX;
-      const wy = wall.horizontal ? newY : newY + i;
-      
-      if (wx <= 0 || wx >= game.cols - 1 || wy <= 0 || wy >= game.rows - 1) {
-        canMove = false;
-        break;
+      function getEmptyCells() {
+        const cells = [];
+        for (let y = 1; y < game.rows - 1; y++) {
+          for (let x = 1; x < game.cols - 1; x++) {
+            if (game.grid[y][x] === 0) {
+              // Pas sur le joueur ni la sortie
+              if (
+                !(x === game.player.x && y === game.player.y) &&
+                !(x === game.exit.x && y === game.exit.y)
+              ) {
+                cells.push({ x, y });
+              }
+            }
+          }
+        }
+        return cells;
       }
-      
-      if (game.grid[wy][wx] === 1) {
-        canMove = false;
-        break;
+
+      function placeDataPoints(count) {
+        const cells = getEmptyCells();
+
+        for (let i = 0; i < count && cells.length > 0; i++) {
+          const idx = Math.floor(Math.random() * cells.length);
+          const cell = cells.splice(idx, 1)[0];
+
+          // Pas trop près du joueur
+          const dist =
+            Math.abs(cell.x - game.player.x) + Math.abs(cell.y - game.player.y);
+          if (dist >= 3) {
+            game.dataPoints.push({ x: cell.x, y: cell.y, collected: false });
+          } else {
+            i--;
+          }
+        }
       }
-    }
-    
-    if (canMove) {
-      wall.x = newX;
-      wall.y = newY;
-    } else {
-      wall.direction *= -1;
-    }
-  });
-}
 
-// ============================================
-// HACKS
-// ============================================
-function activateHack(index) {
-  if (!game.isPlaying || game.isPaused) return;
-  if (index < 0 || index >= CONFIG.HACKS.length) return;
-  
-  const hack = CONFIG.HACKS[index];
-  
-  // Vérifier cooldown
-  if (game.hackCooldowns[hack.id] && game.hackCooldowns[hack.id] > Date.now()) {
-    const remaining = Math.ceil((game.hackCooldowns[hack.id] - Date.now()) / 1000);
-    showAlert(`⏳ ${hack.name} : ${remaining}s`);
-    return;
-  }
-  
-  // Vérifier si déjà actif
-  if (game.activeHacks[hack.id]) {
-    showAlert(`${hack.name} déjà actif !`);
-    return;
-  }
-  
-  // Activer le hack
-  game.activeHacks[hack.id] = true;
-  game.hacksUsed++;
-  playSound('hack');
-  showAlert(`✨ ${hack.name} activé !`);
-  
-  // Effet spécial Gel
-  if (hack.id === 'freeze') {
-    game.sentinels.forEach(s => s.frozen = true);
-  }
-  
-  updateHacksUI();
-  
-  // Désactiver après la durée
-  setTimeout(() => {
-    game.activeHacks[hack.id] = false;
-    
-    if (hack.id === 'freeze') {
-      game.sentinels.forEach(s => s.frozen = false);
-    }
-    
-    showAlert(`⚠️ ${hack.name} terminé`);
-    updateHacksUI();
-  }, hack.duration);
-  
-  // Définir cooldown
-  game.hackCooldowns[hack.id] = Date.now() + hack.cooldown;
-}
+      function placeSentinels(count) {
+        const cells = getEmptyCells();
+        const colors = ["#ff3366", "#ff6633", "#ff3399"];
 
-function updateHacksUI() {
-  const buttons = document.querySelectorAll('.hack-btn');
-  
-  buttons.forEach((btn, index) => {
-    const hack = CONFIG.HACKS[index];
-    if (!hack) return;
-    
-    const nameEl = btn.querySelector('.hack-name');
-    
-    if (game.activeHacks[hack.id]) {
-      btn.classList.add('active');
-      btn.disabled = true;
-      nameEl.textContent = 'ACTIF';
-    } else {
-      btn.classList.remove('active');
-      
-      const cooldownEnd = game.hackCooldowns[hack.id];
-      if (cooldownEnd && cooldownEnd > Date.now()) {
-        btn.disabled = true;
-        const remaining = Math.ceil((cooldownEnd - Date.now()) / 1000);
-        nameEl.textContent = `${remaining}s`;
-      } else {
-        btn.disabled = false;
-        nameEl.textContent = hack.name;
+        for (let i = 0; i < count && cells.length > 0; i++) {
+          const idx = Math.floor(Math.random() * cells.length);
+          const cell = cells.splice(idx, 1)[0];
+
+          // Pas trop près du joueur
+          const dist =
+            Math.abs(cell.x - game.player.x) + Math.abs(cell.y - game.player.y);
+          if (dist >= 5) {
+            game.sentinels.push({
+              x: cell.x,
+              y: cell.y,
+              color: colors[i % colors.length],
+              direction: Math.floor(Math.random() * 4),
+              frozen: false,
+              moveTimer: 0,
+            });
+          } else {
+            i--;
+          }
+        }
       }
-    }
-  });
-}
 
-function resetHacksUI() {
-  game.activeHacks = {};
-  game.hackCooldowns = {};
-  
-  const buttons = document.querySelectorAll('.hack-btn');
-  buttons.forEach((btn, index) => {
-    const hack = CONFIG.HACKS[index];
-    if (!hack) return;
-    
-    btn.classList.remove('active');
-    btn.disabled = false;
-    btn.querySelector('.hack-name').textContent = hack.name;
-  });
-}
+      function placeMovingWalls(count) {
+        for (let i = 0; i < count; i++) {
+          const horizontal = Math.random() < 0.5;
+          const length = 2 + Math.floor(Math.random() * 2);
 
-// ============================================
-// PAUSE ET NAVIGATION
-// ============================================
-function togglePause() {
-  if (!game.isPlaying) return;
-  
-  game.isPaused = !game.isPaused;
-  
-  if (game.isPaused) {
-    document.getElementById('pauseModal').classList.add('show');
-    playSound('pause');
-  } else {
-    document.getElementById('pauseModal').classList.remove('show');
-  }
-}
+          let x,
+            y,
+            valid = false;
+          let attempts = 0;
 
-function resumeGame() {
-  game.isPaused = false;
-  document.getElementById('pauseModal').classList.remove('show');
-}
+          while (!valid && attempts < 50) {
+            x = 2 + Math.floor(Math.random() * (game.cols - 4));
+            y = 2 + Math.floor(Math.random() * (game.rows - 4));
 
-function retryLevel() {
-  // Arrêter tout proprement
-  stopGame();
-  hideAllModals();
-  
-  // Relancer le même niveau
-  setTimeout(() => {
-    startGame(game.level);
-  }, 100);
-}
+            valid = true;
+            for (let j = 0; j < length; j++) {
+              const wx = horizontal ? x + j : x;
+              const wy = horizontal ? y : y + j;
 
-function quitToMenu() {
-  // Arrêter tout proprement
-  stopGame();
-  hideAllModals();
-  
-  // Mettre à jour les stats du menu
-  updateMenuStats();
-  
-  // Afficher le menu
-  showScreen('menuScreen');
-}
+              if (wx >= game.cols - 1 || wy >= game.rows - 1) {
+                valid = false;
+                break;
+              }
 
-function nextLevel() {
-  // Arrêter tout proprement
-  stopGame();
-  hideAllModals();
-  
-  // Niveau suivant
-  const nextLvl = Math.min(game.level + 1, CONFIG.MAX_LEVELS);
-  
-  setTimeout(() => {
-    startGame(nextLvl);
-  }, 100);
-}
+              // Pas sur joueur, sortie ou data
+              if (
+                (wx === game.player.x && wy === game.player.y) ||
+                (wx === game.exit.x && wy === game.exit.y)
+              ) {
+                valid = false;
+                break;
+              }
+            }
 
-// ============================================
-// FIN DE NIVEAU
-// ============================================
-function levelComplete() {
-  stopGame();
-  playSound('win');
-  
-  // Calcul score
-  const timeBonus = game.timeRemaining * 10;
-  const dataBonus = game.collectedData * 100;
-  const healthBonus = game.player.health * 5;
-  const hackPenalty = game.hacksUsed * 50;
-  const levelBonus = game.level * 200;
-  
-  const finalScore = Math.max(0, levelBonus + timeBonus + dataBonus + healthBonus - hackPenalty);
-  game.score = finalScore;
-  
-  // Sauvegarder progression
-  if (!game.progress.completedLevels.includes(game.level)) {
-    game.progress.completedLevels.push(game.level);
-    game.progress.levelsCompleted++;
-  }
-  
-  if (game.level >= game.progress.maxLevel && game.level < CONFIG.MAX_LEVELS) {
-    game.progress.maxLevel = game.level + 1;
-  }
-  
-  if (finalScore > game.progress.bestScore) {
-    game.progress.bestScore = finalScore;
-  }
-  
-  saveProgress();
-  
-  // Afficher modal victoire
-  document.getElementById('winLevel').textContent = game.level;
-  document.getElementById('winData').textContent = `${game.collectedData}/${game.dataPoints.length}`;
-  document.getElementById('winTime').textContent = formatTime(game.timeLimit - game.timeRemaining);
-  document.getElementById('winHealth').textContent = game.player.health + '%';
-  document.getElementById('winScore').textContent = finalScore.toLocaleString();
-  
-  // Bouton niveau suivant
-  const nextBtn = document.getElementById('nextLevelBtn');
-  if (game.level < CONFIG.MAX_LEVELS) {
-    nextBtn.style.display = 'block';
-  } else {
-    nextBtn.style.display = 'none';
-  }
-  
-  document.getElementById('winModal').classList.add('show');
-}
+            attempts++;
+          }
 
-function gameOver(reason) {
-  stopGame();
-  playSound('lose');
-  
-  document.getElementById('loseReason').textContent = reason;
-  document.getElementById('loseLevel').textContent = game.level;
-  document.getElementById('loseData').textContent = `${game.collectedData}/${game.dataPoints.length}`;
-  document.getElementById('loseTime').textContent = formatTime(game.timeLimit - game.timeRemaining);
-  
-  document.getElementById('loseModal').classList.add('show');
-}
-
-function formatTime(seconds) {
-  const m = Math.floor(Math.abs(seconds) / 60);
-  const s = Math.abs(seconds) % 60;
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-}
-
-// ============================================
-// RENDU GRAPHIQUE
-// ============================================
-function render() {
-  const cellSize = game.cellSize;
-  
-  // Effacer
-  ctx.fillStyle = '#0a0a15';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
-  // Dessiner la grille
-  for (let y = 0; y < game.rows; y++) {
-    for (let x = 0; x < game.cols; x++) {
-      const px = x * cellSize;
-      const py = y * cellSize;
-      
-      if (game.grid[y][x] === 1) {
-        // Mur
-        ctx.fillStyle = '#1a1a3e';
-        ctx.fillRect(px, py, cellSize, cellSize);
-        
-        ctx.strokeStyle = '#2a2a5e';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(px + 0.5, py + 0.5, cellSize - 1, cellSize - 1);
-      } else {
-        // Sol
-        ctx.fillStyle = '#0a0a15';
-        ctx.fillRect(px, py, cellSize, cellSize);
-        
-        ctx.strokeStyle = 'rgba(0, 255, 255, 0.05)';
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(px, py, cellSize, cellSize);
+          if (valid) {
+            game.walls.push({
+              x,
+              y,
+              length,
+              horizontal,
+              direction: 1,
+              moveTimer: 0,
+            });
+          }
+        }
       }
-    }
-  }
-  
-  // Murs mobiles
-  ctx.fillStyle = '#ff00ff';
-  ctx.shadowColor = '#ff00ff';
-  ctx.shadowBlur = 10;
-  game.walls.forEach(wall => {
-    for (let i = 0; i < wall.length; i++) {
-      const wx = wall.horizontal ? wall.x + i : wall.x;
-      const wy = wall.horizontal ? wall.y : wall.y + i;
-      ctx.fillRect(wx * cellSize + 2, wy * cellSize + 2, cellSize - 4, cellSize - 4);
-    }
-  });
-  ctx.shadowBlur = 0;
-  
-  // Sortie
-  ctx.fillStyle = '#00ff88';
-  ctx.shadowColor = '#00ff88';
-  ctx.shadowBlur = 15;
-  ctx.fillRect(game.exit.x * cellSize + 4, game.exit.y * cellSize + 4, cellSize - 8, cellSize - 8);
-  ctx.shadowBlur = 0;
-  
-  ctx.fillStyle = '#000';
-  ctx.font = `${cellSize * 0.5}px Arial`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('🚪', game.exit.x * cellSize + cellSize / 2, game.exit.y * cellSize + cellSize / 2);
-  
-  // Data points
-  ctx.shadowColor = '#ffff00';
-  ctx.shadowBlur = 12;
-  game.dataPoints.forEach(data => {
-    if (data.collected) return;
-    ctx.fillStyle = '#ffff00';
-    ctx.beginPath();
-    ctx.arc(data.x * cellSize + cellSize / 2, data.y * cellSize + cellSize / 2, cellSize / 4, 0, Math.PI * 2);
-    ctx.fill();
-  });
-  ctx.shadowBlur = 0;
-  
-  // Sentinelles
-  game.sentinels.forEach(sentinel => {
-    ctx.fillStyle = sentinel.frozen ? '#6666ff' : sentinel.color;
-    ctx.shadowColor = sentinel.color;
-    ctx.shadowBlur = sentinel.frozen ? 5 : 15;
-    ctx.beginPath();
-    ctx.arc(sentinel.x * cellSize + cellSize / 2, sentinel.y * cellSize + cellSize / 2, cellSize / 3, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.fillStyle = '#000';
-    ctx.shadowBlur = 0;
-    ctx.beginPath();
-    ctx.arc(sentinel.x * cellSize + cellSize / 2, sentinel.y * cellSize + cellSize / 2, cellSize / 8, 0, Math.PI * 2);
-    ctx.fill();
-  });
-  
-  // Joueur
-  const playerAlpha = game.activeHacks.ghost ? 0.5 : 1;
-  ctx.globalAlpha = playerAlpha;
-  ctx.fillStyle = '#00ffff';
-  ctx.shadowColor = '#00ffff';
-  ctx.shadowBlur = 20;
-  ctx.beginPath();
-  ctx.arc(game.player.x * cellSize + cellSize / 2, game.player.y * cellSize + cellSize / 2, cellSize / 3, 0, Math.PI * 2);
-  ctx.fill();
-  
-  if (game.activeHacks.speed) {
-    ctx.strokeStyle = '#00ffff';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(game.player.x * cellSize + cellSize / 2, game.player.y * cellSize + cellSize / 2, cellSize / 2, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-  
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
-}
 
-// ============================================
-// MINIMAP
-// ============================================
-function renderMinimap() {
-  const scale = minimap.width / game.cols;
-  
-  minimapCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-  minimapCtx.fillRect(0, 0, minimap.width, minimap.height);
-  
-  for (let y = 0; y < game.rows; y++) {
-    for (let x = 0; x < game.cols; x++) {
-      minimapCtx.fillStyle = game.grid[y][x] === 1 ? '#333366' : '#111122';
-      minimapCtx.fillRect(x * scale, y * scale, scale, scale);
-    }
-  }
-  
-  minimapCtx.fillStyle = '#00ff88';
-  minimapCtx.fillRect(game.exit.x * scale, game.exit.y * scale, scale, scale);
-  
-  minimapCtx.fillStyle = '#ffff00';
-  game.dataPoints.forEach(d => {
-    if (!d.collected) {
-      minimapCtx.fillRect(d.x * scale, d.y * scale, scale, scale);
-    }
-  });
-  
-  minimapCtx.fillStyle = '#ff3366';
-  game.sentinels.forEach(s => {
-    minimapCtx.fillRect(s.x * scale, s.y * scale, scale, scale);
-  });
-  
-  minimapCtx.fillStyle = '#00ffff';
-  minimapCtx.fillRect(game.player.x * scale, game.player.y * scale, scale * 1.5, scale * 1.5);
-}
+      // ============================================
+      // CANVAS
+      // ============================================
+      function resizeCanvas() {
+        const gameArea = document.querySelector(".game-area");
+        const maxWidth = gameArea.clientWidth - 40;
+        const maxHeight = gameArea.clientHeight - 40;
 
-// ============================================
-// AUDIO
-// ============================================
-let audioCtx = null;
+        // Calculer taille cellule pour remplir l'espace
+        const cellW = Math.floor(maxWidth / game.cols);
+        const cellH = Math.floor(maxHeight / game.rows);
+        game.cellSize = Math.max(16, Math.min(cellW, cellH, 40));
 
-function initAudio() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-}
+        canvas.width = game.cols * game.cellSize;
+        canvas.height = game.rows * game.cellSize;
 
-function playSound(type) {
-  if (!audioCtx) return;
-  
-  try {
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    
-    const now = audioCtx.currentTime;
-    
-    switch (type) {
-      case 'step':
-        osc.frequency.setValueAtTime(200, now);
-        osc.type = 'sine';
-        gain.gain.setValueAtTime(0.03, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-        osc.start(now);
-        osc.stop(now + 0.05);
-        break;
-        
-      case 'collect':
-        osc.frequency.setValueAtTime(523, now);
-        osc.frequency.setValueAtTime(659, now + 0.08);
-        osc.frequency.setValueAtTime(784, now + 0.16);
-        osc.type = 'sine';
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-        osc.start(now);
-        osc.stop(now + 0.25);
-        break;
-        
-      case 'damage':
-        osc.frequency.setValueAtTime(150, now);
-        osc.frequency.exponentialRampToValueAtTime(50, now + 0.2);
-        osc.type = 'sawtooth';
-        gain.gain.setValueAtTime(0.15, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-        osc.start(now);
-        osc.stop(now + 0.2);
-        break;
-        
-      case 'hack':
-        osc.frequency.setValueAtTime(300, now);
-        osc.frequency.exponentialRampToValueAtTime(900, now + 0.12);
-        osc.type = 'square';
-        gain.gain.setValueAtTime(0.08, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-        osc.start(now);
-        osc.stop(now + 0.15);
-        break;
-        
-      case 'win':
-        osc.frequency.setValueAtTime(523, now);
-        osc.frequency.setValueAtTime(659, now + 0.12);
-        osc.frequency.setValueAtTime(784, now + 0.24);
-        osc.frequency.setValueAtTime(1047, now + 0.36);
-        osc.type = 'sine';
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-        osc.start(now);
-        osc.stop(now + 0.5);
-        break;
-        
-      case 'lose':
-        osc.frequency.setValueAtTime(200, now);
-        osc.frequency.exponentialRampToValueAtTime(50, now + 0.4);
-        osc.type = 'sawtooth';
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-        osc.start(now);
-        osc.stop(now + 0.4);
-        break;
-        
-      case 'start':
-        osc.frequency.setValueAtTime(262, now);
-        osc.frequency.setValueAtTime(330, now + 0.08);
-        osc.frequency.setValueAtTime(392, now + 0.16);
-        osc.type = 'sine';
-        gain.gain.setValueAtTime(0.1, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-        osc.start(now);
-        osc.stop(now + 0.25);
-        break;
-        
-      case 'wall':
-        osc.frequency.setValueAtTime(80, now);
-        osc.type = 'triangle';
-        gain.gain.setValueAtTime(0.08, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-        osc.start(now);
-        osc.stop(now + 0.08);
-        break;
-        
-      case 'pause':
-        osc.frequency.setValueAtTime(400, now);
-        osc.frequency.setValueAtTime(300, now + 0.1);
-        osc.type = 'sine';
-        gain.gain.setValueAtTime(0.08, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-        osc.start(now);
-        osc.stop(now + 0.15);
-        break;
-    }
-  } catch (e) {
-    // Ignorer les erreurs audio
-  }
-}
-
-// ============================================
-// CONTRÔLES CLAVIER
-// ============================================
-function setupKeyboardControls() {
-  document.addEventListener('keydown', (e) => {
-    // Échap = Pause
-    if (e.key === 'Escape' && game.isPlaying) {
-      e.preventDefault();
-      togglePause();
-      return;
-    }
-    
-    // Si en pause ou pas en jeu, ignorer
-    if (!game.isPlaying || game.isPaused) return;
-    
-    // Mouvement
-    let dx = 0, dy = 0;
-    
-    switch (e.key.toLowerCase()) {
-      case 'arrowup':
-      case 'z':
-      case 'w':
-        dy = -1;
-        e.preventDefault();
-        break;
-      case 'arrowdown':
-      case 's':
-        dy = 1;
-        e.preventDefault();
-        break;
-      case 'arrowleft':
-      case 'q':
-      case 'a':
-        dx = -1;
-        e.preventDefault();
-        break;
-      case 'arrowright':
-      case 'd':
-        dx = 1;
-        e.preventDefault();
-        break;
-        
-      // Hacks avec touches 1-4
-      case '1':
-      case '&':
-        activateHack(0);
-        e.preventDefault();
-        return;
-      case '2':
-      case 'é':
-        activateHack(1);
-        e.preventDefault();
-        return;
-      case '3':
-      case '"':
-        activateHack(2);
-        e.preventDefault();
-        return;
-      case '4':
-      case "'":
-        activateHack(3);
-        e.preventDefault();
-        return;
-    }
-    
-    if (dx !== 0 || dy !== 0) {
-      movePlayer(dx, dy);
-      
-      // Double mouvement si Turbo actif
-      if (game.activeHacks.speed) {
-        setTimeout(() => movePlayer(dx, dy), 80);
+        // Minimap
+        const minimapScale = Math.min(120 / game.cols, 120 / game.rows);
+        minimap.width = game.cols * minimapScale;
+        minimap.height = game.rows * minimapScale;
       }
-    }
-  });
-}
 
-// ============================================
-// CONTRÔLES TACTILES
-// ============================================
-function setupTouchControls() {
-  const touchControls = document.getElementById('touchControls');
-  const buttons = touchControls.querySelectorAll('.touch-btn');
-  
-  // Afficher sur mobile
-  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-    touchControls.style.display = 'grid';
-  }
-  
-  buttons.forEach(btn => {
-    const dir = btn.dataset.dir;
-    
-    const handleTouch = (e) => {
-      e.preventDefault();
-      if (!game.isPlaying || game.isPaused) return;
-      
-      let dx = 0, dy = 0;
-      
-      switch (dir) {
-        case 'up': dy = -1; break;
-        case 'down': dy = 1; break;
-        case 'left': dx = -1; break;
-        case 'right': dx = 1; break;
+      // ============================================
+      // CONTRÔLES
+      // ============================================
+      function setupKeyboardControls() {
+        document.addEventListener("keydown", (e) => {
+          if (!game.isPlaying) return;
+
+          // Pause
+          if (e.key === "Escape" || e.key === "p" || e.key === "P") {
+            togglePause();
+            return;
+          }
+
+          if (game.isPaused) return;
+
+          // Hacks
+          if (e.key >= "1" && e.key <= "4") {
+            activateHack(parseInt(e.key) - 1);
+            return;
+          }
+
+          // Déplacement
+          let dx = 0,
+            dy = 0;
+
+          switch (e.key) {
+            case "ArrowUp":
+            case "z":
+            case "Z":
+            case "w":
+            case "W":
+              dy = -1;
+              break;
+            case "ArrowDown":
+            case "s":
+            case "S":
+              dy = 1;
+              break;
+            case "ArrowLeft":
+            case "q":
+            case "Q":
+            case "a":
+            case "A":
+              dx = -1;
+              break;
+            case "ArrowRight":
+            case "d":
+            case "D":
+              dx = 1;
+              break;
+          }
+
+          if (dx !== 0 || dy !== 0) {
+            e.preventDefault();
+            movePlayer(dx, dy);
+          }
+        });
       }
-      
-      movePlayer(dx, dy);
-      
-      // Double mouvement si Turbo actif
-      if (game.activeHacks.speed) {
-        setTimeout(() => movePlayer(dx, dy), 80);
+
+      function setupTouchControls() {
+        const buttons = document.querySelectorAll(".touch-btn");
+
+        buttons.forEach((btn) => {
+          const dir = btn.dataset.dir;
+          let dx = 0,
+            dy = 0;
+
+          switch (dir) {
+            case "up":
+              dy = -1;
+              break;
+            case "down":
+              dy = 1;
+              break;
+            case "left":
+              dx = -1;
+              break;
+            case "right":
+              dx = 1;
+              break;
+          }
+
+          btn.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            if (game.isPlaying && !game.isPaused) {
+              movePlayer(dx, dy);
+            }
+          });
+
+          btn.addEventListener("click", () => {
+            if (game.isPlaying && !game.isPaused) {
+              movePlayer(dx, dy);
+            }
+          });
+        });
       }
-    };
-    
-    btn.addEventListener('touchstart', handleTouch);
-    btn.addEventListener('mousedown', handleTouch);
-  });
-  
-  // Swipe sur le canvas
-  let touchStartX = 0;
-  let touchStartY = 0;
-  
-  canvas.addEventListener('touchstart', (e) => {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-  }, { passive: true });
-  
-  canvas.addEventListener('touchend', (e) => {
-    if (!game.isPlaying || game.isPaused) return;
-    
-    const touchEndX = e.changedTouches[0].clientX;
-    const touchEndY = e.changedTouches[0].clientY;
-    
-    const diffX = touchEndX - touchStartX;
-    const diffY = touchEndY - touchStartY;
-    
-    const minSwipe = 30;
-    
-    if (Math.abs(diffX) > Math.abs(diffY)) {
-      if (Math.abs(diffX) > minSwipe) {
-        movePlayer(diffX > 0 ? 1 : -1, 0);
+
+      // ============================================
+      // DÉPLACEMENT JOUEUR
+      // ============================================
+      function movePlayer(dx, dy) {
+        // Turbo = double mouvement
+        const steps = game.activeHacks.speed ? 2 : 1;
+
+        for (let i = 0; i < steps; i++) {
+          const newX = game.player.x + dx;
+          const newY = game.player.y + dy;
+
+          // Vérifier limites
+          if (newX < 0 || newX >= game.cols || newY < 0 || newY >= game.rows) {
+            playSound("wall");
+            return;
+          }
+
+          // Vérifier mur (sauf fantôme)
+          if (game.grid[newY][newX] === 1 && !game.activeHacks.ghost) {
+            playSound("wall");
+            return;
+          }
+
+          // Déplacer
+          game.player.x = newX;
+          game.player.y = newY;
+          playSound("step");
+
+          // Collecter data
+          game.dataPoints.forEach((data) => {
+            if (
+              !data.collected &&
+              data.x === game.player.x &&
+              data.y === game.player.y
+            ) {
+              data.collected = true;
+              game.collectedData++;
+              playSound("collect");
+              showAlert(`💎 +1 Donnée !`);
+              updateUI();
+            }
+          });
+
+          // Vérifier sortie
+          if (game.player.x === game.exit.x && game.player.y === game.exit.y) {
+            if (game.collectedData >= game.dataPoints.length) {
+              levelComplete();
+              return;
+            } else {
+              showAlert(`⚠️ Collectez toutes les données d'abord !`);
+            }
+          }
+        }
+
+        checkCollisions();
       }
-    } else {
-      if (Math.abs(diffY) > minSwipe) {
-        movePlayer(0, diffY > 0 ? 1 : -1);
+
+      // ============================================
+      // COLLISIONS
+      // ============================================
+      function checkCollisions() {
+        if (game.activeHacks.ghost) return;
+
+        // Collision sentinelles
+        game.sentinels.forEach((sentinel) => {
+          if (sentinel.x === game.player.x && sentinel.y === game.player.y) {
+            takeDamage(25);
+          }
+        });
+
+        // Collision murs mobiles
+        game.walls.forEach((wall) => {
+          for (let i = 0; i < wall.length; i++) {
+            const wx = wall.horizontal ? wall.x + i : wall.x;
+            const wy = wall.horizontal ? wall.y : wall.y + i;
+
+            if (game.player.x === wx && game.player.y === wy) {
+              takeDamage(10);
+              // Repousser
+              game.player.x = Math.max(
+                1,
+                Math.min(
+                  game.cols - 2,
+                  game.player.x + (wall.horizontal ? wall.direction : 0),
+                ),
+              );
+              game.player.y = Math.max(
+                1,
+                Math.min(
+                  game.rows - 2,
+                  game.player.y + (wall.horizontal ? 0 : wall.direction),
+                ),
+              );
+            }
+          }
+        });
       }
-    }
-  }, { passive: true });
-}
 
-// ============================================
-// REDIMENSIONNEMENT FENÊTRE
-// ============================================
-window.addEventListener('resize', () => {
-  if (game.isPlaying) {
-    resizeCanvas();
-    render();
-    renderMinimap();
-  }
-});
+      function takeDamage(amount) {
+        game.player.health -= amount;
+        playSound("damage");
+        updateHealthBar();
 
-// ============================================
-// INITIALISATION AU CHARGEMENT
-// ============================================
-document.addEventListener('DOMContentLoaded', init);
+        // Flash rouge
+        canvas.style.boxShadow = "0 0 50px rgba(255, 0, 0, 0.8)";
+        setTimeout(() => {
+          canvas.style.boxShadow = "";
+        }, 200);
 
-// Premier clic pour activer l'audio
-document.addEventListener('click', () => {
-  initAudio();
-}, { once: true });
+        if (game.player.health <= 0) {
+          game.player.health = 0;
+          gameOver("Santé épuisée !");
+        }
+      }
 
-// Pause automatique si page cachée
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden && game.isPlaying && !game.isPaused) {
-    togglePause();
-  }
-});
+      // ============================================
+      // MISE À JOUR UI
+      // ============================================
+      function updateUI() {
+        document.getElementById("currentLevel").textContent = game.level;
+        document.getElementById("dataCount").textContent =
+          `${game.collectedData}/${game.dataPoints.length}`;
+        updateHealthBar();
+        updateTimerDisplay();
+      }
 
-// Empêcher zoom sur mobile
-document.addEventListener('touchmove', (e) => {
-  if (e.touches.length > 1) {
-    e.preventDefault();
-  }
-}, { passive: false });
-</script>
+      function updateHealthBar() {
+        const bar = document.getElementById("healthBar");
+        const percent = Math.max(0, game.player.health);
+        bar.style.width = percent + "%";
 
-</body>
+        if (percent <= 25) {
+          bar.style.background = "#ff3366";
+        } else if (percent <= 50) {
+          bar.style.background = "#ff8800";
+        } else {
+          bar.style.background = "#00ff88";
+        }
+      }
+
+      function updateTimerDisplay() {
+        const display = document.getElementById("timeDisplay");
+        display.textContent = formatTime(game.timeRemaining);
+
+        if (game.timeRemaining <= 10) {
+          display.style.color = "#ff3366";
+        } else if (game.timeRemaining <= 30) {
+          display.style.color = "#ff8800";
+        } else {
+          display.style.color = "";
+        }
+      }
+
+      // ============================================
+      // TIMER
+      // ============================================
+      function startTimer() {
+        stopTimer();
+
+        game.timerInterval = setInterval(() => {
+          if (!game.isPaused && game.isPlaying) {
+            game.timeRemaining--;
+            updateTimerDisplay();
+
+            if (game.timeRemaining <= 0) {
+              gameOver("Temps écoulé !");
+            }
+          }
+        }, 1000);
+      }
+
+      function stopTimer() {
+        if (game.timerInterval) {
+          clearInterval(game.timerInterval);
+          game.timerInterval = null;
+        }
+      }
+
+      // ============================================
+      // BOUCLE DE JEU
+      // ============================================
+      function startGameLoop() {
+        stopGameLoop();
+
+        let lastTime = 0;
+
+        function loop(currentTime) {
+          if (!game.isPlaying) return;
+
+          game.gameLoop = requestAnimationFrame(loop);
+
+          if (game.isPaused) return;
+
+          const delta = currentTime - lastTime;
+
+          // Update toutes les 200ms
+          if (delta > 200) {
+            lastTime = currentTime;
+            updateSentinels();
+            updateMovingWalls();
+            updateHacksUI();
+          }
+
+          // Render chaque frame
+          render();
+          renderMinimap();
+        }
+
+        game.gameLoop = requestAnimationFrame(loop);
+      }
+
+      function stopGameLoop() {
+        if (game.gameLoop) {
+          cancelAnimationFrame(game.gameLoop);
+          game.gameLoop = null;
+        }
+      }
+
+      function stopGame() {
+        game.isPlaying = false;
+        stopTimer();
+        stopGameLoop();
+      }
+
+      // ============================================
+      // MISE À JOUR ENTITÉS
+      // ============================================
+      function updateSentinels() {
+        game.sentinels.forEach((sentinel) => {
+          if (sentinel.frozen) return;
+
+          sentinel.moveTimer++;
+          if (sentinel.moveTimer < 3) return;
+          sentinel.moveTimer = 0;
+
+          // Direction chaos
+          if (game.activeHacks.chaos) {
+            sentinel.direction = Math.floor(Math.random() * 4);
+          }
+
+          const dirs = [
+            [0, -1],
+            [1, 0],
+            [0, 1],
+            [-1, 0],
+          ];
+          const [dx, dy] = dirs[sentinel.direction];
+
+          const newX = sentinel.x + dx;
+          const newY = sentinel.y + dy;
+
+          // Peut bouger ?
+          if (
+            newX > 0 &&
+            newX < game.cols - 1 &&
+            newY > 0 &&
+            newY < game.rows - 1 &&
+            game.grid[newY][newX] === 0
+          ) {
+            sentinel.x = newX;
+            sentinel.y = newY;
+          } else {
+            // Changer direction
+            sentinel.direction = (sentinel.direction + 1) % 4;
+          }
+
+          // Collision avec joueur
+          if (
+            sentinel.x === game.player.x &&
+            sentinel.y === game.player.y &&
+            !game.activeHacks.ghost
+          ) {
+            takeDamage(25);
+          }
+        });
+      }
+
+      function updateMovingWalls() {
+        game.walls.forEach((wall) => {
+          wall.moveTimer++;
+          if (wall.moveTimer < 5) return;
+          wall.moveTimer = 0;
+
+          // Nouvelle position
+          const newX = wall.x + (wall.horizontal ? wall.direction : 0);
+          const newY = wall.y + (wall.horizontal ? 0 : wall.direction);
+
+          // Vérifier collision avec bordures
+          let canMove = true;
+
+          for (let i = 0; i < wall.length; i++) {
+            const wx = wall.horizontal ? newX + i : newX;
+            const wy = wall.horizontal ? newY : newY + i;
+
+            if (
+              wx <= 0 ||
+              wx >= game.cols - 1 ||
+              wy <= 0 ||
+              wy >= game.rows - 1
+            ) {
+              canMove = false;
+              break;
+            }
+
+            if (game.grid[wy][wx] === 1) {
+              canMove = false;
+              break;
+            }
+          }
+
+          if (canMove) {
+            wall.x = newX;
+            wall.y = newY;
+          } else {
+            wall.direction *= -1;
+          }
+        });
+      }
+
+      // ============================================
+      // HACKS
+      // ============================================
+      function activateHack(index) {
+        if (!game.isPlaying || game.isPaused) return;
+        if (index < 0 || index >= CONFIG.HACKS.length) return;
+
+        const hack = CONFIG.HACKS[index];
+
+        // Vérifier cooldown
+        if (
+          game.hackCooldowns[hack.id] &&
+          game.hackCooldowns[hack.id] > Date.now()
+        ) {
+          const remaining = Math.ceil(
+            (game.hackCooldowns[hack.id] - Date.now()) / 1000,
+          );
+          showAlert(`⏳ ${hack.name} : ${remaining}s`);
+          return;
+        }
+
+        // Vérifier si déjà actif
+        if (game.activeHacks[hack.id]) {
+          showAlert(`${hack.name} déjà actif !`);
+          return;
+        }
+
+        // Activer le hack
+        game.activeHacks[hack.id] = true;
+        game.hacksUsed++;
+        playSound("hack");
+        showAlert(`✨ ${hack.name} activé !`);
+
+        // Effet spécial Gel
+        if (hack.id === "freeze") {
+          game.sentinels.forEach((s) => (s.frozen = true));
+        }
+
+        updateHacksUI();
+
+        // Désactiver après la durée
+        setTimeout(() => {
+          game.activeHacks[hack.id] = false;
+
+          if (hack.id === "freeze") {
+            game.sentinels.forEach((s) => (s.frozen = false));
+          }
+
+          showAlert(`⚠️ ${hack.name} terminé`);
+          updateHacksUI();
+        }, hack.duration);
+
+        // Définir cooldown
+        game.hackCooldowns[hack.id] = Date.now() + hack.cooldown;
+      }
+
+      function updateHacksUI() {
+        const buttons = document.querySelectorAll(".hack-btn");
+
+        buttons.forEach((btn, index) => {
+          const hack = CONFIG.HACKS[index];
+          if (!hack) return;
+
+          const nameEl = btn.querySelector(".hack-name");
+
+          if (game.activeHacks[hack.id]) {
+            btn.classList.add("active");
+            btn.disabled = true;
+            nameEl.textContent = "ACTIF";
+          } else {
+            btn.classList.remove("active");
+
+            const cooldownEnd = game.hackCooldowns[hack.id];
+            if (cooldownEnd && cooldownEnd > Date.now()) {
+              btn.disabled = true;
+              const remaining = Math.ceil((cooldownEnd - Date.now()) / 1000);
+              nameEl.textContent = `${remaining}s`;
+            } else {
+              btn.disabled = false;
+              nameEl.textContent = hack.name;
+            }
+          }
+        });
+      }
+
+      function resetHacksUI() {
+        game.activeHacks = {};
+        game.hackCooldowns = {};
+
+        const buttons = document.querySelectorAll(".hack-btn");
+        buttons.forEach((btn, index) => {
+          const hack = CONFIG.HACKS[index];
+          if (!hack) return;
+
+          btn.classList.remove("active");
+          btn.disabled = false;
+          btn.querySelector(".hack-name").textContent = hack.name;
+        });
+      }
+
+      // ============================================
+      // PAUSE ET NAVIGATION
+      // ============================================
+      function togglePause() {
+        if (!game.isPlaying) return;
+
+        game.isPaused = !game.isPaused;
+
+        if (game.isPaused) {
+          document.getElementById("pauseModal").classList.add("show");
+          playSound("pause");
+        } else {
+          document.getElementById("pauseModal").classList.remove("show");
+        }
+      }
+
+      function resumeGame() {
+        game.isPaused = false;
+        document.getElementById("pauseModal").classList.remove("show");
+      }
+
+      function retryLevel() {
+        // Arrêter tout proprement
+        stopGame();
+        hideAllModals();
+
+        // Relancer le même niveau
+        setTimeout(() => {
+          startGame(game.level);
+        }, 100);
+      }
+
+      function quitToMenu() {
+        // Arrêter tout proprement
+        stopGame();
+        hideAllModals();
+
+        // Mettre à jour les stats du menu
+        updateMenuStats();
+
+        // Afficher le menu
+        showScreen("menuScreen");
+      }
+
+      function nextLevel() {
+        // Arrêter tout proprement
+        stopGame();
+        hideAllModals();
+
+        // Niveau suivant
+        const nextLvl = Math.min(game.level + 1, CONFIG.MAX_LEVELS);
+
+        setTimeout(() => {
+          startGame(nextLvl);
+        }, 100);
+      }
+
+      // ============================================
+      // FIN DE NIVEAU
+      // ============================================
+      function levelComplete() {
+        stopGame();
+        playSound("win");
+
+        // Calcul score
+        const timeBonus = game.timeRemaining * 10;
+        const dataBonus = game.collectedData * 100;
+        const healthBonus = game.player.health * 5;
+        const hackPenalty = game.hacksUsed * 50;
+        const levelBonus = game.level * 200;
+
+        const finalScore = Math.max(
+          0,
+          levelBonus + timeBonus + dataBonus + healthBonus - hackPenalty,
+        );
+        game.score = finalScore;
+
+        // Sauvegarder progression
+        if (!game.progress.completedLevels.includes(game.level)) {
+          game.progress.completedLevels.push(game.level);
+          game.progress.levelsCompleted++;
+        }
+
+        if (
+          game.level >= game.progress.maxLevel &&
+          game.level < CONFIG.MAX_LEVELS
+        ) {
+          game.progress.maxLevel = game.level + 1;
+        }
+
+        if (finalScore > game.progress.bestScore) {
+          game.progress.bestScore = finalScore;
+        }
+
+        saveProgress();
+
+        // Afficher modal victoire
+        document.getElementById("winLevel").textContent = game.level;
+        document.getElementById("winData").textContent =
+          `${game.collectedData}/${game.dataPoints.length}`;
+        document.getElementById("winTime").textContent = formatTime(
+          game.timeLimit - game.timeRemaining,
+        );
+        document.getElementById("winHealth").textContent =
+          game.player.health + "%";
+        document.getElementById("winScore").textContent =
+          finalScore.toLocaleString();
+
+        // Bouton niveau suivant
+        const nextBtn = document.getElementById("nextLevelBtn");
+        if (game.level < CONFIG.MAX_LEVELS) {
+          nextBtn.style.display = "block";
+        } else {
+          nextBtn.style.display = "none";
+        }
+
+        document.getElementById("winModal").classList.add("show");
+      }
+
+      function gameOver(reason) {
+        stopGame();
+        playSound("lose");
+
+        document.getElementById("loseReason").textContent = reason;
+        document.getElementById("loseLevel").textContent = game.level;
+        document.getElementById("loseData").textContent =
+          `${game.collectedData}/${game.dataPoints.length}`;
+        document.getElementById("loseTime").textContent = formatTime(
+          game.timeLimit - game.timeRemaining,
+        );
+
+        document.getElementById("loseModal").classList.add("show");
+      }
+
+      function formatTime(seconds) {
+        const m = Math.floor(Math.abs(seconds) / 60);
+        const s = Math.abs(seconds) % 60;
+        return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+      }
+
+      // ============================================
+      // RENDU GRAPHIQUE
+      // ============================================
+      function render() {
+        const cellSize = game.cellSize;
+
+        // Effacer
+        ctx.fillStyle = "#0a0a15";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Dessiner la grille
+        for (let y = 0; y < game.rows; y++) {
+          for (let x = 0; x < game.cols; x++) {
+            const px = x * cellSize;
+            const py = y * cellSize;
+
+            if (game.grid[y][x] === 1) {
+              // Mur
+              ctx.fillStyle = "#1a1a3e";
+              ctx.fillRect(px, py, cellSize, cellSize);
+
+              ctx.strokeStyle = "#2a2a5e";
+              ctx.lineWidth = 1;
+              ctx.strokeRect(px + 0.5, py + 0.5, cellSize - 1, cellSize - 1);
+            } else {
+              // Sol
+              ctx.fillStyle = "#0a0a15";
+              ctx.fillRect(px, py, cellSize, cellSize);
+
+              ctx.strokeStyle = "rgba(0, 255, 255, 0.05)";
+              ctx.lineWidth = 0.5;
+              ctx.strokeRect(px, py, cellSize, cellSize);
+            }
+          }
+        }
+
+        // Murs mobiles
+        ctx.fillStyle = "#ff00ff";
+        ctx.shadowColor = "#ff00ff";
+        ctx.shadowBlur = 10;
+        game.walls.forEach((wall) => {
+          for (let i = 0; i < wall.length; i++) {
+            const wx = wall.horizontal ? wall.x + i : wall.x;
+            const wy = wall.horizontal ? wall.y : wall.y + i;
+            ctx.fillRect(
+              wx * cellSize + 2,
+              wy * cellSize + 2,
+              cellSize - 4,
+              cellSize - 4,
+            );
+          }
+        });
+        ctx.shadowBlur = 0;
+
+        // Sortie
+        ctx.fillStyle = "#00ff88";
+        ctx.shadowColor = "#00ff88";
+        ctx.shadowBlur = 15;
+        ctx.fillRect(
+          game.exit.x * cellSize + 4,
+          game.exit.y * cellSize + 4,
+          cellSize - 8,
+          cellSize - 8,
+        );
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = "#000";
+        ctx.font = `${cellSize * 0.5}px Arial`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(
+          "🚪",
+          game.exit.x * cellSize + cellSize / 2,
+          game.exit.y * cellSize + cellSize / 2,
+        );
+
+        // Data points
+        ctx.shadowColor = "#ffff00";
+        ctx.shadowBlur = 12;
+        game.dataPoints.forEach((data) => {
+          if (data.collected) return;
+          ctx.fillStyle = "#ffff00";
+          ctx.beginPath();
+          ctx.arc(
+            data.x * cellSize + cellSize / 2,
+            data.y * cellSize + cellSize / 2,
+            cellSize / 4,
+            0,
+            Math.PI * 2,
+          );
+          ctx.fill();
+        });
+        ctx.shadowBlur = 0;
+
+        // Sentinelles
+        game.sentinels.forEach((sentinel) => {
+          ctx.fillStyle = sentinel.frozen ? "#6666ff" : sentinel.color;
+          ctx.shadowColor = sentinel.color;
+          ctx.shadowBlur = sentinel.frozen ? 5 : 15;
+          ctx.beginPath();
+          ctx.arc(
+            sentinel.x * cellSize + cellSize / 2,
+            sentinel.y * cellSize + cellSize / 2,
+            cellSize / 3,
+            0,
+            Math.PI * 2,
+          );
+          ctx.fill();
+
+          ctx.fillStyle = "#000";
+          ctx.shadowBlur = 0;
+          ctx.beginPath();
+          ctx.arc(
+            sentinel.x * cellSize + cellSize / 2,
+            sentinel.y * cellSize + cellSize / 2,
+            cellSize / 8,
+            0,
+            Math.PI * 2,
+          );
+          ctx.fill();
+        });
+
+        // Joueur
+        const playerAlpha = game.activeHacks.ghost ? 0.5 : 1;
+        ctx.globalAlpha = playerAlpha;
+        ctx.fillStyle = "#00ffff";
+        ctx.shadowColor = "#00ffff";
+        ctx.shadowBlur = 20;
+        ctx.beginPath();
+        ctx.arc(
+          game.player.x * cellSize + cellSize / 2,
+          game.player.y * cellSize + cellSize / 2,
+          cellSize / 3,
+          0,
+          Math.PI * 2,
+        );
+        ctx.fill();
+
+        if (game.activeHacks.speed) {
+          ctx.strokeStyle = "#00ffff";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(
+            game.player.x * cellSize + cellSize / 2,
+            game.player.y * cellSize + cellSize / 2,
+            cellSize / 2,
+            0,
+            Math.PI * 2,
+          );
+          ctx.stroke();
+        }
+
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
+      }
+
+      // ============================================
+      // MINIMAP
+      // ============================================
+      function renderMinimap() {
+        const scale = minimap.width / game.cols;
+
+        minimapCtx.fillStyle = "rgba(0, 0, 0, 0.8)";
+        minimapCtx.fillRect(0, 0, minimap.width, minimap.height);
+
+        for (let y = 0; y < game.rows; y++) {
+          for (let x = 0; x < game.cols; x++) {
+            minimapCtx.fillStyle =
+              game.grid[y][x] === 1 ? "#333366" : "#111122";
+            minimapCtx.fillRect(x * scale, y * scale, scale, scale);
+          }
+        }
+
+        minimapCtx.fillStyle = "#00ff88";
+        minimapCtx.fillRect(
+          game.exit.x * scale,
+          game.exit.y * scale,
+          scale,
+          scale,
+        );
+
+        minimapCtx.fillStyle = "#ffff00";
+        game.dataPoints.forEach((d) => {
+          if (!d.collected) {
+            minimapCtx.fillRect(d.x * scale, d.y * scale, scale, scale);
+          }
+        });
+
+        minimapCtx.fillStyle = "#ff3366";
+        game.sentinels.forEach((s) => {
+          minimapCtx.fillRect(s.x * scale, s.y * scale, scale, scale);
+        });
+
+        minimapCtx.fillStyle = "#00ffff";
+        minimapCtx.fillRect(
+          game.player.x * scale,
+          game.player.y * scale,
+          scale * 1.5,
+          scale * 1.5,
+        );
+      }
+
+      // ============================================
+      // AUDIO
+      // ============================================
+      let audioCtx = null;
+
+      function initAudio() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+      }
+
+      function playSound(type) {
+        if (!audioCtx) return;
+
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          const now = audioCtx.currentTime;
+
+          switch (type) {
+            case "step":
+              osc.frequency.setValueAtTime(200, now);
+              osc.type = "sine";
+              gain.gain.setValueAtTime(0.03, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+              osc.start(now);
+              osc.stop(now + 0.05);
+              break;
+
+            case "collect":
+              osc.frequency.setValueAtTime(523, now);
+              osc.frequency.setValueAtTime(659, now + 0.08);
+              osc.frequency.setValueAtTime(784, now + 0.16);
+              osc.type = "sine";
+              gain.gain.setValueAtTime(0.12, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+              osc.start(now);
+              osc.stop(now + 0.25);
+              break;
+
+            case "damage":
+              osc.frequency.setValueAtTime(150, now);
+              osc.frequency.exponentialRampToValueAtTime(50, now + 0.2);
+              osc.type = "sawtooth";
+              gain.gain.setValueAtTime(0.15, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+              osc.start(now);
+              osc.stop(now + 0.2);
+              break;
+
+            case "hack":
+              osc.frequency.setValueAtTime(300, now);
+              osc.frequency.exponentialRampToValueAtTime(900, now + 0.12);
+              osc.type = "square";
+              gain.gain.setValueAtTime(0.08, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+              osc.start(now);
+              osc.stop(now + 0.15);
+              break;
+
+            case "win":
+              osc.frequency.setValueAtTime(523, now);
+              osc.frequency.setValueAtTime(659, now + 0.12);
+              osc.frequency.setValueAtTime(784, now + 0.24);
+              osc.frequency.setValueAtTime(1047, now + 0.36);
+              osc.type = "sine";
+              gain.gain.setValueAtTime(0.12, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+              osc.start(now);
+              osc.stop(now + 0.5);
+              break;
+
+            case "lose":
+              osc.frequency.setValueAtTime(200, now);
+              osc.frequency.exponentialRampToValueAtTime(50, now + 0.4);
+              osc.type = "sawtooth";
+              gain.gain.setValueAtTime(0.12, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+              osc.start(now);
+              osc.stop(now + 0.4);
+              break;
+
+            case "start":
+              osc.frequency.setValueAtTime(262, now);
+              osc.frequency.setValueAtTime(330, now + 0.08);
+              osc.frequency.setValueAtTime(392, now + 0.16);
+              osc.type = "sine";
+              gain.gain.setValueAtTime(0.1, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+              osc.start(now);
+              osc.stop(now + 0.25);
+              break;
+
+            case "wall":
+              osc.frequency.setValueAtTime(80, now);
+              osc.type = "triangle";
+              gain.gain.setValueAtTime(0.08, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+              osc.start(now);
+              osc.stop(now + 0.08);
+              break;
+
+            case "pause":
+              osc.frequency.setValueAtTime(400, now);
+              osc.frequency.setValueAtTime(300, now + 0.1);
+              osc.type = "sine";
+              gain.gain.setValueAtTime(0.08, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+              osc.start(now);
+              osc.stop(now + 0.15);
+              break;
+          }
+        } catch (e) {
+          // Ignorer les erreurs audio
+        }
+      }
+
+      // ============================================
+      // CONTRÔLES CLAVIER
+      // ============================================
+      function setupKeyboardControls() {
+        document.addEventListener("keydown", (e) => {
+          // Échap = Pause
+          if (e.key === "Escape" && game.isPlaying) {
+            e.preventDefault();
+            togglePause();
+            return;
+          }
+
+          // Si en pause ou pas en jeu, ignorer
+          if (!game.isPlaying || game.isPaused) return;
+
+          // Mouvement
+          let dx = 0,
+            dy = 0;
+
+          switch (e.key.toLowerCase()) {
+            case "arrowup":
+            case "z":
+            case "w":
+              dy = -1;
+              e.preventDefault();
+              break;
+            case "arrowdown":
+            case "s":
+              dy = 1;
+              e.preventDefault();
+              break;
+            case "arrowleft":
+            case "q":
+            case "a":
+              dx = -1;
+              e.preventDefault();
+              break;
+            case "arrowright":
+            case "d":
+              dx = 1;
+              e.preventDefault();
+              break;
+
+            // Hacks avec touches 1-4
+            case "1":
+            case "&":
+              activateHack(0);
+              e.preventDefault();
+              return;
+            case "2":
+            case "é":
+              activateHack(1);
+              e.preventDefault();
+              return;
+            case "3":
+            case '"':
+              activateHack(2);
+              e.preventDefault();
+              return;
+            case "4":
+            case "'":
+              activateHack(3);
+              e.preventDefault();
+              return;
+          }
+
+          if (dx !== 0 || dy !== 0) {
+            movePlayer(dx, dy);
+
+            // Double mouvement si Turbo actif
+            if (game.activeHacks.speed) {
+              setTimeout(() => movePlayer(dx, dy), 80);
+            }
+          }
+        });
+      }
+
+      // ============================================
+      // CONTRÔLES TACTILES
+      // ============================================
+      function setupTouchControls() {
+        const touchControls = document.getElementById("touchControls");
+        const buttons = touchControls.querySelectorAll(".touch-btn");
+
+        // Afficher sur mobile
+        if ("ontouchstart" in window || navigator.maxTouchPoints > 0) {
+          touchControls.style.display = "grid";
+        }
+
+        buttons.forEach((btn) => {
+          const dir = btn.dataset.dir;
+
+          const handleTouch = (e) => {
+            e.preventDefault();
+            if (!game.isPlaying || game.isPaused) return;
+
+            let dx = 0,
+              dy = 0;
+
+            switch (dir) {
+              case "up":
+                dy = -1;
+                break;
+              case "down":
+                dy = 1;
+                break;
+              case "left":
+                dx = -1;
+                break;
+              case "right":
+                dx = 1;
+                break;
+            }
+
+            movePlayer(dx, dy);
+
+            // Double mouvement si Turbo actif
+            if (game.activeHacks.speed) {
+              setTimeout(() => movePlayer(dx, dy), 80);
+            }
+          };
+
+          btn.addEventListener("touchstart", handleTouch);
+          btn.addEventListener("mousedown", handleTouch);
+        });
+
+        // Swipe sur le canvas
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        canvas.addEventListener(
+          "touchstart",
+          (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+          },
+          { passive: true },
+        );
+
+        canvas.addEventListener(
+          "touchend",
+          (e) => {
+            if (!game.isPlaying || game.isPaused) return;
+
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+
+            const minSwipe = 30;
+
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+              if (Math.abs(diffX) > minSwipe) {
+                movePlayer(diffX > 0 ? 1 : -1, 0);
+              }
+            } else {
+              if (Math.abs(diffY) > minSwipe) {
+                movePlayer(0, diffY > 0 ? 1 : -1);
+              }
+            }
+          },
+          { passive: true },
+        );
+      }
+
+      // ============================================
+      // REDIMENSIONNEMENT FENÊTRE
+      // ============================================
+      window.addEventListener("resize", () => {
+        if (game.isPlaying) {
+          resizeCanvas();
+          render();
+          renderMinimap();
+        }
+      });
+
+      // ============================================
+      // INITIALISATION AU CHARGEMENT
+      // ============================================
+      document.addEventListener("DOMContentLoaded", init);
+
+      // Premier clic pour activer l'audio
+      document.addEventListener(
+        "click",
+        () => {
+          initAudio();
+        },
+        { once: true },
+      );
+
+      // Pause automatique si page cachée
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden && game.isPlaying && !game.isPaused) {
+          togglePause();
+        }
+      });
+
+      // Empêcher zoom sur mobile
+      document.addEventListener(
+        "touchmove",
+        (e) => {
+          if (e.touches.length > 1) {
+            e.preventDefault();
+          }
+        },
+        { passive: false },
+      );
+    </script>
+  </body>
 </html>
-

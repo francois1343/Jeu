@@ -7,11 +7,11 @@
 /* 1. CANVAS SETUP */
 /* ============================================================ */
 
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
 // 2. Dimensions virtuelles du canvas (400x600)
-const CANVAS_WIDTH = canvas.width;   // 400
+const CANVAS_WIDTH = canvas.width; // 400
 const CANVAS_HEIGHT = canvas.height; // 600
 
 /* ============================================================ */
@@ -22,20 +22,20 @@ const CONFIG = {
   // 4. Vaisseau du joueur
   playerSize: 16,
   playerSpeed: 4,
-  playerLerpFactor: 0.15,  // Lissage du mouvement (0.15 = réaction rapide)
-  playerPaddingBottom: CANVAS_HEIGHT * 0.3,  // Zone limite en bas
+  playerLerpFactor: 0.15, // Lissage du mouvement (0.15 = réaction rapide)
+  playerPaddingBottom: CANVAS_HEIGHT * 0.3, // Zone limite en bas
 
   // 5. Tir
   bulletSpeed: 6,
   bulletSize: 4,
-  fireInterval: 10,  // frames entre chaque tir automatique
+  fireInterval: 10, // frames entre chaque tir automatique
 
   // 6. Ennemis
   enemyInitialSpeed: 0.8,
   enemySpeedPerLevel: 0.07,
   enemySpeedVariation: 0.15,
   enemySize: 12,
-  waveSpacing: 3,  // Vagues par niveau
+  waveSpacing: 3, // Vagues par niveau
 
   // 7. Boss
   bossSize: 32,
@@ -44,7 +44,7 @@ const CONFIG = {
   bossProjectileSpeed: 1.2,
 
   // 8. Particules
-  particleLifetime: 60,  // frames (à 60 FPS = 1 sec)
+  particleLifetime: 60, // frames (à 60 FPS = 1 sec)
 
   // 9. Screen shake
   maxScreenShake: 10,
@@ -96,7 +96,7 @@ const gameState = {
 
 // 19. Trois couches d'étoiles qui défilent à des vitesses différentes
 class ParallaxLayer {
-  constructor(speed, color = '#ffffff') {
+  constructor(speed, color = "#ffffff") {
     this.speed = speed;
     this.color = color;
     this.offset = 0;
@@ -123,7 +123,7 @@ class ParallaxLayer {
   // 22. Dessiner les étoiles
   draw(ctx) {
     ctx.fillStyle = this.color;
-    this.stars.forEach(star => {
+    this.stars.forEach((star) => {
       let y = (star.y + this.offset) % CANVAS_HEIGHT;
       if (y < 0) y += CANVAS_HEIGHT;
       ctx.fillRect(star.x, y, star.size, star.size);
@@ -132,9 +132,9 @@ class ParallaxLayer {
 }
 
 const parallaxLayers = [
-  new ParallaxLayer(0.3, '#0088ff'),   // Couche lointaine (cyan)
-  new ParallaxLayer(0.6, '#00ff88'),   // Couche intermédiaire (vert)
-  new ParallaxLayer(1.0, '#ffffff'),   // Couche proche (blanc)
+  new ParallaxLayer(0.3, "#0088ff"), // Couche lointaine (cyan)
+  new ParallaxLayer(0.6, "#00ff88"), // Couche intermédiaire (vert)
+  new ParallaxLayer(1.0, "#ffffff"), // Couche proche (blanc)
 ];
 
 /* ============================================================ */
@@ -168,7 +168,7 @@ class Player {
     this.fireCooldown--;
     if (this.fireCooldown <= 0) {
       gameState.bullets.push(new Bullet(this.x, this.y - this.size));
-      playSound('shoot');
+      playSound("shoot");
       vibrate(8);
       this.fireCooldown = CONFIG.fireInterval;
     }
@@ -177,19 +177,19 @@ class Player {
   // 29. Dessiner le vaisseau
   draw(ctx) {
     // 30. Triangle simple (vaisseau classique)
-    ctx.fillStyle = '#00ffff';
+    ctx.fillStyle = "#00ffff";
     ctx.shadowBlur = 15;
-    ctx.shadowColor = '#00ffff';
+    ctx.shadowColor = "#00ffff";
 
     ctx.beginPath();
-    ctx.moveTo(this.x, this.y - this.size);  // Pointe avant
-    ctx.lineTo(this.x - this.size / 2, this.y + this.size);  // Gauche
-    ctx.lineTo(this.x + this.size / 2, this.y + this.size);  // Droite
+    ctx.moveTo(this.x, this.y - this.size); // Pointe avant
+    ctx.lineTo(this.x - this.size / 2, this.y + this.size); // Gauche
+    ctx.lineTo(this.x + this.size / 2, this.y + this.size); // Droite
     ctx.closePath();
     ctx.fill();
 
     // 31. Réacteurs animés (carrés bleus/roses qui clignotent)
-    ctx.fillStyle = Math.random() > 0.5 ? '#ff00ff' : '#00ffff';
+    ctx.fillStyle = Math.random() > 0.5 ? "#ff00ff" : "#00ffff";
     ctx.fillRect(this.x - 4, this.y + this.size - 2, 3, 4);
     ctx.fillRect(this.x + 2, this.y + this.size - 2, 3, 4);
 
@@ -218,16 +218,25 @@ class Bullet {
 
   // 34. Vérifier si la balle est sortie de l'écran
   isOffScreen() {
-    return this.y < -10 || this.y > CANVAS_HEIGHT + 10 ||
-      this.x < -10 || this.x > CANVAS_WIDTH + 10;
+    return (
+      this.y < -10 ||
+      this.y > CANVAS_HEIGHT + 10 ||
+      this.x < -10 ||
+      this.x > CANVAS_WIDTH + 10
+    );
   }
 
   // 35. Dessiner la balle
   draw(ctx) {
-    ctx.fillStyle = '#ffff00';
+    ctx.fillStyle = "#ffff00";
     ctx.shadowBlur = 10;
-    ctx.shadowColor = '#ffff00';
-    ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+    ctx.shadowColor = "#ffff00";
+    ctx.fillRect(
+      this.x - this.size / 2,
+      this.y - this.size / 2,
+      this.size,
+      this.size,
+    );
     ctx.shadowBlur = 0;
   }
 }
@@ -240,8 +249,10 @@ class Enemy {
   constructor(x, y, health = 1, size = CONFIG.enemySize) {
     this.x = x;
     this.y = y;
-    this.vx = (Math.random() - 0.5) * 0.5;  // Léger mouvement latéral
-    this.vy = CONFIG.enemyInitialSpeed * (1 + (gameState.level - 1) * CONFIG.enemySpeedPerLevel);
+    this.vx = (Math.random() - 0.5) * 0.5; // Léger mouvement latéral
+    this.vy =
+      CONFIG.enemyInitialSpeed *
+      (1 + (gameState.level - 1) * CONFIG.enemySpeedPerLevel);
     this.health = health;
     this.size = size;
   }
@@ -270,13 +281,18 @@ class Enemy {
 
   // 41. Dessiner l'ennemi
   draw(ctx) {
-    ctx.fillStyle = '#ff00ff';
+    ctx.fillStyle = "#ff00ff";
     ctx.shadowBlur = 10;
-    ctx.shadowColor = '#ff00ff';
-    ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+    ctx.shadowColor = "#ff00ff";
+    ctx.fillRect(
+      this.x - this.size / 2,
+      this.y - this.size / 2,
+      this.size,
+      this.size,
+    );
 
     // 42. Petit carré blanc pour les yeux
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = "#ffffff";
     ctx.fillRect(this.x - 4, this.y - 2, 2, 2);
     ctx.fillRect(this.x + 2, this.y - 2, 2, 2);
     ctx.shadowBlur = 0;
@@ -292,7 +308,9 @@ class Boss {
     this.x = CANVAS_WIDTH / 2;
     this.y = 60;
     this.size = CONFIG.bossSize;
-    this.health = Math.round(CONFIG.bossMaxHealth * (1 + (gameState.level - 1) * 0.1));
+    this.health = Math.round(
+      CONFIG.bossMaxHealth * (1 + (gameState.level - 1) * 0.1),
+    );
     this.maxHealth = this.health;
     this.shootCounter = 0;
   }
@@ -315,9 +333,12 @@ class Boss {
     const centerAngle = Math.PI / 2 + (Math.random() - 0.5) * 0.35;
     for (let i = 0; i < directions; i++) {
       const angle = centerAngle - spread / 2 + (i / (directions - 1)) * spread;
-      const enemy = new Enemy(this.x + Math.cos(angle) * 50,
+      const enemy = new Enemy(
+        this.x + Math.cos(angle) * 50,
         this.y + Math.sin(angle) * 50,
-        1, 8);
+        1,
+        8,
+      );
       enemy.vx = Math.cos(angle) * CONFIG.bossProjectileSpeed;
       enemy.vy = Math.sin(angle) * CONFIG.bossProjectileSpeed;
       gameState.enemies.push(enemy);
@@ -331,17 +352,27 @@ class Boss {
 
   // 48. Dessiner le boss
   draw(ctx) {
-    ctx.fillStyle = '#ff0080';
+    ctx.fillStyle = "#ff0080";
     ctx.shadowBlur = 20;
-    ctx.shadowColor = '#ff0080';
-    ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+    ctx.shadowColor = "#ff0080";
+    ctx.fillRect(
+      this.x - this.size / 2,
+      this.y - this.size / 2,
+      this.size,
+      this.size,
+    );
 
     // 49. Barre de vie du boss
     const healthBarWidth = 80;
     const healthPercent = this.health / this.maxHealth;
-    ctx.fillStyle = '#00ff00';
-    ctx.fillRect(this.x - healthBarWidth / 2, this.y - 30, healthBarWidth * healthPercent, 4);
-    ctx.strokeStyle = '#00ff00';
+    ctx.fillStyle = "#00ff00";
+    ctx.fillRect(
+      this.x - healthBarWidth / 2,
+      this.y - 30,
+      healthBarWidth * healthPercent,
+      4,
+    );
+    ctx.strokeStyle = "#00ff00";
     ctx.lineWidth = 1;
     ctx.strokeRect(this.x - healthBarWidth / 2, this.y - 30, healthBarWidth, 4);
 
@@ -354,7 +385,7 @@ class Boss {
 /* ============================================================ */
 
 class Particle {
-  constructor(x, y, vx, vy, color = '#ff00ff', life = CONFIG.particleLifetime) {
+  constructor(x, y, vx, vy, color = "#ff00ff", life = CONFIG.particleLifetime) {
     this.x = x;
     this.y = y;
     this.vx = vx;
@@ -384,7 +415,12 @@ class Particle {
     const alpha = this.life / this.maxLife;
     ctx.fillStyle = this.color;
     ctx.globalAlpha = alpha;
-    ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+    ctx.fillRect(
+      this.x - this.size / 2,
+      this.y - this.size / 2,
+      this.size,
+      this.size,
+    );
     ctx.globalAlpha = 1;
   }
 }
@@ -394,10 +430,10 @@ class Particle {
 /* ============================================================ */
 
 class PowerUp {
-  constructor(x, y, type = 'doubleFire') {
+  constructor(x, y, type = "doubleFire") {
     this.x = x;
     this.y = y;
-    this.type = type;  // 'doubleFire', 'laser', 'shield'
+    this.type = type; // 'doubleFire', 'laser', 'shield'
     this.size = 10;
     this.vy = 1;
   }
@@ -414,17 +450,23 @@ class PowerUp {
 
   // 57. Dessiner
   draw(ctx) {
-    ctx.fillStyle = '#ffff00';
+    ctx.fillStyle = "#ffff00";
     ctx.shadowBlur = 15;
-    ctx.shadowColor = '#ffff00';
-    ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+    ctx.shadowColor = "#ffff00";
+    ctx.fillRect(
+      this.x - this.size / 2,
+      this.y - this.size / 2,
+      this.size,
+      this.size,
+    );
 
     // 58. Caractère selon le type
-    ctx.fillStyle = '#000000';
-    ctx.font = '8px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    const char = this.type === 'doubleFire' ? '2' : (this.type === 'laser' ? 'L' : 'S');
+    ctx.fillStyle = "#000000";
+    ctx.font = "8px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const char =
+      this.type === "doubleFire" ? "2" : this.type === "laser" ? "L" : "S";
     ctx.fillText(char, this.x, this.y);
 
     ctx.shadowBlur = 0;
@@ -440,10 +482,12 @@ function checkCollision(a, b) {
   const sizeA = a.size || 16;
   const sizeB = b.size || 12;
 
-  return a.x - sizeA / 2 < b.x + sizeB / 2 &&
+  return (
+    a.x - sizeA / 2 < b.x + sizeB / 2 &&
     a.x + sizeA / 2 > b.x - sizeB / 2 &&
     a.y - sizeA / 2 < b.y + sizeB / 2 &&
-    a.y + sizeA / 2 > b.y - sizeB / 2;
+    a.y + sizeA / 2 > b.y - sizeB / 2
+  );
 }
 
 // 61. Mettre à jour toutes les collisions
@@ -459,9 +503,9 @@ function updateCollisions() {
 
         if (enemy.health <= 0) {
           // 63. Créer explosion
-          createExplosion(enemy.x, enemy.y, '#ff00ff', 15);
+          createExplosion(enemy.x, enemy.y, "#ff00ff", 15);
           gameState.score += 100 * gameState.level;
-          playSound('explode');
+          playSound("explode");
           vibrate(15);
           gameState.enemies.splice(eIdx, 1);
 
@@ -482,16 +526,16 @@ function updateCollisions() {
       if (checkCollision(bullet, gameState.boss)) {
         gameState.bullets.splice(bIdx, 1);
         gameState.boss.takeDamage(1);
-        playSound('explode');
+        playSound("explode");
 
         if (gameState.boss.health <= 0) {
-          createExplosion(gameState.boss.x, gameState.boss.y, '#ff0080', 50);
+          createExplosion(gameState.boss.x, gameState.boss.y, "#ff0080", 50);
           gameState.score += 5000 * gameState.level;
           gameState.boss = null;
           // Les projectiles restants du boss disparaissent avec lui.
           gameState.enemies = [];
           gameState.level++;
-          playSound('arpeggio');
+          playSound("arpeggio");
           shakeScreen(8);
         }
         break;
@@ -504,15 +548,15 @@ function updateCollisions() {
     const enemy = gameState.enemies[eIdx];
     if (checkCollision(gameState.player, enemy)) {
       gameState.playerHealth--;
-      createExplosion(gameState.player.x, gameState.player.y, '#00ffff', 20);
+      createExplosion(gameState.player.x, gameState.player.y, "#00ffff", 20);
       gameState.enemies.splice(eIdx, 1);
-      playSound('hit');
+      playSound("hit");
       shakeScreen(5);
       vibrate(50);
 
       if (gameState.playerHealth <= 0) {
         gameState.isGameOver = true;
-        playSound('gameover');
+        playSound("gameover");
         vibratePrestige();
       }
     }
@@ -524,7 +568,7 @@ function updateCollisions() {
     if (checkCollision(gameState.player, powerup)) {
       // 68. À implémenter : activer le power-up
       gameState.powerups.splice(pIdx, 1);
-      playSound('powerup');
+      playSound("powerup");
     }
   }
 }
@@ -551,7 +595,10 @@ function createExplosion(x, y, color, count = 15) {
 
 function shakeScreen(intensity = 5) {
   // 72. Secouer l'écran pendant quelques frames
-  gameState.screenShakeAmount = Math.min(gameState.screenShakeAmount + intensity, CONFIG.maxScreenShake);
+  gameState.screenShakeAmount = Math.min(
+    gameState.screenShakeAmount + intensity,
+    CONFIG.maxScreenShake,
+  );
 }
 
 /* ============================================================ */
@@ -573,31 +620,38 @@ function spawnWave() {
   }
 
   // 75. Choisir une formation pour que chaque niveau ait un rythme différent.
-  const patterns = ['line', 'staggered', 'flanks'];
+  const patterns = ["line", "staggered", "flanks"];
   const pattern = patterns[Math.floor(Math.random() * patterns.length)];
   const enemyCount = 5 + Math.floor(gameState.level / 2);
   for (let i = 0; i < enemyCount; i++) {
     let x;
     let y;
 
-    if (pattern === 'staggered') {
+    if (pattern === "staggered") {
       const columns = Math.min(3, enemyCount);
       x = (CANVAS_WIDTH / (columns + 1)) * ((i % columns) + 1);
       y = -20 - Math.floor(i / columns) * 42;
-    } else if (pattern === 'flanks') {
+    } else if (pattern === "flanks") {
       const fromLeft = i % 2 === 0;
-      x = fromLeft ? 25 + Math.random() * 50 : CANVAS_WIDTH - 25 - Math.random() * 50;
+      x = fromLeft
+        ? 25 + Math.random() * 50
+        : CANVAS_WIDTH - 25 - Math.random() * 50;
       y = -20 - Math.floor(i / 2) * 32;
     } else {
-      x = (CANVAS_WIDTH / (enemyCount + 1)) * (i + 1) + (Math.random() - 0.5) * 28;
+      x =
+        (CANVAS_WIDTH / (enemyCount + 1)) * (i + 1) +
+        (Math.random() - 0.5) * 28;
       y = -20 - Math.random() * 45;
     }
 
     const enemy = new Enemy(Math.max(15, Math.min(CANVAS_WIDTH - 15, x)), y);
-    const speedFactor = 1 - CONFIG.enemySpeedVariation + Math.random() * CONFIG.enemySpeedVariation * 2;
+    const speedFactor =
+      1 -
+      CONFIG.enemySpeedVariation +
+      Math.random() * CONFIG.enemySpeedVariation * 2;
     enemy.vy *= speedFactor;
 
-    if (pattern === 'flanks') {
+    if (pattern === "flanks") {
       enemy.vx = x < CANVAS_WIDTH / 2 ? 0.45 : -0.45;
     } else {
       enemy.vx *= 0.7 + Math.random() * 1.2;
@@ -633,18 +687,22 @@ function playSound(type) {
 
   osc.connect(gain);
   gain.connect(audioContext.destination);
-  osc.type = 'square';
+  osc.type = "square";
 
-  if (type === 'shoot') {
+  if (type === "shoot") {
     osc.frequency.value = 600;
     gain.gain.setValueAtTime(0.1, now);
     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
     osc.start(now);
     osc.stop(now + 0.08);
-  } else if (type === 'explode') {
+  } else if (type === "explode") {
     // Bruit blanc crépitant
     const noise = audioContext.createBufferSource();
-    const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.2, audioContext.sampleRate);
+    const buffer = audioContext.createBuffer(
+      1,
+      audioContext.sampleRate * 0.2,
+      audioContext.sampleRate,
+    );
     const data = buffer.getChannelData(0);
     for (let i = 0; i < buffer.length; i++) {
       data[i] = Math.random() * 2 - 1;
@@ -655,7 +713,7 @@ function playSound(type) {
     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
     noise.start(now);
     noise.stop(now + 0.2);
-  } else if (type === 'powerup') {
+  } else if (type === "powerup") {
     // Arpège rétro
     const notes = [400, 500, 600, 800];
     notes.forEach((freq, idx) => {
@@ -664,13 +722,13 @@ function playSound(type) {
       o.connect(g);
       g.connect(audioContext.destination);
       o.frequency.value = freq;
-      o.type = 'square';
+      o.type = "square";
       g.gain.setValueAtTime(0.05, now + idx * 0.05);
       g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.05 + 0.1);
       o.start(now + idx * 0.05);
       o.stop(now + idx * 0.05 + 0.1);
     });
-  } else if (type === 'arpeggio') {
+  } else if (type === "arpeggio") {
     // Fanfare boss
     const notes = [400, 500, 800];
     notes.forEach((freq, idx) => {
@@ -679,19 +737,19 @@ function playSound(type) {
       o.connect(g);
       g.connect(audioContext.destination);
       o.frequency.value = freq;
-      o.type = 'square';
+      o.type = "square";
       g.gain.setValueAtTime(0.1, now + idx * 0.1);
       g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.2);
       o.start(now + idx * 0.1);
       o.stop(now + idx * 0.1 + 0.2);
     });
-  } else if (type === 'hit') {
+  } else if (type === "hit") {
     osc.frequency.value = 200;
     gain.gain.setValueAtTime(0.15, now);
     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
     osc.start(now);
     osc.stop(now + 0.15);
-  } else if (type === 'gameover') {
+  } else if (type === "gameover") {
     // Son baissant
     osc.frequency.setValueAtTime(800, now);
     osc.frequency.linearRampToValueAtTime(100, now + 0.5);
@@ -708,14 +766,14 @@ function playSound(type) {
 
 function vibrate(duration = 10) {
   if (!gameState.vibrationEnabled) return;
-  if ('vibrate' in navigator) {
+  if ("vibrate" in navigator) {
     navigator.vibrate(duration);
   }
 }
 
 function vibratePrestige() {
   if (!gameState.vibrationEnabled) return;
-  if ('vibrate' in navigator) {
+  if ("vibrate" in navigator) {
     navigator.vibrate([20, 10, 20, 10, 20]);
   }
 }
@@ -726,23 +784,24 @@ function vibratePrestige() {
 
 // 82. Mettre à jour la logique du jeu
 function update(mouseX, mouseY) {
-  if (!gameState.isGameStarted || gameState.isPaused || gameState.isGameOver) return;
+  if (!gameState.isGameStarted || gameState.isPaused || gameState.isGameOver)
+    return;
 
   // 83. Mettre à jour parallax
-  parallaxLayers.forEach(layer => layer.update());
+  parallaxLayers.forEach((layer) => layer.update());
 
   // 84. Mettre à jour joueur et tir automatique
   gameState.player.update(mouseX, mouseY);
   gameState.player.fire();
 
   // 85. Mettre à jour balles
-  gameState.bullets = gameState.bullets.filter(b => {
+  gameState.bullets = gameState.bullets.filter((b) => {
     b.update();
     return !b.isOffScreen();
   });
 
   // 86. Mettre à jour ennemis
-  gameState.enemies = gameState.enemies.filter(e => {
+  gameState.enemies = gameState.enemies.filter((e) => {
     e.update();
     return !e.isOffScreen();
   });
@@ -753,13 +812,13 @@ function update(mouseX, mouseY) {
   }
 
   // 88. Mettre à jour particules
-  gameState.particles = gameState.particles.filter(p => {
+  gameState.particles = gameState.particles.filter((p) => {
     p.update();
     return !p.isDead();
   });
 
   // 89. Mettre à jour power-ups
-  gameState.powerups = gameState.powerups.filter(pu => {
+  gameState.powerups = gameState.powerups.filter((pu) => {
     pu.update();
     return !pu.isOffScreen();
   });
@@ -779,7 +838,7 @@ function update(mouseX, mouseY) {
 // 93. Dessiner tous les éléments
 function draw() {
   // 94. Effacer le canvas
-  ctx.fillStyle = '#0a0e27';
+  ctx.fillStyle = "#0a0e27";
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
   // 95. Screen shake offset
@@ -789,16 +848,16 @@ function draw() {
   ctx.translate(shakeX, shakeY);
 
   // 96. Dessiner parallax
-  parallaxLayers.forEach(layer => layer.draw(ctx));
+  parallaxLayers.forEach((layer) => layer.draw(ctx));
 
   // 97. Dessiner joueur
   gameState.player.draw(ctx);
 
   // 98. Dessiner balles
-  gameState.bullets.forEach(b => b.draw(ctx));
+  gameState.bullets.forEach((b) => b.draw(ctx));
 
   // 99. Dessiner ennemis
-  gameState.enemies.forEach(e => e.draw(ctx));
+  gameState.enemies.forEach((e) => e.draw(ctx));
 
   // 100. Dessiner boss
   if (gameState.boss) {
@@ -806,17 +865,20 @@ function draw() {
   }
 
   // 101. Dessiner particules
-  gameState.particles.forEach(p => p.draw(ctx));
+  gameState.particles.forEach((p) => p.draw(ctx));
 
   // 102. Dessiner power-ups
-  gameState.powerups.forEach(pu => pu.draw(ctx));
+  gameState.powerups.forEach((pu) => pu.draw(ctx));
 
   ctx.restore();
 
   // 103. Mettre à jour HUD
-  document.getElementById('levelDisplay').textContent = `NIVEAU: ${gameState.level}`;
-  document.getElementById('scoreDisplay').textContent = `SCORE: ${gameState.score}`;
-  document.getElementById('healthDisplay').textContent = `❤️ ${gameState.playerHealth}`;
+  document.getElementById("levelDisplay").textContent =
+    `NIVEAU: ${gameState.level}`;
+  document.getElementById("scoreDisplay").textContent =
+    `SCORE: ${gameState.score}`;
+  document.getElementById("healthDisplay").textContent =
+    `❤️ ${gameState.playerHealth}`;
 }
 
 /* ============================================================ */
@@ -829,13 +891,13 @@ let lastFrameTime = Date.now();
 let gameLoopRunning = false;
 
 // 105. Suivi souris / doigt
-document.addEventListener('mousemove', (e) => {
+document.addEventListener("mousemove", (e) => {
   const rect = canvas.getBoundingClientRect();
   mouseX = (e.clientX - rect.left) * (CANVAS_WIDTH / rect.width);
   mouseY = (e.clientY - rect.top) * (CANVAS_HEIGHT / rect.height);
 });
 
-document.addEventListener('touchmove', (e) => {
+document.addEventListener("touchmove", (e) => {
   e.preventDefault();
   const rect = canvas.getBoundingClientRect();
   mouseX = (e.touches[0].clientX - rect.left) * (CANVAS_WIDTH / rect.width);
@@ -853,16 +915,17 @@ function gameLoop() {
 /* 107. HIGH SCORE & LOCALSTORAGE */
 /* ============================================================ */
 
-const PLAYER_ID_STORAGE_KEY = 'neonOverdrivePlayerId';
-const LEGACY_SCORES_STORAGE_KEY = 'neonOverdriveScores';
+const PLAYER_ID_STORAGE_KEY = "neonOverdrivePlayerId";
+const LEGACY_SCORES_STORAGE_KEY = "neonOverdriveScores";
 
 // 108. Obtenir l'identifiant local du joueur (un par installation/navigateur)
 function getPlayerScoresStorageKey() {
   let playerId = localStorage.getItem(PLAYER_ID_STORAGE_KEY);
   if (!playerId) {
-    playerId = typeof globalThis.crypto?.randomUUID === 'function'
-      ? globalThis.crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    playerId =
+      typeof globalThis.crypto?.randomUUID === "function"
+        ? globalThis.crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
     localStorage.setItem(PLAYER_ID_STORAGE_KEY, playerId);
   }
   return `neonOverdriveScores_${playerId}`;
@@ -875,9 +938,12 @@ function loadHighScores() {
   const legacyScores = localStorage.getItem(LEGACY_SCORES_STORAGE_KEY);
 
   try {
-    const scores = JSON.parse(saved || legacyScores || '[]');
+    const scores = JSON.parse(saved || legacyScores || "[]");
     gameState.highScores = Array.isArray(scores)
-      ? scores.filter(Number.isFinite).sort((a, b) => b - a).slice(0, 3)
+      ? scores
+          .filter(Number.isFinite)
+          .sort((a, b) => b - a)
+          .slice(0, 3)
       : [];
   } catch {
     gameState.highScores = [];
@@ -890,13 +956,17 @@ function loadHighScores() {
 function saveHighScore(score) {
   if (score <= 0) return null;
 
-  const qualifies = gameState.highScores.length < 3 || score > gameState.highScores[2];
+  const qualifies =
+    gameState.highScores.length < 3 || score > gameState.highScores[2];
   if (!qualifies) return null;
 
   gameState.highScores.push(score);
   gameState.highScores.sort((a, b) => b - a);
   gameState.highScores = gameState.highScores.slice(0, 3);
-  localStorage.setItem(getPlayerScoresStorageKey(), JSON.stringify(gameState.highScores));
+  localStorage.setItem(
+    getPlayerScoresStorageKey(),
+    JSON.stringify(gameState.highScores),
+  );
   return gameState.highScores.indexOf(score) + 1;
 }
 
@@ -910,13 +980,16 @@ function clearHighScores() {
 
 // 112. Afficher le Top 3 personnel
 function displayTopScores() {
-  const container = document.getElementById('topScores');
+  const container = document.getElementById("topScores");
   if (gameState.highScores.length === 0) {
     container.innerHTML = '<p class="no-scores">Pas encore de records...</p>';
   } else {
     container.innerHTML = gameState.highScores
-      .map((score, idx) => `<p class="score-item"><span class="score-rank">${idx + 1}.</span> ${score}</p>`)
-      .join('');
+      .map(
+        (score, idx) =>
+          `<p class="score-item"><span class="score-rank">${idx + 1}.</span> ${score}</p>`,
+      )
+      .join("");
   }
 }
 
@@ -926,10 +999,10 @@ function displayTopScores() {
 
 // 112. Afficher écran
 function showScreen(screenId) {
-  document.querySelectorAll('.screen').forEach(screen => {
-    screen.classList.remove('screen-active');
+  document.querySelectorAll(".screen").forEach((screen) => {
+    screen.classList.remove("screen-active");
   });
-  document.getElementById(screenId).classList.add('screen-active');
+  document.getElementById(screenId).classList.add("screen-active");
 }
 
 // 113. Démarrer le jeu
@@ -948,22 +1021,22 @@ function startGame() {
   gameState.boss = null;
   gameState.waveIndex = 0;
 
-  document.getElementById('pauseOverlay').hidden = true;
+  document.getElementById("pauseOverlay").hidden = true;
 
-  showScreen('gameScreen');
+  showScreen("gameScreen");
 
   // 114. Countdown "3 2 1 GO"
   let count = 3;
-  const readyText = document.getElementById('readyText');
-  readyText.style.display = 'block';
+  const readyText = document.getElementById("readyText");
+  readyText.style.display = "block";
 
   const countDown = setInterval(() => {
     count--;
-    readyText.textContent = count === 0 ? 'GO!' : count;
+    readyText.textContent = count === 0 ? "GO!" : count;
 
     if (count < 0) {
       clearInterval(countDown);
-      readyText.style.display = 'none';
+      readyText.style.display = "none";
       gameState.isGameStarted = true;
       spawnWave();
       if (!gameLoopRunning) {
@@ -979,66 +1052,78 @@ function endGame() {
   // toutes les 16 ms, y compris après un clic sur « Main Menu ».
   gameState.isGameStarted = false;
   gameState.isPaused = false;
-  document.getElementById('pauseOverlay').hidden = true;
-  showScreen('gameOverScreen');
+  document.getElementById("pauseOverlay").hidden = true;
+  showScreen("gameOverScreen");
 
   const previousBestScore = gameState.highScores[0] || 0;
   const leaderboardRank = saveHighScore(gameState.score);
-  const recordBanner = document.getElementById('newRecordBanner');
+  const recordBanner = document.getElementById("newRecordBanner");
   if (leaderboardRank) {
-    recordBanner.style.display = 'block';
-    recordBanner.querySelector('.new-record-text').textContent =
-      gameState.score > previousBestScore ? '🎊 NEW HIGH SCORE! 🎊' : `🏆 TOP 3 SCORE — #${leaderboardRank}! 🏆`;
+    recordBanner.style.display = "block";
+    recordBanner.querySelector(".new-record-text").textContent =
+      gameState.score > previousBestScore
+        ? "🎊 NEW HIGH SCORE! 🎊"
+        : `🏆 TOP 3 SCORE — #${leaderboardRank}! 🏆`;
   } else {
-    recordBanner.style.display = 'none';
+    recordBanner.style.display = "none";
   }
 
   displayTopScores();
 
-  document.getElementById('finalScore').textContent = gameState.score;
-  document.getElementById('finalLevel').textContent = gameState.level;
+  document.getElementById("finalScore").textContent = gameState.score;
+  document.getElementById("finalLevel").textContent = gameState.level;
 }
 
 // 116. Pause / reprise de la partie
 function setPaused(isPaused) {
   if (!gameState.isGameStarted || gameState.isGameOver) return;
   gameState.isPaused = isPaused;
-  document.getElementById('pauseOverlay').hidden = !isPaused;
+  document.getElementById("pauseOverlay").hidden = !isPaused;
 }
 
 function returnToMenuFromPause() {
-  const confirmed = window.confirm('Êtes-vous sûr de vouloir quitter la partie et revenir au menu ?');
+  const confirmed = window.confirm(
+    "Êtes-vous sûr de vouloir quitter la partie et revenir au menu ?",
+  );
   if (!confirmed) return;
 
   gameState.isPaused = false;
   gameState.isGameStarted = false;
   gameState.isGameOver = false;
-  document.getElementById('pauseOverlay').hidden = true;
+  document.getElementById("pauseOverlay").hidden = true;
   displayTopScores();
-  showScreen('menuScreen');
+  showScreen("menuScreen");
 }
 
 /* ============================================================ */
 /* 117. EVENT LISTENERS */
 /* ============================================================ */
 
-document.getElementById('startButton')?.addEventListener('click', startGame);
-document.getElementById('restartButton')?.addEventListener('click', startGame);
-document.getElementById('pauseButton')?.addEventListener('click', () => setPaused(true));
-document.getElementById('resumeButton')?.addEventListener('click', () => setPaused(false));
-document.getElementById('quitToMenuButton')?.addEventListener('click', returnToMenuFromPause);
-document.getElementById('menuButton')?.addEventListener('click', () => {
+document.getElementById("startButton")?.addEventListener("click", startGame);
+document.getElementById("restartButton")?.addEventListener("click", startGame);
+document
+  .getElementById("pauseButton")
+  ?.addEventListener("click", () => setPaused(true));
+document
+  .getElementById("resumeButton")
+  ?.addEventListener("click", () => setPaused(false));
+document
+  .getElementById("quitToMenuButton")
+  ?.addEventListener("click", returnToMenuFromPause);
+document.getElementById("menuButton")?.addEventListener("click", () => {
   gameState.isGameStarted = false;
   displayTopScores();
-  showScreen('menuScreen');
+  showScreen("menuScreen");
 });
-document.getElementById('clearScoresButton')?.addEventListener('click', () => {
-  const confirmed = window.confirm('Êtes-vous sûr de vouloir supprimer toutes les données du leaderboard ? Cette action est irréversible.');
+document.getElementById("clearScoresButton")?.addEventListener("click", () => {
+  const confirmed = window.confirm(
+    "Êtes-vous sûr de vouloir supprimer toutes les données du leaderboard ? Cette action est irréversible.",
+  );
   if (confirmed) clearHighScores();
 });
 
-document.addEventListener('keydown', (event) => {
-  if (event.key !== 'Escape') return;
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
   if (!gameState.isGameStarted || gameState.isGameOver) return;
   event.preventDefault();
   setPaused(!gameState.isPaused);
@@ -1046,7 +1131,11 @@ document.addEventListener('keydown', (event) => {
 
 // 118. Quand le jeu se termine
 setInterval(() => {
-  if (gameState.isGameStarted && gameState.isGameOver && gameState.playerHealth <= 0) {
+  if (
+    gameState.isGameStarted &&
+    gameState.isGameOver &&
+    gameState.playerHealth <= 0
+  ) {
     endGame();
   }
 }, 16);
@@ -1055,13 +1144,13 @@ setInterval(() => {
 /* 119. INITIALISATION */
 /* ============================================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   // 120. Charger high scores au démarrage
   loadHighScores();
   displayTopScores();
 
   // 121. Afficher le menu
-  showScreen('menuScreen');
+  showScreen("menuScreen");
 
-  console.log('🌌 Neon Overdrive initialized!');
+  console.log("🌌 Neon Overdrive initialized!");
 });

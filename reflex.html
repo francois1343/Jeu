@@ -1,1031 +1,1164 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>⏱️ Chrono Réflexe</title>
-  <style>
-    /* ===== RESET & BASE ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    :root {
-      --bg-wait: #1a1f3a;
-      --bg-ready: #ff6b6b;
-      --bg-go: #00ff88;
-      --bg-early: #ffa502;
-      --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.7);
-      --accent: #00d4ff;
-    }
-
-    body {
-      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg-wait);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      color: var(--text-primary);
-      overflow: hidden;
-      transition: background 0.15s ease;
-    }
-
-    /* ===== ÉTATS DU JEU ===== */
-    body.state-wait { background: var(--bg-wait); }
-    body.state-ready { background: var(--bg-ready); cursor: wait; }
-    body.state-go { background: var(--bg-go); cursor: pointer; }
-    body.state-early { background: var(--bg-early); }
-    body.state-result { background: var(--bg-wait); }
-
-    /* ===== HEADER ===== */
-    .header {
-      padding: 20px;
-      text-align: center;
-      position: relative;
-      z-index: 10;
-    }
-
-    .logo {
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      opacity: 0.6;
-      margin-bottom: 5px;
-    }
-
-    .title {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -1px;
-    }
-
-    /* ===== ZONE DE JEU ===== */
-    .game-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      cursor: pointer;
-      position: relative;
-    }
-
-    /* ===== CERCLE CENTRAL ===== */
-    .circle {
-      width: 280px;
-      height: 280px;
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .state-wait .circle {
-      background: rgba(255, 255, 255, 0.05);
-      border: 3px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 
-        0 0 60px rgba(0, 212, 255, 0.1),
-        inset 0 0 60px rgba(0, 212, 255, 0.05);
-    }
-
-    .state-ready .circle {
-      background: rgba(0, 0, 0, 0.2);
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 0 80px rgba(0, 0, 0, 0.3);
-      animation: pulse-ready 1s infinite;
-    }
-
-    @keyframes pulse-ready {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.02); }
-    }
-
-    .state-go .circle {
-      background: rgba(0, 0, 0, 0.2);
-      border: 3px solid rgba(255, 255, 255, 0.5);
-      box-shadow: 
-        0 0 100px rgba(0, 255, 136, 0.5),
-        0 0 200px rgba(0, 255, 136, 0.3);
-      animation: pulse-go 0.3s ease;
-    }
-
-    @keyframes pulse-go {
-      0% { transform: scale(0.95); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-
-    .state-early .circle {
-      background: rgba(0, 0, 0, 0.2);
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      animation: shake 0.5s ease;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20% { transform: translateX(-10px); }
-      40% { transform: translateX(10px); }
-      60% { transform: translateX(-10px); }
-      80% { transform: translateX(10px); }
-    }
-
-    .state-result .circle {
-      background: rgba(0, 212, 255, 0.1);
-      border: 3px solid var(--accent);
-      box-shadow: 
-        0 0 60px rgba(0, 212, 255, 0.3),
-        inset 0 0 40px rgba(0, 212, 255, 0.1);
-    }
-
-    /* ===== CONTENU DU CERCLE ===== */
-    .circle-icon {
-      font-size: 48px;
-      margin-bottom: 15px;
-      transition: all 0.3s ease;
-    }
-
-    .circle-text {
-      font-size: 20px;
-      font-weight: 600;
-      text-align: center;
-      line-height: 1.4;
-      padding: 0 20px;
-    }
-
-    .circle-subtext {
-      font-size: 14px;
-      opacity: 0.7;
-      margin-top: 10px;
-    }
-
-    /* ===== RÉSULTAT EN MS ===== */
-    .result-time {
-      font-size: 72px;
-      font-weight: 800;
-      letter-spacing: -3px;
-      line-height: 1;
-      background: linear-gradient(135deg, #00d4ff, #00ff88);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-shadow: none;
-    }
-
-    .result-unit {
-      font-size: 24px;
-      font-weight: 600;
-      opacity: 0.8;
-      margin-top: 5px;
-    }
-
-    .result-label {
-      font-size: 16px;
-      opacity: 0.6;
-      margin-top: 15px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-
-    /* ===== CLASSEMENT DU RÉSULTAT ===== */
-    .result-rank {
-      margin-top: 15px;
-      padding: 8px 20px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 600;
-      animation: pop-in 0.3s ease;
-    }
-
-    @keyframes pop-in {
-      0% { transform: scale(0); opacity: 0; }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .rank-legendary { background: linear-gradient(135deg, #ffd93d, #ff6b6b); color: #000; }
-    .rank-excellent { background: linear-gradient(135deg, #00ff88, #00d4ff); color: #000; }
-    .rank-good { background: rgba(0, 212, 255, 0.3); color: #fff; }
-    .rank-average { background: rgba(255, 255, 255, 0.2); color: #fff; }
-    .rank-slow { background: rgba(255, 107, 107, 0.3); color: #fff; }
-
-    /* ===== STATS BAR ===== */
-    .stats-bar {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(10px);
-    }
-
-    .stat-item {
-      text-align: center;
-    }
-
-    .stat-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    .stat-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      opacity: 0.6;
-      margin-top: 3px;
-    }
-
-    .stat-value.best {
-      background: linear-gradient(135deg, #ffd93d, #ff6b6b);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* ===== HISTORIQUE ===== */
-    .history {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      padding: 15px 20px;
-      flex-wrap: wrap;
-    }
-
-    .history-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      transition: all 0.3s ease;
-      animation: dot-in 0.3s ease backwards;
-    }
-
-    .history-dot.legendary { background: linear-gradient(135deg, #ffd93d, #ff6b6b); box-shadow: 0 0 10px #ffd93d; }
-    .history-dot.excellent { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
-    .history-dot.good { background: #00d4ff; box-shadow: 0 0 10px #00d4ff; }
-    .history-dot.average { background: #888; }
-    .history-dot.slow { background: #ff6b6b; }
-    .history-dot.early { background: #ffa502; }
-
-    @keyframes dot-in {
-      0% { transform: scale(0); }
-      100% { transform: scale(1); }
-    }
-
-    /* ===== BOUTON MENU ===== */
-    .menu-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      color: #fff;
-      font-size: 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      z-index: 100;
-    }
-
-    .menu-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.1);
-    }
-
-    /* ===== OVERLAY MENU ===== */
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(10, 14, 26, 0.95);
-      backdrop-filter: blur(20px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    .overlay.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .menu {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 25px;
-      padding: 40px;
-      max-width: 350px;
-      width: 90%;
-      text-align: center;
-      transform: scale(0.9);
-      transition: transform 0.3s ease;
-    }
-
-    .overlay.show .menu {
-      transform: scale(1);
-    }
-
-    .menu h2 {
-      font-size: 24px;
-      margin-bottom: 30px;
-    }
-
-    .menu-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .menu-item:last-child {
-      border-bottom: none;
-    }
-
-    .menu-item-label {
-      font-size: 16px;
-    }
-
-    .menu-item-value {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    .menu-btn-action {
-      width: 100%;
-      padding: 15px;
-      margin-top: 20px;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .menu-btn-action.primary {
-      background: linear-gradient(135deg, #00d4ff, #00ff88);
-      color: #000;
-    }
-
-    .menu-btn-action.secondary {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      margin-top: 10px;
-    }
-
-    .menu-btn-action:hover {
-      transform: scale(1.02);
-    }
-
-    /* ===== INDICATEUR DE PROGRESSION ===== */
-    .progress-ring {
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      pointer-events: none;
-    }
-
-    .progress-ring circle {
-      fill: none;
-      stroke-width: 4;
-      stroke-linecap: round;
-      transform: rotate(-90deg);
-      transform-origin: center;
-    }
-
-    .progress-ring .bg {
-      stroke: rgba(255, 255, 255, 0.1);
-    }
-
-    .progress-ring .progress {
-      stroke: var(--accent);
-      stroke-dasharray: 880;
-      stroke-dashoffset: 880;
-      transition: stroke-dashoffset 0.1s linear;
-    }
-
-    /* ===== TIPS ===== */
-    .tip {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 13px;
-      opacity: 0.5;
-      text-align: center;
-      max-width: 300px;
-    }
-
-    /* ===== PARTICULES DE CÉLÉBRATION ===== */
-    .celebration {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      pointer-events: none;
-      z-index: 50;
-    }
-
-    .confetti {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      opacity: 0;
-    }
-
-    /* ===== NEW RECORD BADGE ===== */
-    .new-record {
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(135deg, #ffd93d, #ff6b6b);
-      color: #000;
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      animation: bounce-in 0.5s ease;
-      white-space: nowrap;
-    }
-
-    @keyframes bounce-in {
-      0% { transform: translateX(-50%) scale(0); }
-      50% { transform: translateX(-50%) scale(1.2); }
-      100% { transform: translateX(-50%) scale(1); }
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 400px) {
-      .circle {
-        width: 240px;
-        height: 240px;
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>⏱️ Chrono Réflexe</title>
+    <style>
+      /* ===== RESET & BASE ===== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
       }
 
-      .result-time {
-        font-size: 56px;
+      :root {
+        --bg-wait: #1a1f3a;
+        --bg-ready: #ff6b6b;
+        --bg-go: #00ff88;
+        --bg-early: #ffa502;
+        --text-primary: #ffffff;
+        --text-secondary: rgba(255, 255, 255, 0.7);
+        --accent: #00d4ff;
+      }
+
+      body {
+        font-family:
+          "SF Pro Display",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background: var(--bg-wait);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        color: var(--text-primary);
+        overflow: hidden;
+        transition: background 0.15s ease;
+      }
+
+      /* ===== ÉTATS DU JEU ===== */
+      body.state-wait {
+        background: var(--bg-wait);
+      }
+      body.state-ready {
+        background: var(--bg-ready);
+        cursor: wait;
+      }
+      body.state-go {
+        background: var(--bg-go);
+        cursor: pointer;
+      }
+      body.state-early {
+        background: var(--bg-early);
+      }
+      body.state-result {
+        background: var(--bg-wait);
+      }
+
+      /* ===== HEADER ===== */
+      .header {
+        padding: 20px;
+        text-align: center;
+        position: relative;
+        z-index: 10;
+      }
+
+      .logo {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        opacity: 0.6;
+        margin-bottom: 5px;
       }
 
       .title {
-        font-size: 24px;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -1px;
       }
 
+      /* ===== ZONE DE JEU ===== */
+      .game-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        cursor: pointer;
+        position: relative;
+      }
+
+      /* ===== CERCLE CENTRAL ===== */
+      .circle {
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .state-wait .circle {
+        background: rgba(255, 255, 255, 0.05);
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        box-shadow:
+          0 0 60px rgba(0, 212, 255, 0.1),
+          inset 0 0 60px rgba(0, 212, 255, 0.05);
+      }
+
+      .state-ready .circle {
+        background: rgba(0, 0, 0, 0.2);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 0 80px rgba(0, 0, 0, 0.3);
+        animation: pulse-ready 1s infinite;
+      }
+
+      @keyframes pulse-ready {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.02);
+        }
+      }
+
+      .state-go .circle {
+        background: rgba(0, 0, 0, 0.2);
+        border: 3px solid rgba(255, 255, 255, 0.5);
+        box-shadow:
+          0 0 100px rgba(0, 255, 136, 0.5),
+          0 0 200px rgba(0, 255, 136, 0.3);
+        animation: pulse-go 0.3s ease;
+      }
+
+      @keyframes pulse-go {
+        0% {
+          transform: scale(0.95);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .state-early .circle {
+        background: rgba(0, 0, 0, 0.2);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        animation: shake 0.5s ease;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20% {
+          transform: translateX(-10px);
+        }
+        40% {
+          transform: translateX(10px);
+        }
+        60% {
+          transform: translateX(-10px);
+        }
+        80% {
+          transform: translateX(10px);
+        }
+      }
+
+      .state-result .circle {
+        background: rgba(0, 212, 255, 0.1);
+        border: 3px solid var(--accent);
+        box-shadow:
+          0 0 60px rgba(0, 212, 255, 0.3),
+          inset 0 0 40px rgba(0, 212, 255, 0.1);
+      }
+
+      /* ===== CONTENU DU CERCLE ===== */
+      .circle-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .circle-text {
+        font-size: 20px;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.4;
+        padding: 0 20px;
+      }
+
+      .circle-subtext {
+        font-size: 14px;
+        opacity: 0.7;
+        margin-top: 10px;
+      }
+
+      /* ===== RÉSULTAT EN MS ===== */
+      .result-time {
+        font-size: 72px;
+        font-weight: 800;
+        letter-spacing: -3px;
+        line-height: 1;
+        background: linear-gradient(135deg, #00d4ff, #00ff88);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+      }
+
+      .result-unit {
+        font-size: 24px;
+        font-weight: 600;
+        opacity: 0.8;
+        margin-top: 5px;
+      }
+
+      .result-label {
+        font-size: 16px;
+        opacity: 0.6;
+        margin-top: 15px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      /* ===== CLASSEMENT DU RÉSULTAT ===== */
+      .result-rank {
+        margin-top: 15px;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        animation: pop-in 0.3s ease;
+      }
+
+      @keyframes pop-in {
+        0% {
+          transform: scale(0);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .rank-legendary {
+        background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+        color: #000;
+      }
+      .rank-excellent {
+        background: linear-gradient(135deg, #00ff88, #00d4ff);
+        color: #000;
+      }
+      .rank-good {
+        background: rgba(0, 212, 255, 0.3);
+        color: #fff;
+      }
+      .rank-average {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+      }
+      .rank-slow {
+        background: rgba(255, 107, 107, 0.3);
+        color: #fff;
+      }
+
+      /* ===== STATS BAR ===== */
       .stats-bar {
-        gap: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+      }
+
+      .stat-item {
+        text-align: center;
       }
 
       .stat-value {
-        font-size: 20px;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--accent);
       }
-    }
 
-    /* ===== ANIMATION INSTRUCTIONS ===== */
-    .instructions {
-      animation: fade-pulse 2s infinite;
-    }
+      .stat-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.6;
+        margin-top: 3px;
+      }
 
-    @keyframes fade-pulse {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 1; }
-    }
-  </style>
-  <link rel="stylesheet" href="arcade-home.css">
-</head>
-<body class="state-wait">
-  <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil"><span class="arcade-home-icon" aria-hidden="true">⌂</span><span class="arcade-home-label">Accueil</span></a>
+      .stat-value.best {
+        background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
 
-<!-- Bouton Menu -->
-<button class="menu-btn" onclick="toggleMenu()">☰</button>
+      /* ===== HISTORIQUE ===== */
+      .history {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        padding: 15px 20px;
+        flex-wrap: wrap;
+      }
 
-<!-- Header -->
-<div class="header">
-  <div class="logo">⏱️ Chrono</div>
-  <div class="title">Réflexe</div>
-</div>
+      .history-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        animation: dot-in 0.3s ease backwards;
+      }
 
-<!-- Zone de jeu -->
-<div class="game-area" id="gameArea">
-  <svg class="progress-ring" id="progressRing">
-    <circle class="bg" cx="150" cy="150" r="140"></circle>
-    <circle class="progress" cx="150" cy="150" r="140" id="progressCircle"></circle>
-  </svg>
-  
-  <div class="circle" id="circle">
-    <div id="newRecord" class="new-record" style="display: none;">🏆 Nouveau Record!</div>
-    <div class="circle-icon" id="circleIcon">👆</div>
-    <div class="circle-text" id="circleText">
-      <span class="instructions">Touchez pour commencer</span>
+      .history-dot.legendary {
+        background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+        box-shadow: 0 0 10px #ffd93d;
+      }
+      .history-dot.excellent {
+        background: #00ff88;
+        box-shadow: 0 0 10px #00ff88;
+      }
+      .history-dot.good {
+        background: #00d4ff;
+        box-shadow: 0 0 10px #00d4ff;
+      }
+      .history-dot.average {
+        background: #888;
+      }
+      .history-dot.slow {
+        background: #ff6b6b;
+      }
+      .history-dot.early {
+        background: #ffa502;
+      }
+
+      @keyframes dot-in {
+        0% {
+          transform: scale(0);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* ===== BOUTON MENU ===== */
+      .menu-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .menu-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+
+      /* ===== OVERLAY MENU ===== */
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(10, 14, 26, 0.95);
+        backdrop-filter: blur(20px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .menu {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        padding: 40px;
+        max-width: 350px;
+        width: 90%;
+        text-align: center;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      }
+
+      .overlay.show .menu {
+        transform: scale(1);
+      }
+
+      .menu h2 {
+        font-size: 24px;
+        margin-bottom: 30px;
+      }
+
+      .menu-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .menu-item:last-child {
+        border-bottom: none;
+      }
+
+      .menu-item-label {
+        font-size: 16px;
+      }
+
+      .menu-item-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--accent);
+      }
+
+      .menu-btn-action {
+        width: 100%;
+        padding: 15px;
+        margin-top: 20px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .menu-btn-action.primary {
+        background: linear-gradient(135deg, #00d4ff, #00ff88);
+        color: #000;
+      }
+
+      .menu-btn-action.secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        margin-top: 10px;
+      }
+
+      .menu-btn-action:hover {
+        transform: scale(1.02);
+      }
+
+      /* ===== INDICATEUR DE PROGRESSION ===== */
+      .progress-ring {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        pointer-events: none;
+      }
+
+      .progress-ring circle {
+        fill: none;
+        stroke-width: 4;
+        stroke-linecap: round;
+        transform: rotate(-90deg);
+        transform-origin: center;
+      }
+
+      .progress-ring .bg {
+        stroke: rgba(255, 255, 255, 0.1);
+      }
+
+      .progress-ring .progress {
+        stroke: var(--accent);
+        stroke-dasharray: 880;
+        stroke-dashoffset: 880;
+        transition: stroke-dashoffset 0.1s linear;
+      }
+
+      /* ===== TIPS ===== */
+      .tip {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 13px;
+        opacity: 0.5;
+        text-align: center;
+        max-width: 300px;
+      }
+
+      /* ===== PARTICULES DE CÉLÉBRATION ===== */
+      .celebration {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 50;
+      }
+
+      .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        opacity: 0;
+      }
+
+      /* ===== NEW RECORD BADGE ===== */
+      .new-record {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+        color: #000;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        animation: bounce-in 0.5s ease;
+        white-space: nowrap;
+      }
+
+      @keyframes bounce-in {
+        0% {
+          transform: translateX(-50%) scale(0);
+        }
+        50% {
+          transform: translateX(-50%) scale(1.2);
+        }
+        100% {
+          transform: translateX(-50%) scale(1);
+        }
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 400px) {
+        .circle {
+          width: 240px;
+          height: 240px;
+        }
+
+        .result-time {
+          font-size: 56px;
+        }
+
+        .title {
+          font-size: 24px;
+        }
+
+        .stats-bar {
+          gap: 20px;
+        }
+
+        .stat-value {
+          font-size: 20px;
+        }
+      }
+
+      /* ===== ANIMATION INSTRUCTIONS ===== */
+      .instructions {
+        animation: fade-pulse 2s infinite;
+      }
+
+      @keyframes fade-pulse {
+        0%,
+        100% {
+          opacity: 0.7;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="arcade-home.css" />
+  </head>
+  <body class="state-wait">
+    <a
+      class="arcade-home-link"
+      href="index.html"
+      aria-label="Retour à l'accueil"
+      title="Retour à l'accueil"
+      ><span class="arcade-home-icon" aria-hidden="true">⌂</span
+      ><span class="arcade-home-label">Accueil</span></a
+    >
+
+    <!-- Bouton Menu -->
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">⏱️ Chrono</div>
+      <div class="title">Réflexe</div>
     </div>
-    <div class="circle-subtext" id="circleSubtext"></div>
-  </div>
-  
-  <div class="tip" id="tip">Testez vos réflexes en cliquant dès que l'écran devient vert</div>
-</div>
 
-<!-- Historique -->
-<div class="history" id="history"></div>
+    <!-- Zone de jeu -->
+    <div class="game-area" id="gameArea">
+      <svg class="progress-ring" id="progressRing">
+        <circle class="bg" cx="150" cy="150" r="140"></circle>
+        <circle
+          class="progress"
+          cx="150"
+          cy="150"
+          r="140"
+          id="progressCircle"
+        ></circle>
+      </svg>
 
-<!-- Stats Bar -->
-<div class="stats-bar">
-  <div class="stat-item">
-    <div class="stat-value" id="statAvg">---</div>
-    <div class="stat-label">Moyenne</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-value best" id="statBest">---</div>
-    <div class="stat-label">Record</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-value" id="statTries">0</div>
-    <div class="stat-label">Essais</div>
-  </div>
-</div>
+      <div class="circle" id="circle">
+        <div id="newRecord" class="new-record" style="display: none">
+          🏆 Nouveau Record!
+        </div>
+        <div class="circle-icon" id="circleIcon">👆</div>
+        <div class="circle-text" id="circleText">
+          <span class="instructions">Touchez pour commencer</span>
+        </div>
+        <div class="circle-subtext" id="circleSubtext"></div>
+      </div>
 
-<!-- Célébration -->
-<div class="celebration" id="celebration"></div>
-
-<!-- Menu Overlay -->
-<div class="overlay" id="menuOverlay">
-  <div class="menu">
-    <h2>📊 Statistiques</h2>
-    
-    <div class="menu-item">
-      <span class="menu-item-label">Meilleur temps</span>
-      <span class="menu-item-value" id="menuBest">---</span>
+      <div class="tip" id="tip">
+        Testez vos réflexes en cliquant dès que l'écran devient vert
+      </div>
     </div>
-    
-    <div class="menu-item">
-      <span class="menu-item-label">Moyenne</span>
-      <span class="menu-item-value" id="menuAvg">---</span>
+
+    <!-- Historique -->
+    <div class="history" id="history"></div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-value" id="statAvg">---</div>
+        <div class="stat-label">Moyenne</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value best" id="statBest">---</div>
+        <div class="stat-label">Record</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="statTries">0</div>
+        <div class="stat-label">Essais</div>
+      </div>
     </div>
-    
-    <div class="menu-item">
-      <span class="menu-item-label">Total essais</span>
-      <span class="menu-item-value" id="menuTries">0</span>
+
+    <!-- Célébration -->
+    <div class="celebration" id="celebration"></div>
+
+    <!-- Menu Overlay -->
+    <div class="overlay" id="menuOverlay">
+      <div class="menu">
+        <h2>📊 Statistiques</h2>
+
+        <div class="menu-item">
+          <span class="menu-item-label">Meilleur temps</span>
+          <span class="menu-item-value" id="menuBest">---</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-label">Moyenne</span>
+          <span class="menu-item-value" id="menuAvg">---</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-label">Total essais</span>
+          <span class="menu-item-value" id="menuTries">0</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-label">Trop tôt</span>
+          <span class="menu-item-value" id="menuEarly">0</span>
+        </div>
+
+        <button class="menu-btn-action secondary" onclick="resetStats()">
+          🗑️ Réinitialiser
+        </button>
+        <button class="menu-btn-action primary" onclick="toggleMenu()">
+          ✓ Fermer
+        </button>
+      </div>
     </div>
-    
-    <div class="menu-item">
-      <span class="menu-item-label">Trop tôt</span>
-      <span class="menu-item-value" id="menuEarly">0</span>
-    </div>
-    
-    <button class="menu-btn-action secondary" onclick="resetStats()">🗑️ Réinitialiser</button>
-    <button class="menu-btn-action primary" onclick="toggleMenu()">✓ Fermer</button>
-  </div>
-</div>
 
-<script>
-// ============================================
-// CONFIGURATION
-// ============================================
-const CONFIG = {
-  minDelay: 1500,      // Délai minimum avant le vert (ms)
-  maxDelay: 5000,      // Délai maximum avant le vert (ms)
-  historySize: 10,     // Nombre de points dans l'historique
-  ranks: [
-    { max: 150, name: 'Légendaire', class: 'legendary', emoji: '⚡' },
-    { max: 200, name: 'Excellent', class: 'excellent', emoji: '🔥' },
-    { max: 250, name: 'Très bien', class: 'good', emoji: '✨' },
-    { max: 350, name: 'Correct', class: 'average', emoji: '👍' },
-    { max: Infinity, name: 'À améliorer', class: 'slow', emoji: '🐢' }
-  ]
-};
+    <script>
+      // ============================================
+      // CONFIGURATION
+      // ============================================
+      const CONFIG = {
+        minDelay: 1500, // Délai minimum avant le vert (ms)
+        maxDelay: 5000, // Délai maximum avant le vert (ms)
+        historySize: 10, // Nombre de points dans l'historique
+        ranks: [
+          { max: 150, name: "Légendaire", class: "legendary", emoji: "⚡" },
+          { max: 200, name: "Excellent", class: "excellent", emoji: "🔥" },
+          { max: 250, name: "Très bien", class: "good", emoji: "✨" },
+          { max: 350, name: "Correct", class: "average", emoji: "👍" },
+          { max: Infinity, name: "À améliorer", class: "slow", emoji: "🐢" },
+        ],
+      };
 
-// ============================================
-// ÉTAT DU JEU
-// ============================================
-let state = {
-  phase: 'wait',       // wait, ready, go, early, result
-  startTime: 0,
-  timeoutId: null,
-  results: [],
-  earlyCount: 0,
-  bestTime: Infinity
-};
+      // ============================================
+      // ÉTAT DU JEU
+      // ============================================
+      let state = {
+        phase: "wait", // wait, ready, go, early, result
+        startTime: 0,
+        timeoutId: null,
+        results: [],
+        earlyCount: 0,
+        bestTime: Infinity,
+      };
 
-// ============================================
-// ÉLÉMENTS DOM
-// ============================================
-const elements = {
-  body: document.body,
-  gameArea: document.getElementById('gameArea'),
-  circle: document.getElementById('circle'),
-  circleIcon: document.getElementById('circleIcon'),
-  circleText: document.getElementById('circleText'),
-  circleSubtext: document.getElementById('circleSubtext'),
-  progressCircle: document.getElementById('progressCircle'),
-  history: document.getElementById('history'),
-  statAvg: document.getElementById('statAvg'),
-  statBest: document.getElementById('statBest'),
-  statTries: document.getElementById('statTries'),
-  tip: document.getElementById('tip'),
-  newRecord: document.getElementById('newRecord'),
-  celebration: document.getElementById('celebration'),
-  menuOverlay: document.getElementById('menuOverlay'),
-  menuBest: document.getElementById('menuBest'),
-  menuAvg: document.getElementById('menuAvg'),
-  menuTries: document.getElementById('menuTries'),
-  menuEarly: document.getElementById('menuEarly')
-};
+      // ============================================
+      // ÉLÉMENTS DOM
+      // ============================================
+      const elements = {
+        body: document.body,
+        gameArea: document.getElementById("gameArea"),
+        circle: document.getElementById("circle"),
+        circleIcon: document.getElementById("circleIcon"),
+        circleText: document.getElementById("circleText"),
+        circleSubtext: document.getElementById("circleSubtext"),
+        progressCircle: document.getElementById("progressCircle"),
+        history: document.getElementById("history"),
+        statAvg: document.getElementById("statAvg"),
+        statBest: document.getElementById("statBest"),
+        statTries: document.getElementById("statTries"),
+        tip: document.getElementById("tip"),
+        newRecord: document.getElementById("newRecord"),
+        celebration: document.getElementById("celebration"),
+        menuOverlay: document.getElementById("menuOverlay"),
+        menuBest: document.getElementById("menuBest"),
+        menuAvg: document.getElementById("menuAvg"),
+        menuTries: document.getElementById("menuTries"),
+        menuEarly: document.getElementById("menuEarly"),
+      };
 
-// ============================================
-// INITIALISATION
-// ============================================
-function init() {
-  loadState();
-  updateStats();
-  renderHistory();
-  
-  // Event listeners
-  elements.gameArea.addEventListener('click', handleClick);
-  elements.gameArea.addEventListener('touchstart', handleTouch, { passive: false });
-  
-  // Empêcher le menu contextuel sur mobile
-  elements.gameArea.addEventListener('contextmenu', e => e.preventDefault());
-}
+      // ============================================
+      // INITIALISATION
+      // ============================================
+      function init() {
+        loadState();
+        updateStats();
+        renderHistory();
 
-function handleTouch(e) {
-  e.preventDefault();
-  handleClick();
-}
+        // Event listeners
+        elements.gameArea.addEventListener("click", handleClick);
+        elements.gameArea.addEventListener("touchstart", handleTouch, {
+          passive: false,
+        });
 
-// ============================================
-// LOGIQUE DU JEU
-// ============================================
-function handleClick() {
-  switch (state.phase) {
-    case 'wait':
-    case 'result':
-    case 'early':
-      startRound();
-      break;
-    case 'ready':
-      tooEarly();
-      break;
-    case 'go':
-      recordTime();
-      break;
-  }
-}
+        // Empêcher le menu contextuel sur mobile
+        elements.gameArea.addEventListener("contextmenu", (e) =>
+          e.preventDefault(),
+        );
+      }
 
-function startRound() {
-  state.phase = 'ready';
-  setBodyState('ready');
-  
-  elements.circleIcon.textContent = '🔴';
-  elements.circleText.innerHTML = 'Attendez le vert...';
-  elements.circleSubtext.textContent = '';
-  elements.newRecord.style.display = 'none';
-  elements.tip.textContent = 'Ne cliquez pas encore !';
-  
-  // Délai aléatoire avant le vert
-  const delay = CONFIG.minDelay + Math.random() * (CONFIG.maxDelay - CONFIG.minDelay);
-  
-  // Animation de progression (optionnel, pour le suspense)
-  animateProgress(delay);
-  
-  state.timeoutId = setTimeout(() => {
-    showGreen();
-  }, delay);
-}
+      function handleTouch(e) {
+        e.preventDefault();
+        handleClick();
+      }
 
-function showGreen() {
-  state.phase = 'go';
-  state.startTime = performance.now();
-  setBodyState('go');
-  
-  elements.circleIcon.textContent = '🟢';
-  elements.circleText.innerHTML = 'CLIQUEZ !';
-  elements.circleSubtext.textContent = '';
-  elements.tip.textContent = 'Maintenant !';
-  
-  // Son
-  playSound('go');
-  
-  // Vibration sur mobile
-  if (navigator.vibrate) {
-    navigator.vibrate(50);
-  }
-}
+      // ============================================
+      // LOGIQUE DU JEU
+      // ============================================
+      function handleClick() {
+        switch (state.phase) {
+          case "wait":
+          case "result":
+          case "early":
+            startRound();
+            break;
+          case "ready":
+            tooEarly();
+            break;
+          case "go":
+            recordTime();
+            break;
+        }
+      }
 
-function tooEarly() {
-  clearTimeout(state.timeoutId);
-  state.phase = 'early';
-  state.earlyCount++;
-  setBodyState('early');
-  
-  elements.circleIcon.textContent = '⚠️';
-  elements.circleText.innerHTML = 'Trop tôt !';
-  elements.circleSubtext.textContent = 'Touchez pour réessayer';
-  elements.tip.textContent = 'Attendez que l\'écran devienne vert';
-  
-  // Ajouter à l'historique
-  addToHistory('early');
-  
-  // Son
-  playSound('early');
-  
-  // Vibration
-  if (navigator.vibrate) {
-    navigator.vibrate([100, 50, 100]);
-  }
-  
-  saveState();
-  updateStats();
-}
+      function startRound() {
+        state.phase = "ready";
+        setBodyState("ready");
 
-function recordTime() {
-  const reactionTime = Math.round(performance.now() - state.startTime);
-  state.phase = 'result';
-  setBodyState('result');
-  
-  // Vérifier si c'est un nouveau record
-  const isNewRecord = reactionTime < state.bestTime;
-  if (isNewRecord) {
-    state.bestTime = reactionTime;
-    elements.newRecord.style.display = 'block';
-    celebrate();
-    playSound('record');
-  } else {
-    playSound('result');
-  }
-  
-  // Ajouter le résultat
-  state.results.push(reactionTime);
-  
-  // Trouver le rang
-  const rank = CONFIG.ranks.find(r => reactionTime <= r.max);
-  
-  // Afficher le résultat
-  elements.circleIcon.textContent = rank.emoji;
-  elements.circleText.innerHTML = `
+        elements.circleIcon.textContent = "🔴";
+        elements.circleText.innerHTML = "Attendez le vert...";
+        elements.circleSubtext.textContent = "";
+        elements.newRecord.style.display = "none";
+        elements.tip.textContent = "Ne cliquez pas encore !";
+
+        // Délai aléatoire avant le vert
+        const delay =
+          CONFIG.minDelay + Math.random() * (CONFIG.maxDelay - CONFIG.minDelay);
+
+        // Animation de progression (optionnel, pour le suspense)
+        animateProgress(delay);
+
+        state.timeoutId = setTimeout(() => {
+          showGreen();
+        }, delay);
+      }
+
+      function showGreen() {
+        state.phase = "go";
+        state.startTime = performance.now();
+        setBodyState("go");
+
+        elements.circleIcon.textContent = "🟢";
+        elements.circleText.innerHTML = "CLIQUEZ !";
+        elements.circleSubtext.textContent = "";
+        elements.tip.textContent = "Maintenant !";
+
+        // Son
+        playSound("go");
+
+        // Vibration sur mobile
+        if (navigator.vibrate) {
+          navigator.vibrate(50);
+        }
+      }
+
+      function tooEarly() {
+        clearTimeout(state.timeoutId);
+        state.phase = "early";
+        state.earlyCount++;
+        setBodyState("early");
+
+        elements.circleIcon.textContent = "⚠️";
+        elements.circleText.innerHTML = "Trop tôt !";
+        elements.circleSubtext.textContent = "Touchez pour réessayer";
+        elements.tip.textContent = "Attendez que l'écran devienne vert";
+
+        // Ajouter à l'historique
+        addToHistory("early");
+
+        // Son
+        playSound("early");
+
+        // Vibration
+        if (navigator.vibrate) {
+          navigator.vibrate([100, 50, 100]);
+        }
+
+        saveState();
+        updateStats();
+      }
+
+      function recordTime() {
+        const reactionTime = Math.round(performance.now() - state.startTime);
+        state.phase = "result";
+        setBodyState("result");
+
+        // Vérifier si c'est un nouveau record
+        const isNewRecord = reactionTime < state.bestTime;
+        if (isNewRecord) {
+          state.bestTime = reactionTime;
+          elements.newRecord.style.display = "block";
+          celebrate();
+          playSound("record");
+        } else {
+          playSound("result");
+        }
+
+        // Ajouter le résultat
+        state.results.push(reactionTime);
+
+        // Trouver le rang
+        const rank = CONFIG.ranks.find((r) => reactionTime <= r.max);
+
+        // Afficher le résultat
+        elements.circleIcon.textContent = rank.emoji;
+        elements.circleText.innerHTML = `
     <div class="result-time">${reactionTime}</div>
     <div class="result-unit">ms</div>
     <div class="result-rank ${rank.class}">${rank.name}</div>
   `;
-  elements.circleSubtext.textContent = 'Touchez pour réessayer';
-  elements.tip.textContent = getMotivationalText(reactionTime);
-  
-  // Historique
-  addToHistory(rank.class);
-  
-  // Vibration
-  if (navigator.vibrate) {
-    navigator.vibrate(30);
-  }
-  
-  saveState();
-  updateStats();
-}
+        elements.circleSubtext.textContent = "Touchez pour réessayer";
+        elements.tip.textContent = getMotivationalText(reactionTime);
 
-// ============================================
-// UI HELPERS
-// ============================================
-function setBodyState(stateName) {
-  elements.body.className = 'state-' + stateName;
-}
+        // Historique
+        addToHistory(rank.class);
 
-function animateProgress(duration) {
-  const circle = elements.progressCircle;
-  const circumference = 2 * Math.PI * 140;
-  
-  circle.style.strokeDasharray = circumference;
-  circle.style.strokeDashoffset = circumference;
-  circle.style.transition = `stroke-dashoffset ${duration}ms linear`;
-  
-  // Trigger reflow
-  circle.getBoundingClientRect();
-  
-  circle.style.strokeDashoffset = '0';
-}
+        // Vibration
+        if (navigator.vibrate) {
+          navigator.vibrate(30);
+        }
 
-function addToHistory(type) {
-  const dot = document.createElement('div');
-  dot.className = `history-dot ${type}`;
-  dot.style.animationDelay = '0s';
-  
-  elements.history.appendChild(dot);
-  
-  // Limiter la taille de l'historique
-  while (elements.history.children.length > CONFIG.historySize) {
-    elements.history.removeChild(elements.history.firstChild);
-  }
-}
+        saveState();
+        updateStats();
+      }
 
-function renderHistory() {
-  elements.history.innerHTML = '';
-  
-  // Afficher les derniers résultats
-  const recent = state.results.slice(-CONFIG.historySize);
-  recent.forEach(time => {
-    const rank = CONFIG.ranks.find(r => time <= r.max);
-    addToHistory(rank.class);
-  });
-}
+      // ============================================
+      // UI HELPERS
+      // ============================================
+      function setBodyState(stateName) {
+        elements.body.className = "state-" + stateName;
+      }
 
-function updateStats() {
-  const validResults = state.results;
-  const totalTries = validResults.length + state.earlyCount;
-  
-  // Moyenne
-  if (validResults.length > 0) {
-    const avg = Math.round(validResults.reduce((a, b) => a + b, 0) / validResults.length);
-    elements.statAvg.textContent = avg + ' ms';
-    elements.menuAvg.textContent = avg + ' ms';
-  } else {
-    elements.statAvg.textContent = '---';
-    elements.menuAvg.textContent = '---';
-  }
-  
-  // Meilleur temps
-  if (state.bestTime < Infinity) {
-    elements.statBest.textContent = state.bestTime + ' ms';
-    elements.menuBest.textContent = state.bestTime + ' ms';
-  } else {
-    elements.statBest.textContent = '---';
-    elements.menuBest.textContent = '---';
-  }
-  
-  // Essais
-  elements.statTries.textContent = totalTries;
-  elements.menuTries.textContent = totalTries;
-  elements.menuEarly.textContent = state.earlyCount;
-}
+      function animateProgress(duration) {
+        const circle = elements.progressCircle;
+        const circumference = 2 * Math.PI * 140;
 
-function getMotivationalText(time) {
-  if (time < 150) return "Incroyable ! Vous êtes surhumain ! 🦸";
-  if (time < 200) return "Réflexes de pro gamer ! 🎮";
-  if (time < 250) return "Excellent ! Continuez comme ça ! 💪";
-  if (time < 300) return "Bien joué ! Encore un peu d'entraînement 👏";
-  if (time < 400) return "Pas mal ! Vous pouvez faire mieux 😊";
-  return "Restez concentré, vous allez y arriver ! 🎯";
-}
+        circle.style.strokeDasharray = circumference;
+        circle.style.strokeDashoffset = circumference;
+        circle.style.transition = `stroke-dashoffset ${duration}ms linear`;
 
-// ============================================
-// CÉLÉBRATION
-// ============================================
-function celebrate() {
-  const colors = ['#ffd93d', '#ff6b6b', '#00ff88', '#00d4ff', '#f093fb'];
-  const container = elements.celebration;
-  
-  for (let i = 0; i < 50; i++) {
-    const confetti = document.createElement('div');
-    confetti.className = 'confetti';
-    confetti.style.left = Math.random() * 100 + '%';
-    confetti.style.top = '-10px';
-    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-    confetti.style.width = (Math.random() * 10 + 5) + 'px';
-    confetti.style.height = confetti.style.width;
-    
-    container.appendChild(confetti);
-    
-    // Animation
-    const duration = Math.random() * 2000 + 1000;
-    const xEnd = (Math.random() - 0.5) * 200;
-    
-    confetti.animate([
-      { transform: 'translateY(0) translateX(0) rotate(0deg)', opacity: 1 },
-      { transform: `translateY(${window.innerHeight + 50}px) translateX(${xEnd}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
-    ], {
-      duration: duration,
-      easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-    }).onfinish = () => confetti.remove();
-  }
-}
+        // Trigger reflow
+        circle.getBoundingClientRect();
 
-// ============================================
-// AUDIO
-// ============================================
-function playSound(type) {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    
-    const now = ctx.currentTime;
-    gain.gain.setValueAtTime(0.15, now);
-    
-    switch (type) {
-      case 'go':
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(880, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-        osc.start(now);
-        osc.stop(now + 0.1);
-        break;
-        
-      case 'early':
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(200, now);
-        osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-        osc.start(now);
-        osc.stop(now + 0.2);
-        break;
-        
-      case 'result':
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(523, now);
-        osc.frequency.setValueAtTime(659, now + 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-        osc.start(now);
-        osc.stop(now + 0.2);
-        break;
-        
-      case 'record':
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(523, now);
-        osc.frequency.setValueAtTime(659, now + 0.1);
-        osc.frequency.setValueAtTime(784, now + 0.2);
-        osc.frequency.setValueAtTime(1047, now + 0.3);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-        osc.start(now);
-        osc.stop(now + 0.5);
-        break;
-    }
-  } catch (e) {
-    // Audio non supporté
-  }
-}
+        circle.style.strokeDashoffset = "0";
+      }
 
-// ============================================
-// MENU
-// ============================================
-function toggleMenu() {
-  elements.menuOverlay.classList.toggle('show');
-}
+      function addToHistory(type) {
+        const dot = document.createElement("div");
+        dot.className = `history-dot ${type}`;
+        dot.style.animationDelay = "0s";
 
-function resetStats() {
-  if (confirm('Réinitialiser toutes les statistiques ?')) {
-    state.results = [];
-    state.earlyCount = 0;
-    state.bestTime = Infinity;
-    
-    saveState();
-    updateStats();
-    renderHistory();
-    toggleMenu();
-  }
-}
+        elements.history.appendChild(dot);
 
-// ============================================
-// SAUVEGARDE
-// ============================================
-function saveState() {
-  const data = {
-    results: state.results.slice(-100), // Garder les 100 derniers
-    earlyCount: state.earlyCount,
-    bestTime: state.bestTime
-  };
-  localStorage.setItem('reflex-game', JSON.stringify(data));
-}
+        // Limiter la taille de l'historique
+        while (elements.history.children.length > CONFIG.historySize) {
+          elements.history.removeChild(elements.history.firstChild);
+        }
+      }
 
-function loadState() {
-  try {
-    const saved = localStorage.getItem('reflex-game');
-    if (saved) {
-      const data = JSON.parse(saved);
-      state.results = data.results || [];
-      state.earlyCount = data.earlyCount || 0;
-      state.bestTime = data.bestTime || Infinity;
-    }
-  } catch (e) {
-    console.warn('Erreur chargement sauvegarde');
-  }
-}
+      function renderHistory() {
+        elements.history.innerHTML = "";
 
-// ============================================
-// DÉMARRAGE
-// ============================================
-init();
-</script>
+        // Afficher les derniers résultats
+        const recent = state.results.slice(-CONFIG.historySize);
+        recent.forEach((time) => {
+          const rank = CONFIG.ranks.find((r) => time <= r.max);
+          addToHistory(rank.class);
+        });
+      }
 
-</body>
+      function updateStats() {
+        const validResults = state.results;
+        const totalTries = validResults.length + state.earlyCount;
+
+        // Moyenne
+        if (validResults.length > 0) {
+          const avg = Math.round(
+            validResults.reduce((a, b) => a + b, 0) / validResults.length,
+          );
+          elements.statAvg.textContent = avg + " ms";
+          elements.menuAvg.textContent = avg + " ms";
+        } else {
+          elements.statAvg.textContent = "---";
+          elements.menuAvg.textContent = "---";
+        }
+
+        // Meilleur temps
+        if (state.bestTime < Infinity) {
+          elements.statBest.textContent = state.bestTime + " ms";
+          elements.menuBest.textContent = state.bestTime + " ms";
+        } else {
+          elements.statBest.textContent = "---";
+          elements.menuBest.textContent = "---";
+        }
+
+        // Essais
+        elements.statTries.textContent = totalTries;
+        elements.menuTries.textContent = totalTries;
+        elements.menuEarly.textContent = state.earlyCount;
+      }
+
+      function getMotivationalText(time) {
+        if (time < 150) return "Incroyable ! Vous êtes surhumain ! 🦸";
+        if (time < 200) return "Réflexes de pro gamer ! 🎮";
+        if (time < 250) return "Excellent ! Continuez comme ça ! 💪";
+        if (time < 300) return "Bien joué ! Encore un peu d'entraînement 👏";
+        if (time < 400) return "Pas mal ! Vous pouvez faire mieux 😊";
+        return "Restez concentré, vous allez y arriver ! 🎯";
+      }
+
+      // ============================================
+      // CÉLÉBRATION
+      // ============================================
+      function celebrate() {
+        const colors = ["#ffd93d", "#ff6b6b", "#00ff88", "#00d4ff", "#f093fb"];
+        const container = elements.celebration;
+
+        for (let i = 0; i < 50; i++) {
+          const confetti = document.createElement("div");
+          confetti.className = "confetti";
+          confetti.style.left = Math.random() * 100 + "%";
+          confetti.style.top = "-10px";
+          confetti.style.background =
+            colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.borderRadius = Math.random() > 0.5 ? "50%" : "0";
+          confetti.style.width = Math.random() * 10 + 5 + "px";
+          confetti.style.height = confetti.style.width;
+
+          container.appendChild(confetti);
+
+          // Animation
+          const duration = Math.random() * 2000 + 1000;
+          const xEnd = (Math.random() - 0.5) * 200;
+
+          confetti.animate(
+            [
+              {
+                transform: "translateY(0) translateX(0) rotate(0deg)",
+                opacity: 1,
+              },
+              {
+                transform: `translateY(${window.innerHeight + 50}px) translateX(${xEnd}px) rotate(${Math.random() * 720}deg)`,
+                opacity: 0,
+              },
+            ],
+            {
+              duration: duration,
+              easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+            },
+          ).onfinish = () => confetti.remove();
+        }
+      }
+
+      // ============================================
+      // AUDIO
+      // ============================================
+      function playSound(type) {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          const now = ctx.currentTime;
+          gain.gain.setValueAtTime(0.15, now);
+
+          switch (type) {
+            case "go":
+              osc.type = "sine";
+              osc.frequency.setValueAtTime(880, now);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+              osc.start(now);
+              osc.stop(now + 0.1);
+              break;
+
+            case "early":
+              osc.type = "sawtooth";
+              osc.frequency.setValueAtTime(200, now);
+              osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+              osc.start(now);
+              osc.stop(now + 0.2);
+              break;
+
+            case "result":
+              osc.type = "sine";
+              osc.frequency.setValueAtTime(523, now);
+              osc.frequency.setValueAtTime(659, now + 0.1);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+              osc.start(now);
+              osc.stop(now + 0.2);
+              break;
+
+            case "record":
+              osc.type = "sine";
+              osc.frequency.setValueAtTime(523, now);
+              osc.frequency.setValueAtTime(659, now + 0.1);
+              osc.frequency.setValueAtTime(784, now + 0.2);
+              osc.frequency.setValueAtTime(1047, now + 0.3);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+              osc.start(now);
+              osc.stop(now + 0.5);
+              break;
+          }
+        } catch (e) {
+          // Audio non supporté
+        }
+      }
+
+      // ============================================
+      // MENU
+      // ============================================
+      function toggleMenu() {
+        elements.menuOverlay.classList.toggle("show");
+      }
+
+      function resetStats() {
+        if (confirm("Réinitialiser toutes les statistiques ?")) {
+          state.results = [];
+          state.earlyCount = 0;
+          state.bestTime = Infinity;
+
+          saveState();
+          updateStats();
+          renderHistory();
+          toggleMenu();
+        }
+      }
+
+      // ============================================
+      // SAUVEGARDE
+      // ============================================
+      function saveState() {
+        const data = {
+          results: state.results.slice(-100), // Garder les 100 derniers
+          earlyCount: state.earlyCount,
+          bestTime: state.bestTime,
+        };
+        localStorage.setItem("reflex-game", JSON.stringify(data));
+      }
+
+      function loadState() {
+        try {
+          const saved = localStorage.getItem("reflex-game");
+          if (saved) {
+            const data = JSON.parse(saved);
+            state.results = data.results || [];
+            state.earlyCount = data.earlyCount || 0;
+            state.bestTime = data.bestTime || Infinity;
+          }
+        } catch (e) {
+          console.warn("Erreur chargement sauvegarde");
+        }
+      }
+
+      // ============================================
+      // DÉMARRAGE
+      // ============================================
+      init();
+    </script>
+  </body>
 </html>
