@@ -1,182 +1,267 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Cyber Spider Solitaire</title>
-  <script>
-    try {
-      if (localStorage.getItem('spider_solitaire_theme') === 'dark') {
-        document.documentElement.dataset.theme = 'dark';
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Cyber Spider Solitaire</title>
+    <script>
+      try {
+        if (localStorage.getItem("spider_solitaire_theme") === "dark") {
+          document.documentElement.dataset.theme = "dark";
+        }
+      } catch (error) {
+        // Le jeu reste en thème clair si le stockage local est indisponible.
       }
-    } catch (error) {
-      // Le jeu reste en thème clair si le stockage local est indisponible.
-    }
-  </script>
-  <link rel="stylesheet" href="SpiderSolitaire.css">
-  <link rel="stylesheet" href="arcade-home.css">
-</head>
+    </script>
+    <link rel="stylesheet" href="SpiderSolitaire.css" />
+    <link rel="stylesheet" href="arcade-home.css" />
+  </head>
 
-<body>
-  <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil"><span class="arcade-home-icon" aria-hidden="true">⌂</span><span class="arcade-home-label">Accueil</span></a>
-  <div id="game-container">
-    <!-- BARRE SUPÉRIEURE : Stats & Contrôles -->
-    <header id="ui-header">
-      <div class="logo">SPIDER<span>NEON</span></div>
-      <div class="stats-group">
-        <div class="stat-box">
-          <span class="label">SCORE</span>
-          <span id="score-display">500</span>
+  <body>
+    <a
+      class="arcade-home-link"
+      href="index.html"
+      aria-label="Retour à l'accueil"
+      title="Retour à l'accueil"
+      ><span class="arcade-home-icon" aria-hidden="true">⌂</span
+      ><span class="arcade-home-label">Accueil</span></a
+    >
+    <div id="game-container">
+      <!-- BARRE SUPÉRIEURE : Stats & Contrôles -->
+      <header id="ui-header">
+        <div class="logo">SPIDER<span>NEON</span></div>
+        <div class="stats-group">
+          <div class="stat-box">
+            <span class="label">SCORE</span>
+            <span id="score-display">500</span>
+          </div>
+          <div class="stat-box">
+            <span class="label">COUPS</span>
+            <span id="moves-display">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="label">TEMPS</span>
+            <span id="timer-display">00:00</span>
+          </div>
         </div>
-        <div class="stat-box">
-          <span class="label">COUPS</span>
-          <span id="moves-display">0</span>
+        <div class="controls-group">
+          <button
+            class="btn-action"
+            type="button"
+            data-theme-toggle
+            aria-label="Activer le thème sombre"
+            aria-pressed="false"
+            title="Activer le thème sombre"
+          >
+            <span class="icon theme-icon" aria-hidden="true">🌙</span>
+          </button>
+          <button
+            id="btn-undo"
+            class="btn-action"
+            title="Annuler le dernier coup"
+          >
+            <span class="icon">↩️</span>
+          </button>
+          <button id="btn-hint" class="btn-action" title="Obtenir un indice">
+            <span class="icon">💡</span>
+          </button>
+          <button
+            id="btn-home"
+            class="btn-action"
+            title="Accueil — revenir au menu"
+            aria-label="Accueil"
+          >
+            <span class="icon" aria-hidden="true">🏠</span>
+          </button>
         </div>
-        <div class="stat-box">
-          <span class="label">TEMPS</span>
-          <span id="timer-display">00:00</span>
-        </div>
-      </div>
-      <div class="controls-group">
-        <button class="btn-action" type="button" data-theme-toggle aria-label="Activer le thème sombre" aria-pressed="false" title="Activer le thème sombre">
-          <span class="icon theme-icon" aria-hidden="true">🌙</span>
-        </button>
-        <button id="btn-undo" class="btn-action" title="Annuler le dernier coup">
-          <span class="icon">↩️</span>
-        </button>
-        <button id="btn-hint" class="btn-action" title="Obtenir un indice">
-          <span class="icon">💡</span>
-        </button>
-        <button id="btn-home" class="btn-action" title="Accueil — revenir au menu" aria-label="Accueil">
-          <span class="icon" aria-hidden="true">🏠</span>
-        </button>
-      </div>
-    </header>
+      </header>
 
-    <!-- TAPIS DE JEU PRINCIPAL -->
-    <main id="solitaire-board">
-      <!-- Zone des 10 colonnes de jeu -->
-      <div id="tableau-container">
-        <div class="column" data-col="0"></div>
-        <div class="column" data-col="1"></div>
-        <div class="column" data-col="2"></div>
-        <div class="column" data-col="3"></div>
-        <div class="column" data-col="4"></div>
-        <div class="column" data-col="5"></div>
-        <div class="column" data-col="6"></div>
-        <div class="column" data-col="7"></div>
-        <div class="column" data-col="8"></div>
-        <div class="column" data-col="9"></div>
-      </div>
-
-      <!-- Zone Inférieure : Fondations & Pioche -->
-      <footer id="board-bottom">
-        <!-- 8 Emplacements de suites complétées -->
-        <div id="foundations-container">
-          <div class="foundation-slot"></div>
-          <div class="foundation-slot"></div>
-          <div class="foundation-slot"></div>
-          <div class="foundation-slot"></div>
-          <div class="foundation-slot"></div>
-          <div class="foundation-slot"></div>
-          <div class="foundation-slot"></div>
-          <div class="foundation-slot"></div>
+      <!-- TAPIS DE JEU PRINCIPAL -->
+      <main id="solitaire-board">
+        <!-- Zone des 10 colonnes de jeu -->
+        <div id="tableau-container">
+          <div class="column" data-col="0"></div>
+          <div class="column" data-col="1"></div>
+          <div class="column" data-col="2"></div>
+          <div class="column" data-col="3"></div>
+          <div class="column" data-col="4"></div>
+          <div class="column" data-col="5"></div>
+          <div class="column" data-col="6"></div>
+          <div class="column" data-col="7"></div>
+          <div class="column" data-col="8"></div>
+          <div class="column" data-col="9"></div>
         </div>
 
-        <!-- Pioche (5 distributions de 10 cartes) -->
-        <div id="stock-container">
-          <div id="stock-pile" title="Distribuer une nouvelle rangée">
-            <div class="card-back-design" aria-hidden="true">
-              <svg class="spider-back-emblem" viewBox="0 0 100 100" focusable="false">
-                <circle cx="50" cy="31" r="10"></circle>
-                <ellipse cx="50" cy="57" rx="14" ry="19"></ellipse>
-                <path fill="none" d="M39 43 18 27M37 51 12 46M37 60 12 68M39 68 21 86M61 43 82 27M63 51 88 46M63 60 88 68M61 68 79 86"></path>
-              </svg>
+        <!-- Zone Inférieure : Fondations & Pioche -->
+        <footer id="board-bottom">
+          <!-- 8 Emplacements de suites complétées -->
+          <div id="foundations-container">
+            <div class="foundation-slot"></div>
+            <div class="foundation-slot"></div>
+            <div class="foundation-slot"></div>
+            <div class="foundation-slot"></div>
+            <div class="foundation-slot"></div>
+            <div class="foundation-slot"></div>
+            <div class="foundation-slot"></div>
+            <div class="foundation-slot"></div>
+          </div>
+
+          <!-- Pioche (5 distributions de 10 cartes) -->
+          <div id="stock-container">
+            <div id="stock-pile" title="Distribuer une nouvelle rangée">
+              <div class="card-back-design" aria-hidden="true">
+                <svg
+                  class="spider-back-emblem"
+                  viewBox="0 0 100 100"
+                  focusable="false"
+                >
+                  <circle cx="50" cy="31" r="10"></circle>
+                  <ellipse cx="50" cy="57" rx="14" ry="19"></ellipse>
+                  <path
+                    fill="none"
+                    d="M39 43 18 27M37 51 12 46M37 60 12 68M39 68 21 86M61 43 82 27M63 51 88 46M63 60 88 68M61 68 79 86"
+                  ></path>
+                </svg>
+              </div>
+              <span id="stock-count">5</span>
             </div>
-            <span id="stock-count">5</span>
+          </div>
+        </footer>
+      </main>
+
+      <!-- CANVAS DES ANIMATIONS EN CASCADE (VICTOIRE) -->
+      <canvas id="effects-canvas"></canvas>
+
+      <!-- OVERLAY CHOIX DE DIFFICULTÉ (AU DÉMARRAGE) -->
+      <div id="difficulty-overlay" class="overlay">
+        <div class="overlay-card">
+          <h2>SPIDER SOLITAIRE</h2>
+          <p>Choisissez votre niveau de difficulté :</p>
+          <div class="difficulty-options">
+            <button class="btn-difficulty" data-suits="1">
+              <span class="diff-title">1 COULEUR</span>
+              <span class="diff-sub">Facile (♠ Pique)</span>
+            </button>
+            <button class="btn-difficulty" data-suits="2">
+              <span class="diff-title">2 COULEURS</span>
+              <span class="diff-sub">Moyen (♠ Pique &amp; ♥ Cœur)</span>
+            </button>
+            <button class="btn-difficulty" data-suits="4">
+              <span class="diff-title">4 COULEURS</span>
+              <span class="diff-sub">Expert (♠ ♥ ♦ ♣)</span>
+            </button>
+          </div>
+
+          <button id="btn-open-leaderboard" class="btn-secondary" type="button">
+            🏆 LEADERBOARD
+          </button>
+          <button
+            class="btn-secondary theme-menu-toggle"
+            type="button"
+            data-theme-toggle
+            aria-label="Activer le thème sombre"
+            aria-pressed="false"
+            title="Activer le thème sombre"
+          >
+            <span class="theme-icon" aria-hidden="true">🌙</span>
+            <span class="theme-label">THÈME SOMBRE</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ÉCRAN SECONDAIRE : CLASSEMENT -->
+      <div id="leaderboard-overlay" class="overlay hidden">
+        <div class="overlay-card leaderboard-card">
+          <h2>LEADERBOARD</h2>
+          <p>Vos cinq meilleures victoires.</p>
+          <section class="leaderboard" aria-labelledby="leaderboard-title">
+            <h3 id="leaderboard-title">MEILLEURS SCORES</h3>
+            <div
+              class="leaderboard-tabs"
+              role="tablist"
+              aria-label="Difficulté"
+            >
+              <button
+                class="leaderboard-tab active"
+                type="button"
+                data-difficulty="1"
+                role="tab"
+                aria-selected="true"
+              >
+                1 COULEUR
+              </button>
+              <button
+                class="leaderboard-tab"
+                type="button"
+                data-difficulty="2"
+                role="tab"
+                aria-selected="false"
+              >
+                2 COULEURS
+              </button>
+              <button
+                class="leaderboard-tab"
+                type="button"
+                data-difficulty="4"
+                role="tab"
+                aria-selected="false"
+              >
+                4 COULEURS
+              </button>
+            </div>
+            <ol
+              id="leaderboard-list"
+              class="leaderboard-list"
+              aria-live="polite"
+            ></ol>
+          </section>
+          <button id="btn-back-to-menu" class="btn-secondary" type="button">
+            ← RETOUR AU MENU
+          </button>
+        </div>
+      </div>
+
+      <!-- OVERLAY DE VICTOIRE -->
+      <div id="victory-overlay" class="overlay hidden">
+        <div class="overlay-card glow">
+          <h2>VICTOIRE !</h2>
+          <p id="victory-stats">Grille résolue en 0 coups et 00:00 !</p>
+          <div class="best-score-box">
+            Meilleur Score : <span id="best-score-display">0</span>
+          </div>
+          <button id="btn-play-again" class="btn-primary">REJOUER</button>
+        </div>
+      </div>
+
+      <!-- CONFIRMATION : ABANDON DE LA PARTIE -->
+      <div
+        id="home-confirm-overlay"
+        class="overlay hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="home-confirm-title"
+      >
+        <div class="overlay-card confirmation-card">
+          <h2 id="home-confirm-title">RETOUR AU MENU ?</h2>
+          <p>
+            Voulez-vous vraiment retourner au menu ou changer de difficulté ?
+            Votre progression ne sera pas sauvegardée.
+          </p>
+          <div class="confirmation-actions">
+            <button id="btn-cancel-home" class="btn-secondary" type="button">
+              ANNULER
+            </button>
+            <button id="btn-confirm-home" class="btn-primary" type="button">
+              RETOUR AU MENU
+            </button>
           </div>
         </div>
-      </footer>
-    </main>
-
-    <!-- CANVAS DES ANIMATIONS EN CASCADE (VICTOIRE) -->
-    <canvas id="effects-canvas"></canvas>
-
-    <!-- OVERLAY CHOIX DE DIFFICULTÉ (AU DÉMARRAGE) -->
-    <div id="difficulty-overlay" class="overlay">
-      <div class="overlay-card">
-        <h2>SPIDER SOLITAIRE</h2>
-        <p>Choisissez votre niveau de difficulté :</p>
-        <div class="difficulty-options">
-          <button class="btn-difficulty" data-suits="1">
-            <span class="diff-title">1 COULEUR</span>
-            <span class="diff-sub">Facile (♠ Pique)</span>
-          </button>
-          <button class="btn-difficulty" data-suits="2">
-            <span class="diff-title">2 COULEURS</span>
-            <span class="diff-sub">Moyen (♠ Pique &amp; ♥ Cœur)</span>
-          </button>
-          <button class="btn-difficulty" data-suits="4">
-            <span class="diff-title">4 COULEURS</span>
-            <span class="diff-sub">Expert (♠ ♥ ♦ ♣)</span>
-          </button>
-        </div>
-
-        <button id="btn-open-leaderboard" class="btn-secondary" type="button">
-          🏆 LEADERBOARD
-        </button>
-        <button class="btn-secondary theme-menu-toggle" type="button" data-theme-toggle aria-label="Activer le thème sombre" aria-pressed="false" title="Activer le thème sombre">
-          <span class="theme-icon" aria-hidden="true">🌙</span>
-          <span class="theme-label">THÈME SOMBRE</span>
-        </button>
       </div>
     </div>
 
-    <!-- ÉCRAN SECONDAIRE : CLASSEMENT -->
-    <div id="leaderboard-overlay" class="overlay hidden">
-      <div class="overlay-card leaderboard-card">
-        <h2>LEADERBOARD</h2>
-        <p>Vos cinq meilleures victoires.</p>
-        <section class="leaderboard" aria-labelledby="leaderboard-title">
-          <h3 id="leaderboard-title">MEILLEURS SCORES</h3>
-          <div class="leaderboard-tabs" role="tablist" aria-label="Difficulté">
-            <button class="leaderboard-tab active" type="button" data-difficulty="1" role="tab" aria-selected="true">1 COULEUR</button>
-            <button class="leaderboard-tab" type="button" data-difficulty="2" role="tab" aria-selected="false">2 COULEURS</button>
-            <button class="leaderboard-tab" type="button" data-difficulty="4" role="tab" aria-selected="false">4 COULEURS</button>
-          </div>
-          <ol id="leaderboard-list" class="leaderboard-list" aria-live="polite"></ol>
-        </section>
-        <button id="btn-back-to-menu" class="btn-secondary" type="button">← RETOUR AU MENU</button>
-      </div>
-    </div>
-
-    <!-- OVERLAY DE VICTOIRE -->
-    <div id="victory-overlay" class="overlay hidden">
-      <div class="overlay-card glow">
-        <h2>VICTOIRE !</h2>
-        <p id="victory-stats">Grille résolue en 0 coups et 00:00 !</p>
-        <div class="best-score-box">
-          Meilleur Score : <span id="best-score-display">0</span>
-        </div>
-        <button id="btn-play-again" class="btn-primary">REJOUER</button>
-      </div>
-    </div>
-
-    <!-- CONFIRMATION : ABANDON DE LA PARTIE -->
-    <div id="home-confirm-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="home-confirm-title">
-      <div class="overlay-card confirmation-card">
-        <h2 id="home-confirm-title">RETOUR AU MENU ?</h2>
-        <p>Voulez-vous vraiment retourner au menu ou changer de difficulté ? Votre progression ne sera pas sauvegardée.</p>
-        <div class="confirmation-actions">
-          <button id="btn-cancel-home" class="btn-secondary" type="button">ANNULER</button>
-          <button id="btn-confirm-home" class="btn-primary" type="button">RETOUR AU MENU</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="SpiderSolitaire.js"></script>
-</body>
-
+    <script src="SpiderSolitaire.js"></script>
+  </body>
 </html>

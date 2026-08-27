@@ -2,18 +2,32 @@
  * CYBER SPIDER SOLITAIRE - Game Engine
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   // --- CONSTANTES & CONFIGURATION ---
   const SUITS = {
-    spade: { symbol: '♠', class: 'spade' },
-    heart: { symbol: '♥', class: 'heart' },
-    diamond: { symbol: '♦', class: 'diamond' },
-    club: { symbol: '♣', class: 'club' }
+    spade: { symbol: "♠", class: "spade" },
+    heart: { symbol: "♥", class: "heart" },
+    diamond: { symbol: "♦", class: "diamond" },
+    club: { symbol: "♣", class: "club" },
   };
 
-  const VALUES = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-  const LEADERBOARD_KEY = 'spider_solitaire_leaderboard';
-  const THEME_KEY = 'spider_solitaire_theme';
+  const VALUES = [
+    "A",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "J",
+    "Q",
+    "K",
+  ];
+  const LEADERBOARD_KEY = "spider_solitaire_leaderboard";
+  const THEME_KEY = "spider_solitaire_theme";
 
   // --- ÉTAT DU JEU ---
   let difficulty = 1; // 1, 2 ou 4 couleurs
@@ -39,42 +53,45 @@ document.addEventListener('DOMContentLoaded', () => {
   let dragProxy = null;
 
   // Éléments DOM
-  const board = document.getElementById('solitaire-board');
-  const columnElements = document.querySelectorAll('.column');
-  const foundationSlots = document.querySelectorAll('.foundation-slot');
-  const stockPile = document.getElementById('stock-pile');
-  const stockCount = document.getElementById('stock-count');
-  const scoreDisplay = document.getElementById('score-display');
-  const movesDisplay = document.getElementById('moves-display');
-  const timerDisplay = document.getElementById('timer-display');
-  const difficultyOverlay = document.getElementById('difficulty-overlay');
-  const leaderboardOverlay = document.getElementById('leaderboard-overlay');
-  const victoryOverlay = document.getElementById('victory-overlay');
-  const homeConfirmOverlay = document.getElementById('home-confirm-overlay');
-  const victoryStats = document.getElementById('victory-stats');
-  const bestScoreDisplay = document.getElementById('best-score-display');
-  const leaderboardList = document.getElementById('leaderboard-list');
-  const leaderboardTabs = document.querySelectorAll('.leaderboard-tab');
-  const themeToggles = document.querySelectorAll('[data-theme-toggle]');
-  const canvas = document.getElementById('effects-canvas');
-  const ctx = canvas.getContext('2d');
+  const board = document.getElementById("solitaire-board");
+  const columnElements = document.querySelectorAll(".column");
+  const foundationSlots = document.querySelectorAll(".foundation-slot");
+  const stockPile = document.getElementById("stock-pile");
+  const stockCount = document.getElementById("stock-count");
+  const scoreDisplay = document.getElementById("score-display");
+  const movesDisplay = document.getElementById("moves-display");
+  const timerDisplay = document.getElementById("timer-display");
+  const difficultyOverlay = document.getElementById("difficulty-overlay");
+  const leaderboardOverlay = document.getElementById("leaderboard-overlay");
+  const victoryOverlay = document.getElementById("victory-overlay");
+  const homeConfirmOverlay = document.getElementById("home-confirm-overlay");
+  const victoryStats = document.getElementById("victory-stats");
+  const bestScoreDisplay = document.getElementById("best-score-display");
+  const leaderboardList = document.getElementById("leaderboard-list");
+  const leaderboardTabs = document.querySelectorAll(".leaderboard-tab");
+  const themeToggles = document.querySelectorAll("[data-theme-toggle]");
+  const canvas = document.getElementById("effects-canvas");
+  const ctx = canvas.getContext("2d");
 
   // --- THÈMES CLAIR & SOMBRE ---
   function applyTheme(theme, persist = false) {
-    const activeTheme = theme === 'dark' ? 'dark' : 'light';
-    const darkModeEnabled = activeTheme === 'dark';
+    const activeTheme = theme === "dark" ? "dark" : "light";
+    const darkModeEnabled = activeTheme === "dark";
     document.documentElement.dataset.theme = activeTheme;
 
-    themeToggles.forEach(toggle => {
-      const nextThemeLabel = darkModeEnabled ? 'Activer le thème clair' : 'Activer le thème sombre';
-      toggle.setAttribute('aria-label', nextThemeLabel);
-      toggle.setAttribute('aria-pressed', String(darkModeEnabled));
+    themeToggles.forEach((toggle) => {
+      const nextThemeLabel = darkModeEnabled
+        ? "Activer le thème clair"
+        : "Activer le thème sombre";
+      toggle.setAttribute("aria-label", nextThemeLabel);
+      toggle.setAttribute("aria-pressed", String(darkModeEnabled));
       toggle.title = nextThemeLabel;
 
-      const icon = toggle.querySelector('.theme-icon');
-      const label = toggle.querySelector('.theme-label');
-      if (icon) icon.textContent = darkModeEnabled ? '☀️' : '🌙';
-      if (label) label.textContent = darkModeEnabled ? 'THÈME CLAIR' : 'THÈME SOMBRE';
+      const icon = toggle.querySelector(".theme-icon");
+      const label = toggle.querySelector(".theme-label");
+      if (icon) icon.textContent = darkModeEnabled ? "☀️" : "🌙";
+      if (label)
+        label.textContent = darkModeEnabled ? "THÈME CLAIR" : "THÈME SOMBRE";
     });
 
     if (persist) {
@@ -88,9 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   applyTheme(document.documentElement.dataset.theme);
 
-  themeToggles.forEach(toggle => {
-    toggle.addEventListener('click', () => {
-      const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  themeToggles.forEach((toggle) => {
+    toggle.addEventListener("click", () => {
+      const nextTheme =
+        document.documentElement.dataset.theme === "dark" ? "light" : "dark";
       applyTheme(nextTheme, true);
     });
   });
@@ -107,20 +125,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!audioCtx) return;
     const now = audioCtx.currentTime;
 
-    if (type === 'card') {
+    if (type === "card") {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.connect(gain);
       gain.connect(audioCtx.destination);
-      osc.type = 'triangle';
+      osc.type = "triangle";
       osc.frequency.setValueAtTime(120, now);
       osc.frequency.exponentialRampToValueAtTime(40, now + 0.08);
       gain.gain.setValueAtTime(0.15, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
       osc.start(now);
       osc.stop(now + 0.08);
-    } else if (type === 'complete') {
-      const notes = [261.63, 329.63, 392.00, 523.25];
+    } else if (type === "complete") {
+      const notes = [261.63, 329.63, 392.0, 523.25];
       notes.forEach((freq, idx) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
@@ -132,19 +150,19 @@ document.addEventListener('DOMContentLoaded', () => {
         osc.start(now + idx * 0.08);
         osc.stop(now + idx * 0.08 + 0.2);
       });
-    } else if (type === 'error') {
+    } else if (type === "error") {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.connect(gain);
       gain.connect(audioCtx.destination);
-      osc.type = 'sawtooth';
+      osc.type = "sawtooth";
       osc.frequency.setValueAtTime(100, now);
       gain.gain.setValueAtTime(0.08, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
       osc.start(now);
       osc.stop(now + 0.1);
-    } else if (type === 'win') {
-      const notes = [523.25, 659.25, 783.99, 1046.50];
+    } else if (type === "win") {
+      const notes = [523.25, 659.25, 783.99, 1046.5];
       notes.forEach((freq, idx) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
@@ -179,8 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
     shuffleDeck();
     dealInitialCards();
 
-    difficultyOverlay.classList.add('hidden');
-    victoryOverlay.classList.add('hidden');
+    difficultyOverlay.classList.add("hidden");
+    victoryOverlay.classList.add("hidden");
     isGameActive = true;
 
     startTimer();
@@ -193,25 +211,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let suitsToUse = [];
 
     if (difficulty === 1) {
-      suitsToUse = Array(8).fill('spade');
+      suitsToUse = Array(8).fill("spade");
     } else if (difficulty === 2) {
-      suitsToUse = Array(4).fill('spade').concat(Array(4).fill('heart'));
+      suitsToUse = Array(4).fill("spade").concat(Array(4).fill("heart"));
     } else {
-      suitsToUse = Array(2).fill('spade')
-        .concat(Array(2).fill('heart'))
-        .concat(Array(2).fill('diamond'))
-        .concat(Array(2).fill('club'));
+      suitsToUse = Array(2)
+        .fill("spade")
+        .concat(Array(2).fill("heart"))
+        .concat(Array(2).fill("diamond"))
+        .concat(Array(2).fill("club"));
     }
 
     let idCounter = 0;
-    suitsToUse.forEach(suitKey => {
+    suitsToUse.forEach((suitKey) => {
       VALUES.forEach((val, index) => {
         deck.push({
           id: idCounter++,
           value: index + 1, // 1 (A) à 13 (K)
           valueText: val,
           suit: suitKey,
-          faceUp: false
+          faceUp: false,
         });
       });
     });
@@ -245,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- RENDU VISUEL ---
   function renderBoard() {
     columnElements.forEach((colEl, colIndex) => {
-      colEl.innerHTML = '';
+      colEl.innerHTML = "";
       const colCards = columns[colIndex];
 
       colCards.forEach((card, cardIndex) => {
@@ -261,9 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const dealsLeft = Math.ceil(stock.length / 10);
     stockCount.textContent = dealsLeft;
     if (dealsLeft === 0) {
-      stockPile.classList.add('empty');
+      stockPile.classList.add("empty");
     } else {
-      stockPile.classList.remove('empty');
+      stockPile.classList.remove("empty");
     }
 
     updateUI();
@@ -272,19 +291,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderFoundations() {
     foundationSlots.forEach((slot, index) => {
-      slot.innerHTML = '';
+      slot.innerHTML = "";
       const suit = completedSequences[index];
       if (!suit) return;
 
-      const cardEl = createCardElement({
-        value: 1,
-        valueText: 'A',
-        suit,
-        faceUp: true
-      }, -1, -1);
-      cardEl.style.position = 'relative';
-      cardEl.style.top = '0';
-      cardEl.style.pointerEvents = 'none';
+      const cardEl = createCardElement(
+        {
+          value: 1,
+          valueText: "A",
+          suit,
+          faceUp: true,
+        },
+        -1,
+        -1,
+      );
+      cardEl.style.position = "relative";
+      cardEl.style.top = "0";
+      cardEl.style.pointerEvents = "none";
       slot.appendChild(cardEl);
     });
   }
@@ -298,8 +321,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function createCardElement(card, colIndex, cardIndex) {
-    const cardEl = document.createElement('div');
-    cardEl.className = `card ${card.faceUp ? SUITS[card.suit].class : 'face-down'}`;
+    const cardEl = document.createElement("div");
+    cardEl.className = `card ${card.faceUp ? SUITS[card.suit].class : "face-down"}`;
     cardEl.dataset.col = colIndex;
     cardEl.dataset.index = cardIndex;
 
@@ -326,9 +349,11 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
       // Interactions
-      cardEl.addEventListener('mousedown', handleDragStart);
-      cardEl.addEventListener('touchstart', handleDragStart, { passive: false });
-      cardEl.addEventListener('click', handleCardClick);
+      cardEl.addEventListener("mousedown", handleDragStart);
+      cardEl.addEventListener("touchstart", handleDragStart, {
+        passive: false,
+      });
+      cardEl.addEventListener("click", handleCardClick);
     } else {
       cardEl.innerHTML = `
                 <div class="card-back-design" aria-hidden="true">
@@ -410,13 +435,13 @@ document.addEventListener('DOMContentLoaded', () => {
       pushHistory();
       executeMove(colIndex, cardIndex, destination);
     } else {
-      playSound('error');
+      playSound("error");
     }
   }
 
   function executeMove(fromCol, cardIndex, toCol) {
     initAudio();
-    playSound('card');
+    playSound("card");
     triggerHaptic();
 
     const movingCards = columns[fromCol].splice(cardIndex);
@@ -436,20 +461,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- PIOCHE (STOCK) ---
-  stockPile.addEventListener('click', () => {
+  stockPile.addEventListener("click", () => {
     if (!isGameActive || stock.length === 0) return;
 
     // Vérification : toutes les colonnes doivent avoir au moins une carte
-    const hasEmptyColumn = columns.some(col => col.length === 0);
+    const hasEmptyColumn = columns.some((col) => col.length === 0);
     if (hasEmptyColumn) {
-      playSound('error');
-      alert("Toutes les colonnes doivent contenir au moins une carte pour distribuer !");
+      playSound("error");
+      alert(
+        "Toutes les colonnes doivent contenir au moins une carte pour distribuer !",
+      );
       return;
     }
 
     pushHistory();
     initAudio();
-    playSound('card');
+    playSound("card");
 
     for (let i = 0; i < 10; i++) {
       if (stock.length > 0) {
@@ -471,10 +498,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- DÉTECTION & COMPLÉTION DES SUITES (DU ROI À L'AS) ---
   function isCompletedSuit(cards) {
-    return cards.length === 13 &&
-      cards.every(card => card.faceUp) &&
+    return (
+      cards.length === 13 &&
+      cards.every((card) => card.faceUp) &&
       cards[0].value === 13 &&
-      isValidSequence(cards);
+      isValidSequence(cards)
+    );
   }
 
   function checkCompletedSuits(colIndex) {
@@ -492,11 +521,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // La colonne peut avoir changé pendant l'animation (notamment après une annulation).
         const currentLast13 = columns[colIndex].slice(-13);
-        if (scheduledSession !== gameSession || !isCompletedSuit(currentLast13)) {
+        if (
+          scheduledSession !== gameSession ||
+          !isCompletedSuit(currentLast13)
+        ) {
           return;
         }
 
-        playSound('complete');
+        playSound("complete");
         triggerHaptic();
 
         // Retirer la suite du tableau
@@ -549,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dragOffset.y = touch.clientY - rect.top;
 
     // Création du Proxy de glissement
-    dragProxy = document.createElement('div');
+    dragProxy = document.createElement("div");
     dragProxy.style.cssText = `
             position: fixed;
             pointer-events: none;
@@ -562,18 +594,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cloner la séquence de cartes
     draggedCards.forEach((card, idx) => {
       const clone = createCardElement(card, colIndex, cardIndex + idx);
-      clone.classList.add('dragging');
-      clone.style.position = 'absolute';
+      clone.classList.add("dragging");
+      clone.style.position = "absolute";
       clone.style.top = `${idx * 24}px`;
       dragProxy.appendChild(clone);
     });
 
     document.body.appendChild(dragProxy);
 
-    window.addEventListener('mousemove', handleDragMove);
-    window.addEventListener('touchmove', handleDragMove, { passive: false });
-    window.addEventListener('mouseup', handleDragEnd);
-    window.addEventListener('touchend', handleDragEnd);
+    window.addEventListener("mousemove", handleDragMove);
+    window.addEventListener("touchmove", handleDragMove, { passive: false });
+    window.addEventListener("mouseup", handleDragEnd);
+    window.addEventListener("touchend", handleDragEnd);
   }
 
   function handleDragMove(e) {
@@ -586,11 +618,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Highlight colonne survolée
     columnElements.forEach((colEl, idx) => {
       const rect = colEl.getBoundingClientRect();
-      if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
-        touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-        colEl.classList.add('highlight');
+      if (
+        touch.clientX >= rect.left &&
+        touch.clientX <= rect.right &&
+        touch.clientY >= rect.top &&
+        touch.clientY <= rect.bottom
+      ) {
+        colEl.classList.add("highlight");
       } else {
-        colEl.classList.remove('highlight');
+        colEl.classList.remove("highlight");
       }
     });
   }
@@ -602,21 +638,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let targetColIndex = -1;
 
     columnElements.forEach((colEl, idx) => {
-      colEl.classList.remove('highlight');
+      colEl.classList.remove("highlight");
       const rect = colEl.getBoundingClientRect();
-      if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
-        touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+      if (
+        touch.clientX >= rect.left &&
+        touch.clientX <= rect.right &&
+        touch.clientY >= rect.top &&
+        touch.clientY <= rect.bottom
+      ) {
         targetColIndex = idx;
       }
     });
 
-    if (targetColIndex !== -1 && targetColIndex !== sourceColIndex &&
-      canMoveToColumn(draggedCards, targetColIndex)) {
+    if (
+      targetColIndex !== -1 &&
+      targetColIndex !== sourceColIndex &&
+      canMoveToColumn(draggedCards, targetColIndex)
+    ) {
       pushHistory();
       const cardIndex = columns[sourceColIndex].length - draggedCards.length;
       executeMove(sourceColIndex, cardIndex, targetColIndex);
     } else if (targetColIndex !== -1 && targetColIndex !== sourceColIndex) {
-      playSound('error');
+      playSound("error");
     }
 
     // Clean Up
@@ -625,26 +668,28 @@ document.addEventListener('DOMContentLoaded', () => {
     draggedCards = [];
     sourceColIndex = -1;
 
-    window.removeEventListener('mousemove', handleDragMove);
-    window.removeEventListener('touchmove', handleDragMove);
-    window.removeEventListener('mouseup', handleDragEnd);
-    window.removeEventListener('touchend', handleDragEnd);
+    window.removeEventListener("mousemove", handleDragMove);
+    window.removeEventListener("touchmove", handleDragMove);
+    window.removeEventListener("mouseup", handleDragEnd);
+    window.removeEventListener("touchend", handleDragEnd);
   }
 
   // --- ANNULATION (UNDO) & INDICES (HINT) ---
   function pushHistory() {
-    history.push(JSON.stringify({
-      columns,
-      stock,
-      completedSuits,
-      completedSequences,
-      score,
-      moves
-    }));
+    history.push(
+      JSON.stringify({
+        columns,
+        stock,
+        completedSuits,
+        completedSequences,
+        score,
+        moves,
+      }),
+    );
     if (history.length > 20) history.shift(); // Max 20 annulations
   }
 
-  document.getElementById('btn-undo').addEventListener('click', () => {
+  document.getElementById("btn-undo").addEventListener("click", () => {
     if (history.length === 0 || !isGameActive) return;
     const prevState = JSON.parse(history.pop());
     columns = prevState.columns;
@@ -656,11 +701,11 @@ document.addEventListener('DOMContentLoaded', () => {
     moves = prevState.moves;
 
     renderBoard();
-    playSound('card');
+    playSound("card");
     saveState();
   });
 
-  document.getElementById('btn-hint').addEventListener('click', () => {
+  document.getElementById("btn-hint").addEventListener("click", () => {
     if (!isGameActive) return;
 
     // Chercher un coup valide
@@ -678,8 +723,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const colEl = columnElements[fromCol];
             const cardEl = colEl.children[cardIdx];
             if (cardEl) {
-              cardEl.classList.add('hint');
-              setTimeout(() => cardEl.classList.remove('hint'), 2000);
+              cardEl.classList.add("hint");
+              setTimeout(() => cardEl.classList.remove("hint"), 2000);
               score = Math.max(0, score - 5);
               updateUI();
               return;
@@ -688,7 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
-    playSound('error');
+    playSound("error");
   });
 
   // --- CHRONOMÈTRE ---
@@ -711,8 +756,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function formatTime(totalSeconds) {
-    const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
-    const secs = String(totalSeconds % 60).padStart(2, '0');
+    const mins = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+    const secs = String(totalSeconds % 60).padStart(2, "0");
     return `${mins}:${secs}`;
   }
 
@@ -728,48 +773,54 @@ document.addEventListener('DOMContentLoaded', () => {
   function saveLeaderboardEntry() {
     const scores = getLeaderboard();
     scores.push({ score, moves, seconds: secondsElapsed, difficulty });
-    const sortScores = (a, b) => b.score - a.score || a.moves - b.moves || a.seconds - b.seconds;
-    const bestScores = [1, 2, 4].flatMap(difficultyLevel => scores
-      .filter(entry => Number(entry.difficulty) === difficultyLevel)
-      .sort(sortScores)
-      .slice(0, 5));
+    const sortScores = (a, b) =>
+      b.score - a.score || a.moves - b.moves || a.seconds - b.seconds;
+    const bestScores = [1, 2, 4].flatMap((difficultyLevel) =>
+      scores
+        .filter((entry) => Number(entry.difficulty) === difficultyLevel)
+        .sort(sortScores)
+        .slice(0, 5),
+    );
     localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(bestScores));
   }
 
   function renderLeaderboard() {
     const scores = getLeaderboard()
-      .filter(entry => Number(entry.difficulty) === leaderboardDifficulty)
-      .sort((a, b) => b.score - a.score || a.moves - b.moves || a.seconds - b.seconds);
-    leaderboardList.innerHTML = '';
+      .filter((entry) => Number(entry.difficulty) === leaderboardDifficulty)
+      .sort(
+        (a, b) =>
+          b.score - a.score || a.moves - b.moves || a.seconds - b.seconds,
+      );
+    leaderboardList.innerHTML = "";
 
-    leaderboardTabs.forEach(tab => {
+    leaderboardTabs.forEach((tab) => {
       const isActive = Number(tab.dataset.difficulty) === leaderboardDifficulty;
-      tab.classList.toggle('active', isActive);
-      tab.setAttribute('aria-selected', String(isActive));
+      tab.classList.toggle("active", isActive);
+      tab.setAttribute("aria-selected", String(isActive));
     });
 
     if (scores.length === 0) {
-      const emptyEntry = document.createElement('li');
-      emptyEntry.className = 'leaderboard-empty';
-      emptyEntry.textContent = 'Terminez une partie pour apparaître ici.';
+      const emptyEntry = document.createElement("li");
+      emptyEntry.className = "leaderboard-empty";
+      emptyEntry.textContent = "Terminez une partie pour apparaître ici.";
       leaderboardList.appendChild(emptyEntry);
       return;
     }
 
     scores.forEach((entry, index) => {
-      const item = document.createElement('li');
-      item.className = 'leaderboard-entry';
+      const item = document.createElement("li");
+      item.className = "leaderboard-entry";
 
-      const rank = document.createElement('span');
-      rank.className = 'leaderboard-rank';
+      const rank = document.createElement("span");
+      rank.className = "leaderboard-rank";
       rank.textContent = `#${index + 1}`;
 
-      const details = document.createElement('span');
-      details.className = 'leaderboard-details';
+      const details = document.createElement("span");
+      details.className = "leaderboard-details";
       details.textContent = `${entry.moves} coups · ${formatTime(entry.seconds)}`;
 
-      const entryScore = document.createElement('span');
-      entryScore.className = 'leaderboard-score';
+      const entryScore = document.createElement("span");
+      entryScore.className = "leaderboard-score";
       entryScore.textContent = entry.score;
 
       item.append(rank, details, entryScore);
@@ -781,10 +832,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleVictory() {
     isGameActive = false;
     stopTimer();
-    playSound('win');
+    playSound("win");
 
-    const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
-    const secs = String(secondsElapsed % 60).padStart(2, '0');
+    const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, "0");
+    const secs = String(secondsElapsed % 60).padStart(2, "0");
     victoryStats.textContent = `Grille résolue en ${moves} coups et ${mins}:${secs} !`;
 
     saveLeaderboardEntry();
@@ -802,7 +853,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     startCardCascadeAnimation();
     setTimeout(() => {
-      victoryOverlay.classList.remove('hidden');
+      victoryOverlay.classList.remove("hidden");
     }, 3000);
   }
 
@@ -811,7 +862,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.height = window.innerHeight;
 
     const activeCards = [];
-    const colors = ['#27845e', '#c53f57', '#245fa7', '#a96d00'];
+    const colors = ["#27845e", "#c53f57", "#245fa7", "#a96d00"];
 
     for (let i = 0; i < 40; i++) {
       activeCards.push({
@@ -821,7 +872,7 @@ document.addEventListener('DOMContentLoaded', () => {
         vy: Math.random() * 5 + 3,
         color: colors[Math.floor(Math.random() * colors.length)],
         width: 60,
-        height: 84
+        height: 84,
       });
     }
 
@@ -829,7 +880,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       let stillAnimating = false;
 
-      activeCards.forEach(c => {
+      activeCards.forEach((c) => {
         c.x += c.vx;
         c.y += c.vy;
         c.vy += 0.2; // Gravité
@@ -843,9 +894,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (c.y < canvas.height) stillAnimating = true;
 
         ctx.save();
-        ctx.fillStyle = getComputedStyle(document.documentElement)
-          .getPropertyValue('--card-bg')
-          .trim() || '#fffefa';
+        ctx.fillStyle =
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--card-bg")
+            .trim() || "#fffefa";
         ctx.strokeStyle = c.color;
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -855,7 +907,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.restore();
       });
 
-      if (stillAnimating && !victoryOverlay.classList.contains('hidden')) {
+      if (stillAnimating && !victoryOverlay.classList.contains("hidden")) {
         requestAnimationFrame(drawCascade);
       }
     }
@@ -872,65 +924,67 @@ document.addEventListener('DOMContentLoaded', () => {
       completedSequences,
       score,
       moves,
-      secondsElapsed
+      secondsElapsed,
     };
-    localStorage.setItem('spider_solitaire_save', JSON.stringify(state));
+    localStorage.setItem("spider_solitaire_save", JSON.stringify(state));
   }
 
   // --- BOUTONS & OVERLAYS ---
-  document.querySelectorAll('.btn-difficulty').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  document.querySelectorAll(".btn-difficulty").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
       const diff = e.currentTarget.dataset.suits;
       startNewGame(diff);
     });
   });
 
-  document.getElementById('btn-home').addEventListener('click', () => {
-    homeConfirmOverlay.classList.remove('hidden');
+  document.getElementById("btn-home").addEventListener("click", () => {
+    homeConfirmOverlay.classList.remove("hidden");
   });
 
-  document.getElementById('btn-cancel-home').addEventListener('click', () => {
-    homeConfirmOverlay.classList.add('hidden');
+  document.getElementById("btn-cancel-home").addEventListener("click", () => {
+    homeConfirmOverlay.classList.add("hidden");
   });
 
-  document.getElementById('btn-confirm-home').addEventListener('click', () => {
+  document.getElementById("btn-confirm-home").addEventListener("click", () => {
     isGameActive = false;
     gameSession++;
     completingColumns.clear();
     stopTimer();
-    localStorage.removeItem('spider_solitaire_save');
-    homeConfirmOverlay.classList.add('hidden');
-    leaderboardOverlay.classList.add('hidden');
+    localStorage.removeItem("spider_solitaire_save");
+    homeConfirmOverlay.classList.add("hidden");
+    leaderboardOverlay.classList.add("hidden");
     renderLeaderboard();
-    difficultyOverlay.classList.remove('hidden');
+    difficultyOverlay.classList.remove("hidden");
   });
 
-  document.getElementById('btn-open-leaderboard').addEventListener('click', () => {
-    renderLeaderboard();
-    difficultyOverlay.classList.add('hidden');
-    leaderboardOverlay.classList.remove('hidden');
+  document
+    .getElementById("btn-open-leaderboard")
+    .addEventListener("click", () => {
+      renderLeaderboard();
+      difficultyOverlay.classList.add("hidden");
+      leaderboardOverlay.classList.remove("hidden");
+    });
+
+  document.getElementById("btn-back-to-menu").addEventListener("click", () => {
+    leaderboardOverlay.classList.add("hidden");
+    difficultyOverlay.classList.remove("hidden");
   });
 
-  document.getElementById('btn-back-to-menu').addEventListener('click', () => {
-    leaderboardOverlay.classList.add('hidden');
-    difficultyOverlay.classList.remove('hidden');
-  });
-
-  leaderboardTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
+  leaderboardTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
       leaderboardDifficulty = Number(tab.dataset.difficulty);
       renderLeaderboard();
     });
   });
 
-  document.getElementById('btn-play-again').addEventListener('click', () => {
-    victoryOverlay.classList.add('hidden');
-    leaderboardOverlay.classList.add('hidden');
+  document.getElementById("btn-play-again").addEventListener("click", () => {
+    victoryOverlay.classList.add("hidden");
+    leaderboardOverlay.classList.add("hidden");
     renderLeaderboard();
-    difficultyOverlay.classList.remove('hidden');
+    difficultyOverlay.classList.remove("hidden");
   });
 
   renderLeaderboard();
 
-  window.addEventListener('resize', () => renderBoard());
+  window.addEventListener("resize", () => renderBoard());
 });

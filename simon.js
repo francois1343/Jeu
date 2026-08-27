@@ -10,24 +10,24 @@
 const CONFIG = {
   // 2. Couleurs & Fréquences audio
   colors: {
-    green: { freq: 392, label: 'green' },   // Sol
-    red: { freq: 523, label: 'red' },       // Do
-    yellow: { freq: 659, label: 'yellow' }, // Mi
-    blue: { freq: 784, label: 'blue' }      // Sol (octave)
+    green: { freq: 392, label: "green" }, // Sol
+    red: { freq: 523, label: "red" }, // Do
+    yellow: { freq: 659, label: "yellow" }, // Mi
+    blue: { freq: 784, label: "blue" }, // Sol (octave)
   },
 
   // 3. Timing (en ms)
-  noteLength: 400,           // Durée de la note jouée
-  pauseBetweenNotes: 200,    // Pause entre 2 notes
-  playerTimeout: 3000,       // Temps avant "trop lent"
+  noteLength: 400, // Durée de la note jouée
+  pauseBetweenNotes: 200, // Pause entre 2 notes
+  playerTimeout: 3000, // Temps avant "trop lent"
 
   // 4. Vitesse (diminue avec la difficulté)
-  speedMultiplier: 1.0,      // 1.0 = lent, 0.8 = normal, 0.6 = rapide
+  speedMultiplier: 1.0, // 1.0 = lent, 0.8 = normal, 0.6 = rapide
   speedIncreasePerRound: 0.02, // Acceleration +2% par round
-  minSpeedMultiplier: 0.3,   // Vitesse max
+  minSpeedMultiplier: 0.3, // Vitesse max
 
   // 5. Paliers de victoire
-  victoryThreshold: 20,      // Toutes les 20 séquences
+  victoryThreshold: 20, // Toutes les 20 séquences
 };
 
 /* ============================================================ */
@@ -45,8 +45,8 @@ const gameState = {
   level: 1,
 
   // 8. Mode & configuration
-  mode: 'normal',        // 'normal' ou 'strict'
-  speed: 'normal',       // 'slow', 'normal', 'fast'
+  mode: "normal", // 'normal' ou 'strict'
+  speed: "normal", // 'slow', 'normal', 'fast'
 
   // 9. État du jeu
   isGameRunning: false,
@@ -61,8 +61,8 @@ const gameState = {
   // 11. Leaderboard
   leaderboard: {
     normal: [],
-    strict: []
-  }
+    strict: [],
+  },
 };
 
 /* ============================================================ */
@@ -99,14 +99,14 @@ function playNote(colorLabel, duration = CONFIG.noteLength) {
   osc.connect(gain);
   gain.connect(audioContext.destination);
 
-  osc.type = 'square';
+  osc.type = "square";
   osc.frequency.setValueAtTime(freq, now);
 
   // 17. Envelope : fade in rapide, sustain, fade out rapide
   gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(0.15, now + 0.05);  // Fade in rapide
-  gain.gain.setValueAtTime(0.15, now + duration * 0.9);  // Sustain
-  gain.gain.linearRampToValueAtTime(0, now + duration);  // Fade out
+  gain.gain.linearRampToValueAtTime(0.15, now + 0.05); // Fade in rapide
+  gain.gain.setValueAtTime(0.15, now + duration * 0.9); // Sustain
+  gain.gain.linearRampToValueAtTime(0, now + duration); // Fade out
 
   osc.start(now);
   osc.stop(now + duration / 1000);
@@ -121,7 +121,11 @@ function playErrorSound() {
 
   // 19. Bruit blanc + basse grave
   const noise = audioContext.createBufferSource();
-  const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.3, audioContext.sampleRate);
+  const buffer = audioContext.createBuffer(
+    1,
+    audioContext.sampleRate * 0.3,
+    audioContext.sampleRate,
+  );
   const data = buffer.getChannelData(0);
 
   for (let i = 0; i < buffer.length; i++) {
@@ -146,7 +150,7 @@ function playErrorSound() {
   bassOsc.connect(basGain);
   basGain.connect(audioContext.destination);
 
-  bassOsc.type = 'sine';
+  bassOsc.type = "sine";
   bassOsc.frequency.setValueAtTime(100, now);
   bassOsc.frequency.linearRampToValueAtTime(50, now + 0.3);
 
@@ -172,7 +176,7 @@ function playVictorySound() {
     osc.connect(gain);
     gain.connect(audioContext.destination);
 
-    osc.type = 'square';
+    osc.type = "square";
     osc.frequency.value = freq;
 
     const startTime = now + idx * 0.1;
@@ -190,7 +194,7 @@ function playVictorySound() {
 
 function vibrate(pattern = 20) {
   if (!gameState.vibrationEnabled) return;
-  if ('vibrate' in navigator) {
+  if ("vibrate" in navigator) {
     navigator.vibrate(pattern);
   }
 }
@@ -198,10 +202,10 @@ function vibrate(pattern = 20) {
 // 23. Vibration personnalisée par couleur
 function vibrateColor(colorLabel) {
   const patterns = {
-    green: [10, 5, 10],      // Double tap
-    red: [20, 10, 20],       // Triple tap
+    green: [10, 5, 10], // Double tap
+    red: [20, 10, 20], // Triple tap
     yellow: [15, 5, 15, 5, 15], // Rapide triple
-    blue: [30]               // Seul long
+    blue: [30], // Seul long
   };
   vibrate(patterns[colorLabel] || 20);
 }
@@ -227,10 +231,10 @@ async function playSequence() {
   let noteDuration = CONFIG.noteLength;
   let pauseDuration = CONFIG.pauseBetweenNotes;
 
-  if (gameState.speed === 'slow') {
+  if (gameState.speed === "slow") {
     noteDuration = CONFIG.noteLength * 1.3;
     pauseDuration = CONFIG.pauseBetweenNotes * 1.3;
-  } else if (gameState.speed === 'fast') {
+  } else if (gameState.speed === "fast") {
     noteDuration = CONFIG.noteLength * 0.7;
     pauseDuration = CONFIG.pauseBetweenNotes * 0.7;
   }
@@ -238,7 +242,7 @@ async function playSequence() {
   // 28. Appliquer la vitesse progressive
   const speedFactor = Math.max(
     CONFIG.minSpeedMultiplier,
-    1 - (gameState.level - 1) * CONFIG.speedIncreasePerRound
+    1 - (gameState.level - 1) * CONFIG.speedIncreasePerRound,
   );
   noteDuration *= speedFactor;
   pauseDuration *= speedFactor;
@@ -267,12 +271,12 @@ async function playSequence() {
   gameState.isPlayerTurn = true;
 
   // 35. Mettre à jour le statut
-  updateStatus('Votre tour !');
+  updateStatus("Votre tour !");
 }
 
 // 36. Fonction sleep helper
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /* ============================================================ */
@@ -284,11 +288,11 @@ function highlightButton(colorLabel) {
   const btn = document.querySelector(`.simon-${colorLabel}`);
   if (!btn) return;
 
-  btn.classList.add('active');
+  btn.classList.add("active");
 
   // Retirer la classe après 200ms
   setTimeout(() => {
-    btn.classList.remove('active');
+    btn.classList.remove("active");
   }, 300);
 }
 
@@ -326,7 +330,7 @@ function handleButtonClick(colorLabel) {
 
     // 47. Pause avant la prochaine séquence
     gameState.isPlayerTurn = false;
-    updateStatus('Bravo ! Séquence suivante...');
+    updateStatus("Bravo ! Séquence suivante...");
 
     setTimeout(() => {
       addRandomColor();
@@ -339,23 +343,23 @@ function handleButtonClick(colorLabel) {
 function handleError() {
   playErrorSound();
   vibrate([50, 50, 50, 50, 50]); // Vibration d'erreur intense
-  updateStatus('ERREUR !');
+  updateStatus("ERREUR !");
 
   // 49. Animer le flash rouge
-  document.body.style.background = 'rgba(255, 0, 0, 0.3)';
+  document.body.style.background = "rgba(255, 0, 0, 0.3)";
   setTimeout(() => {
-    document.body.style.background = '';
+    document.body.style.background = "";
   }, 300);
 
   gameState.isPlayerTurn = false;
 
-  if (gameState.mode === 'strict') {
+  if (gameState.mode === "strict") {
     // 50. Mode Strict : Game Over immédiat
     gameState.gameOver = true;
     endGame();
   } else {
     // 51. Mode Normal : Rejouer la séquence
-    updateStatus('Recommençons...');
+    updateStatus("Recommençons...");
     setTimeout(() => {
       playSequence();
     }, 1000);
@@ -368,19 +372,24 @@ function handleError() {
 
 // 53. Mettre à jour l'affichage HUD
 function updateHUD() {
-  document.getElementById('levelDisplay').textContent = gameState.level;
-  document.getElementById('highScoreHud').textContent = gameState.highScore;
-  document.getElementById('modeDisplay').textContent = gameState.mode === 'strict' ? 'STRICT' : 'NORMAL';
-  document.getElementById('ledScore').textContent = String(gameState.level).padStart(2, '0');
-  document.getElementById('sequenceCounter').textContent = gameState.sequence.length;
+  document.getElementById("levelDisplay").textContent = gameState.level;
+  document.getElementById("highScoreHud").textContent = gameState.highScore;
+  document.getElementById("modeDisplay").textContent =
+    gameState.mode === "strict" ? "STRICT" : "NORMAL";
+  document.getElementById("ledScore").textContent = String(
+    gameState.level,
+  ).padStart(2, "0");
+  document.getElementById("sequenceCounter").textContent =
+    gameState.sequence.length;
 }
 
 // 54. Mettre à jour le statut
 function updateStatus(text) {
-  const statusText = document.getElementById('statusText');
-  const statusDot = document.getElementById('statusDot');
+  const statusText = document.getElementById("statusText");
+  const statusDot = document.getElementById("statusDot");
   if (statusText) statusText.textContent = text;
-  if (statusDot) statusDot.classList.toggle('playing', gameState.isComputerPlaying);
+  if (statusDot)
+    statusDot.classList.toggle("playing", gameState.isComputerPlaying);
 }
 
 /* ============================================================ */
@@ -402,10 +411,10 @@ function startGame() {
 
   // 59. Mettre à jour l'affichage
   updateHUD();
-  updateStatus('Prêt !');
+  updateStatus("Prêt !");
 
   // 60. Afficher le game screen
-  showScreen('gameScreen');
+  showScreen("gameScreen");
 
   // 61. Lancer la boucle de jeu
   setTimeout(() => {
@@ -423,7 +432,8 @@ function saveGameResult() {
 
   // 64. Vérifier nouveau record puis enregistrer cette partie
   const currentBoard = gameState.leaderboard[gameState.mode] || [];
-  const isNewRecord = currentBoard.length === 0 || gameState.score > currentBoard[0].score;
+  const isNewRecord =
+    currentBoard.length === 0 || gameState.score > currentBoard[0].score;
   addToLeaderboard(gameState.score, gameState.level);
 
   return isNewRecord;
@@ -447,36 +457,37 @@ function endGame() {
 
 // 67. Afficher un écran
 function showScreen(screenId) {
-  document.querySelectorAll('.screen').forEach(screen => {
-    screen.classList.remove('screen-active');
+  document.querySelectorAll(".screen").forEach((screen) => {
+    screen.classList.remove("screen-active");
   });
-  document.getElementById(screenId)?.classList.add('screen-active');
+  document.getElementById(screenId)?.classList.add("screen-active");
 }
 
 // 68. Afficher l'écran game over
 function showGameOverScreen(isNewRecord) {
-  document.getElementById('finalScore').textContent = gameState.score;
-  document.getElementById('finalSequence').textContent = gameState.level - 1;
-  document.getElementById('finalMode').textContent = gameState.mode === 'strict' ? 'Strict' : 'Normal';
+  document.getElementById("finalScore").textContent = gameState.score;
+  document.getElementById("finalSequence").textContent = gameState.level - 1;
+  document.getElementById("finalMode").textContent =
+    gameState.mode === "strict" ? "Strict" : "Normal";
 
   if (isNewRecord) {
-    document.getElementById('newRecordBanner').style.display = 'block';
+    document.getElementById("newRecordBanner").style.display = "block";
     playVictorySound();
     vibrate([20, 10, 20, 10, 20, 10, 20]);
   } else {
-    document.getElementById('newRecordBanner').style.display = 'none';
+    document.getElementById("newRecordBanner").style.display = "none";
   }
 
-  showScreen('gameOverScreen');
+  showScreen("gameOverScreen");
 }
 
 // 69. Afficher modal palier victoire
 function showVictoryPalier(level) {
-  const modal = document.getElementById('victoryModal');
-  const message = document.getElementById('victoryMessage');
+  const modal = document.getElementById("victoryModal");
+  const message = document.getElementById("victoryMessage");
 
   message.textContent = `Vous avez atteint ${level} séquences ! C'est incroyable !`;
-  modal.style.display = 'flex';
+  modal.style.display = "flex";
 
   playVictorySound();
   vibrate([30, 10, 30, 10, 30]);
@@ -488,22 +499,26 @@ function showVictoryPalier(level) {
 
 // 71. Charger le leaderboard
 function loadLeaderboard() {
-  const saved = localStorage.getItem('simonLeaderboard');
+  const saved = localStorage.getItem("simonLeaderboard");
   if (saved) {
     try {
       const parsedLeaderboard = JSON.parse(saved);
       gameState.leaderboard = {
-        normal: Array.isArray(parsedLeaderboard.normal) ? parsedLeaderboard.normal : [],
-        strict: Array.isArray(parsedLeaderboard.strict) ? parsedLeaderboard.strict : []
+        normal: Array.isArray(parsedLeaderboard.normal)
+          ? parsedLeaderboard.normal
+          : [],
+        strict: Array.isArray(parsedLeaderboard.strict)
+          ? parsedLeaderboard.strict
+          : [],
       };
     } catch {
       // Une ancienne donnée invalide ne doit pas empêcher le jeu de démarrer.
-      localStorage.removeItem('simonLeaderboard');
+      localStorage.removeItem("simonLeaderboard");
     }
   }
 
   // 72. Charger aussi le high score global
-  const hsaved = localStorage.getItem('simonHighScore');
+  const hsaved = localStorage.getItem("simonHighScore");
   if (hsaved) {
     gameState.highScore = parseInt(hsaved);
   }
@@ -511,51 +526,59 @@ function loadLeaderboard() {
 
 // 73. Sauvegarder le high score global
 function saveHighScore(score) {
-  localStorage.setItem('simonHighScore', score.toString());
+  localStorage.setItem("simonHighScore", score.toString());
 }
 
 // 74. Ajouter une entrée au leaderboard
 function addToLeaderboard(score, level) {
   const entry = {
-    score,             // Points réellement affichés au joueur
-    level: level - 1,  // Nombre de séquences réussies
-    timestamp: new Date().getTime()
+    score, // Points réellement affichés au joueur
+    level: level - 1, // Nombre de séquences réussies
+    timestamp: new Date().getTime(),
   };
 
   gameState.leaderboard[gameState.mode].push(entry);
   gameState.leaderboard[gameState.mode].sort((a, b) => b.score - a.score);
-  gameState.leaderboard[gameState.mode] = gameState.leaderboard[gameState.mode].slice(0, 10); // Top 10
+  gameState.leaderboard[gameState.mode] = gameState.leaderboard[
+    gameState.mode
+  ].slice(0, 10); // Top 10
 
   saveLeaderboard();
 }
 
 // 75. Sauvegarder le leaderboard
 function saveLeaderboard() {
-  localStorage.setItem('simonLeaderboard', JSON.stringify(gameState.leaderboard));
+  localStorage.setItem(
+    "simonLeaderboard",
+    JSON.stringify(gameState.leaderboard),
+  );
 }
 
 // 76. Afficher le leaderboard
 function displayLeaderboard(mode) {
   const list = gameState.leaderboard[mode] || [];
-  const container = document.getElementById('leaderboardList');
+  const container = document.getElementById("leaderboardList");
 
   if (list.length === 0) {
-    container.innerHTML = '<div class="empty-leaderboard">Aucun score enregistré</div>';
+    container.innerHTML =
+      '<div class="empty-leaderboard">Aucun score enregistré</div>';
     return;
   }
 
-  const medals = ['🥇', '🥈', '🥉'];
+  const medals = ["🥇", "🥈", "🥉"];
 
-  container.innerHTML = list.map((entry, idx) => {
-    const medal = medals[idx] || '•';
-    return `
+  container.innerHTML = list
+    .map((entry, idx) => {
+      const medal = medals[idx] || "•";
+      return `
             <div class="leaderboard-entry">
                 <div class="rank-medal">${medal}</div>
                 <div class="entry-name">#${idx + 1}</div>
                 <div class="entry-score">${entry.score}</div>
             </div>
         `;
-  }).join('');
+    })
+    .join("");
 }
 
 /* ============================================================ */
@@ -563,30 +586,34 @@ function displayLeaderboard(mode) {
 /* ============================================================ */
 
 // 78. Sélectionner le mode de jeu
-document.querySelectorAll('.mode-option').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.mode-option').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+document.querySelectorAll(".mode-option").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document
+      .querySelectorAll(".mode-option")
+      .forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
     gameState.mode = btn.dataset.mode;
   });
 });
 
 // 79. Sélectionner la vitesse
-document.querySelectorAll('.speed-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('speed-active'));
-    btn.classList.add('speed-active');
+document.querySelectorAll(".speed-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document
+      .querySelectorAll(".speed-btn")
+      .forEach((b) => b.classList.remove("speed-active"));
+    btn.classList.add("speed-active");
     gameState.speed = btn.dataset.speed;
   });
 });
 
 // 80. Bouton démarrer du menu
-document.getElementById('startGameBtn')?.addEventListener('click', startGame);
+document.getElementById("startGameBtn")?.addEventListener("click", startGame);
 
 // 81. Bouton leaderboard du menu
-document.getElementById('leaderboardMenuBtn')?.addEventListener('click', () => {
-  displayLeaderboard('normal');
-  showScreen('leaderboardScreen');
+document.getElementById("leaderboardMenuBtn")?.addEventListener("click", () => {
+  displayLeaderboard("normal");
+  showScreen("leaderboardScreen");
 });
 
 /* ============================================================ */
@@ -594,23 +621,23 @@ document.getElementById('leaderboardMenuBtn')?.addEventListener('click', () => {
 /* ============================================================ */
 
 // 83. Clic sur les 4 boutons Simon
-document.querySelectorAll('.simon-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
+document.querySelectorAll(".simon-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
     const color = btn.dataset.color;
     handleButtonClick(color);
   });
 
   // 84. Vibration au toucher (feedback haptique)
-  btn.addEventListener('touchstart', (e) => {
+  btn.addEventListener("touchstart", (e) => {
     vibrate(10);
   });
 });
 
 // 85. Bouton Recommencer
-document.getElementById('restartGameBtn')?.addEventListener('click', startGame);
+document.getElementById("restartGameBtn")?.addEventListener("click", startGame);
 
 // 86. Bouton Quitter
-document.getElementById('quitGameBtn')?.addEventListener('click', () => {
+document.getElementById("quitGameBtn")?.addEventListener("click", () => {
   // En mode Normal, le joueur choisit lui-même de terminer sa session.
   if (gameState.isGameRunning && gameState.score > 0) {
     saveGameResult();
@@ -618,7 +645,7 @@ document.getElementById('quitGameBtn')?.addEventListener('click', () => {
   gameState.isGameRunning = false;
   gameState.isPlayerTurn = false;
   gameState.isComputerPlaying = false;
-  showScreen('menuScreen');
+  showScreen("menuScreen");
 });
 
 /* ============================================================ */
@@ -626,11 +653,13 @@ document.getElementById('quitGameBtn')?.addEventListener('click', () => {
 /* ============================================================ */
 
 // 89. Rejouer
-document.getElementById('retryGameOverBtn')?.addEventListener('click', startGame);
+document
+  .getElementById("retryGameOverBtn")
+  ?.addEventListener("click", startGame);
 
 // 90. Menu depuis game over
-document.getElementById('menuGameOverBtn')?.addEventListener('click', () => {
-  showScreen('menuScreen');
+document.getElementById("menuGameOverBtn")?.addEventListener("click", () => {
+  showScreen("menuScreen");
 });
 
 /* ============================================================ */
@@ -638,17 +667,19 @@ document.getElementById('menuGameOverBtn')?.addEventListener('click', () => {
 /* ============================================================ */
 
 // 92. Onglets leaderboard
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
-    btn.classList.add('tab-active');
+document.querySelectorAll(".tab-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document
+      .querySelectorAll(".tab-btn")
+      .forEach((b) => b.classList.remove("tab-active"));
+    btn.classList.add("tab-active");
     displayLeaderboard(btn.dataset.tab);
   });
 });
 
 // 93. Bouton retour leaderboard
-document.getElementById('leaderboardBackBtn')?.addEventListener('click', () => {
-  showScreen('menuScreen');
+document.getElementById("leaderboardBackBtn")?.addEventListener("click", () => {
+  showScreen("menuScreen");
 });
 
 /* ============================================================ */
@@ -656,26 +687,26 @@ document.getElementById('leaderboardBackBtn')?.addEventListener('click', () => {
 /* ============================================================ */
 
 // 95. Confirmer le palier
-document.getElementById('victoryConfirmBtn')?.addEventListener('click', () => {
-  document.getElementById('victoryModal').style.display = 'none';
+document.getElementById("victoryConfirmBtn")?.addEventListener("click", () => {
+  document.getElementById("victoryModal").style.display = "none";
 });
 
 /* ============================================================ */
 /* 96. INITIALISATION AU DÉMARRAGE */
 /* ============================================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   // 97. Charger les données sauvegardées
   loadLeaderboard();
 
   // 98. Mettre à jour le high score d'affichage
-  document.getElementById('highScoreHud').textContent = gameState.highScore;
+  document.getElementById("highScoreHud").textContent = gameState.highScore;
 
   // 99. Afficher le menu par défaut
-  showScreen('menuScreen');
+  showScreen("menuScreen");
 
   // 100. Log de démarrage
-  console.log('🎮 Simon Néon initialized!');
+  console.log("🎮 Simon Néon initialized!");
 });
 
 /* ============================================================ */
@@ -683,17 +714,25 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ============================================================ */
 
 // 102. Débloquer l'audio context sur click (requis sur mobile iOS)
-document.addEventListener('click', () => {
-  initAudioContext();
-  if (audioContext && audioContext.state === 'suspended') {
-    audioContext.resume();
-  }
-}, { once: true });
+document.addEventListener(
+  "click",
+  () => {
+    initAudioContext();
+    if (audioContext && audioContext.state === "suspended") {
+      audioContext.resume();
+    }
+  },
+  { once: true },
+);
 
 // 103. Alternative touch pour déverrouillage audio
-document.addEventListener('touchstart', () => {
-  initAudioContext();
-  if (audioContext && audioContext.state === 'suspended') {
-    audioContext.resume();
-  }
-}, { once: true });
+document.addEventListener(
+  "touchstart",
+  () => {
+    initAudioContext();
+    if (audioContext && audioContext.state === "suspended") {
+      audioContext.resume();
+    }
+  },
+  { once: true },
+);
