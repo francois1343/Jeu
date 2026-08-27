@@ -1,7 +1,7 @@
 /* ===== RESET & BASE ===== */
 * {
   box-sizing: border-box;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
 body {
@@ -46,7 +46,7 @@ h1 {
   --color-snake: #22c55e;
   --color-pong: #ec4899;
   --color-demineur: #ef4444;
-  
+
   /* Nouveaux jeux */
   --color-2048: #f97316;
   --color-bataille: #0ea5e9;
@@ -57,7 +57,7 @@ h1 {
 .game-card {
   --card-color: #888;
   --card-color-rgb: 136, 136, 136;
-  
+
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
@@ -69,7 +69,7 @@ h1 {
 }
 
 .game-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -81,7 +81,7 @@ h1 {
 
 .game-card:hover {
   transform: translateY(-5px);
-  box-shadow: 
+  box-shadow:
     0 15px 40px rgba(0, 0, 0, 0.6),
     0 0 30px rgba(var(--card-color-rgb), 0.15);
   border-color: rgba(var(--card-color-rgb), 0.3);
@@ -255,7 +255,11 @@ h1 {
   letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: linear-gradient(135deg, var(--card-color), rgba(var(--card-color-rgb), 0.7));
+  background: linear-gradient(
+    135deg,
+    var(--card-color),
+    rgba(var(--card-color-rgb), 0.7)
+  );
   color: #000;
   position: relative;
   overflow: hidden;
@@ -272,13 +276,18 @@ h1 {
 
 /* Effet brillance sur le bouton */
 .btn-launch::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
   transition: left 0.5s ease;
 }
 
@@ -291,21 +300,21 @@ h1 {
   body {
     padding: 20px 10px;
   }
-  
+
   h1 {
     font-size: 1.8rem;
   }
-  
+
   .games {
     grid-template-columns: 1fr;
     gap: 15px;
     padding: 10px;
   }
-  
+
   .game-card {
     padding: 20px;
   }
-  
+
   .game-title {
     font-size: 1.1rem;
   }
@@ -315,7 +324,7 @@ h1 {
   .game-tags {
     justify-content: center;
   }
-  
+
   .game-interactive {
     padding: 15px;
   }
@@ -337,14 +346,36 @@ h1 {
   animation: fadeIn 0.5s ease forwards;
 }
 
-.game-card:nth-child(1) { animation-delay: 0.05s; }
-.game-card:nth-child(2) { animation-delay: 0.1s; }
-.game-card:nth-child(3) { animation-delay: 0.15s; }
-.game-card:nth-child(4) { animation-delay: 0.2s; }
-.game-card:nth-child(5) { animation-delay: 0.25s; }
-.game-card:nth-child(6) { animation-delay: 0.3s; }
-.game-card:nth-child(7) { animation-delay: 0.35s; }
-.game-card:nth-child(8) { animation-delay: 0.4s; }
-.game-card:nth-child(9) { animation-delay: 0.45s; }
-.game-card:nth-child(10) { animation-delay: 0.5s; }
-.game-card:nth-child(11) { animation-delay: 0.55s; }
+.game-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.game-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.game-card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.game-card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.game-card:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.game-card:nth-child(6) {
+  animation-delay: 0.3s;
+}
+.game-card:nth-child(7) {
+  animation-delay: 0.35s;
+}
+.game-card:nth-child(8) {
+  animation-delay: 0.4s;
+}
+.game-card:nth-child(9) {
+  animation-delay: 0.45s;
+}
+.game-card:nth-child(10) {
+  animation-delay: 0.5s;
+}
+.game-card:nth-child(11) {
+  animation-delay: 0.55s;
+}

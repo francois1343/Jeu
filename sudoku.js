@@ -2,15 +2,15 @@
  * SUDOKU MASTER & SOLVER - Engine Game.js
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   // --- VARIABLES D'ÉTAT DU JEU ---
-  let board = Array(81).fill(0);          // Valeurs actuelles (0 = vide)
-  let initialBoard = Array(81).fill(0);   // Configuration de départ
-  let solutionBoard = Array(81).fill(0);  // Grille résolue
+  let board = Array(81).fill(0); // Valeurs actuelles (0 = vide)
+  let initialBoard = Array(81).fill(0); // Configuration de départ
+  let solutionBoard = Array(81).fill(0); // Grille résolue
   let notes = Array.from({ length: 81 }, () => new Set()); // Notes crayon (1-9)
 
   let selectedCell = -1;
-  let currentDifficulty = 'easy';
+  let currentDifficulty = "easy";
   let isPencilMode = false;
   let errors = 0;
   const maxErrors = 3;
@@ -20,29 +20,29 @@ document.addEventListener('DOMContentLoaded', () => {
   let history = []; // Pile pour Undo (annuler)
   let hintedCells = new Set();
   let hintMessageTimeout = null;
-  let currentTheme = 'dark';
-  let currentAccent = 'cyan';
+  let currentTheme = "dark";
+  let currentAccent = "cyan";
 
   // Elements DOM
-  const boardElement = document.getElementById('sudoku-board');
-  const timerElement = document.getElementById('timer');
-  const errorCountElement = document.getElementById('error-count');
-  const modeDisplayElement = document.getElementById('current-mode-display');
-  const pencilBtn = document.getElementById('btn-pencil');
-  const pencilStatus = document.getElementById('pencil-status');
-  const insaneControls = document.getElementById('insane-controls');
-  const leaderboardList = document.getElementById('leaderboard-list');
-  const mainMenu = document.getElementById('main-menu');
-  const gameView = document.getElementById('game-view');
-  const menuBtn = document.getElementById('btn-menu');
-  const hintBtn = document.getElementById('btn-hint');
-  const hintMessage = document.getElementById('hint-message');
-  const quickThemeBtn = document.getElementById('btn-theme-quick');
+  const boardElement = document.getElementById("sudoku-board");
+  const timerElement = document.getElementById("timer");
+  const errorCountElement = document.getElementById("error-count");
+  const modeDisplayElement = document.getElementById("current-mode-display");
+  const pencilBtn = document.getElementById("btn-pencil");
+  const pencilStatus = document.getElementById("pencil-status");
+  const insaneControls = document.getElementById("insane-controls");
+  const leaderboardList = document.getElementById("leaderboard-list");
+  const mainMenu = document.getElementById("main-menu");
+  const gameView = document.getElementById("game-view");
+  const menuBtn = document.getElementById("btn-menu");
+  const hintBtn = document.getElementById("btn-hint");
+  const hintMessage = document.getElementById("hint-message");
+  const quickThemeBtn = document.getElementById("btn-theme-quick");
   const difficultyLabels = {
-    easy: 'Facile',
-    medium: 'Moyen',
-    hard: 'Difficile',
-    insane: 'Insane'
+    easy: "Facile",
+    medium: "Moyen",
+    hard: "Difficile",
+    insane: "Insane",
   };
 
   // --- MOTEUR AUDIO (Web Audio API) ---
@@ -64,21 +64,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const now = audioCtx.currentTime;
 
-    if (type === 'click') {
+    if (type === "click") {
       osc.frequency.setValueAtTime(400, now);
       gain.gain.setValueAtTime(0.1, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
       osc.start(now);
       osc.stop(now + 0.05);
-    } else if (type === 'error') {
-      osc.type = 'sawtooth';
+    } else if (type === "error") {
+      osc.type = "sawtooth";
       osc.frequency.setValueAtTime(150, now);
       gain.gain.setValueAtTime(0.2, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
       osc.start(now);
       osc.stop(now + 0.2);
-    } else if (type === 'win') {
-      const notes = [261.63, 329.63, 392.00, 523.25]; // Do, Mi, Sol, Do
+    } else if (type === "win") {
+      const notes = [261.63, 329.63, 392.0, 523.25]; // Do, Mi, Sol, Do
       notes.forEach((freq, idx) => {
         const noteOsc = audioCtx.createOscillator();
         const noteGain = audioCtx.createGain();
@@ -101,39 +101,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- PERSONNALISATION DE L'APPARENCE ---
   function applyAppearance(theme, accent, persist = true) {
-    const validThemes = ['dark', 'light'];
-    const validAccents = ['cyan', 'purple', 'pink', 'green'];
-    currentTheme = validThemes.includes(theme) ? theme : 'dark';
-    currentAccent = validAccents.includes(accent) ? accent : 'cyan';
+    const validThemes = ["dark", "light"];
+    const validAccents = ["cyan", "purple", "pink", "green"];
+    currentTheme = validThemes.includes(theme) ? theme : "dark";
+    currentAccent = validAccents.includes(accent) ? accent : "cyan";
 
     document.documentElement.dataset.theme = currentTheme;
     document.documentElement.dataset.accent = currentAccent;
 
-    document.querySelectorAll('[data-theme-choice]').forEach(button => {
+    document.querySelectorAll("[data-theme-choice]").forEach((button) => {
       const isActive = button.dataset.themeChoice === currentTheme;
-      button.classList.toggle('active', isActive);
-      button.setAttribute('aria-pressed', String(isActive));
+      button.classList.toggle("active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
     });
 
-    document.querySelectorAll('[data-accent-choice]').forEach(button => {
+    document.querySelectorAll("[data-accent-choice]").forEach((button) => {
       const isActive = button.dataset.accentChoice === currentAccent;
-      button.classList.toggle('active', isActive);
-      button.setAttribute('aria-pressed', String(isActive));
+      button.classList.toggle("active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
     });
 
-    const isDark = currentTheme === 'dark';
-    quickThemeBtn.textContent = isDark ? '☀' : '☾';
-    quickThemeBtn.setAttribute('aria-label', isDark ? 'Activer le thème lumineux' : 'Activer le thème sombre');
+    const isDark = currentTheme === "dark";
+    quickThemeBtn.textContent = isDark ? "☀" : "☾";
+    quickThemeBtn.setAttribute(
+      "aria-label",
+      isDark ? "Activer le thème lumineux" : "Activer le thème sombre",
+    );
 
     if (persist) {
-      localStorage.setItem('sudoku_theme', currentTheme);
-      localStorage.setItem('sudoku_accent', currentAccent);
+      localStorage.setItem("sudoku_theme", currentTheme);
+      localStorage.setItem("sudoku_accent", currentAccent);
     }
   }
 
   function loadAppearance() {
-    const savedTheme = localStorage.getItem('sudoku_theme') || 'dark';
-    const savedAccent = localStorage.getItem('sudoku_accent') || 'cyan';
+    const savedTheme = localStorage.getItem("sudoku_theme") || "dark";
+    const savedAccent = localStorage.getItem("sudoku_accent") || "cyan";
     applyAppearance(savedTheme, savedAccent, false);
   }
 
@@ -144,9 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     for (let i = 0; i < 9; i++) {
       // Ligne
-      if (grid[row * 9 + i] === num && (row * 9 + i) !== index) return false;
+      if (grid[row * 9 + i] === num && row * 9 + i !== index) return false;
       // Colonne
-      if (grid[i * 9 + col] === num && (i * 9 + col) !== index) return false;
+      if (grid[i * 9 + col] === num && i * 9 + col !== index) return false;
     }
 
     // Bloc 3x3
@@ -173,7 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function solveGrid(grid, randomize = false) {
     for (let i = 0; i < 81; i++) {
       if (grid[i] === 0) {
-        const nums = randomize ? shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]) : [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        const nums = randomize
+          ? shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9])
+          : [1, 2, 3, 4, 5, 6, 7, 8, 9];
         for (let num of nums) {
           if (isValidMove(grid, i, num)) {
             grid[i] = num;
@@ -211,10 +216,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const puzzle = [...full];
 
     let toRemove = 30; // Facile par défaut
-    if (difficulty === 'medium') toRemove = 42;
-    if (difficulty === 'hard') toRemove = 54;
+    if (difficulty === "medium") toRemove = 42;
+    if (difficulty === "hard") toRemove = 54;
 
-    const indices = Array.from({ length: 81 }, (_, i) => i).sort(() => Math.random() - 0.5);
+    const indices = Array.from({ length: 81 }, (_, i) => i).sort(
+      () => Math.random() - 0.5,
+    );
     for (let i = 0; i < toRemove; i++) {
       puzzle[indices[i]] = 0;
     }
@@ -233,33 +240,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateTimerDisplay() {
-    const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
-    const secs = String(secondsElapsed % 60).padStart(2, '0');
+    const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, "0");
+    const secs = String(secondsElapsed % 60).padStart(2, "0");
     timerElement.textContent = `${mins}:${secs}`;
   }
 
   // --- RENDU UI DE LA GRILLE ---
   function initBoardUI() {
-    boardElement.innerHTML = '';
+    boardElement.innerHTML = "";
     for (let i = 0; i < 81; i++) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
       cell.dataset.index = i;
       cell.dataset.row = Math.floor(i / 9);
       cell.dataset.col = i % 9;
 
       // Notes grid (3x3)
-      const notesGrid = document.createElement('div');
-      notesGrid.classList.add('notes-grid');
+      const notesGrid = document.createElement("div");
+      notesGrid.classList.add("notes-grid");
       for (let n = 1; n <= 9; n++) {
-        const noteSpan = document.createElement('span');
-        noteSpan.classList.add('note-candidate');
+        const noteSpan = document.createElement("span");
+        noteSpan.classList.add("note-candidate");
         noteSpan.dataset.note = n;
         notesGrid.appendChild(noteSpan);
       }
       cell.appendChild(notesGrid);
 
-      cell.addEventListener('click', () => {
+      cell.addEventListener("click", () => {
         initAudio();
         selectCell(i);
       });
@@ -284,57 +291,75 @@ document.addEventListener('DOMContentLoaded', () => {
       const boxCol = Math.floor(col / 3);
 
       // Remise à zéro des classes d'état
-      cell.classList.remove('selected', 'highlighted', 'same-number', 'given', 'error', 'hinted');
+      cell.classList.remove(
+        "selected",
+        "highlighted",
+        "same-number",
+        "given",
+        "error",
+        "hinted",
+      );
 
       // Cellule pré-remplie
       if (initialBoard[i] !== 0) {
-        cell.classList.add('given');
+        cell.classList.add("given");
       }
 
       if (hintedCells.has(i)) {
-        cell.classList.add('hinted');
+        cell.classList.add("hinted");
       }
 
       // Valeurs et Notes
-      const notesGrid = cell.querySelector('.notes-grid');
+      const notesGrid = cell.querySelector(".notes-grid");
       if (val !== 0) {
-        notesGrid.style.display = 'none';
-        let textNode = cell.querySelector('.cell-value');
+        notesGrid.style.display = "none";
+        let textNode = cell.querySelector(".cell-value");
         if (!textNode) {
-          textNode = document.createElement('span');
-          textNode.classList.add('cell-value');
+          textNode = document.createElement("span");
+          textNode.classList.add("cell-value");
           cell.appendChild(textNode);
         }
         textNode.textContent = val;
 
         // Erreur de surbrillance
-        if (currentDifficulty !== 'insane' && val !== solutionBoard[i] && initialBoard[i] === 0) {
-          cell.classList.add('error');
-        } else if (currentDifficulty === 'insane' && !isValidMove(board, i, val)) {
-          cell.classList.add('error');
+        if (
+          currentDifficulty !== "insane" &&
+          val !== solutionBoard[i] &&
+          initialBoard[i] === 0
+        ) {
+          cell.classList.add("error");
+        } else if (
+          currentDifficulty === "insane" &&
+          !isValidMove(board, i, val)
+        ) {
+          cell.classList.add("error");
         }
       } else {
-        notesGrid.style.display = 'grid';
-        const textNode = cell.querySelector('.cell-value');
+        notesGrid.style.display = "grid";
+        const textNode = cell.querySelector(".cell-value");
         if (textNode) textNode.remove();
 
         // Afficher les candidat(e)s en mode crayon
-        const spans = notesGrid.querySelectorAll('.note-candidate');
-        spans.forEach(span => {
+        const spans = notesGrid.querySelectorAll(".note-candidate");
+        spans.forEach((span) => {
           const candidateNum = parseInt(span.dataset.note);
-          span.textContent = notes[i].has(candidateNum) ? candidateNum : '';
+          span.textContent = notes[i].has(candidateNum) ? candidateNum : "";
         });
       }
 
       // Surbrillances dynamiques
       if (i === selectedCell) {
-        cell.classList.add('selected');
+        cell.classList.add("selected");
       } else if (selectedCell !== -1) {
-        if (row === selRow || col === selCol || (boxRow === selBoxRow && boxCol === selBoxCol)) {
-          cell.classList.add('highlighted');
+        if (
+          row === selRow ||
+          col === selCol ||
+          (boxRow === selBoxRow && boxCol === selBoxCol)
+        ) {
+          cell.classList.add("highlighted");
         }
         if (selectedVal !== 0 && val === selectedVal) {
-          cell.classList.add('same-number');
+          cell.classList.add("same-number");
         }
       }
     }
@@ -343,14 +368,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function selectCell(index) {
     selectedCell = index;
     triggerHaptic();
-    playSound('click');
+    playSound("click");
     renderBoard();
   }
 
   // --- GESTION DES ENTRÉES DU JOUEUR ---
   function handleInput(number) {
     if (selectedCell === -1) return;
-    if (initialBoard[selectedCell] !== 0 && currentDifficulty !== 'insane') return;
+    if (initialBoard[selectedCell] !== 0 && currentDifficulty !== "insane")
+      return;
 
     initAudio();
     triggerHaptic();
@@ -359,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
     saveStateForUndo();
 
     if (isPencilMode && board[selectedCell] === 0) {
-      playSound('click');
+      playSound("click");
       if (notes[selectedCell].has(number)) {
         notes[selectedCell].delete(number);
       } else {
@@ -374,17 +400,20 @@ document.addEventListener('DOMContentLoaded', () => {
         board[selectedCell] = number;
 
         // Traitement des erreurs en mode classique
-        if (currentDifficulty !== 'insane' && number !== solutionBoard[selectedCell]) {
-          playSound('error');
+        if (
+          currentDifficulty !== "insane" &&
+          number !== solutionBoard[selectedCell]
+        ) {
+          playSound("error");
           errors++;
           errorCountElement.textContent = `${errors}/${maxErrors}`;
           if (errors >= maxErrors) {
-            alert('Game Over ! Vous avez atteint le nombre maximal d\'erreurs.');
+            alert("Game Over ! Vous avez atteint le nombre maximal d'erreurs.");
             startNewGame(currentDifficulty);
             return;
           }
         } else {
-          playSound('click');
+          playSound("click");
         }
       }
     }
@@ -396,13 +425,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function eraseCell() {
     if (selectedCell === -1) return;
-    if (initialBoard[selectedCell] !== 0 && currentDifficulty !== 'insane') return;
+    if (initialBoard[selectedCell] !== 0 && currentDifficulty !== "insane")
+      return;
 
     saveStateForUndo();
     board[selectedCell] = 0;
     hintedCells.delete(selectedCell);
     notes[selectedCell].clear();
-    playSound('click');
+    playSound("click");
     renderBoard();
     saveGameState();
   }
@@ -410,8 +440,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function saveStateForUndo() {
     history.push({
       board: [...board],
-      notes: notes.map(set => new Set(set)),
-      hintedCells: new Set(hintedCells)
+      notes: notes.map((set) => new Set(set)),
+      hintedCells: new Set(hintedCells),
     });
     if (history.length > 20) history.shift(); // Limite à 20 coups
   }
@@ -422,18 +452,18 @@ document.addEventListener('DOMContentLoaded', () => {
     board = lastState.board;
     notes = lastState.notes;
     hintedCells = lastState.hintedCells || new Set();
-    playSound('click');
+    playSound("click");
     renderBoard();
     saveGameState();
   }
 
   function checkVictory() {
-    if (currentDifficulty === 'insane') return; // Pas de détection auto de victoire en mode insane vide
+    if (currentDifficulty === "insane") return; // Pas de détection auto de victoire en mode insane vide
 
     const isComplete = board.every((val, idx) => val === solutionBoard[idx]);
     if (isComplete) {
       clearInterval(timerInterval);
-      playSound('win');
+      playSound("win");
       setTimeout(() => {
         alert(`Bravo ! Grille complétée en ${timerElement.textContent} !`);
         saveScore(currentDifficulty, secondsElapsed);
@@ -453,7 +483,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function isGridConsistent(grid) {
-    return grid.every((value, index) => value === 0 || isValidMove(grid, index, value));
+    return grid.every(
+      (value, index) => value === 0 || isValidMove(grid, index, value),
+    );
   }
 
   function findBestHintCell() {
@@ -481,43 +513,64 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < 81; i++) {
       const peerRow = Math.floor(i / 9);
       const peerCol = i % 9;
-      const sameBox = Math.floor(peerRow / 3) === boxRow && Math.floor(peerCol / 3) === boxCol;
-      if (peerRow === row || peerCol === col || sameBox) notes[i].delete(number);
+      const sameBox =
+        Math.floor(peerRow / 3) === boxRow &&
+        Math.floor(peerCol / 3) === boxCol;
+      if (peerRow === row || peerCol === col || sameBox)
+        notes[i].delete(number);
     }
   }
 
   function showHintMessage(message, isError = false) {
     clearTimeout(hintMessageTimeout);
     hintMessage.textContent = message;
-    hintMessage.classList.toggle('error', isError);
-    hintMessage.classList.add('visible');
-    hintMessageTimeout = setTimeout(() => hintMessage.classList.remove('visible'), 6500);
+    hintMessage.classList.toggle("error", isError);
+    hintMessage.classList.add("visible");
+    hintMessageTimeout = setTimeout(
+      () => hintMessage.classList.remove("visible"),
+      6500,
+    );
   }
 
   function useSmartHint() {
     initAudio();
 
     let resolvedGrid = solutionBoard;
-    if (currentDifficulty === 'insane') {
+    if (currentDifficulty === "insane") {
       if (!isGridConsistent(board)) {
-        playSound('error');
-        showHintMessage('Impossible de donner un indice : la grille contient un conflit.', true);
+        playSound("error");
+        showHintMessage(
+          "Impossible de donner un indice : la grille contient un conflit.",
+          true,
+        );
         return;
       }
       resolvedGrid = [...board];
       if (!solveGrid(resolvedGrid, true)) {
-        playSound('error');
-        showHintMessage('Cette configuration ne possède aucune solution.', true);
+        playSound("error");
+        showHintMessage(
+          "Cette configuration ne possède aucune solution.",
+          true,
+        );
         return;
       }
     }
 
-    const selectedIsEditable = selectedCell !== -1 && initialBoard[selectedCell] === 0;
-    let target = selectedIsEditable && board[selectedCell] !== resolvedGrid[selectedCell] ? selectedCell : -1;
+    const selectedIsEditable =
+      selectedCell !== -1 && initialBoard[selectedCell] === 0;
+    let target =
+      selectedIsEditable && board[selectedCell] !== resolvedGrid[selectedCell]
+        ? selectedCell
+        : -1;
     let isCorrection = target !== -1 && board[target] !== 0;
 
-    if (target === -1 && currentDifficulty !== 'insane') {
-      target = board.findIndex((value, index) => initialBoard[index] === 0 && value !== 0 && value !== resolvedGrid[index]);
+    if (target === -1 && currentDifficulty !== "insane") {
+      target = board.findIndex(
+        (value, index) =>
+          initialBoard[index] === 0 &&
+          value !== 0 &&
+          value !== resolvedGrid[index],
+      );
       isCorrection = target !== -1;
     }
 
@@ -525,7 +578,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (target === -1 && bestCell) target = bestCell.index;
 
     if (target === -1) {
-      showHintMessage('La grille est déjà complète. Il ne reste plus qu’à la valider !');
+      showHintMessage(
+        "La grille est déjà complète. Il ne reste plus qu’à la valider !",
+      );
       return;
     }
 
@@ -537,10 +592,10 @@ document.addEventListener('DOMContentLoaded', () => {
     hintedCells.add(target);
     removeHintedNumberFromNotes(target, number);
     selectedCell = target;
-    playSound('click');
+    playSound("click");
     triggerHaptic();
     renderBoard();
-    if (currentDifficulty !== 'insane') {
+    if (currentDifficulty !== "insane") {
       secondsElapsed += hintPenaltySeconds;
       updateTimerDisplay();
     }
@@ -548,13 +603,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const row = Math.floor(target / 9) + 1;
     const col = (target % 9) + 1;
-    const penaltyText = currentDifficulty === 'insane' ? '' : ` · +${hintPenaltySeconds} s`;
+    const penaltyText =
+      currentDifficulty === "insane" ? "" : ` · +${hintPenaltySeconds} s`;
     if (isCorrection) {
-      showHintMessage(`Correction intelligente : la case L${row} C${col} doit contenir ${number}${penaltyText}.`);
+      showHintMessage(
+        `Correction intelligente : la case L${row} C${col} doit contenir ${number}${penaltyText}.`,
+      );
     } else if (candidatesBeforeHint.length === 1) {
-      showHintMessage(`Déduction logique : ${number} est le seul chiffre possible en L${row} C${col}${penaltyText}.`);
+      showHintMessage(
+        `Déduction logique : ${number} est le seul chiffre possible en L${row} C${col}${penaltyText}.`,
+      );
     } else {
-      showHintMessage(`Indice : la case L${row} C${col} contient ${number}. Ligne, colonne et région analysées${penaltyText}.`);
+      showHintMessage(
+        `Indice : la case L${row} C${col} contient ${number}. Ligne, colonne et région analysées${penaltyText}.`,
+      );
     }
     checkVictory();
   }
@@ -570,19 +632,19 @@ document.addEventListener('DOMContentLoaded', () => {
     notes = Array.from({ length: 81 }, () => new Set());
     errorCountElement.textContent = `${errors}/${maxErrors}`;
     modeDisplayElement.textContent = difficultyLabels[difficulty];
-    pencilBtn.classList.remove('active');
-    pencilStatus.textContent = 'OFF';
-    hintMessage.classList.remove('visible', 'error');
-    hintMessage.textContent = '';
+    pencilBtn.classList.remove("active");
+    pencilStatus.textContent = "OFF";
+    hintMessage.classList.remove("visible", "error");
+    hintMessage.textContent = "";
 
     // Gestion de l'affichage Mode Insane
-    if (difficulty === 'insane') {
-      insaneControls.classList.remove('hidden');
+    if (difficulty === "insane") {
+      insaneControls.classList.remove("hidden");
       board = Array(81).fill(0);
       initialBoard = Array(81).fill(0);
       solutionBoard = Array(81).fill(0);
     } else {
-      insaneControls.classList.add('hidden');
+      insaneControls.classList.add("hidden");
       board = generatePuzzle(difficulty);
       initialBoard = [...board];
     }
@@ -595,43 +657,47 @@ document.addEventListener('DOMContentLoaded', () => {
   function showMenu() {
     clearInterval(timerInterval);
     selectedCell = -1;
-    setLeaderboardTab(currentDifficulty === 'insane' ? 'easy' : currentDifficulty);
-    mainMenu.classList.remove('hidden');
-    gameView.classList.add('hidden');
+    setLeaderboardTab(
+      currentDifficulty === "insane" ? "easy" : currentDifficulty,
+    );
+    mainMenu.classList.remove("hidden");
+    gameView.classList.add("hidden");
   }
 
   function startGameFromMenu(difficulty) {
-    mainMenu.classList.add('hidden');
-    gameView.classList.remove('hidden');
+    mainMenu.classList.add("hidden");
+    gameView.classList.remove("hidden");
     startNewGame(difficulty);
   }
 
   // --- MODE INSANE (BACKTRACKING SOLVER & VALIDATION) ---
-  document.getElementById('btn-validate-custom').addEventListener('click', () => {
-    let isValid = true;
-    for (let i = 0; i < 81; i++) {
-      if (board[i] !== 0 && !isValidMove(board, i, board[i])) {
-        isValid = false;
-        break;
+  document
+    .getElementById("btn-validate-custom")
+    .addEventListener("click", () => {
+      let isValid = true;
+      for (let i = 0; i < 81; i++) {
+        if (board[i] !== 0 && !isValidMove(board, i, board[i])) {
+          isValid = false;
+          break;
+        }
       }
-    }
-    if (isValid) {
-      alert('La grille est valide selon les règles du Sudoku !');
-    } else {
-      playSound('error');
-      alert('Attention : La grille contient des doublons ou des erreurs.');
-    }
-  });
+      if (isValid) {
+        alert("La grille est valide selon les règles du Sudoku !");
+      } else {
+        playSound("error");
+        alert("Attention : La grille contient des doublons ou des erreurs.");
+      }
+    });
 
-  document.getElementById('btn-solve-ai').addEventListener('click', () => {
+  document.getElementById("btn-solve-ai").addEventListener("click", () => {
     const gridCopy = [...board];
     if (solveGrid(gridCopy, true)) {
       board = gridCopy;
-      playSound('win');
+      playSound("win");
       renderBoard();
     } else {
-      playSound('error');
-      alert('Aucune solution trouvée pour cette configuration.');
+      playSound("error");
+      alert("Aucune solution trouvée pour cette configuration.");
     }
   });
 
@@ -641,57 +707,62 @@ document.addEventListener('DOMContentLoaded', () => {
       board,
       initialBoard,
       solutionBoard,
-      notes: notes.map(set => Array.from(set)),
+      notes: notes.map((set) => Array.from(set)),
       secondsElapsed,
       errors,
       currentDifficulty,
-      hintedCells: Array.from(hintedCells)
+      hintedCells: Array.from(hintedCells),
     };
-    localStorage.setItem('sudoku_current_game', JSON.stringify(state));
+    localStorage.setItem("sudoku_current_game", JSON.stringify(state));
   }
 
   function saveScore(difficulty, timeInSeconds) {
-    const scores = JSON.parse(localStorage.getItem('sudoku_leaderboard') || '{}');
+    const scores = JSON.parse(
+      localStorage.getItem("sudoku_leaderboard") || "{}",
+    );
     if (!scores[difficulty]) scores[difficulty] = [];
 
     scores[difficulty].push({
       time: timeInSeconds,
-      date: new Date().toLocaleDateString('fr-FR')
+      date: new Date().toLocaleDateString("fr-FR"),
     });
 
     // Tri du meilleur au moins bon chrono
     scores[difficulty].sort((a, b) => a.time - b.time);
     scores[difficulty] = scores[difficulty].slice(0, 5); // Conserver le Top 5
 
-    localStorage.setItem('sudoku_leaderboard', JSON.stringify(scores));
+    localStorage.setItem("sudoku_leaderboard", JSON.stringify(scores));
   }
 
-  function updateLeaderboardUI(tabDifficulty = 'easy') {
-    const scores = JSON.parse(localStorage.getItem('sudoku_leaderboard') || '{}');
+  function updateLeaderboardUI(tabDifficulty = "easy") {
+    const scores = JSON.parse(
+      localStorage.getItem("sudoku_leaderboard") || "{}",
+    );
     const list = scores[tabDifficulty] || [];
-    leaderboardList.innerHTML = '';
+    leaderboardList.innerHTML = "";
 
     if (list.length === 0) {
-      leaderboardList.innerHTML = '<li class="empty-state"><span>Aucun chrono pour le moment.<br>Lancez une partie pour ouvrir le classement.</span></li>';
+      leaderboardList.innerHTML =
+        '<li class="empty-state"><span>Aucun chrono pour le moment.<br>Lancez une partie pour ouvrir le classement.</span></li>';
       return;
     }
 
     list.forEach((score, index) => {
-      const mins = String(Math.floor(score.time / 60)).padStart(2, '0');
-      const secs = String(score.time % 60).padStart(2, '0');
-      const li = document.createElement('li');
-      const performance = document.createElement('span');
-      performance.className = 'performance';
+      const mins = String(Math.floor(score.time / 60)).padStart(2, "0");
+      const secs = String(score.time % 60).padStart(2, "0");
+      const li = document.createElement("li");
+      const performance = document.createElement("span");
+      performance.className = "performance";
 
-      const rank = document.createElement('strong');
-      rank.className = 'rank';
+      const rank = document.createElement("strong");
+      rank.className = "rank";
       rank.textContent = `#${index + 1}`;
 
-      const time = document.createElement('span');
-      time.className = 'score-time';
+      const time = document.createElement("span");
+      time.className = "score-time";
       time.textContent = `${mins}:${secs}`;
 
-      const date = document.createElement('small');
+      const date = document.createElement("small");
       date.textContent = score.date;
 
       performance.append(rank, time);
@@ -701,83 +772,87 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setLeaderboardTab(difficulty) {
-    document.querySelectorAll('.tab-btn').forEach(tab => {
+    document.querySelectorAll(".tab-btn").forEach((tab) => {
       const isActive = tab.dataset.tab === difficulty;
-      tab.classList.toggle('active', isActive);
-      tab.setAttribute('aria-selected', String(isActive));
+      tab.classList.toggle("active", isActive);
+      tab.setAttribute("aria-selected", String(isActive));
     });
     updateLeaderboardUI(difficulty);
   }
 
   // --- ÉVÉNEMENTS ÉCOUTEURS ---
   // Choix de difficulté depuis le menu d'accueil
-  document.querySelectorAll('.btn-menu-diff').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  document.querySelectorAll(".btn-menu-diff").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
       initAudio();
-      playSound('click');
+      playSound("click");
       startGameFromMenu(e.currentTarget.dataset.difficulty);
     });
   });
 
-  menuBtn.addEventListener('click', showMenu);
-  hintBtn.addEventListener('click', useSmartHint);
+  menuBtn.addEventListener("click", showMenu);
+  hintBtn.addEventListener("click", useSmartHint);
 
-  document.querySelectorAll('[data-theme-choice]').forEach(button => {
-    button.addEventListener('click', () => applyAppearance(button.dataset.themeChoice, currentAccent));
+  document.querySelectorAll("[data-theme-choice]").forEach((button) => {
+    button.addEventListener("click", () =>
+      applyAppearance(button.dataset.themeChoice, currentAccent),
+    );
   });
 
-  document.querySelectorAll('[data-accent-choice]').forEach(button => {
-    button.addEventListener('click', () => applyAppearance(currentTheme, button.dataset.accentChoice));
+  document.querySelectorAll("[data-accent-choice]").forEach((button) => {
+    button.addEventListener("click", () =>
+      applyAppearance(currentTheme, button.dataset.accentChoice),
+    );
   });
 
-  quickThemeBtn.addEventListener('click', () => {
-    applyAppearance(currentTheme === 'dark' ? 'light' : 'dark', currentAccent);
+  quickThemeBtn.addEventListener("click", () => {
+    applyAppearance(currentTheme === "dark" ? "light" : "dark", currentAccent);
   });
 
   // Pavé numérique
-  document.querySelectorAll('.num-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+  document.querySelectorAll(".num-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
       handleInput(parseInt(btn.dataset.value));
     });
   });
 
   // Raccourcis Clavier (1-9, Backspace, Crayon, Flèches)
-  document.addEventListener('keydown', (e) => {
-    if (gameView.classList.contains('hidden')) return;
+  document.addEventListener("keydown", (e) => {
+    if (gameView.classList.contains("hidden")) return;
     initAudio();
-    if (e.key >= '1' && e.key <= '9') {
+    if (e.key >= "1" && e.key <= "9") {
       handleInput(parseInt(e.key));
-    } else if (e.key === 'Backspace' || e.key === 'Delete') {
+    } else if (e.key === "Backspace" || e.key === "Delete") {
       eraseCell();
-    } else if (e.key.toLowerCase() === 'n') {
+    } else if (e.key.toLowerCase() === "n") {
       pencilBtn.click();
-    } else if (e.key.toLowerCase() === 'h') {
+    } else if (e.key.toLowerCase() === "h") {
       useSmartHint();
     } else if (selectedCell !== -1) {
       let row = Math.floor(selectedCell / 9);
       let col = selectedCell % 9;
-      if (e.key === 'ArrowUp' && row > 0) row--;
-      if (e.key === 'ArrowDown' && row < 8) row++;
-      if (e.key === 'ArrowLeft' && col > 0) col--;
-      if (e.key === 'ArrowRight' && col < 8) col++;
+      if (e.key === "ArrowUp" && row > 0) row--;
+      if (e.key === "ArrowDown" && row < 8) row++;
+      if (e.key === "ArrowLeft" && col > 0) col--;
+      if (e.key === "ArrowRight" && col < 8) col++;
       selectCell(row * 9 + col);
     }
   });
 
   // Actions rapides Outils
-  pencilBtn.addEventListener('click', () => {
+  pencilBtn.addEventListener("click", () => {
     isPencilMode = !isPencilMode;
-    pencilBtn.classList.toggle('active', isPencilMode);
-    pencilStatus.textContent = isPencilMode ? 'ON' : 'OFF';
-    playSound('click');
+    pencilBtn.classList.toggle("active", isPencilMode);
+    pencilStatus.textContent = isPencilMode ? "ON" : "OFF";
+    playSound("click");
   });
 
-  document.getElementById('btn-erase').addEventListener('click', eraseCell);
-  document.getElementById('btn-undo').addEventListener('click', undo);
+  document.getElementById("btn-erase").addEventListener("click", eraseCell);
+  document.getElementById("btn-undo").addEventListener("click", undo);
 
   // Leaderboard Tabs
-  document.querySelectorAll('.tab-btn').forEach(tab => {
-    tab.addEventListener('click', (e) => {
+  document.querySelectorAll(".tab-btn").forEach((tab) => {
+    tab.addEventListener("click", (e) => {
       setLeaderboardTab(e.currentTarget.dataset.tab);
     });
   });
@@ -785,5 +860,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- INITIALISATION ---
   loadAppearance();
   initBoardUI();
-  setLeaderboardTab('easy');
+  setLeaderboardTab("easy");
 });
