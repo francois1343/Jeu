@@ -1,0 +1,12 @@
+# Secrets locaux et fichiers temporaires Supabase
+.env
+.env.*
+!.env.example
+supabase/.env
+supabase/.temp/
+supabase/.branches/
+
+# Dépendances et sorties natives
+node_modules/
+android/.gradle/
+android/app/build/

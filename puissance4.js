@@ -717,6 +717,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function playMove2D(column, initiatedByPlayer = false) {
+    if (initiatedByPlayer) window.ArcadeGameSession?.start({ mode: "2d" });
     if (STATE.isGameOver || STATE.isAnimating) return;
     if (
       initiatedByPlayer &&
@@ -789,6 +790,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function playMove3D(x, z) {
+    window.ArcadeGameSession?.start({ mode: "3d" });
     if (STATE.isGameOver || STATE.isAnimating || !scene) return;
     if (STATE.disksLeft[STATE.currentPlayer] <= 0) return;
     const y = getLowestEmptyY3D(x, z);
@@ -1009,6 +1011,8 @@ document.addEventListener("DOMContentLoaded", () => {
     clearTimeout(aiTimer);
     highlightWinningLine(winLine);
     AudioEngine.playWin();
+    if (player === 1) window.ArcadeGameSession?.win({ mode: STATE.mode });
+    else window.ArcadeGameSession?.lose({ mode: STATE.mode });
 
     if (player === 1) STATE.stats.red += 1;
     else STATE.stats.yellow += 1;
@@ -1024,6 +1028,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function handleDraw() {
     STATE.isGameOver = true;
     clearTimeout(aiTimer);
+    window.ArcadeGameSession?.lose({ mode: STATE.mode, draw: true });
     DOM.winnerTitle.textContent = "MATCH NUL !";
     DOM.winnerSubtext.textContent = "La grille est pleine. La revanche s’impose.";
     modalTimer = setTimeout(() => revealGameOver(false), 220);

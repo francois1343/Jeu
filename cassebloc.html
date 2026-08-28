@@ -538,6 +538,7 @@
 
         // ===== ÉTATS DU JEU =====
         start() {
+          window.ArcadeGameSession?.start({ level: this.level });
           document.getElementById("start-screen").classList.add("hidden");
           this.running = true;
           this.loop();
@@ -545,12 +546,14 @@
 
         gameOver() {
           this.running = false;
+          window.ArcadeGameSession?.lose({ score: this.score, level: this.level });
           document.getElementById("final-score").textContent = this.score;
           document.getElementById("game-over").classList.remove("hidden");
         }
 
         win() {
           this.running = false;
+          window.ArcadeGameSession?.win({ score: this.score, level: this.level });
           document.getElementById("completed-level").textContent = this.level;
           document.getElementById("win-screen").classList.remove("hidden");
         }
@@ -588,5 +591,8 @@
       // ============================================
       const game = new Breakout();
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

@@ -1422,6 +1422,7 @@
       // DÉMARRAGE DU JEU
       // ============================================
       function startGame() {
+        window.ArcadeGameSession?.start({ mode: game.mode, difficulty: game.difficulty });
         // Reset état
         game.score = 0;
         game.correct = 0;
@@ -1772,6 +1773,11 @@
         // Déterminer résultat
         let icon, title, subtitle;
         const accuracy = game.correct / (game.correct + game.wrong) || 0;
+        window.ArcadeGameSession?.completeByAccuracy(accuracy, {
+          correct: game.correct,
+          wrong: game.wrong,
+          score: game.score,
+        });
 
         if (accuracy >= 0.9 && game.correct >= 10) {
           icon = "🏆";
@@ -2058,5 +2064,8 @@
       // ============================================
       init();
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

@@ -1348,6 +1348,7 @@
       }
 
       function startGame() {
+        window.ArcadeGameSession?.start({ mode: "exploration" });
         if (!GameState.player.profile) return;
 
         saveGame();
@@ -2488,5 +2489,8 @@
         document.body.classList.add("no-animations");
       }
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

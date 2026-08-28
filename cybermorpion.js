@@ -208,6 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function executeMove(index, player) {
+    window.ArcadeGameSession?.start({ opponent: STATE.opponent, gridSize: STATE.gridSize });
     AudioEngine.init();
     STATE.board[index] = player;
 
@@ -332,6 +333,8 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("cyber_morpion_scores", JSON.stringify(STATE.scores));
     updateHUD();
     AudioEngine.playWinSound();
+    if (winner === "X") window.ArcadeGameSession?.win({ opponent: STATE.opponent });
+    else window.ArcadeGameSession?.lose({ opponent: STATE.opponent });
   }
 
   function handleDraw() {
@@ -341,6 +344,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("cyber_morpion_scores", JSON.stringify(STATE.scores));
     updateHUD();
     AudioEngine.playDrawSound();
+    window.ArcadeGameSession?.lose({ draw: true, opponent: STATE.opponent });
   }
 
   // --- IA DE JEU ---

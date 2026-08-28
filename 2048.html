@@ -715,6 +715,7 @@
         }
 
         move(direction) {
+          window.ArcadeGameSession?.start({ direction });
           if (this.over && !this.keepPlaying) return false;
 
           // Save state for undo
@@ -1041,6 +1042,7 @@
         // ============================================
 
         showWin() {
+          window.ArcadeGameSession?.win({ score: this.score, target: 2048 });
           document.getElementById("message-title").textContent = "🎉 Bravo !";
           document.getElementById("message-title").className =
             "message-title win";
@@ -1058,6 +1060,7 @@
         }
 
         showGameOver() {
+          window.ArcadeGameSession?.lose({ score: this.score });
           document.getElementById("message-title").textContent = "💀 Game Over";
           document.getElementById("message-title").className =
             "message-title lose";
@@ -1336,5 +1339,8 @@
         game = new Game2048();
       });
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

@@ -2794,6 +2794,7 @@
       // DÉMARRAGE DU JEU
       // ============================================
       function startGame() {
+        window.ArcadeGameSession?.start({ difficulty: state.difficulty });
         if (!state.selectedCategory) {
           state.selectedCategory = "mixed";
         }
@@ -3054,6 +3055,12 @@
         const comboBonus = state.maxCombo * 50;
         const totalBonus = completionBonus + comboBonus;
         state.score += totalBonus;
+        const accuracy = state.correctAnswers / state.totalQuestions || 0;
+        window.ArcadeGameSession?.completeByAccuracy(accuracy, {
+          correct: state.correctAnswers,
+          total: state.totalQuestions,
+          score: state.score,
+        });
 
         // Mise à jour des stats
         state.stats.gamesPlayed++;
@@ -3572,5 +3579,8 @@
       // ============================================
       init();
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

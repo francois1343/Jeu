@@ -1384,6 +1384,11 @@
         const { player, exit } = state;
 
         if (player.x === exit.x && player.y === exit.y) {
+          window.ArcadeGameSession?.win({
+            level: state.level,
+            moves: state.moves,
+            time: state.time,
+          });
           // Niveau complété !
           playSound("complete");
           state.level++;
@@ -1552,6 +1557,7 @@
       // NAVIGATION
       // ============================================
       function startGame() {
+        window.ArcadeGameSession?.start({ difficulty: state.difficulty });
         state.level = 1;
         state.collected = 0;
         state.moves = 0;
@@ -1743,5 +1749,8 @@
 
       init();
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

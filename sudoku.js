@@ -409,6 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
           errorCountElement.textContent = `${errors}/${maxErrors}`;
           if (errors >= maxErrors) {
             alert("Game Over ! Vous avez atteint le nombre maximal d'erreurs.");
+            window.ArcadeGameSession?.lose({ errors, difficulty: currentDifficulty });
             startNewGame(currentDifficulty);
             return;
           }
@@ -466,6 +467,11 @@ document.addEventListener("DOMContentLoaded", () => {
       playSound("win");
       setTimeout(() => {
         alert(`Bravo ! Grille complétée en ${timerElement.textContent} !`);
+        window.ArcadeGameSession?.win({
+          errors,
+          difficulty: currentDifficulty,
+          time: timerElement.textContent,
+        });
         saveScore(currentDifficulty, secondsElapsed);
         setLeaderboardTab(currentDifficulty);
       }, 200);
@@ -665,6 +671,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function startGameFromMenu(difficulty) {
+    window.ArcadeGameSession?.start({ difficulty });
     mainMenu.classList.add("hidden");
     gameView.classList.remove("hidden");
     startNewGame(difficulty);

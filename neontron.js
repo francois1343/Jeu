@@ -818,6 +818,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function endMatch() {
     const playerWon = STATE.scorePlayer >= 3;
+    if (playerWon) window.ArcadeGameSession?.win({ scorePlayer: STATE.scorePlayer, scoreCPU: STATE.scoreCPU });
+    else window.ArcadeGameSession?.lose({ scorePlayer: STATE.scorePlayer, scoreCPU: STATE.scoreCPU });
     if (playerWon) {
       STATE.globalWins += 1;
       try {
@@ -954,6 +956,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function startMatch() {
+    window.ArcadeGameSession?.start({ difficulty: STATE.difficulty });
     cancelAnimationFrame(animationFrame);
     Audio.init();
     Audio.stopEngine();

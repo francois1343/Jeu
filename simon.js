@@ -398,6 +398,7 @@ function updateStatus(text) {
 
 // 56. Commencer une nouvelle partie
 function startGame() {
+  window.ArcadeGameSession?.start({ mode: gameState.mode });
   // 57. Réinitialiser l'état
   gameState.sequence = [];
   gameState.playerSequence = [];
@@ -444,6 +445,7 @@ function endGame() {
   gameState.isGameRunning = false;
   gameState.isPlayerTurn = false;
   gameState.isComputerPlaying = false;
+  window.ArcadeGameSession?.lose({ score: gameState.score, level: gameState.level });
 
   const isNewRecord = saveGameResult();
 
@@ -483,6 +485,9 @@ function showGameOverScreen(isNewRecord) {
 
 // 69. Afficher modal palier victoire
 function showVictoryPalier(level) {
+  if (level >= (window.ArcadeGameSession?.policy?.victoryLevel || 5)) {
+    window.ArcadeGameSession?.win({ score: gameState.score, level });
+  }
   const modal = document.getElementById("victoryModal");
   const message = document.getElementById("victoryMessage");
 

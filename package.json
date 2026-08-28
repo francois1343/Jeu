@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "scripts": {
     "build": "echo 'Files ready'",
+    "test": "node tests/local-economy-v2.test.js && node tests/html-inline-syntax.test.js",
+    "serve": "python -m http.server 4173 --bind 127.0.0.1",
+    "supabase:start": "npx supabase start",
+    "supabase:push": "npx supabase db push",
+    "supabase:deploy": "npx supabase functions deploy",
     "cap:add": "npx cap add android",
     "cap:sync": "npx cap sync",
     "cap:open": "npx cap open android"

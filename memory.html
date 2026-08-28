@@ -1122,6 +1122,7 @@
       // DÉMARRAGE DU JEU
       // ============================================
       function startGame() {
+        window.ArcadeGameSession?.start({ gridSize: game.gridSize, theme: game.theme });
         // Reset
         game.cards = [];
         game.flipped = [];
@@ -1301,6 +1302,7 @@
           100,
           Math.floor((baseScore - timePenalty - movesPenalty) * multiplier),
         );
+        window.ArcadeGameSession?.win({ score, moves: game.moves, timeSeconds: timeSec });
 
         // Check record
         const isRecord = saveScore(score, timeSec);
@@ -1547,5 +1549,8 @@
       // ============================================
       init();
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

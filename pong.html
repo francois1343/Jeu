@@ -1538,6 +1538,8 @@
 
           // Calculer statistiques
           const winner = this.scoreP1 > this.scoreP2 ? "Joueur 1" : "Joueur 2";
+          if (winner === "Joueur 1") window.ArcadeGameSession?.win({ scoreP1: this.scoreP1, scoreP2: this.scoreP2 });
+          else window.ArcadeGameSession?.lose({ scoreP1: this.scoreP1, scoreP2: this.scoreP2 });
           const finalScore = Math.max(this.scoreP1, this.scoreP2);
           const timeSeconds = Math.floor(this.gameTime / 1000);
 
@@ -1643,6 +1645,7 @@
       // ============================================
 
       function startGame(mode) {
+        window.ArcadeGameSession?.start({ mode });
         document.getElementById("main-menu").classList.add("hidden");
         game.start(mode);
       }
@@ -1788,5 +1791,8 @@
         initGame();
       });
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

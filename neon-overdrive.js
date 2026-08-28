@@ -1038,6 +1038,7 @@ function startGame() {
       clearInterval(countDown);
       readyText.style.display = "none";
       gameState.isGameStarted = true;
+      window.ArcadeGameSession?.start({ source: "countdown_complete" });
       spawnWave();
       if (!gameLoopRunning) {
         gameLoopRunning = true;
@@ -1052,6 +1053,10 @@ function endGame() {
   // toutes les 16 ms, y compris après un clic sur « Main Menu ».
   gameState.isGameStarted = false;
   gameState.isPaused = false;
+  window.ArcadeGameSession?.completeByScore(gameState.score, {
+    level: gameState.level,
+    wave: gameState.waveIndex,
+  });
   document.getElementById("pauseOverlay").hidden = true;
   showScreen("gameOverScreen");
 

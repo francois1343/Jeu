@@ -813,6 +813,7 @@
       }
 
       function startRound() {
+        window.ArcadeGameSession?.start({ round: state.results.length + 1 });
         state.phase = "ready";
         setBodyState("ready");
 
@@ -857,6 +858,7 @@
         clearTimeout(state.timeoutId);
         state.phase = "early";
         state.earlyCount++;
+        window.ArcadeGameSession?.lose({ reason: "too_early" });
         setBodyState("early");
 
         elements.circleIcon.textContent = "⚠️";
@@ -881,6 +883,7 @@
 
       function recordTime() {
         const reactionTime = Math.round(performance.now() - state.startTime);
+        window.ArcadeGameSession?.win({ reactionTime });
         state.phase = "result";
         setBodyState("result");
 
@@ -1160,5 +1163,8 @@
       // ============================================
       init();
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

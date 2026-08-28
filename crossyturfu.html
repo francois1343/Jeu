@@ -1526,6 +1526,7 @@
 
         // Démarrage
         startGame() {
+          window.ArcadeGameSession?.start({ difficulty: this.difficulty });
           this.hideAllMenus();
           this.reset();
 
@@ -1758,6 +1759,7 @@
         killPlayer(reason) {
           this.gameOver = true;
           this.gameStarted = false;
+          window.ArcadeGameSession?.completeByScore(this.score, { reason });
           this.audio.play("death");
 
           setTimeout(() => {
@@ -2050,5 +2052,8 @@
         game = new Game();
       });
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

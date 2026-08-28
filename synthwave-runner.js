@@ -528,6 +528,7 @@ function returnToMenu() {
   }
 }
 function startGame() {
+  window.ArcadeGameSession?.start({ source: "start_button" });
   Object.assign(game, {
     status: "running",
     score: 0,
@@ -552,6 +553,9 @@ function startGame() {
 function finishGame() {
   if (game.status !== "running") return;
   game.status = "over";
+  window.ArcadeGameSession?.completeByScore(game.score, {
+    distance: Math.floor(game.distance),
+  });
   game.shake = 16;
   game.flash = 1;
   burst(game.player.x + 35, game.player.y + 21, 36, "#ffbe0b", 340);

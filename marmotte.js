@@ -335,6 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function startGame() {
+    window.ArcadeGameSession?.start({ difficulty: selectedDifficulty });
     stopGame();
     AudioEngine.init();
     AudioEngine.playStart();
@@ -373,6 +374,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const totalShots = score + missedShots;
     const accuracy = totalShots ? Math.round((score / totalShots) * 100) : 0;
+    window.ArcadeGameSession?.completeByScore(score, {
+      accuracy,
+      missedShots,
+      missedMoles,
+      difficulty: selectedDifficulty,
+    });
     const madeTopFive = addLeaderboardEntry(accuracy);
     finalScoreDisplay.textContent = score;
     finalMissedShots.textContent = missedShots;

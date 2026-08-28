@@ -1833,6 +1833,7 @@ class TetrisGame {
 
   // ========== GAME STATE ==========
   start(mode) {
+    window.ArcadeGameSession?.start({ mode });
     this.reset();
     this.gameMode = mode;
     document.getElementById('time-box').style.display =
@@ -1868,6 +1869,7 @@ class TetrisGame {
     if (this.gameMode === 'zen') return;
     
     this.gameOver = true;
+    window.ArcadeGameSession?.lose({ mode: this.gameMode, score: this.score, lines: this.lines });
     this.audio.play('gameover');
     this.saveHighScore();
     showGameOver();
@@ -1875,6 +1877,7 @@ class TetrisGame {
 
   showVictory() {
     this.gameOver = true;
+    window.ArcadeGameSession?.win({ mode: this.gameMode, score: this.score, lines: this.lines });
     this.saveHighScore();
     
     document.getElementById('victory-stats').innerHTML = `
@@ -2034,6 +2037,9 @@ window.onload = () => {
   game = new TetrisGame();
 };
 </script>
+  <script src="arcade-config.js"></script>
+  <script src="arcade-local-store.js"></script>
+  <script src="arcade-game-bridge.js"></script>
 </body>
 </html>
 

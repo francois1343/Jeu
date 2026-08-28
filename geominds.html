@@ -2795,6 +2795,7 @@
 
         startMode(mode) {
           this.currentMode = mode;
+          window.ArcadeGameSession?.start({ mode });
           this.sound.play("click");
 
           switch (mode) {
@@ -2812,6 +2813,7 @@
 
         // Mode Défi
         startChallengeMode() {
+          window.ArcadeGameSession?.start({ mode: "challenge" });
           this.showScreen("gameScreen");
           this.level = 1;
           this.puzzlesSolved = 0;
@@ -3068,6 +3070,10 @@
 
           // Vérifier passage de niveau
           if (this.puzzlesSolved > 0 && this.puzzlesSolved % 5 === 0) {
+            window.ArcadeGameSession?.win({
+              puzzlesSolved: this.puzzlesSolved,
+              level: this.level,
+            });
             this.level++;
             if (this.level > this.stats.highestLevel) {
               this.stats.highestLevel = this.level;
@@ -3535,5 +3541,8 @@
         game = new GeoMindsGame();
       });
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

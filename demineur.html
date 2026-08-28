@@ -1420,6 +1420,7 @@ class MinesweeperGame {
     
     // Premier clic - placer les mines
     if (this.firstClick) {
+      window.ArcadeGameSession?.start({ difficulty: this.difficulty });
       this.placeMines(x, y);
       this.firstClick = false;
       this.startTimer();
@@ -1437,6 +1438,7 @@ class MinesweeperGame {
       this.audio.playExplode();
       document.getElementById('face-btn').textContent = '😵';
       this.stopTimer();
+      window.ArcadeGameSession?.lose({ difficulty: this.difficulty, time: this.timer });
       
       // Particules d'explosion
       const cellEl = this.getCellElement(x, y);
@@ -1607,6 +1609,7 @@ class MinesweeperGame {
     if (revealedCount === totalCells - this.mineCount) {
       this.gameOver = true;
       this.won = true;
+      window.ArcadeGameSession?.win({ difficulty: this.difficulty, time: this.timer });
       this.stopTimer();
       this.audio.playWin();
       document.getElementById('face-btn').textContent = '😎';
@@ -2104,5 +2107,8 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 </script>
+  <script src="arcade-config.js"></script>
+  <script src="arcade-local-store.js"></script>
+  <script src="arcade-game-bridge.js"></script>
 </body>
 </html>

@@ -2305,6 +2305,7 @@
 
         // Commencer la bataille
         startBattle() {
+          window.ArcadeGameSession?.start({ phase: "battle" });
           if (this.placedShips.length !== CONFIG.SHIPS.length) return;
 
           this.phase = "battle";
@@ -2456,6 +2457,8 @@
         // Fin de partie
         endGame(victory) {
           this.phase = "gameover";
+          if (victory) window.ArcadeGameSession?.win({ shots: this.shots, hits: this.hits });
+          else window.ArcadeGameSession?.lose({ shots: this.shots, hits: this.hits });
 
           if (victory) {
             this.audio.play("victory");
@@ -2629,5 +2632,8 @@
       // ============================================
       const game = new Game();
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

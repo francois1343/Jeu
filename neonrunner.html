@@ -1385,6 +1385,7 @@
       // DÉMARRAGE PARTIE
       // ============================================
       function startGame(level) {
+        window.ArcadeGameSession?.start({ level });
         // Reset complet de l'état du jeu
         game.level = level;
         game.isPlaying = true;
@@ -2276,6 +2277,7 @@
       // ============================================
       function levelComplete() {
         stopGame();
+        window.ArcadeGameSession?.win({ level: game.level, score: game.score });
         playSound("win");
 
         // Calcul score
@@ -2335,6 +2337,7 @@
 
       function gameOver(reason) {
         stopGame();
+        window.ArcadeGameSession?.lose({ level: game.level, reason });
         playSound("lose");
 
         document.getElementById("loseReason").textContent = reason;
@@ -2888,5 +2891,8 @@
         { passive: false },
       );
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

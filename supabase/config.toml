@@ -1,0 +1,31 @@
+project_id = "arcade-station"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:4173"
+additional_redirect_urls = ["http://localhost:4173", "http://127.0.0.1:4173"]
+enable_signup = true
+
+[functions.start-challenge]
+verify_jwt = true
+
+[functions.settle-challenge]
+verify_jwt = true
+
+[functions.rewarded-ad-callback]
+verify_jwt = false

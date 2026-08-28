@@ -1784,6 +1784,7 @@
 
         gameOver() {
           this.gameState = "gameover";
+          window.ArcadeGameSession?.completeByScore(this.score, { world: this.world?.currentWorld });
 
           this.audio.playDeath();
           this.particles.emit(this.player.x, this.player.y, "death", 30);
@@ -2000,6 +2001,7 @@
       // FONCTIONS UI
       // ============================================
       function startGame() {
+        window.ArcadeGameSession?.start({ source: "main_menu" });
         if (!game) {
           game = new Game();
         }
@@ -2073,5 +2075,8 @@
         game = new Game();
       });
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

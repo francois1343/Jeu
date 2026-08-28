@@ -183,6 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- INITIALISATION DU JEU ---
   function startNewGame(selectedDifficulty) {
+    window.ArcadeGameSession?.start({ difficulty: selectedDifficulty });
     gameSession++;
     difficulty = parseInt(selectedDifficulty);
     completedSuits = 0;
@@ -831,6 +832,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- ANIMATION DE CASCADE DE CARTES & VICTOIRE ---
   function handleVictory() {
     isGameActive = false;
+    window.ArcadeGameSession?.win({ score, moves, seconds: secondsElapsed, difficulty });
     stopTimer();
     playSound("win");
 

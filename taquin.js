@@ -346,6 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isSolved) {
       isGameActive = false;
+      window.ArcadeGameSession?.win({ moves, seconds: secondsElapsed, gridSize });
       stopTimer();
       playSound("win");
       triggerHaptic();
@@ -439,6 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function startGame() {
+    window.ArcadeGameSession?.start({ mode: "selected_image" });
     menuScreen.classList.add("hidden");
     menuScreen.setAttribute("aria-hidden", "true");
     gameScreen.classList.remove("hidden");
@@ -480,6 +482,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function startRandomGame() {
+    window.ArcadeGameSession?.start({ mode: "random" });
     const sizes = [3, 4, 5];
     const themes = Array.from(themeButtons, (button) => button.dataset.theme);
     selectGridSize(sizes[Math.floor(Math.random() * sizes.length)]);

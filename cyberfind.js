@@ -638,6 +638,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------------
 
   function startGame() {
+    window.ArcadeGameSession?.start({ difficulty: game.selectedDifficulty });
     game.difficulty = DIFFICULTIES[game.selectedDifficulty];
     game.secondsElapsed = 0;
     game.hintSecondsRemaining = game.difficulty.hintDelay;
@@ -693,6 +694,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function completeGame() {
     game.isPlaying = false;
+    window.ArcadeGameSession?.win({
+      difficulty: game.selectedDifficulty,
+      seconds: game.secondsElapsed,
+    });
     stopGameTimers();
     playSound("win");
     vibrate([50, 40, 50]);

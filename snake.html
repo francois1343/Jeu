@@ -1476,6 +1476,10 @@
 
         die() {
           this.isRunning = false;
+          window.ArcadeGameSession?.completeByScore(this.score, {
+            level: this.level,
+            length: this.maxLength,
+          });
 
           // Son
           this.audio.play("death");
@@ -1780,6 +1784,7 @@
       }
 
       function startGame() {
+        window.ArcadeGameSession?.start({ mode: selectedMode });
         game.mode = selectedMode;
         game.start();
       }
@@ -1898,5 +1903,8 @@
         game = new SnakeGame();
       });
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

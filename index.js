@@ -1,4 +1,4 @@
-      // ===== GÃ‰NÃ‰RATION DES PARTICULES =====
+      // ===== GÉNÉRATION DES PARTICULES =====
       function createParticles() {
         const container = document.getElementById("particles");
         const colors = ["#00ffff", "#ff00ff", "#00ff88", "#ffff00", "#4d7cff"];
@@ -30,12 +30,12 @@
           display.textContent = result;
           display.classList.remove("flipping");
 
-          // Son de rÃ©sultat
+          // Son de résultat
           playSound(result === "P" ? 600 : 400, 0.15);
         }, 600);
       }
 
-      // ===== DÃ‰ PERSONNALISABLE =====
+      // ===== DÉ PERSONNALISABLE =====
       function rollDice(event) {
         event.stopPropagation();
         const faces = parseInt(document.getElementById("diceFaces").value) || 6;
@@ -44,7 +44,7 @@
         display.classList.add("rolling");
         playSound(500, 0.1);
 
-        // Animation de chiffres alÃ©atoires
+        // Animation de chiffres aléatoires
         let rolls = 0;
         const maxRolls = 10;
         const interval = setInterval(() => {
@@ -64,6 +64,13 @@
       // ===== LANCEMENT DES JEUX =====
       function launchGame(url, event) {
         event.stopPropagation();
+        const card = event.currentTarget.closest(".game-card");
+        const gameKey = card?.dataset.game || url.replace(/\.html$/i, "");
+        const title = card?.querySelector(".game-title")?.textContent?.trim() || gameKey;
+        const launch = window.ArcadePlatform?.beginGame({ gameKey, title, url });
+        if (launch === false) return;
+        const destination = launch?.url || url;
+
         playSound(900, 0.1);
 
         // Animation de transition
@@ -71,7 +78,7 @@
         document.body.style.transition = "opacity 0.3s ease";
 
         setTimeout(() => {
-          window.location.href = url;
+          window.location.href = destination;
         }, 300);
       }
 
@@ -84,7 +91,7 @@
         }, 150);
       }
 
-      // ===== SYSTÃˆME AUDIO SIMPLE =====
+      // ===== SYSTÈME AUDIO SIMPLE =====
       let audioContext = null;
 
       function playSound(frequency, duration) {
@@ -113,7 +120,7 @@
           oscillator.start(audioContext.currentTime);
           oscillator.stop(audioContext.currentTime + duration);
         } catch (e) {
-          // Audio non supportÃ©, on continue silencieusement
+          // Audio non supporté, on continue silencieusement
         }
       }
 
@@ -133,7 +140,7 @@
         );
       });
 
-      // ===== EMPÃŠCHER LE SCROLL HORIZONTAL =====
+      // ===== EMPÊCHER LE SCROLL HORIZONTAL =====
       document.body.addEventListener(
         "touchmove",
         (e) => {
@@ -143,4 +150,3 @@
         },
         { passive: false },
       );
-

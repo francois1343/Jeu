@@ -715,6 +715,7 @@ function updateAllDisplay() {
 
 // Ajouter des bits au clic
 function clickButton(event) {
+  window.ArcadeGameSession?.start({ mode: "clicker" });
   if (!event) return;
 
   const clickValue = 1; // 1 bit par click

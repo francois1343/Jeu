@@ -724,6 +724,7 @@
       // LOGIQUE DU JEU
       // ============================================
       function play(playerChoice) {
+        window.ArcadeGameSession?.start({ round: state.history.length + 1 });
         if (state.isPlaying) return;
         state.isPlaying = true;
 
@@ -887,6 +888,8 @@
 
         elements.result.textContent = data.text;
         elements.result.className = "result " + data.class;
+        if (result === "win") window.ArcadeGameSession?.win({ playerChoice, aiChoice });
+        else window.ArcadeGameSession?.lose({ playerChoice, aiChoice, draw: result === "tie" });
 
         // Animations des choix
         if (result === "win") {
@@ -1095,5 +1098,8 @@
       // Initialisation au chargement
       init();
     </script>
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-game-bridge.js"></script>
   </body>
 </html>

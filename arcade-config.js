@@ -1,0 +1,45 @@
+window.ARCADE_CONFIG = Object.freeze({
+  mode: "local-test",
+  supabaseUrl: "",
+  supabasePublishableKey: "",
+  coins: Object.freeze({
+    unitsPerCoin: 100,
+    decimals: 2,
+  }),
+  localEconomy: Object.freeze({
+    starterCoins: 5,
+    playCostCoins: 1,
+    winPayoutCoins: 1.25,
+    maxHistoryEntries: 60,
+    maxSessionEntries: 40,
+    adminPseudos: Object.freeze(["ADMIN"]),
+    gamePolicies: Object.freeze({
+      "pixel-forge": Object.freeze({ economyMode: "practice" }),
+      openworld: Object.freeze({ economyMode: "practice" }),
+      geominds: Object.freeze({
+        requiredSolved: 5,
+        practiceModes: Object.freeze(["free", "creative"]),
+      }),
+      sudoku: Object.freeze({ practiceModes: Object.freeze(["insane"]) }),
+      tetris: Object.freeze({ practiceModes: Object.freeze(["zen"]) }),
+      calculation: Object.freeze({ minimumAccuracy: 0.7 }),
+      enigme: Object.freeze({ minimumAccuracy: 0.7 }),
+      marmotte: Object.freeze({ minimumScore: 10 }),
+      crossyturfu: Object.freeze({ minimumScore: 10 }),
+      cyberflux: Object.freeze({ minimumScore: 10 }),
+      "neon-overdrive": Object.freeze({ minimumScore: 1500 }),
+      "synthwave-runner": Object.freeze({ minimumScore: 1000 }),
+      snake: Object.freeze({ minimumScore: 10 }),
+      simon: Object.freeze({ victoryLevel: 5 }),
+    }),
+  }),
+  rewardedAds: Object.freeze({
+    enabled: false,
+    providerName: "",
+    placement: "arcade_home_reward",
+  }),
+  paypal: Object.freeze({
+    environment: "production",
+    hostedButtonId: "",
+  }),
+});

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ðŸŽ® Mini Jeux Arcade</title>
+    <title>🎮 Mini Jeux Arcade</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;700&display=swap"
       rel="stylesheet"
@@ -12,17 +12,68 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <!-- Particules dÃ©coratives -->
+    <!-- Particules décoratives -->
     <div class="particles" id="particles"></div>
 
     <div class="app-container">
       <!-- Header -->
       <header class="header">
-        <div class="logo">ðŸŽ® Arcade Station</div>
+        <div class="logo">🎮 Arcade Station</div>
         <h1 class="title">Mini Jeux</h1>
-        <p class="subtitle">Collection de jeux classiques revisitÃ©s</p>
+        <p class="subtitle">Collection de jeux classiques revisités</p>
         <div class="header-line"></div>
+        <div class="account-strip" aria-label="Compte Arcade">
+          <div class="account-balance">
+            <span class="account-balance-label">Solde</span>
+            <strong><span id="coinBalance">—</span> 🪙</strong>
+          </div>
+          <span class="platform-state" id="platformState">Initialisation…</span>
+          <button class="account-button" id="accountButton" type="button">
+            <span aria-hidden="true">◉</span>
+            <span id="accountLabel">Connexion</span>
+          </button>
+        </div>
       </header>
+
+      <section class="platform-dashboard" aria-labelledby="arcadeEconomyTitle">
+        <div class="platform-intro">
+          <span class="platform-kicker">MODE ÉCONOMIE · TEST LOCAL</span>
+          <h2 id="arcadeEconomyTitle">Testez vos Coins fictifs</h2>
+          <p>
+            Une partie coûte <strong id="challengeCost">1 Coin</strong>. Une victoire
+            verse <strong id="challengeReward">1,25 Coin</strong>. Les profils, soldes et
+            transactions restent uniquement sur cet appareil, sans argent ni publicité réels.
+            Open World et Pixel Forge restent en entraînement gratuit pendant leur adaptation.
+          </p>
+        </div>
+        <div class="platform-actions">
+          <button
+            class="platform-action primary"
+            type="button"
+            data-open-dialog="challengeDialog"
+            data-requires-account
+          >
+            <span aria-hidden="true">⚡</span>
+            <span><strong>Défis économiques</strong><small>3 défis de test disponibles</small></span>
+          </button>
+          <button class="platform-action" id="openAccountButton" type="button">
+            <span aria-hidden="true">👤</span>
+            <span><strong>Profil local</strong><small>Nouveau profil : <span id="starterCoins">5 Coins</span></small></span>
+          </button>
+          <button
+            class="platform-action admin-action"
+            id="openAdminButton"
+            type="button"
+            data-open-dialog="adminDialog"
+            hidden
+          >
+            <span aria-hidden="true">🛠️</span>
+            <span><strong>Panneau de test</strong><small>Ajouter ou retirer des Coins</small></span>
+          </button>
+        </div>
+      </section>
+
+      <div class="platform-message" id="platformMessage" role="status" aria-live="polite" hidden></div>
 
       <!-- Grille de jeux -->
       <main class="games-grid">
@@ -32,37 +83,37 @@
           onclick="focusCard(this)"
           data-game="pile-face"
         >
-          <div class="game-icon">ðŸª™</div>
+          <div class="game-icon">🪙</div>
           <h2 class="game-title">Pile ou Face</h2>
           <div class="game-tags">
             <span class="tag difficulty-easy">Facile</span>
             <span class="tag">Chance</span>
           </div>
           <p class="game-description">
-            Lancez la piÃ¨ce et tentez votre chance ! Un classique intemporel.
+            Lancez la pièce et tentez votre chance ! Un classique intemporel.
           </p>
           <div class="game-interactive">
             <div class="coin-display" id="coinDisplay">?</div>
           </div>
           <button class="btn btn-primary btn-launch" onclick="playCoin(event)">
-            Lancer la piÃ¨ce
+            Lancer la pièce
           </button>
         </article>
 
-        <!-- DÃ© personnalisable -->
+        <!-- Dé personnalisable -->
         <article
           class="game-card dice fade-in"
           onclick="focusCard(this)"
           data-game="de"
         >
-          <div class="game-icon">ðŸŽ²</div>
-          <h2 class="game-title">DÃ© Magique</h2>
+          <div class="game-icon">🎲</div>
+          <h2 class="game-title">Dé Magique</h2>
           <div class="game-tags">
             <span class="tag difficulty-easy">Facile</span>
             <span class="tag">Personnalisable</span>
           </div>
           <p class="game-description">
-            Un dÃ© avec le nombre de faces de votre choix. De 2 Ã  l'infini !
+            Un dé avec le nombre de faces de votre choix. De 2 à l'infini !
           </p>
           <div class="game-interactive">
             <div class="input-group">
@@ -79,7 +130,7 @@
             </div>
           </div>
           <button class="btn btn-primary btn-launch" onclick="rollDice(event)">
-            Lancer le dÃ©
+            Lancer le dé
           </button>
         </article>
 
@@ -89,15 +140,15 @@
           onclick="focusCard(this)"
           data-game="calculation"
         >
-          <div class="game-icon">ðŸ§®</div>
+          <div class="game-icon">🧮</div>
           <h2 class="game-title">Calcul Mental</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
             <span class="tag">Maths</span>
           </div>
           <p class="game-description">
-            Testez vos compÃ©tences en calcul mental. RÃ©pondez aux questions en
-            temps limitÃ©.
+            Testez vos compétences en calcul mental. Répondez aux questions en
+            temps limité.
           </p>
           <br />
           <div class="game-interactive">
@@ -118,42 +169,42 @@
           onclick="focusCard(this)"
           data-game="hifumi"
         >
-          <div class="game-icon">ðŸª¨</div>
+          <div class="game-icon">🪨</div>
           <h2 class="game-title">HiFuMi</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
-            <span class="tag">StratÃ©gie</span>
+            <span class="tag">Stratégie</span>
           </div>
           <p class="game-description">
-            Le jeu de la Pierre, Feuille, Ciseaux avec une variante amÃ©liorÃ©e.
+            Le jeu de la Pierre, Feuille, Ciseaux avec une variante améliorée.
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">ðŸª¨ ðŸ“„ âœ‚ï¸</div>
+            <div class="result-display">🪨 📄 ✂️</div>
           </div>
           <br />
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('HiFuMi.html', event)"
           >
-            Jouer Ã  HiFuMi
+            Jouer à HiFuMi
           </button>
         </article>
 
-        <!-- Chrono RÃ©flexe -->
+        <!-- Chrono Réflexe -->
         <article
           class="game-card reflexe fade-in"
           onclick="focusCard(this)"
           data-game="reflex"
         >
-          <div class="game-icon">â±ï¸</div>
-          <h2 class="game-title">Chrono RÃ©flexe</h2>
+          <div class="game-icon">⏱️</div>
+          <h2 class="game-title">Chrono Réflexe</h2>
           <div class="game-tags">
             <span class="tag difficulty-easy">Facile</span>
-            <span class="tag">RÃ©flexes</span>
+            <span class="tag">Réflexes</span>
           </div>
           <p class="game-description">
-            Testez vos rÃ©flexes ! Appuyez dÃ¨s que le chrono atteint zÃ©ro.
+            Testez vos réflexes ! Appuyez dès que le chrono atteint zéro.
           </p>
           <br />
           <div class="game-interactive">
@@ -173,11 +224,11 @@
           onclick="focusCard(this)"
           data-game="memory"
         >
-          <div class="game-icon">ðŸ§ </div>
+          <div class="game-icon">🧠</div>
           <h2 class="game-title">Memory</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
-            <span class="tag">MÃ©moire</span>
+            <span class="tag">Mémoire</span>
             <span class="tag">Puzzle</span>
           </div>
           <p class="game-description">
@@ -186,7 +237,7 @@
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">ðŸ‚  ðŸ‚  ðŸ‚  ðŸ‚ </div>
+            <div class="result-display">🂠 🂠 🂠 🂠</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
@@ -202,24 +253,24 @@
           onclick="focusCard(this)"
           data-game="enigme"
         >
-          <div class="game-icon">ðŸŒŒ</div>
+          <div class="game-icon">🌌</div>
           <h2 class="game-title">Enigme Cosmique</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
-            <span class="tag">Ã‰nigmes</span>
+            <span class="tag">Énigmes</span>
             <span class="tag">Science</span>
           </div>
           <p class="game-description">
-            RÃ©solvez des Ã©nigmes spatiales inspirÃ©es de l'univers cosmique.
+            Résolvez des énigmes spatiales inspirées de l'univers cosmique.
           </p>
           <div class="game-interactive">
-            <div class="result-display">â“ ðŸ” ðŸŒŒ</div>
+            <div class="result-display">❓ 🔍 🌌</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('enigme.html', event)"
           >
-            Jouer Ã  l'Enigme Cosmique
+            Jouer à l'Enigme Cosmique
           </button>
         </article>
 
@@ -229,25 +280,25 @@
           onclick="focusCard(this)"
           data-game="tetris"
         >
-          <div class="game-icon">â¬›</div>
+          <div class="game-icon">⬛</div>
           <h2 class="game-title">Tetris</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
             <span class="tag">Puzzle</span>
-            <span class="tag">RÃ©flexes</span>
+            <span class="tag">Réflexes</span>
           </div>
           <p class="game-description">
-            Le cÃ©lÃ¨bre jeu de puzzle ! Empilez les blocs et faites des lignes.
+            Le célèbre jeu de puzzle ! Empilez les blocs et faites des lignes.
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">â–£ â–¤ â–¥ â–¦</div>
+            <div class="result-display">▣ ▤ ▥ ▦</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('tetris.html', event)"
           >
-            Jouer Ã  Tetris
+            Jouer à Tetris
           </button>
         </article>
 
@@ -257,8 +308,8 @@
           onclick="focusCard(this)"
           data-game="snake"
         >
-          <div class="game-icon">ðŸ</div>
-          <h2 class="game-title">Snake NÃ©on</h2>
+          <div class="game-icon">🐍</div>
+          <h2 class="game-title">Snake Néon</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
             <span class="tag">Arcade</span>
@@ -269,13 +320,13 @@
             !
           </p>
           <div class="game-interactive">
-            <div class="result-display">ðŸŽ â†’ ðŸ</div>
+            <div class="result-display">🍎 → 🐍</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('snake.html', event)"
           >
-            Jouer Ã  Snake
+            Jouer à Snake
           </button>
         </article>
 
@@ -285,7 +336,7 @@
           onclick="focusCard(this)"
           data-game="pong"
         >
-          <div class="game-icon">ðŸ“</div>
+          <div class="game-icon">🏓</div>
           <h2 class="game-title">Pong Arcade</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
@@ -293,43 +344,43 @@
             <span class="tag">Sport</span>
           </div>
           <p class="game-description">
-            Affrontez l'IA dans ce classique du jeu vidÃ©o. Premier Ã  11 points !
+            Affrontez l'IA dans ce classique du jeu vidéo. Premier à 11 points !
           </p>
           <div class="game-interactive">
-            <div class="result-display">| â— |</div>
+            <div class="result-display">| ● |</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('pong.html', event)"
           >
-            Jouer Ã  Pong
+            Jouer à Pong
           </button>
         </article>
 
-        <!-- DÃ©mineur -->
+        <!-- Démineur -->
         <article
           class="game-card minesweeper fade-in"
           onclick="focusCard(this)"
           data-game="demineur"
         >
-          <div class="game-icon">ðŸ’£</div>
-          <h2 class="game-title">DÃ©mineur</h2>
+          <div class="game-icon">💣</div>
+          <h2 class="game-title">Démineur</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
             <span class="tag">Logique</span>
-            <span class="tag">StratÃ©gie</span>
+            <span class="tag">Stratégie</span>
           </div>
           <p class="game-description">
-            Trouvez toutes les mines cachÃ©es sans en faire exploser une seule !
+            Trouvez toutes les mines cachées sans en faire exploser une seule !
           </p>
           <div class="game-interactive">
-            <div class="result-display">ðŸš© ðŸ’£ ðŸ”¢</div>
+            <div class="result-display">🚩 💣 🔢</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('demineur.html', event)"
           >
-            Jouer au DÃ©mineur
+            Jouer au Démineur
           </button>
         </article>
 
@@ -339,25 +390,25 @@
           onclick="focusCard(this)"
           data-game="bataille"
         >
-          <div class="game-icon">ðŸš¢</div>
+          <div class="game-icon">🚢</div>
           <h2 class="game-title">Bataille Navale</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
-            <span class="tag">StratÃ©gie</span>
+            <span class="tag">Stratégie</span>
             <span class="tag">VS CPU</span>
           </div>
           <p class="game-description">
             Placez vos navires et coulez la flotte ennemie avant qu'il ne coule
-            la vÃ´tre !
+            la vôtre !
           </p>
           <div class="game-interactive">
-            <div class="result-display">âš“ ðŸŽ¯ ðŸ’¥</div>
+            <div class="result-display">⚓ 🎯 💥</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('bataillenavale.html', event)"
           >
-            Jouer Ã  la Bataille
+            Jouer à la Bataille
           </button>
         </article>
 
@@ -367,15 +418,15 @@
           onclick="focusCard(this)"
           data-game="2048"
         >
-          <div class="game-icon">ðŸ”¢</div>
+          <div class="game-icon">🔢</div>
           <h2 class="game-title">2048</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
             <span class="tag">Puzzle</span>
-            <span class="tag">RÃ©flexion</span>
+            <span class="tag">Réflexion</span>
           </div>
           <p class="game-description">
-            Combinez les tuiles pour atteindre le nombre 2048. Un dÃ©fi addictif
+            Combinez les tuiles pour atteindre le nombre 2048. Un défi addictif
             !
           </p>
           <br />
@@ -386,7 +437,7 @@
             class="btn btn-primary btn-launch"
             onclick="launchGame('2048.html', event)"
           >
-            Jouer Ã  2048
+            Jouer à 2048
           </button>
         </article>
 
@@ -396,7 +447,7 @@
           onclick="focusCard(this)"
           data-game="casse-blocs"
         >
-          <div class="game-icon">ðŸ§±</div>
+          <div class="game-icon">🧱</div>
           <h2 class="game-title">Casse-Briques</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
@@ -404,17 +455,17 @@
             <span class="tag">Puzzle</span>
           </div>
           <p class="game-description">
-            DÃ©truisez toutes les briques sans laisser aucune !
+            Détruisez toutes les briques sans laisser aucune !
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">ðŸ§± â†’ ðŸ’¥</div>
+            <div class="result-display">🧱 → 💥</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('cassebloc.html', event)"
           >
-            Jouer Ã  Casse-Briques
+            Jouer à Casse-Briques
           </button>
         </article>
 
@@ -424,7 +475,7 @@
           onclick="focusCard(this)"
           data-game="labyrinthe"
         >
-          <div class="game-icon">ðŸ§­</div>
+          <div class="game-icon">🧭</div>
           <h2 class="game-title">Labyrinthe</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
@@ -432,11 +483,11 @@
             <span class="tag">Puzzle</span>
           </div>
           <p class="game-description">
-            Trouvez la sortie du labyrinthe en Ã©vitant les obstacles !
+            Trouvez la sortie du labyrinthe en évitant les obstacles !
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">ðŸ§­ â†’ ðŸšª</div>
+            <div class="result-display">🧭 → 🚪</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
@@ -452,18 +503,18 @@
           onclick="focusCard(this)"
           data-game="neon"
         >
-          <div class="game-icon">âš¡</div>
+          <div class="game-icon">⚡</div>
           <h2 class="game-title">Neon Runner</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
             <span class="tag">Puzzle</span>
-            <span class="tag">MystÃ¨re</span>
+            <span class="tag">Mystère</span>
           </div>
           <p class="game-description">
-            DÃ©chiffrez les Ã©nigmes anciennes pour dÃ©couvrir les secrets cachÃ©s !
+            Déchiffrez les énigmes anciennes pour découvrir les secrets cachés !
           </p>
           <div class="game-interactive">
-            <div class="result-display">ðŸ”® ðŸ” ðŸ§©</div>
+            <div class="result-display">🔮 🔍 🧩</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
@@ -479,25 +530,25 @@
           onclick="focusCard(this)"
           data-game="cyberflux"
         >
-          <div class="game-icon">ðŸŒ</div>
+          <div class="game-icon">🌐</div>
           <h2 class="game-title">Cyber Flux</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
             <span class="tag">Highscore</span>
           </div>
           <p class="game-description">
-            Vous incarnez un nÃ©on poussin qui doit naviguer dans les flux
-            cybernÃ©tiques pour ne pas se cogner Ã  un obstacle !
+            Vous incarnez un néon poussin qui doit naviguer dans les flux
+            cybernétiques pour ne pas se cogner à un obstacle !
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">ðŸŒðŸ£</div>
+            <div class="result-display">🌐🐣</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('cyberflux.html', event)"
           >
-            Jouer Ã  Cyber Flux
+            Jouer à Cyber Flux
           </button>
         </article>
 
@@ -507,26 +558,26 @@
           onclick="focusCard(this)"
           data-game="crossyturfu"
         >
-          <div class="game-icon">ðŸ”</div>
+          <div class="game-icon">🐔</div>
           <h2 class="game-title">Crossy Turfu</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
             <span class="tag">Puzzle</span>
-            <span class="tag">RÃ©flexion</span>
+            <span class="tag">Réflexion</span>
           </div>
           <p class="game-description">
-            Un jeu de rÃ©flexion oÃ¹ vous devez traverser un terrain en Ã©vitant
+            Un jeu de réflexion où vous devez traverser un terrain en évitant
             les obstacles !
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">ðŸ” â†’ ðŸš§</div>
+            <div class="result-display">🐔 → 🚧</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('crossyturfu.html', event)"
           >
-            Jouer Ã  Crossy Turfu
+            Jouer à Crossy Turfu
           </button>
         </article>
 
@@ -536,7 +587,7 @@
           onclick="focusCard(this)"
           data-game="openworld"
         >
-          <div class="game-icon">ðŸŒ</div>
+          <div class="game-icon">🌍</div>
           <h2 class="game-title">Open World</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
@@ -544,16 +595,16 @@
             <span class="tag">Aventure</span>
           </div>
           <p class="game-description">
-            Explorez un monde ouvert et dÃ©couvrez des secrets cachÃ©s !
+            Explorez un monde ouvert et découvrez des secrets cachés !
           </p>
           <div class="game-interactive">
-            <div class="result-display">ðŸŒ â†’ ðŸ§­</div>
+            <div class="result-display">🌍 → 🧭</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('openworld.html', event)"
           >
-            Jouer Ã  Open World
+            Jouer à Open World
           </button>
         </article>
 
@@ -563,7 +614,7 @@
           onclick="focusCard(this)"
           data-game="pixel-forge"
         >
-          <div class="game-icon">ðŸ•¹ï¸</div>
+          <div class="game-icon">🕹️</div>
           <h2 class="game-title">Pixel Forge</h2>
           <div class="game-tags">
             <span class="tag difficulty-easy">Facile</span>
@@ -571,18 +622,18 @@
             <span class="tag">Progression</span>
           </div>
           <p class="game-description">
-            GÃ©nÃ©rez des bits, achetez des amÃ©liorations et traversez les Ã¨res
+            Générez des bits, achetez des améliorations et traversez les ères
             technologiques.
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">ðŸ’¾âš¡ðŸŒ</div>
+            <div class="result-display">💾⚡🌐</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('clickerbit.html', event)"
           >
-            Jouer Ã  Pixel Forge
+            Jouer à Pixel Forge
           </button>
         </article>
 
@@ -592,7 +643,7 @@
           onclick="focusCard(this)"
           data-game="cyberfind"
         >
-          <div class="game-icon">ðŸ”Ž</div>
+          <div class="game-icon">🔎</div>
           <h2 class="game-title">CyberFind</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
@@ -600,12 +651,12 @@
             <span class="tag">Recherche</span>
           </div>
           <p class="game-description">
-            Zoomez dans le district cyberpunk et repÃ©rez toutes les anomalies
-            dissimulÃ©es dans la scÃ¨ne.
+            Zoomez dans le district cyberpunk et repérez toutes les anomalies
+            dissimulées dans la scène.
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">ðŸŒ† ðŸ” âš ï¸</div>
+            <div class="result-display">🌆 🔍 ⚠️</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
@@ -621,7 +672,7 @@
           onclick="focusCard(this)"
           data-game="neon-overdrive"
         >
-          <div class="game-icon">ðŸš€</div>
+          <div class="game-icon">🚀</div>
           <h2 class="game-title">Neon Overdrive</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
@@ -633,43 +684,43 @@
             de projectiles du vide.
           </p>
           <div class="game-interactive">
-            <div class="result-display">ðŸš€ âœ¦ ðŸ’¥</div>
+            <div class="result-display">🚀 ✦ 💥</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('neon-overdrive.html', event)"
           >
-            Jouer Ã  Neon Overdrive
+            Jouer à Neon Overdrive
           </button>
         </article>
 
-        <!-- Simon NÃ©on -->
+        <!-- Simon Néon -->
         <article
           class="game-card simon fade-in"
           onclick="focusCard(this)"
           data-game="simon"
         >
-          <div class="game-icon">ðŸŽ›ï¸</div>
-          <h2 class="game-title">Simon NÃ©on</h2>
+          <div class="game-icon">🎛️</div>
+          <h2 class="game-title">Simon Néon</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
-            <span class="tag">MÃ©moire</span>
+            <span class="tag">Mémoire</span>
             <span class="tag">Rythme</span>
           </div>
           <p class="game-description">
-            Observez la sÃ©quence lumineuse, reproduisez-la sans erreur et tenez
-            le rythme qui accÃ©lÃ¨re.
+            Observez la séquence lumineuse, reproduisez-la sans erreur et tenez
+            le rythme qui accélère.
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">ðŸ”´ðŸŸ¢ðŸ”µðŸŸ¡</div>
+            <div class="result-display">🔴🟢🔵🟡</div>
           </div>
           <br />
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('simon.html', event)"
           >
-            Jouer Ã  Simon NÃ©on
+            Jouer à Simon Néon
           </button>
         </article>
 
@@ -679,20 +730,20 @@
           onclick="focusCard(this)"
           data-game="spider-solitaire"
         >
-          <div class="game-icon">ðŸ•·ï¸</div>
+          <div class="game-icon">🕷️</div>
           <h2 class="game-title">Spider Solitaire</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
             <span class="tag">Cartes</span>
-            <span class="tag">StratÃ©gie</span>
+            <span class="tag">Stratégie</span>
           </div>
           <p class="game-description">
-            Rangez les cartes en suites complÃ¨tes et relevez le dÃ©fi avec une,
+            Rangez les cartes en suites complètes et relevez le défi avec une,
             deux ou quatre couleurs.
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">ðŸ‚¡ ðŸ‚® ðŸ•¸ï¸</div>
+            <div class="result-display">🂡 🂮 🕸️</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
@@ -708,7 +759,7 @@
           onclick="focusCard(this)"
           data-game="sudoku"
         >
-          <div class="game-icon">ðŸ”¢</div>
+          <div class="game-icon">🔢</div>
           <h2 class="game-title">Sudoku</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
@@ -716,12 +767,12 @@
             <span class="tag">Puzzle</span>
           </div>
           <p class="game-description">
-            ComplÃ©tez la grille grÃ¢ce Ã  votre logique, avec plusieurs niveaux et
-            un solveur pour les dÃ©fis libres.
+            Complétez la grille grâce à votre logique, avec plusieurs niveaux et
+            un solveur pour les défis libres.
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">1 âž¡ï¸â€‹ 9</div>
+            <div class="result-display">1 ➡️​ 9</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
@@ -737,7 +788,7 @@
           onclick="focusCard(this)"
           data-game="synthwave-runner"
         >
-          <div class="game-icon">ðŸŒ…</div>
+          <div class="game-icon">🌅</div>
           <h2 class="game-title">Synthwave Runner</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
@@ -749,13 +800,13 @@
             infinie de plus en plus rapide.
           </p>
           <div class="game-interactive">
-            <div class="result-display">ðŸƒ ðŸŒ´ ðŸŒ‡</div>
+            <div class="result-display">🏃 🌴 🌇</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('synthwave-runner.html', event)"
           >
-            Jouer Ã  Synthwave Runner
+            Jouer à Synthwave Runner
           </button>
         </article>
 
@@ -765,26 +816,26 @@
           onclick="focusCard(this)"
           data-game="taquin"
         >
-          <div class="game-icon">ðŸ§©</div>
+          <div class="game-icon">🧩</div>
           <h2 class="game-title">Pixel Taquin</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
             <span class="tag">Puzzle</span>
-            <span class="tag">RÃ©flexion</span>
+            <span class="tag">Réflexion</span>
           </div>
           <p class="game-description">
             Faites glisser les tuiles, remettez-les dans le bon ordre et tentez
-            de rÃ©soudre le puzzle en un minimum de coups.
+            de résoudre le puzzle en un minimum de coups.
           </p>
           <br />
           <div class="game-interactive">
-            <div class="result-display">1 2 3 Â· 4 5</div>
+            <div class="result-display">1 2 3 · 4 5</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('taquin.html', event)"
           >
-            Jouer Ã  Pixel Taquin
+            Jouer à Pixel Taquin
           </button>
         </article>
 
@@ -794,25 +845,25 @@
           onclick="focusCard(this)"
           data-game="geominds"
         >
-          <div class="game-icon">ðŸ“</div>
+          <div class="game-icon">📐</div>
           <h2 class="game-title">GeoMinds</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
-            <span class="tag">GÃ©omÃ©trie</span>
+            <span class="tag">Géométrie</span>
             <span class="tag">Logique</span>
           </div>
           <p class="game-description">
-            RÃ©solvez des dÃ©fis de gÃ©omÃ©trie et de logique spatiale dans un
-            univers colorÃ© et apaisant.
+            Résolvez des défis de géométrie et de logique spatiale dans un
+            univers coloré et apaisant.
           </p>
           <div class="game-interactive">
-            <div class="result-display">â–³ â—‹ â–¡</div>
+            <div class="result-display">△ ○ □</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('geominds.html', event)"
           >
-            Jouer Ã  GeoMinds
+            Jouer à GeoMinds
           </button>
         </article>
 
@@ -822,19 +873,19 @@
           onclick="focusCard(this)"
           data-game="cybermorpion"
         >
-          <div class="game-icon">âŒ</div>
+          <div class="game-icon">❌</div>
           <h2 class="game-title">Cyber-Morpion</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
-            <span class="tag">StratÃ©gie</span>
+            <span class="tag">Stratégie</span>
             <span class="tag">VS IA</span>
           </div>
           <p class="game-description">
-            Alignez vos symboles sur une grille 3 Ã— 3 ou 5 Ã— 5, en duel local
-            ou face Ã  l'intelligence artificielle.
+            Alignez vos symboles sur une grille 3 × 3 ou 5 × 5, en duel local
+            ou face à l'intelligence artificielle.
           </p>
           <div class="game-interactive">
-            <div class="result-display">X Â· O</div>
+            <div class="result-display">X · O</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
@@ -850,25 +901,25 @@
           onclick="focusCard(this)"
           data-game="marmotte"
         >
-          <div class="game-icon">ðŸ”¨</div>
+          <div class="game-icon">🔨</div>
           <h2 class="game-title">Neon Whack</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
             <span class="tag">Arcade</span>
-            <span class="tag">RÃ©flexes</span>
+            <span class="tag">Réflexes</span>
           </div>
           <p class="game-description">
-            Frappez les taupes Ã  toute vitesse, choisissez votre difficultÃ© et
+            Frappez les taupes à toute vitesse, choisissez votre difficulté et
             grimpez dans le classement local.
           </p>
           <div class="game-interactive">
-            <div class="result-display">ðŸ”¨ âš¡ ðŸ¹</div>
+            <div class="result-display">🔨 ⚡ 🐹</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('marmotte.html', event)"
           >
-            Jouer Ã  Tape-Taupe
+            Jouer à Tape-Taupe
           </button>
         </article>
 
@@ -878,7 +929,7 @@
           onclick="focusCard(this)"
           data-game="neontron"
         >
-          <div class="game-icon">ðŸ</div>
+          <div class="game-icon">🏁</div>
           <h2 class="game-title">Neontron</h2>
           <div class="game-tags">
             <span class="tag difficulty-hard">Difficile</span>
@@ -886,17 +937,17 @@
             <span class="tag">VS CPU</span>
           </div>
           <p class="game-description">
-            Tracez votre ligne, coupez celle du systÃ¨me et remportez ce duel de
-            lightcycles rÃ©tro-futuriste.
+            Tracez votre ligne, coupez celle du système et remportez ce duel de
+            lightcycles rétro-futuriste.
           </p>
           <div class="game-interactive">
-            <div class="result-display">â•¾â” â•¾â”</div>
+            <div class="result-display">╾━ ╾━</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('neontron.html', event)"
           >
-            Entrer dans l'arÃ¨ne
+            Entrer dans l'arène
           </button>
         </article>
 
@@ -906,25 +957,25 @@
           onclick="focusCard(this)"
           data-game="puissance4"
         >
-          <div class="game-icon">ðŸ”´</div>
+          <div class="game-icon">🔴</div>
           <h2 class="game-title">Puissance 4 Advance</h2>
           <div class="game-tags">
             <span class="tag difficulty-medium">Moyen</span>
-            <span class="tag">StratÃ©gie</span>
+            <span class="tag">Stratégie</span>
             <span class="tag">2D &amp; 3D</span>
           </div>
           <p class="game-description">
             Alignez quatre jetons avant votre rival sur la grille classique ou
-            dans un plateau 3D inÃ©dit.
+            dans un plateau 3D inédit.
           </p>
           <div class="game-interactive">
-            <div class="result-display">â— â— â— â—</div>
+            <div class="result-display">● ● ● ●</div>
           </div>
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('puissance4.html', event)"
           >
-            Jouer Ã  Puissance 4
+            Jouer à Puissance 4
           </button>
         </article>
       </main>
@@ -932,14 +983,142 @@
       <!-- Footer -->
       <footer class="footer">
         <div class="footer-links">
-          <a href="#" class="footer-link">Ã€ propos</a>
-          <a href="#" class="footer-link">ParamÃ¨tres</a>
-          <a href="#" class="footer-link">CrÃ©dits</a>
+          <a href="#" class="footer-link">À propos</a>
+          <a href="#" class="footer-link">Paramètres</a>
+          <a href="#" class="footer-link">Crédits</a>
         </div>
-        <p>Â© 2026 Francis Arcade â€¢ Fait avec ðŸ’œ</p>
+        <p>© 2026 Francis Arcade • Fait avec 💜</p>
       </footer>
     </div>
 
+    <dialog class="arcade-dialog" id="accountDialog" aria-labelledby="accountDialogTitle">
+      <div class="dialog-shell">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer">×</button>
+        <div class="dialog-heading">
+          <span class="platform-kicker">PROFIL LOCAL</span>
+          <h2 id="accountDialogTitle">Choisissez votre pseudo</h2>
+        </div>
+
+        <section id="signedOutPanel">
+          <p class="dialog-copy">
+            Un pseudo suffit. S’il n’existe pas encore sur cet appareil, il recevra
+            <strong id="starterCoinsDialog">quelques Coins de départ</strong>. Aucun mot de passe
+            ni donnée personnelle n’est demandé.
+          </p>
+          <form class="auth-form" id="authForm">
+            <label>
+              Pseudo
+              <input
+                type="text"
+                name="pseudo"
+                autocomplete="nickname"
+                minlength="2"
+                maxlength="20"
+                placeholder="Ex. NeoPlayer"
+                required
+              />
+            </label>
+            <div class="auth-actions">
+              <button class="btn btn-primary" type="submit">Entrer dans l’arcade</button>
+            </div>
+          </form>
+          <p class="local-admin-hint">
+            Profil administrateur de test : <strong id="adminPseudoHint">ADMIN</strong>
+          </p>
+        </section>
+
+        <section id="signedInPanel" hidden>
+          <div class="account-summary">
+            <div>
+              <small>Profil actif</small>
+              <strong id="accountEmail">Compte Arcade</strong>
+            </div>
+            <div class="modal-balance">
+              <small>Solde disponible</small>
+              <strong id="modalCoinBalance">0 Coin</strong>
+            </div>
+          </div>
+          <h3 class="dialog-section-title">Dernières transactions</h3>
+          <ul class="transaction-list" id="transactionList"></ul>
+          <button class="btn btn-secondary signout-button" id="signOutButton" type="button">Changer de pseudo</button>
+        </section>
+      </div>
+    </dialog>
+
+    <dialog class="arcade-dialog" id="challengeDialog" aria-labelledby="challengeDialogTitle">
+      <div class="dialog-shell">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer">×</button>
+        <div class="dialog-heading">
+          <span class="platform-kicker">DÉFIS DE TEST</span>
+          <h2 id="challengeDialogTitle">Choisissez votre épreuve</h2>
+        </div>
+        <section id="challengeLobby">
+          <p class="dialog-copy">Chaque défi utilise l’économie fictive locale. Une réponse règle immédiatement la partie.</p>
+          <div class="challenge-grid">
+            <button type="button" class="challenge-card" data-challenge-key="challenge_math">
+              <span>➗</span><strong>Calcul éclair</strong><small>Rapidité et précision</small>
+            </button>
+            <button type="button" class="challenge-card" data-challenge-key="challenge_sequence">
+              <span>🔢</span><strong>Suite néon</strong><small>Trouvez le nombre suivant</small>
+            </button>
+            <button type="button" class="challenge-card" data-challenge-key="challenge_intruder">
+              <span>🔍</span><strong>Intrus logique</strong><small>Repérez l’exception</small>
+            </button>
+          </div>
+        </section>
+        <section class="active-challenge" id="activeChallenge" hidden>
+          <h3 id="activeChallengeTitle">Défi</h3>
+          <p class="challenge-prompt" id="activeChallengePrompt"></p>
+          <form id="challengeForm">
+            <div class="challenge-choices" id="challengeChoices"></div>
+            <input
+              class="challenge-answer"
+              id="challengeAnswer"
+              type="number"
+              inputmode="numeric"
+              autocomplete="off"
+              aria-label="Votre réponse"
+            />
+            <button class="btn btn-primary" id="challengeSubmit" type="submit">Valider ma réponse</button>
+          </form>
+          <p class="challenge-result" id="challengeResult" role="status" hidden></p>
+          <button class="btn btn-secondary" id="backToChallenges" type="button" hidden>Choisir un autre défi</button>
+        </section>
+      </div>
+    </dialog>
+
+    <dialog class="arcade-dialog" id="adminDialog" aria-labelledby="adminDialogTitle">
+      <div class="dialog-shell">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer">×</button>
+        <div class="dialog-heading">
+          <span class="platform-kicker">ADMINISTRATEUR LOCAL</span>
+          <h2 id="adminDialogTitle">Ajuster un solde de test</h2>
+        </div>
+        <p class="dialog-copy">
+          Ces opérations sont fictives et enregistrées dans l’historique du profil ciblé.
+        </p>
+        <form class="auth-form admin-form" id="adminForm">
+          <label>
+            Profil à modifier
+            <select name="targetProfile" id="adminTargetProfile" required></select>
+          </label>
+          <label>
+            Nombre de Coins
+            <input type="number" name="amount" min="0.01" step="0.01" inputmode="decimal" required />
+          </label>
+          <div class="auth-actions">
+            <button class="btn btn-primary" type="submit" name="direction" value="add">Ajouter</button>
+            <button class="btn btn-danger" type="submit" name="direction" value="remove">Retirer</button>
+          </div>
+        </form>
+        <p class="admin-result" id="adminResult" role="status"></p>
+      </div>
+    </dialog>
+
+    <script src="arcade-config.js"></script>
+    <script src="arcade-local-store.js"></script>
+    <script src="arcade-platform.js"></script>
+    <script src="arcade-game-sdk.js"></script>
     <script src="index.js"></script>
   </body>
 </html>
