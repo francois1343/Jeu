@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Cyber-Morpion 80s</title>
+    <link rel="stylesheet" href="cybermorpion.css" />
+    <link rel="stylesheet" href="arcade-home.css" />
+  </head>
+  <body>
+    <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil">
+      <span class="arcade-home-icon" aria-hidden="true">⌂</span>
+      <span class="arcade-home-label">Accueil</span>
+    </a>
+    <div id="game-container">
+      <!-- EN-TÊTE -->
+      <header id="header">
+        <h1 class="neon-title">CYBER<span class="pink">MORPION</span></h1>
+      </header>
+
+      <!-- TABLEAU DE BORD (HUD) -->
+      <section id="hud">
+        <div class="hud-card score-x">
+          <span class="hud-label">JOUEUR (X)</span>
+          <span id="score-x" class="hud-value neon-cyan">0</span>
+        </div>
+        <div class="hud-card score-draw">
+          <span class="hud-label">ÉGALITÉS</span>
+          <span id="score-draw" class="hud-value neon-yellow">0</span>
+        </div>
+        <div class="hud-card score-o">
+          <span class="hud-label">JOUEUR (O)</span>
+          <span id="score-o" class="hud-value neon-pink">0</span>
+        </div>
+      </section>
+
+      <!-- BANNIÈRE DU TOUR ACTIVE -->
+      <div id="turn-banner" class="turn-banner">
+        <span>TOUR : </span><span id="turn-display" class="neon-cyan">X</span>
+      </div>
+
+      <!-- PANNEAU DE CONFIGURATION -->
+      <section id="config-panel">
+        <div class="config-row">
+          <div class="selector-group">
+            <label>GRILLE</label>
+            <div class="btn-group">
+              <button id="btn-3x3" class="btn-select active" data-grid="3">
+                3x3 (Aligner 3)
+              </button>
+              <button id="btn-5x5" class="btn-select" data-grid="5">
+                5x5 (Aligner 4)
+              </button>
+            </div>
+          </div>
+          <div class="selector-group">
+            <label>ADVERSAIRE</label>
+            <div class="btn-group">
+              <button id="btn-pvp" class="btn-select active" data-opp="pvp">
+                2 Joueurs
+              </button>
+              <button id="btn-ai" class="btn-select" data-opp="ai">IA</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="ai-difficulty-container" class="config-row hidden">
+          <div class="selector-group full-width">
+            <label>DIFFICULTÉ IA</label>
+            <div class="btn-group">
+              <button class="btn-diff active" data-diff="easy">Facile</button>
+              <button class="btn-diff" data-diff="medium">Moyen</button>
+              <button id="btn-unbeatable" class="btn-diff" data-diff="hard">
+                Imbattable
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PLATEAU DE JEU AVEC CALQUE LASER SVG -->
+      <main id="board-wrapper">
+        <div id="board" class="grid-3x3"></div>
+        <svg id="winning-line-svg" class="winning-svg">
+          <line
+            id="laser-line"
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="0"
+            class="laser-beam hidden"
+          />
+        </svg>
+      </main>
+
+      <!-- COMMANDES EN BAS DE PAGE -->
+      <footer id="footer-controls">
+        <button id="btn-restart" class="btn-neon">REJOUER</button>
+        <button id="btn-reset-scores" class="btn-neon-danger">
+          RÉINIT. SCORES
+        </button>
+        <button id="btn-audio" class="btn-icon" aria-label="Sons">🔊</button>
+      </footer>
+    </div>
+
+    <script src="cybermorpion.js"></script>
+  </body>
+</html>

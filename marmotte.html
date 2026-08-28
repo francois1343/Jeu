@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#10002b" />
+    <title>Neon Whack — Tape-Taupe</title>
+    <link rel="stylesheet" href="marmotte.css" />
+    <link rel="stylesheet" href="arcade-home.css" />
+  </head>
+  <body data-theme="normal">
+    <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil">
+      <span class="arcade-home-icon" aria-hidden="true">⌂</span>
+      <span class="arcade-home-label">Accueil</span>
+    </a>
+    <!-- Décor synthwave placé derrière la borne. -->
+    <div class="sun" aria-hidden="true"></div>
+    <div class="retro-grid" aria-hidden="true"></div>
+
+    <div id="arcade-cabinet">
+      <!-- En-tête commun aux trois écrans : menu, jeu et classement. -->
+      <header class="game-header">
+        <p class="eyebrow">HIGH VOLTAGE ARCADE · 1986</p>
+        <h1 class="arcade-title">NEON <span>WHACK</span></h1>
+        <p id="tagline" class="tagline">Le grand classique arcade, sous haute tension.</p>
+      </header>
+
+      <!-- ÉCRAN 1 : sélection de la difficulté. -->
+      <section id="menu-view" class="screen-view" aria-labelledby="menu-title">
+        <div class="section-heading">
+          <p class="section-kicker">SELECT MODE</p>
+          <h2 id="menu-title">CHOISIS TA DIFFICULTÉ</h2>
+        </div>
+
+        <div class="difficulty-grid" role="group" aria-label="Niveau de difficulté">
+          <button class="difficulty-card difficulty-easy" type="button" data-difficulty="easy" aria-pressed="false">
+            <span class="difficulty-icon" aria-hidden="true">★</span>
+            <strong>FACILE</strong>
+            <span>40 secondes</span>
+            <small>Ambiance chill</small>
+          </button>
+
+          <button class="difficulty-card difficulty-normal selected" type="button" data-difficulty="normal" aria-pressed="true">
+            <span class="recommended">RECOMMANDÉ</span>
+            <span class="difficulty-icon" aria-hidden="true">★★</span>
+            <strong>NORMAL</strong>
+            <span>35 secondes</span>
+            <small>Rythme arcade</small>
+          </button>
+
+          <button class="difficulty-card difficulty-hard" type="button" data-difficulty="hard" aria-pressed="false">
+            <span class="difficulty-icon" aria-hidden="true">★★★</span>
+            <strong>DIFFICILE</strong>
+            <span>30 secondes</span>
+            <small>Zone de danger</small>
+          </button>
+
+          <button class="difficulty-card difficulty-ultra" type="button" data-difficulty="ultra" aria-pressed="false">
+            <span class="difficulty-icon" aria-hidden="true">★★★★</span>
+            <strong>ULTRA</strong>
+            <span>25 secondes</span>
+            <small>Hyper vitesse</small>
+          </button>
+
+          <button class="difficulty-card difficulty-diabolical" type="button" data-difficulty="diabolical" aria-pressed="false">
+            <span class="difficulty-icon" aria-hidden="true">★★★★★</span>
+            <strong>DIABOLIQUE</strong>
+            <span>20 secondes</span>
+            <small>Aucune pitié</small>
+          </button>
+        </div>
+
+        <div class="menu-actions">
+          <button id="play-btn" class="btn-insert-coin" type="button"><span class="play-icon" aria-hidden="true">▶</span>JOUER</button>
+          <button id="leaderboard-btn" class="btn-secondary" type="button"><span aria-hidden="true">🏆</span> LEADERBOARD</button>
+        </div>
+        <p class="save-note">Tes 5 meilleures parties sont sauvegardées sur cet appareil.</p>
+      </section>
+
+      <!-- ÉCRAN 2 : HUD et plateau de jeu. -->
+      <section id="game-view" class="screen-view hidden" aria-label="Partie en cours">
+        <div class="game-toolbar">
+          <button id="quit-btn" class="icon-button" type="button" aria-label="Quitter et revenir au menu">‹ MENU</button>
+          <span id="difficulty-badge" class="difficulty-badge">NORMAL</span>
+          <span id="game-status" class="game-status" role="status" aria-live="polite">Frappe vite !</span>
+        </div>
+
+        <div class="hud" aria-label="Statistiques de la partie">
+          <div class="panel panel-score"><span class="label">SCORE</span><span id="score" class="value">00</span></div>
+          <div class="panel panel-time"><span class="label">TEMPS</span><span class="value"><span id="time">35</span><small>S</small></span></div>
+          <div class="panel panel-missed-shots"><span class="label">COUPS RATÉS</span><span id="missed-shots" class="value">00</span></div>
+          <div class="panel panel-missed-moles"><span class="label">TAUPES LOUPÉES</span><span id="missed-moles" class="value">00</span></div>
+        </div>
+
+        <main class="game-board" aria-label="Plateau de Tape-Taupe">
+          <div class="board-glow" aria-hidden="true"></div>
+          <div class="grid">
+            <div class="hole"><div class="marmot" aria-label="Taupe"></div><div class="dirt"></div></div>
+            <div class="hole"><div class="marmot" aria-label="Taupe"></div><div class="dirt"></div></div>
+            <div class="hole"><div class="marmot" aria-label="Taupe"></div><div class="dirt"></div></div>
+            <div class="hole"><div class="marmot" aria-label="Taupe"></div><div class="dirt"></div></div>
+            <div class="hole"><div class="marmot" aria-label="Taupe"></div><div class="dirt"></div></div>
+            <div class="hole"><div class="marmot" aria-label="Taupe"></div><div class="dirt"></div></div>
+            <div class="hole"><div class="marmot" aria-label="Taupe"></div><div class="dirt"></div></div>
+            <div class="hole"><div class="marmot" aria-label="Taupe"></div><div class="dirt"></div></div>
+            <div class="hole"><div class="marmot" aria-label="Taupe"></div><div class="dirt"></div></div>
+          </div>
+        </main>
+        <p class="tip"><span aria-hidden="true">✦</span> Plateau manqué = coup raté · Taupe échappée = taupe loupée</p>
+      </section>
+
+      <!-- ÉCRAN 3 : cinq tops 5 indépendants. -->
+      <section id="leaderboard-view" class="screen-view hidden" aria-labelledby="leaderboard-title">
+        <div class="view-header">
+          <button id="leaderboard-back-btn" class="icon-button" type="button">‹ MENU</button>
+          <div class="section-heading compact">
+            <p class="section-kicker">HALL OF FAME</p>
+            <h2 id="leaderboard-title">LEADERBOARD</h2>
+          </div>
+          <span class="view-header-spacer" aria-hidden="true"></span>
+        </div>
+        <div id="leaderboard-lists" class="leaderboard-grid"></div>
+      </section>
+
+      <!-- Modale affichée après la sauvegarde du résultat. -->
+      <div id="game-over" class="hidden" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
+        <div class="results-card">
+          <p id="final-difficulty" class="eyebrow">NORMAL · RUN COMPLETE</p>
+          <h2 id="game-over-title">FIN DE PARTIE</h2>
+          <div class="new-record hidden" id="new-record">★ NOUVEAU TOP 5 ★</div>
+          <div class="final-score-wrap"><span class="label">SCORE FINAL</span><strong id="final-score">0</strong></div>
+          <div class="results-grid">
+            <p><span id="final-missed-shots">0</span> coups ratés</p>
+            <p><span id="final-missed-moles">0</span> taupes loupées</p>
+            <p><span id="final-accuracy">0%</span> de précision</p>
+          </div>
+          <div class="result-actions">
+            <button id="restart-btn" class="btn-insert-coin" type="button">↻ REJOUER</button>
+            <button id="results-leaderboard-btn" class="btn-secondary" type="button">🏆 CLASSEMENT</button>
+            <button id="results-menu-btn" class="text-button" type="button">Retour au menu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="marmotte.js"></script>
+  </body>
+</html>

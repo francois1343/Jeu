@@ -1,0 +1,336 @@
+/* --- PALETTE NÉON SYNTHWAVE --- */
+:root {
+  --bg-dark: #0a0612;
+  --panel-bg: rgba(20, 12, 38, 0.85);
+  --neon-cyan: #00f3ff;
+  --neon-pink: #ff007f;
+  --neon-purple: #9d00ff;
+  --neon-yellow: #ffe600;
+  --text-color: #f8fafc;
+  --font-synth: "Courier New", Courier, monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-color);
+  font-family: var(--font-synth);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  /* Motif de grille rétro en arrière-plan */
+  background-image:
+    linear-gradient(to right, rgba(157, 0, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(157, 0, 255, 0.1) 1px, transparent 1px);
+  background-size: 35px 35px;
+}
+
+#game-container {
+  width: 100vw;
+  max-width: 480px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: var(--bg-dark);
+  border: 2px solid var(--neon-purple);
+  box-shadow: 0 0 25px rgba(157, 0, 255, 0.35);
+  position: relative;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* --- EN-TÊTE & COULEURS --- */
+.neon-title {
+  font-size: 2rem;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 10px var(--neon-cyan);
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.neon-title .pink {
+  color: var(--neon-pink);
+  text-shadow: 0 0 10px var(--neon-pink);
+}
+
+.neon-cyan {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px var(--neon-cyan);
+}
+
+.neon-pink {
+  color: var(--neon-pink);
+  text-shadow: 0 0 8px var(--neon-pink);
+}
+
+.neon-yellow {
+  color: var(--neon-yellow);
+  text-shadow: 0 0 8px var(--neon-yellow);
+}
+
+/* --- TABLEAU DE BORD (HUD) --- */
+#hud {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.hud-card {
+  flex: 1;
+  background: var(--panel-bg);
+  border: 1px solid var(--neon-purple);
+  border-radius: 6px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.hud-label {
+  font-size: 0.65rem;
+  color: #a855f7;
+  margin-bottom: 2px;
+}
+
+.hud-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.turn-banner {
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+/* --- CONFIGURATION & SELECTEURS --- */
+#config-panel {
+  width: 100%;
+  background: var(--panel-bg);
+  border: 1px solid rgba(157, 0, 255, 0.4);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.config-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.selector-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.selector-group.full-width {
+  width: 100%;
+}
+
+.selector-group label {
+  font-size: 0.6rem;
+  color: #a855f7;
+  letter-spacing: 1px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+}
+
+.btn-select,
+.btn-diff {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--neon-purple);
+  color: var(--text-color);
+  padding: 6px 2px;
+  font-size: 0.7rem;
+  font-family: var(--font-synth);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-select.active,
+.btn-diff.active {
+  background: var(--neon-purple);
+  color: #fff;
+  box-shadow: 0 0 8px var(--neon-purple);
+  border-color: var(--neon-cyan);
+}
+
+/* --- PLATEAU DE JEU & CELLULES --- */
+#board-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 1 / 1;
+  margin: auto;
+}
+
+#board {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  gap: 8px;
+  background: transparent;
+}
+
+#board.grid-3x3 {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+#board.grid-5x5 {
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 4px;
+}
+
+.cell {
+  background: var(--panel-bg);
+  border: 2px solid var(--neon-purple);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+#board.grid-5x5 .cell {
+  font-size: 1.4rem;
+  border-width: 1px;
+  border-radius: 4px;
+}
+
+.cell:hover {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+.cell.x-mark {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 12px var(--neon-cyan);
+}
+
+.cell.o-mark {
+  color: var(--neon-pink);
+  text-shadow: 0 0 12px var(--neon-pink);
+}
+
+/* --- EFFET LASER EN OVERLAY (SVG) --- */
+.winning-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.laser-beam {
+  stroke: var(--neon-yellow);
+  stroke-width: 6;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px var(--neon-yellow)) drop-shadow(0 0 15px #ff0055);
+  transition: stroke-dashoffset 0.4s ease-out;
+}
+
+/* --- BOUTONS D'ACTION --- */
+#footer-controls {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.btn-neon {
+  flex: 2;
+  background: transparent;
+  color: var(--neon-cyan);
+  border: 1px solid var(--neon-cyan);
+  padding: 10px;
+  font-size: 0.85rem;
+  font-family: var(--font-synth);
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-neon-danger {
+  flex: 2;
+  background: transparent;
+  color: var(--neon-pink);
+  border: 1px solid var(--neon-pink);
+  padding: 10px;
+  font-size: 0.85rem;
+  font-family: var(--font-synth);
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(255, 0, 127, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-neon:hover,
+.btn-neon-danger:hover {
+  transform: translateY(-2px);
+}
+
+.btn-icon {
+  flex: 0.8;
+  background: transparent;
+  border: 1px solid var(--neon-purple);
+  color: var(--text-color);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 400px) {
+  #game-container {
+    border: none;
+    padding: 10px;
+  }
+  .neon-title {
+    font-size: 1.6rem;
+  }
+  .hud-value {
+    font-size: 1rem;
+  }
+}

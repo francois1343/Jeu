@@ -108,9 +108,9 @@
   .arcade-home-link {
     top: max(8px, env(safe-area-inset-top));
     left: max(8px, env(safe-area-inset-left));
-    width: 42px;
-    min-width: 42px;
-    height: 42px;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
     padding: 0;
     justify-content: center;
     border-radius: 50%;

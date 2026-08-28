@@ -433,6 +433,36 @@
         --card-color-rgb: 192, 132, 252;
       }
 
+      /* GeoMinds - Bleu géométrique */
+      .game-card.geominds {
+        --card-color: #60a5fa;
+        --card-color-rgb: 96, 165, 250;
+      }
+
+      /* Cyber-Morpion - Rose laser */
+      .game-card.cybermorpion {
+        --card-color: #f472b6;
+        --card-color-rgb: 244, 114, 182;
+      }
+
+      /* Tape-Taupe - Jaune électrique */
+      .game-card.marmotte {
+        --card-color: #facc15;
+        --card-color-rgb: 250, 204, 21;
+      }
+
+      /* Neontron - Cyan lightcycle */
+      .game-card.neontron {
+        --card-color: #22d3ee;
+        --card-color-rgb: 34, 211, 238;
+      }
+
+      /* Puissance 4 Advance - Rouge arcade */
+      .game-card.puissance4 {
+        --card-color: #fb4d5d;
+        --card-color-rgb: 251, 77, 93;
+      }
+
       /* ===== ICÔNE DU JEU ===== */
       .game-icon {
         width: 70px;
@@ -1684,6 +1714,146 @@
             onclick="launchGame('taquin.html', event)"
           >
             Jouer à Pixel Taquin
+          </button>
+        </article>
+
+        <!-- GeoMinds -->
+        <article
+          class="game-card geominds fade-in"
+          onclick="focusCard(this)"
+          data-game="geominds"
+        >
+          <div class="game-icon">📐</div>
+          <h2 class="game-title">GeoMinds</h2>
+          <div class="game-tags">
+            <span class="tag difficulty-medium">Moyen</span>
+            <span class="tag">Géométrie</span>
+            <span class="tag">Logique</span>
+          </div>
+          <p class="game-description">
+            Résolvez des défis de géométrie et de logique spatiale dans un
+            univers coloré et apaisant.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">△ ○ □</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="launchGame('geominds.html', event)"
+          >
+            Jouer à GeoMinds
+          </button>
+        </article>
+
+        <!-- Cyber-Morpion -->
+        <article
+          class="game-card cybermorpion fade-in"
+          onclick="focusCard(this)"
+          data-game="cybermorpion"
+        >
+          <div class="game-icon">❌</div>
+          <h2 class="game-title">Cyber-Morpion</h2>
+          <div class="game-tags">
+            <span class="tag difficulty-medium">Moyen</span>
+            <span class="tag">Stratégie</span>
+            <span class="tag">VS IA</span>
+          </div>
+          <p class="game-description">
+            Alignez vos symboles sur une grille 3 × 3 ou 5 × 5, en duel local
+            ou face à l'intelligence artificielle.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">X · O</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="launchGame('cybermorpion.html', event)"
+          >
+            Jouer au Cyber-Morpion
+          </button>
+        </article>
+
+        <!-- Tape-Taupe -->
+        <article
+          class="game-card marmotte fade-in"
+          onclick="focusCard(this)"
+          data-game="marmotte"
+        >
+          <div class="game-icon">🔨</div>
+          <h2 class="game-title">Neon Whack</h2>
+          <div class="game-tags">
+            <span class="tag difficulty-medium">Moyen</span>
+            <span class="tag">Arcade</span>
+            <span class="tag">Réflexes</span>
+          </div>
+          <p class="game-description">
+            Frappez les taupes à toute vitesse, choisissez votre difficulté et
+            grimpez dans le classement local.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">🔨 ⚡ 🐹</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="launchGame('marmotte.html', event)"
+          >
+            Jouer à Tape-Taupe
+          </button>
+        </article>
+
+        <!-- Neontron -->
+        <article
+          class="game-card neontron fade-in"
+          onclick="focusCard(this)"
+          data-game="neontron"
+        >
+          <div class="game-icon">🏁</div>
+          <h2 class="game-title">Neontron</h2>
+          <div class="game-tags">
+            <span class="tag difficulty-hard">Difficile</span>
+            <span class="tag">Arcade</span>
+            <span class="tag">VS CPU</span>
+          </div>
+          <p class="game-description">
+            Tracez votre ligne, coupez celle du système et remportez ce duel de
+            lightcycles rétro-futuriste.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">╾━ ╾━</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="launchGame('neontron.html', event)"
+          >
+            Entrer dans l'arène
+          </button>
+        </article>
+
+        <!-- Puissance 4 Advance -->
+        <article
+          class="game-card puissance4 fade-in"
+          onclick="focusCard(this)"
+          data-game="puissance4"
+        >
+          <div class="game-icon">🔴</div>
+          <h2 class="game-title">Puissance 4 Advance</h2>
+          <div class="game-tags">
+            <span class="tag difficulty-medium">Moyen</span>
+            <span class="tag">Stratégie</span>
+            <span class="tag">2D &amp; 3D</span>
+          </div>
+          <p class="game-description">
+            Alignez quatre jetons avant votre rival sur la grille classique ou
+            dans un plateau 3D inédit.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">● ● ● ●</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="launchGame('puissance4.html', event)"
+          >
+            Jouer à Puissance 4
           </button>
         </article>
       </main>

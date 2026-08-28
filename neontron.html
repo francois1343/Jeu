@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="Neontron, duel de lightcycles rétro-futuriste à vitesse constante."
+    />
+    <title>Neontron — Lightcycle Duel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Orbitron:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="neontron.css" />
+    <link rel="stylesheet" href="arcade-home.css" />
+  </head>
+  <body>
+    <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil">
+      <span class="arcade-home-icon" aria-hidden="true">⌂</span>
+      <span class="arcade-home-label">Accueil</span>
+    </a>
+    <div class="world-grid" aria-hidden="true">
+      <div class="horizon-glow"></div>
+      <div class="scanlines"></div>
+    </div>
+
+    <div id="app-container">
+      <header id="hud" class="hidden" aria-label="Tableau de bord du match">
+        <div class="hud-brand">
+          <span class="brand-mark">N</span>
+          <div>
+            <strong>NEONTRON</strong>
+            <small>LIGHTCYCLE DUEL</small>
+          </div>
+        </div>
+
+        <div class="duel-scoreboard">
+          <section id="hud-player" class="rider-score player-score active" aria-label="Score du joueur">
+            <div class="rider-copy">
+              <span>RIDER 01</span>
+              <strong>VOUS</strong>
+            </div>
+            <b id="score-player">0</b>
+            <div id="player-pips" class="score-pips" aria-hidden="true">
+              <i></i><i></i><i></i>
+            </div>
+          </section>
+
+          <div class="match-core">
+            <span id="hud-round">MANCHE 01</span>
+            <div class="versus"><i></i><b>VS</b><i></i></div>
+            <span id="hud-status" class="live-status"><i></i> EN COURSE</span>
+          </div>
+
+          <section id="hud-cpu" class="rider-score cpu-score" aria-label="Score du système">
+            <b id="score-cpu">0</b>
+            <div class="rider-copy">
+              <span id="cpu-level-label">PROTOCOLE COOL</span>
+              <strong>SYSTÈME</strong>
+            </div>
+            <div id="cpu-pips" class="score-pips" aria-hidden="true">
+              <i></i><i></i><i></i>
+            </div>
+          </section>
+        </div>
+
+        <div class="hud-actions">
+          <button id="btn-hud-restart" class="hud-button" type="button" title="Recommencer le match">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" /></svg>
+            <span>RESTART</span>
+          </button>
+          <button id="btn-hud-menu" class="hud-button" type="button" title="Retour au menu">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+            <span>MENU</span>
+          </button>
+        </div>
+      </header>
+
+      <main id="game-stage">
+        <div id="canvas-wrapper" aria-label="Arène Neontron">
+          <canvas id="game-canvas"></canvas>
+          <div class="arena-corner corner-tl" aria-hidden="true"></div>
+          <div class="arena-corner corner-tr" aria-hidden="true"></div>
+          <div class="arena-corner corner-bl" aria-hidden="true"></div>
+          <div class="arena-corner corner-br" aria-hidden="true"></div>
+
+          <section id="menu-overlay" class="overlay menu-overlay" aria-labelledby="menu-title">
+            <div class="menu-card">
+              <div class="menu-kicker"><i></i> ARCADE PROTOCOL // 1989</div>
+              <h1 id="menu-title" class="neon-title">
+                <span>NEON</span><strong>TRON</strong>
+              </h1>
+              <p class="menu-subtitle">TRACE TA LIGNE. COUPE LA SIENNE.</p>
+
+              <div class="menu-meta">
+                <span class="record-chip">RECORD <b id="global-wins">0</b></span>
+                <span class="constant-speed-chip"><i></i> VITESSE CONSTANTE</span>
+              </div>
+
+              <div class="config-panel">
+                <div class="config-heading">
+                  <div>
+                    <span>PROTOCOLE ADVERSE</span>
+                    <h2>CHOISIS TON DUEL</h2>
+                  </div>
+                  <em>01</em>
+                </div>
+
+                <div class="btn-group" role="group" aria-label="Difficulté du système">
+                  <button class="btn-diff active" data-diff="easy" type="button">
+                    <span class="diff-code">01</span>
+                    <strong>COOL</strong>
+                    <small>Réflexes espacés</small>
+                  </button>
+                  <button class="btn-diff" data-diff="medium" type="button">
+                    <span class="diff-code">02</span>
+                    <strong>TACTIQUE</strong>
+                    <small>Lecture à 6 cases</small>
+                  </button>
+                  <button class="btn-diff" data-diff="hardcore" type="button">
+                    <span class="diff-code">03</span>
+                    <strong>PRÉDATEUR</strong>
+                    <small>Arène verrouillée</small>
+                  </button>
+                </div>
+              </div>
+
+              <button id="btn-start" class="btn-action primary" type="button">
+                <span>ENTRER DANS L’ARÈNE</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+              </button>
+
+              <div class="controls-hint">
+                <span class="desktop-hint"><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> ou <kbd>ZQSD</kbd></span>
+                <span class="mobile-hint">GLISSE POUR TOURNER</span>
+                <small>Aucun demi-tour • Premier à 3 manches</small>
+              </div>
+            </div>
+          </section>
+
+          <section id="result-overlay" class="overlay result-overlay hidden" role="dialog" aria-modal="true" aria-live="polite" aria-labelledby="result-message">
+            <div class="result-card">
+              <span id="result-kicker" class="result-kicker">MANCHE TERMINÉE</span>
+              <div id="result-emblem" class="result-emblem"><span>×</span></div>
+              <h2 id="result-message" class="result-title"></h2>
+              <div id="round-details" class="round-details"></div>
+              <div class="result-actions">
+                <button id="btn-next" class="btn-action primary" type="button">
+                  <span>MANCHE SUIVANTE</span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+                </button>
+                <button id="btn-rematch" class="btn-action secondary" type="button">
+                  RECOMMENCER LE MATCH
+                </button>
+                <button id="btn-menu" class="text-button" type="button">RETOUR AU MENU</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <footer id="mobile-controls" class="hidden" aria-label="Contrôles tactiles">
+        <button id="btn-left" class="d-btn" type="button" aria-label="Tourner à gauche">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+        </button>
+        <div class="vertical-controls">
+          <button id="btn-up" class="d-btn" type="button" aria-label="Tourner vers le haut">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6" /></svg>
+          </button>
+          <button id="btn-down" class="d-btn" type="button" aria-label="Tourner vers le bas">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </button>
+        </div>
+        <button id="btn-right" class="d-btn" type="button" aria-label="Tourner à droite">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+        </button>
+      </footer>
+    </div>
+
+    <script src="neontron.js"></script>
+  </body>
+</html>

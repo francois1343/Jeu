@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="Puissance 4 Advance, réinventé comme un jeu d'arcade rétro en 2D et 3D."
+    />
+    <title>Puissance 4 Advance — Retro Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bungee&family=DM+Sans:wght@500;600;700;800&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="puissance4.css" />
+    <link rel="stylesheet" href="arcade-home.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  </head>
+  <body>
+    <a class="arcade-home-link" href="index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil">
+      <span class="arcade-home-icon" aria-hidden="true">⌂</span>
+      <span class="arcade-home-label">Accueil</span>
+    </a>
+    <div class="retro-sky" aria-hidden="true">
+      <div class="sky-glow"></div>
+      <div class="pixel-star star-one"></div>
+      <div class="pixel-star star-two"></div>
+      <div class="pixel-star star-three"></div>
+      <div class="orbit orbit-one"></div>
+      <div class="orbit orbit-two"></div>
+      <div class="grid-floor"></div>
+    </div>
+
+    <div id="app-container">
+      <section id="menu-screen" class="screen" aria-labelledby="main-title">
+        <header class="menu-topbar">
+          <div class="mini-logo" aria-label="P4 Advance">
+            <span class="mini-logo-four">4</span>
+            <span>ADV</span>
+          </div>
+          <p>ÉDITION ARCADE • 1988</p>
+          <div class="status-pill"><span></span> PRÊT À JOUER</div>
+        </header>
+
+        <div class="menu-shell">
+          <section class="brand-panel">
+            <div class="eyebrow"><span></span> ENTRE DANS LA 4E DIMENSION</div>
+            <h1 id="main-title" class="hero-title">
+              <span>PUISSANCE</span>
+              <strong><i>4</i> ADVANCE</strong>
+            </h1>
+            <p class="hero-copy">
+              Aligne quatre pièces avant ton rival. Sur la grille ou dans
+              l’espace, chaque coup peut tout renverser.
+            </p>
+
+            <div class="mini-board" aria-hidden="true">
+              <div class="mini-board-glow"></div>
+              <div class="mini-base">
+                <span class="mini-rod rod-a"><i></i><i></i><i></i></span>
+                <span class="mini-rod rod-b"><i></i><i></i></span>
+                <span class="mini-rod rod-c"><i></i><i></i><i></i><i></i></span>
+                <span class="mini-rod rod-d"><i></i></span>
+                <span class="mini-rod rod-e"><i></i><i></i><i></i></span>
+              </div>
+            </div>
+
+            <div class="feature-row" aria-label="Caractéristiques">
+              <span><b>02</b> MODES</span>
+              <span><b>03</b> NIVEAUX IA</span>
+              <span><b>∞</b> REVANCHES</span>
+            </div>
+          </section>
+
+          <section class="setup-panel" aria-label="Configuration de la partie">
+            <div class="setup-heading">
+              <div>
+                <span class="step-label">PLAYER SELECT</span>
+                <h2>CHOISIS TA PARTIE</h2>
+              </div>
+              <span class="step-number">01</span>
+            </div>
+
+            <div class="config-group">
+              <div class="config-label-row">
+                <label class="config-label">FORMAT DU PLATEAU</label>
+                <span>1 / 3</span>
+              </div>
+              <div class="mode-selector mode-cards">
+                <button class="btn-mode active" data-mode="2d" type="button">
+                  <span class="mode-icon grid-icon" aria-hidden="true">
+                    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                  </span>
+                  <span><b>CLASSIQUE</b><small>Grille 7 × 6</small></span>
+                  <em>2D</em>
+                </button>
+                <button class="btn-mode" data-mode="3d" type="button">
+                  <span class="mode-icon cube-icon" aria-hidden="true">
+                    <i></i><i></i><i></i><i></i>
+                  </span>
+                  <span><b>ADVANCE</b><small>Volume 4 × 4 × 4</small></span>
+                  <em>3D</em>
+                </button>
+              </div>
+            </div>
+
+            <div class="config-group">
+              <div class="config-label-row">
+                <label class="config-label">ADVERSAIRE</label>
+                <span>2 / 3</span>
+              </div>
+              <div class="mode-selector opponent-selector">
+                <button class="btn-opp active" data-opp="pvp" type="button">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8-1a3 3 0 1 0 0-6m-8 9c-4 0-6 2-6 5v2h12v-2c0-3-2-5-6-5Zm8-1c3.5 0 6 1.8 6 5v2h-6"/></svg>
+                  DUEL LOCAL
+                </button>
+                <button class="btn-opp" data-opp="ai" type="button">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="16" height="13" rx="3"/><path d="M9 11h.01M15 11h.01M9 15h6M12 6V3M9 3h6"/></svg>
+                  VS ORDINATEUR
+                </button>
+              </div>
+            </div>
+
+            <div class="config-group hidden" id="ai-difficulty-group">
+              <div class="config-label-row">
+                <label class="config-label">NIVEAU DE L’IA</label>
+                <span>3 / 3</span>
+              </div>
+              <div class="difficulty-selector">
+                <button class="btn-diff active" data-diff="easy" type="button">COOL</button>
+                <button class="btn-diff" data-diff="medium" type="button">CHAUD</button>
+                <button class="btn-diff" data-diff="hard" type="button">BRUTAL</button>
+              </div>
+            </div>
+
+            <button id="btn-start" class="btn-launch" type="button">
+              <span>LANCER LA PARTIE</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </button>
+
+            <div class="stats-bar" aria-label="Tableau des victoires">
+              <span class="stats-title">HALL OF FAME</span>
+              <span class="stat-player red-stat"><i></i> ROUGE <strong id="stat-red">0</strong></span>
+              <span class="stat-divider">VS</span>
+              <span class="stat-player yellow-stat"><i></i> JAUNE <strong id="stat-yellow">0</strong></span>
+            </div>
+          </section>
+        </div>
+
+        <footer class="menu-footer">
+          <p><span>TIP</span> Centre fort, victoire proche.</p>
+          <p>UN CLASSIQUE • UNE DIMENSION EN PLUS</p>
+        </footer>
+      </section>
+
+      <section id="game-screen" class="screen hidden" aria-label="Partie en cours">
+        <header id="game-hud">
+          <button id="btn-menu" class="btn-icon label-button" type="button" title="Menu principal">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+            <span>MENU</span>
+          </button>
+
+          <div class="game-brand" aria-label="Puissance 4 Advance">
+            <span>PUISSANCE</span><strong>4</strong><em>ADV</em>
+          </div>
+
+          <div class="turn-indicator">
+            <span class="turn-label">AU TOUR DE</span>
+            <div id="current-player-badge" class="player-badge red">
+              <i></i><span id="player-color-text">ROUGE</span>
+            </div>
+          </div>
+
+          <div class="hud-actions">
+            <button id="btn-undo" class="btn-icon" type="button" title="Annuler le dernier coup" aria-label="Annuler le dernier coup">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4 12l5 5M5 12h9a5 5 0 0 1 5 5"/></svg>
+            </button>
+            <button id="btn-restart" class="btn-icon" type="button" title="Recommencer" aria-label="Recommencer">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="game-arena">
+          <aside id="player-card-red" class="side-player red-side active" aria-label="Joueur rouge">
+            <span class="side-number">P1</span>
+            <div class="player-orb red-orb"><i></i></div>
+            <strong>ROUGE</strong>
+            <small>FEU</small>
+            <div class="win-counter"><span>VIC.</span><b id="game-score-red">0</b></div>
+          </aside>
+
+          <div class="board-zone">
+            <div class="board-meta">
+              <span id="mode-kicker">MODE CLASSIQUE</span>
+              <p id="mode-instruction">Choisis une colonne et lâche ton jeton.</p>
+            </div>
+
+            <main id="view-2d" class="game-view">
+              <div id="board-2d-container">
+                <div class="column-arrows" aria-hidden="true">
+                  <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                </div>
+                <div id="columns-trigger-container"></div>
+                <div id="grid-2d"></div>
+                <div class="wood-signature">P4 • ARCADE EDITION</div>
+              </div>
+            </main>
+
+            <main id="view-3d" class="game-view hidden">
+              <div id="canvas-3d-container"></div>
+              <div class="controls-hint">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11V7a2 2 0 0 1 4 0v3-2a2 2 0 0 1 4 0v3-1a2 2 0 0 1 4 0v5c0 4-2 6-6 6h-2c-2 0-3-1-4-3l-3-5a2 2 0 0 1 3-2Z"/></svg>
+                <span>GLISSE POUR TOURNER <b>•</b> CLIQUE UNE TIGE POUR JOUER</span>
+              </div>
+            </main>
+
+            <footer id="game-footer">
+              <div id="remaining-disks" class="hidden">
+                <span class="reserve-label">RÉSERVE 3D</span>
+                <span class="reserve red-reserve"><i></i> <b id="count-red">32</b></span>
+                <span class="reserve yellow-reserve"><i></i> <b id="count-yellow">32</b></span>
+              </div>
+            </footer>
+          </div>
+
+          <aside id="player-card-yellow" class="side-player yellow-side" aria-label="Joueur jaune">
+            <span class="side-number">P2</span>
+            <div class="player-orb yellow-orb"><i></i></div>
+            <strong>JAUNE</strong>
+            <small>ÉCLAIR</small>
+            <div class="win-counter"><span>VIC.</span><b id="game-score-yellow">0</b></div>
+          </aside>
+        </div>
+      </section>
+
+      <div id="game-over-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="winner-title">
+        <div id="confetti-layer" aria-hidden="true"></div>
+        <div class="modal-card">
+          <span class="modal-kicker">GAME OVER</span>
+          <div class="winner-medal"><span>4</span></div>
+          <h2 id="winner-title">VICTOIRE ROUGE !</h2>
+          <p id="winner-subtext">Alignement réussi de 4 jetons.</p>
+          <div class="modal-buttons">
+            <button id="btn-modal-restart" class="btn-launch" type="button">
+              <span>REVANCHE</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
+            </button>
+            <button id="btn-modal-menu" class="btn-secondary" type="button">RETOUR AU MENU</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="puissance4.js"></script>
+  </body>
+</html>
