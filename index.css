@@ -1,0 +1,929 @@
+      /* ===== RESET & VARIABLES ===== */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        /* Couleurs principales */
+        --bg-primary: #0a0e1a;
+        --bg-secondary: #111827;
+        --bg-card: rgba(17, 24, 39, 0.8);
+
+        /* Couleurs nÃ©on */
+        --neon-cyan: #00ffff;
+        --neon-pink: #ff00ff;
+        --neon-green: #00ff88;
+        --neon-yellow: #ffff00;
+        --neon-orange: #ff8800;
+        --neon-blue: #4d7cff;
+        --neon-red: #ff4757;
+
+        /* Nouvelles couleurs */
+        --neon-emerald: #10b981;
+        --neon-violet: #8b5cf6;
+        --neon-sky: #0ea5e9;
+        --neon-amber: #f97316;
+        --neon-fuchsia: #e879f9;
+
+        /* Texte */
+        --text-primary: #ffffff;
+        --text-secondary: #8892b0;
+        --text-muted: #4a5568;
+
+        /* Effets */
+        --glow-cyan: 0 0 20px rgba(0, 255, 255, 0.5);
+        --glow-pink: 0 0 20px rgba(255, 0, 255, 0.5);
+        --glow-green: 0 0 20px rgba(0, 255, 136, 0.5);
+
+        /* Transitions */
+        --transition-fast: 0.2s ease;
+        --transition-medium: 0.3s ease;
+        --transition-slow: 0.5s ease;
+
+        /* Border radius */
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 20px;
+        --radius-xl: 30px;
+      }
+
+      /* ===== BODY & BACKGROUND ===== */
+      body {
+        font-family: "Rajdhani", sans-serif;
+        background: var(--bg-primary);
+        min-height: 100vh;
+        color: var(--text-primary);
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* Fond animÃ© avec grille */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+          linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Gradient overlay */
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+          radial-gradient(
+            ellipse at top,
+            rgba(77, 124, 255, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at bottom right,
+            rgba(255, 0, 255, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at bottom left,
+            rgba(0, 255, 255, 0.1) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ===== CONTAINER PRINCIPAL ===== */
+      .app-container {
+        position: relative;
+        z-index: 1;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      /* ===== HEADER ===== */
+      .header {
+        text-align: center;
+        padding: 40px 20px 60px;
+        position: relative;
+      }
+
+      .logo {
+        font-size: 18px;
+        color: var(--neon-cyan);
+        text-transform: uppercase;
+        letter-spacing: 8px;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+
+      .title {
+        font-family: "Orbitron", sans-serif;
+        font-size: clamp(2.5rem, 8vw, 4.5rem);
+        font-weight: 900;
+        background: linear-gradient(
+          135deg,
+          var(--neon-cyan) 0%,
+          var(--neon-pink) 50%,
+          var(--neon-cyan) 100%
+        );
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 3s ease infinite;
+        margin-bottom: 15px;
+      }
+
+      @keyframes gradientShift {
+        0%,
+        100% {
+          background-position: 0% center;
+        }
+        50% {
+          background-position: 200% center;
+        }
+      }
+
+      .subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+      }
+
+      /* Ligne dÃ©corative */
+      .header-line {
+        width: 200px;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--neon-cyan),
+          transparent
+        );
+        margin: 30px auto 0;
+        position: relative;
+      }
+
+      .header-line::before {
+        content: "â—†";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: var(--neon-cyan);
+        font-size: 12px;
+        background: var(--bg-primary);
+        padding: 0 10px;
+      }
+
+      /* ===== GRILLE DE JEUX ===== */
+      .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        padding: 20px 0;
+      }
+
+      /* ===== CARTE DE JEU ===== */
+      .game-card {
+        --card-color: var(--neon-cyan);
+        --card-color-rgb: 0, 255, 255;
+
+        background: var(--bg-card);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-lg);
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        transition: all var(--transition-medium);
+        cursor: pointer;
+      }
+
+      .game-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--card-color), transparent);
+        opacity: 0.8;
+      }
+
+      .game-card::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          var(--card-color) 0%,
+          transparent 70%
+        );
+        opacity: 0;
+        transition: opacity var(--transition-medium);
+        pointer-events: none;
+      }
+
+      .game-card:hover {
+        transform: translateY(-8px);
+        border-color: var(--card-color);
+        box-shadow:
+          0 20px 40px rgba(0, 0, 0, 0.3),
+          0 0 30px rgba(var(--card-color-rgb), 0.2);
+      }
+
+      .game-card:hover::after {
+        opacity: 0.05;
+      }
+
+      /* ========================================== */
+      /* ===== COULEURS PAR JEU (CLASSES) ===== */
+      /* ========================================== */
+
+      /* ðŸª™ Pile ou Face - Jaune dorÃ© */
+      .game-card.coin {
+        --card-color: var(--neon-yellow);
+        --card-color-rgb: 255, 255, 0;
+      }
+
+      /* âœŠ HiFuMi - Cyan */
+      .game-card.hifu {
+        --card-color: #06b6d4;
+        --card-color-rgb: 6, 182, 212;
+      }
+
+      /* ðŸŽ² DÃ© Magique - Orange */
+      .game-card.dice {
+        --card-color: var(--neon-orange);
+        --card-color-rgb: 255, 136, 0;
+      }
+
+      /* â±ï¸ Chrono RÃ©flexe - Vert Ã©meraude */
+      .game-card.reflexe {
+        --card-color: var(--neon-emerald);
+        --card-color-rgb: 16, 185, 129;
+      }
+
+      /* ðŸ§± Tetris - Violet */
+      .game-card.tetris {
+        --card-color: var(--neon-violet);
+        --card-color-rgb: 139, 92, 246;
+      }
+
+      /* ðŸ Snake - Vert nÃ©on */
+      .game-card.snake {
+        --card-color: var(--neon-green);
+        --card-color-rgb: 0, 255, 136;
+      }
+
+      /* ðŸ“ Pong - Rose magenta */
+      .game-card.pong {
+        --card-color: var(--neon-pink);
+        --card-color-rgb: 255, 0, 255;
+      }
+
+      /* ðŸ’£ DÃ©mineur - Rouge */
+      .game-card.minesweeper {
+        --card-color: var(--neon-red);
+        --card-color-rgb: 255, 71, 87;
+      }
+
+      /* ðŸš¢ Bataille Navale - Bleu ocÃ©an */
+      .game-card.battleship {
+        --card-color: var(--neon-sky);
+        --card-color-rgb: 14, 165, 233;
+      }
+
+      /* ðŸ”¢ 2048 - Beige NÃ©on */
+      .game-card.n2048 {
+        --card-color: #fffbe6;
+        --card-color-rgb: 255, 251, 230;
+      }
+
+      /* ðŸ§± Casse-Briques - Fuchsia */
+      .game-card.breakout {
+        --card-color: var(--neon-fuchsia);
+        --card-color-rgb: 232, 121, 249;
+      }
+
+      /* ðŸ§  Memory - Bleu Clair */
+      .game-card.memory {
+        --card-color: #3b82f6;
+        --card-color-rgb: 59, 130, 246;
+      }
+
+      /* ðŸŒŒ Enigme Cosmique - Violet Profond */
+      .game-card.cosmic {
+        --card-color: #7c3aed;
+        --card-color-rgb: 124, 58, 237;
+      }
+
+      /* âš¡ Neon Runner - Rouge pÃ¢le NÃ©on */
+      .game-card.neon {
+        --card-color: #ff00ff;
+        --card-color-rgb: 255, 0, 255;
+      }
+
+      /* ðŸ§® Calcul Mental - Orange PÃ¢le NÃ©on */
+      .game-card.calculation {
+        --card-color: #ffb347;
+        --card-color-rgb: 255, 179, 71;
+      }
+
+      /*  Labyrinthe - Vert Clair NÃ©on */
+      .game-card.maze {
+        --card-color: #00ff88;
+        --card-color-rgb: 0, 255, 136;
+      }
+
+      /* Cyber Flux - Jaune Or NÃ©on */
+      .game-card.cyberflux {
+        --card-color: #ffff66;
+        --card-color-rgb: 255, 255, 102;
+      }
+
+      /* Crossy Turfu - Brun vif NÃ©on */
+      .game-card.crossyturfu {
+        --card-color: #8b4513;
+        --card-color-rgb: 139, 69, 19;
+      }
+
+      /* Open World - Rose clair NÃ©on */
+      .game-card.openworld {
+        --card-color: #ff69b4;
+        --card-color-rgb: 255, 105, 180;
+      }
+
+      /* Pixel Forge - Orange pixel */
+      .game-card.pixel-forge {
+        --card-color: #ff9f1c;
+        --card-color-rgb: 255, 159, 28;
+      }
+
+      /* CyberFind - Cyan cybernÃ©tique */
+      .game-card.cyberfind {
+        --card-color: #22d3ee;
+        --card-color-rgb: 34, 211, 238;
+      }
+
+      /* Neon Overdrive - Rouge laser */
+      .game-card.neon-overdrive {
+        --card-color: #ff3864;
+        --card-color-rgb: 255, 56, 100;
+      }
+
+      /* Simon NÃ©on - Vert lumineux */
+      .game-card.simon {
+        --card-color: #39ff14;
+        --card-color-rgb: 57, 255, 20;
+      }
+
+      /* Spider Solitaire - Bleu Ã©lectrique */
+      .game-card.spider-solitaire {
+        --card-color: #4d7cff;
+        --card-color-rgb: 77, 124, 255;
+      }
+
+      /* Sudoku - Turquoise logique */
+      .game-card.sudoku {
+        --card-color: #2dd4bf;
+        --card-color-rgb: 45, 212, 191;
+      }
+
+      /* Synthwave Runner - Rose coucher de soleil */
+      .game-card.synthwave-runner {
+        --card-color: #fb7185;
+        --card-color-rgb: 251, 113, 133;
+      }
+
+      /* Pixel Taquin - Violet rÃ©tro */
+      .game-card.taquin {
+        --card-color: #c084fc;
+        --card-color-rgb: 192, 132, 252;
+      }
+
+      /* GeoMinds - Bleu gÃ©omÃ©trique */
+      .game-card.geominds {
+        --card-color: #60a5fa;
+        --card-color-rgb: 96, 165, 250;
+      }
+
+      /* Cyber-Morpion - Rose laser */
+      .game-card.cybermorpion {
+        --card-color: #f472b6;
+        --card-color-rgb: 244, 114, 182;
+      }
+
+      /* Tape-Taupe - Jaune Ã©lectrique */
+      .game-card.marmotte {
+        --card-color: #facc15;
+        --card-color-rgb: 250, 204, 21;
+      }
+
+      /* Neontron - Cyan lightcycle */
+      .game-card.neontron {
+        --card-color: #22d3ee;
+        --card-color-rgb: 34, 211, 238;
+      }
+
+      /* Puissance 4 Advance - Rouge arcade */
+      .game-card.puissance4 {
+        --card-color: #fb4d5d;
+        --card-color-rgb: 251, 77, 93;
+      }
+
+      /* ===== ICÃ”NE DU JEU ===== */
+      .game-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: var(--radius-md);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0.05)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        z-index: 1;
+      }
+
+      .game-card:hover .game-icon {
+        animation: iconBounce 0.5s ease;
+        border-color: rgba(var(--card-color-rgb), 0.5);
+        background: linear-gradient(
+          135deg,
+          rgba(var(--card-color-rgb), 0.2),
+          rgba(var(--card-color-rgb), 0.1)
+        );
+      }
+
+      @keyframes iconBounce {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      /* ===== TITRE DU JEU ===== */
+      .game-title {
+        font-family: "Orbitron", sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ===== DESCRIPTION ===== */
+      .game-description {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ===== ZONE INTERACTIVE ===== */
+      .game-interactive {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        margin-bottom: 20px;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ===== RÃ‰SULTAT ANIMÃ‰ ===== */
+      .result-display {
+        font-family: "Orbitron", sans-serif;
+        font-size: 2rem;
+        font-weight: 900;
+        color: var(--card-color);
+        text-shadow: 0 0 20px var(--card-color);
+        transition: all var(--transition-fast);
+        letter-spacing: 3px;
+      }
+
+      .result-display.animate {
+        animation: resultPop 0.3s ease;
+      }
+
+      @keyframes resultPop {
+        0% {
+          transform: scale(0.5);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* ===== INPUT PERSONNALISÃ‰ ===== */
+      .custom-input {
+        background: rgba(0, 0, 0, 0.4);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-sm);
+        padding: 12px 16px;
+        color: var(--text-primary);
+        font-family: "Orbitron", sans-serif;
+        font-size: 1.1rem;
+        width: 80px;
+        text-align: center;
+        transition: all var(--transition-fast);
+      }
+
+      .custom-input:focus {
+        outline: none;
+        border-color: var(--card-color);
+        box-shadow: 0 0 15px rgba(var(--card-color-rgb), 0.3);
+      }
+
+      /* ===== INPUT GROUP ===== */
+      .input-group {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .input-label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      /* ===== BOUTONS ===== */
+      .btn {
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        padding: 14px 28px;
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all var(--transition-fast);
+        z-index: 1;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--card-color),
+          rgba(var(--card-color-rgb), 0.7)
+        );
+        color: var(--bg-primary);
+        box-shadow: 0 4px 15px rgba(var(--card-color-rgb), 0.3);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(var(--card-color-rgb), 0.4);
+      }
+
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      /* Effet de brillance */
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      .btn-launch {
+        width: 100%;
+        padding: 16px;
+        font-size: 1.1rem;
+      }
+
+      /* ===== TAGS ===== */
+      .game-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .tag {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .tag.difficulty-easy {
+        border-color: var(--neon-green);
+        color: var(--neon-green);
+      }
+      .tag.difficulty-medium {
+        border-color: var(--neon-yellow);
+        color: var(--neon-yellow);
+      }
+      .tag.difficulty-hard {
+        border-color: var(--neon-red);
+        color: var(--neon-red);
+      }
+
+      /* ===== MINI JEUX INLINE ===== */
+      .coin-display {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ffd700, #ffaa00);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #8b4513;
+        box-shadow:
+          inset 0 -4px 8px rgba(0, 0, 0, 0.3),
+          0 4px 15px rgba(255, 215, 0, 0.4);
+        transition: all var(--transition-fast);
+      }
+
+      .coin-display.flipping {
+        animation: coinFlip 0.6s ease-in-out;
+      }
+
+      @keyframes coinFlip {
+        0% {
+          transform: rotateY(0deg) scale(1);
+        }
+        50% {
+          transform: rotateY(1800deg) scale(1.2);
+        }
+        100% {
+          transform: rotateY(3600deg) scale(1);
+        }
+      }
+
+      .dice-display {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #fff, #e0e0e0);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Orbitron", sans-serif;
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: var(--bg-primary);
+        box-shadow:
+          inset 0 -4px 8px rgba(0, 0, 0, 0.1),
+          0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: all var(--transition-fast);
+      }
+
+      .dice-display.rolling {
+        animation: diceRoll 0.5s ease-in-out;
+      }
+
+      @keyframes diceRoll {
+        0%,
+        100% {
+          transform: rotate(0deg) scale(1);
+        }
+        25% {
+          transform: rotate(-15deg) scale(1.1);
+        }
+        50% {
+          transform: rotate(15deg) scale(0.9);
+        }
+        75% {
+          transform: rotate(-10deg) scale(1.05);
+        }
+      }
+
+      /* ===== FOOTER ===== */
+      .footer {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 15px;
+      }
+
+      .footer-link {
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: color var(--transition-fast);
+      }
+
+      .footer-link:hover {
+        color: var(--neon-cyan);
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 768px) {
+        .app-container {
+          padding: 15px;
+        }
+
+        .header {
+          padding: 30px 15px 40px;
+        }
+
+        .logo {
+          font-size: 14px;
+          letter-spacing: 4px;
+        }
+
+        .games-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .game-card {
+          padding: 25px;
+        }
+
+        .game-icon {
+          width: 60px;
+          height: 60px;
+          font-size: 28px;
+        }
+
+        .btn-launch {
+          padding: 14px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .title {
+          font-size: 2rem;
+        }
+
+        .game-title {
+          font-size: 1.2rem;
+        }
+
+        .input-group {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .custom-input {
+          width: 100%;
+        }
+      }
+
+      /* ===== ANIMATIONS GLOBALES ===== */
+      .fade-in {
+        animation: fadeIn 0.5s ease forwards;
+        opacity: 0;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .game-card:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .game-card:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .game-card:nth-child(3) {
+        animation-delay: 0.15s;
+      }
+      .game-card:nth-child(4) {
+        animation-delay: 0.2s;
+      }
+      .game-card:nth-child(5) {
+        animation-delay: 0.25s;
+      }
+      .game-card:nth-child(6) {
+        animation-delay: 0.3s;
+      }
+      .game-card:nth-child(7) {
+        animation-delay: 0.35s;
+      }
+      .game-card:nth-child(8) {
+        animation-delay: 0.4s;
+      }
+      .game-card:nth-child(9) {
+        animation-delay: 0.45s;
+      }
+      .game-card:nth-child(10) {
+        animation-delay: 0.5s;
+      }
+      .game-card:nth-child(11) {
+        animation-delay: 0.55s;
+      }
+
+      /* ===== PARTICULES DÃ‰CORATIVES ===== */
+      .particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--neon-cyan);
+        border-radius: 50%;
+        opacity: 0.3;
+        animation: float 15s infinite ease-in-out;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(100vh) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.3;
+        }
+        90% {
+          opacity: 0.3;
+        }
+        100% {
+          transform: translateY(-100vh) rotate(720deg);
+          opacity: 0;
+        }
+      }
+
