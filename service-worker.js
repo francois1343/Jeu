@@ -1,4 +1,4 @@
-const CACHE = "arcade-station-v3";
+const CACHE = "arcade-station-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -13,9 +13,9 @@ const APP_SHELL = [
   "./js/core/arcade-platform.js",
   "./js/core/arcade-game-sdk.js",
   "./assets/icons/arcade-favicon.png",
-  "./assets/icons/arcade-icon-180.png",
-  "./assets/icons/arcade-icon-192.png",
-  "./assets/icons/arcade-icon-512.png",
+  "./assets/icons/arcade-icon-v2-180.png",
+  "./assets/icons/arcade-icon-v2-192.png",
+  "./assets/icons/arcade-icon-v2-512.png",
 ];
 
 self.addEventListener("install", (event) => {

@@ -153,7 +153,7 @@ function writePng(filePath, size, pixels) {
 
 const source = readPng(sourcePath);
 for (const size of sizes) {
-  writePng(path.join(outputDirectory, `arcade-icon-${size}.png`), size, resize(source, size));
+  writePng(path.join(outputDirectory, `arcade-icon-v2-${size}.png`), size, resize(source, size));
 }
 
 console.log(`Icônes PWA générées depuis arcade-favicon.png : ${sizes.join(", ")} px`);
