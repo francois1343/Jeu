@@ -33,7 +33,7 @@ ou `service_role` ne doit jamais être ajoutée au frontend ou au dépôt.
 
 ## 2. Relier le frontend
 
-Dans `arcade-config.js`, renseigner uniquement :
+Dans `js/core/arcade-config.js`, renseigner uniquement :
 
 - `supabaseUrl` : URL publique du projet ;
 - `supabasePublishableKey` : clé publique/publishable du projet.
@@ -73,13 +73,13 @@ npx supabase secrets set REWARDED_AD_WEBHOOK_SECRET=UNE_VALEUR_LONGUE_ET_ALEATOI
 
 Enfin, installer l’adaptateur JavaScript du fournisseur sous la forme
 `window.ArcadeRewardedAdProvider.show({ userId, placement })`, puis mettre
-`rewardedAds.enabled` à `true` dans `arcade-config.js`. La fin de l’affichage ne crédite rien
+`rewardedAds.enabled` à `true` dans `js/core/arcade-config.js`. La fin de l’affichage ne crédite rien
 directement : seul le callback signé ajoute les Coins.
 
 ## 4. Configurer le don PayPal
 
 Créer un bouton Donate dans PayPal, copier son `hosted_button_id`, puis le renseigner dans
-`arcade-config.js`. Le don est présenté séparément et ne crée aucune transaction de Coins.
+`js/core/arcade-config.js`. Le don est présenté séparément et ne crée aucune transaction de Coins.
 
 ## 5. Publier progressivement
 

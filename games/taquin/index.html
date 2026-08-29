@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Taquin - Sliding Tile Puzzle</title>
+    <link rel="stylesheet" href="taquin.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+  </head>
+
+  <body>
+    <a
+      class="arcade-home-link"
+      href="../../index.html"
+      aria-label="Retour à l'accueil"
+      title="Retour à l'accueil"
+      ><span class="arcade-home-icon" aria-hidden="true">⌂</span
+      ><span class="arcade-home-label">Accueil</span></a
+    >
+    <div class="app-container">
+      <!-- Menu principal : tous les réglages et le classement restent hors partie -->
+      <main id="menu-screen" class="screen menu-screen">
+        <section class="menu-card">
+          <p class="eyebrow">SLIDING TILE PUZZLE</p>
+          <h1 class="logo">PIXEL<span>TAQUIN</span></h1>
+          <p class="menu-intro">
+            Préparez votre partie avant de lancer le puzzle.
+          </p>
+
+          <div class="menu-options">
+            <div class="control-group">
+              <span class="group-label">DIFFICULTÉ</span>
+              <div class="size-selector" aria-label="Choisir la difficulté">
+                <button class="btn btn-size active" data-size="3">
+                  Facile · 3x3
+                </button>
+                <button class="btn btn-size" data-size="4">Moyen · 4x4</button>
+                <button class="btn btn-size" data-size="5">
+                  Difficile · 5x5
+                </button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <span class="group-label">NUMÉROS</span>
+              <button
+                id="btn-toggle-numbers"
+                class="btn btn-toggle active"
+                aria-pressed="true"
+              >
+                <span class="icon">🔢</span> Numéros : ON
+              </button>
+            </div>
+
+            <div class="control-group">
+              <span class="group-label">APPARENCE</span>
+              <div
+                class="appearance-selector"
+                aria-label="Choisir l'apparence de l'application"
+              >
+                <button
+                  class="btn btn-ui-theme active"
+                  data-ui-theme="dark"
+                  aria-pressed="true"
+                >
+                  🌙 Foncé
+                </button>
+                <button
+                  class="btn btn-ui-theme"
+                  data-ui-theme="light"
+                  aria-pressed="false"
+                >
+                  ☀️ Clair
+                </button>
+              </div>
+            </div>
+
+            <div class="control-group theme-control">
+              <span class="group-label">THÈME</span>
+              <div class="theme-picker">
+                <div class="theme-selector">
+                  <button class="btn btn-theme active" data-theme="sunset">
+                    <span>🌇 Sunset</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="space">
+                    <span>🌌 Space</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="cyber">
+                    <span>🌆 Cyber</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="nature">
+                    <span>🌲 Forest</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="ocean">
+                    <span>🌊 Ocean</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="lava">
+                    <span>🌋 Lava</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="aurora">
+                    <span>✨ Aurora</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="mosaic">
+                    <span>🔷 Mosaic</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="candy">
+                    <span>🍬 Candy</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="desert">
+                    <span>🏜️ Desert</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="sakura">
+                    <span>🌸 Sakura</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="glacier">
+                    <span>❄️ Glacier</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="tropical">
+                    <span>🌴 Tropical</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="autumn">
+                    <span>🍂 Autumn</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="moonlight">
+                    <span>🌕 Moonlight</span>
+                  </button>
+                  <button class="btn btn-theme" data-theme="prism">
+                    <span>🔺 Prism</span>
+                  </button>
+                </div>
+                <div class="theme-preview-frame">
+                  <span class="theme-preview-label">APERÇU ACTIF</span>
+                  <div
+                    id="menu-theme-preview"
+                    class="menu-theme-preview theme-sunset"
+                    aria-label="Aperçu du thème sélectionné"
+                    role="img"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-actions">
+            <button id="btn-start-game" class="btn btn-primary btn-start">
+              Jouer
+            </button>
+            <button id="btn-random-game" class="btn btn-random">
+              🎲 Partie aléatoire
+            </button>
+          </div>
+        </section>
+
+        <!-- Leaderboard, accessible uniquement depuis le menu -->
+        <section class="leaderboard-section">
+          <div class="leaderboard-header">
+            <h2>🏆 Meilleurs Scores</h2>
+            <div class="leaderboard-tabs">
+              <button class="tab-btn active" data-tab="3">3x3</button>
+              <button class="tab-btn" data-tab="4">4x4</button>
+              <button class="tab-btn" data-tab="5">5x5</button>
+            </div>
+          </div>
+          <ol id="leaderboard-list" class="leaderboard-list">
+            <!-- Rempli dynamiquement en JS -->
+          </ol>
+        </section>
+      </main>
+
+      <!-- Vue de jeu : aucun réglage ni leaderboard -->
+      <section
+        id="game-screen"
+        class="screen game-screen hidden"
+        aria-hidden="true"
+      >
+        <header class="header">
+          <h1 class="logo">PIXEL<span>TAQUIN</span></h1>
+          <div class="stats-bar">
+            <div class="stat-card">
+              <span class="stat-label">COUPS</span>
+              <span id="move-count" class="stat-value">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">TEMPS</span>
+              <span id="timer" class="stat-value">00:00</span>
+            </div>
+            <button id="btn-back-to-menu" class="btn btn-menu">Menu</button>
+          </div>
+        </header>
+
+        <div class="game-area">
+          <div class="board-wrapper">
+            <div id="puzzle-board" class="puzzle-board" style="--grid-size: 3">
+              <!-- Les tuiles seront générées dynamiquement en JS -->
+            </div>
+
+            <!-- Overlay de Victoire -->
+            <div id="victory-overlay" class="victory-overlay hidden">
+              <div class="victory-content">
+                <h2>🎉 VICTOIRE !</h2>
+                <p id="victory-stats">Résolu en 0 coups et 00:00 !</p>
+                <button id="btn-restart" class="btn btn-action">Rejouer</button>
+                <button id="btn-victory-menu" class="btn">
+                  Retour au menu
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panneau latéral / Aperçu & Actions -->
+          <aside class="side-panel">
+            <div class="preview-card">
+              <span class="preview-label">APERÇU</span>
+              <div id="image-preview" class="image-preview theme-sunset"></div>
+            </div>
+
+            <div class="action-buttons">
+              <button id="btn-shuffle" class="btn btn-primary">
+                <span class="icon">🔀</span> Mélanger
+              </button>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </div>
+
+    <script src="taquin.js" defer></script>
+    <script src="../../js/core/arcade-config.js"></script>
+    <script src="../../js/core/arcade-local-store.js"></script>
+    <script src="../../js/core/arcade-game-bridge.js"></script>
+  </body>
+</html>

@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "build": "echo 'Files ready'",
-    "test": "node tests/local-economy-v2.test.js && node tests/html-inline-syntax.test.js",
+    "pwa:icons": "node scripts/generate-pwa-icons.js",
+    "test": "node tests/local-economy-v2.test.js && node tests/html-inline-syntax.test.js && node tests/local-links.test.js && node tests/pwa.test.js",
     "serve": "python -m http.server 4173 --bind 127.0.0.1",
     "supabase:start": "npx supabase start",
     "supabase:push": "npx supabase db push",

@@ -2,7 +2,8 @@
 
 ## Cycle d’une session
 
-Chaque lancement depuis `index.html` crée un identifiant unique transmis au jeu dans le paramètre
+Chaque lancement depuis `index.html` ouvre `games/<jeu>/index.html`, crée un identifiant unique et
+le transmet au jeu dans le paramètre
 `arcadeSession` :
 
 ```text
@@ -22,10 +23,10 @@ mise reste perdue. Une session terminale ne peut pas être relancée ou payée u
 
 ## Responsabilités
 
-`arcade-local-store.js` est le seul composant autorisé à modifier le solde. Il crée, démarre et
+`js/core/arcade-local-store.js` est le seul composant autorisé à modifier le solde. Il crée, démarre et
 règle les sessions de façon idempotente, puis ajoute les transactions à l’historique.
 
-`arcade-game-bridge.js` est chargé par les 30 pages de jeu. Il :
+`js/core/arcade-game-bridge.js` est chargé par les 30 pages de jeu. Il :
 
 - retrouve la session transmise par la grille ;
 - affiche son état et le solde dans un petit HUD ;
@@ -44,7 +45,7 @@ ArcadeGameSession.completeByAccuracy(accuracy);
 ```
 
 Les montants ne sont jamais passés par le jeu. Le gestionnaire retrouve le coût, la récompense
-et les éventuels seuils dans `arcade-config.js`.
+et les éventuels seuils dans `js/core/arcade-config.js`.
 
 ## Jeux et modes d’entraînement
 

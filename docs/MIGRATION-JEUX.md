@@ -58,8 +58,8 @@ avant une refonte de leur autorité de jeu.
 
 ## Contrat d’intégration
 
-Un jeu migré charge `arcade-config.js`, la bibliothèque Supabase, `arcade-platform.js`, puis
-`arcade-game-sdk.js`. Il suit quatre étapes :
+Un jeu migré charge les modules `js/core/arcade-config.js`, la bibliothèque Supabase,
+`js/core/arcade-platform.js`, puis `js/core/arcade-game-sdk.js`. Il suit quatre étapes :
 
 1. `startVerifiedGame(gameKey)` engage atomiquement la mise et renvoie une session.
 2. Le jeu utilise uniquement le défi ou la graine fournie par le serveur.

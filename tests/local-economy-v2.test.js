@@ -26,7 +26,7 @@ global.ARCADE_CONFIG = {
   },
 };
 
-require("../arcade-local-store.js");
+require("../js/core/arcade-local-store.js");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#080b16" />
+    <title>CYBERFIND — Chasse aux anomalies</title>
+    <link rel="stylesheet" href="cyberfind.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+  </head>
+  <body>
+    <a
+      class="arcade-home-link"
+      href="../../index.html"
+      aria-label="Retour à l'accueil"
+      title="Retour à l'accueil"
+      ><span class="arcade-home-icon" aria-hidden="true">⌂</span
+      ><span class="arcade-home-label">Accueil</span></a
+    >
+    <div id="game-container">
+      <header id="ui-header">
+        <div class="brand-mini"><span>◈</span> CYBERFIND</div>
+        <div class="mission-status">
+          <small>ANOMALIES</small><strong id="found-count">0 / 0</strong>
+        </div>
+        <div class="mission-status">
+          <small>TEMPS</small><strong id="timer">00:00</strong>
+        </div>
+        <button id="btn-hint" class="btn-action" disabled>
+          ✦ <span id="hint-cooldown">INDICE</span>
+        </button>
+        <button id="btn-pause" class="btn-icon" aria-label="Mettre en pause">
+          Ⅱ
+        </button>
+      </header>
+      <main id="viewport">
+        <div id="world">
+          <div id="scene-bg">
+            <div class="scene-title">
+              <small>SECTEUR</small><strong>NEON // 09</strong
+              ><small>RÉSEAU URBAIN NON CARTOGRAPHIÉ</small>
+            </div>
+            <div class="neon-sign sign-one">BYTE<br /><b>MARKET</b></div>
+            <div class="neon-sign sign-two">OPEN<br /><b>24/7</b></div>
+            <div class="skyline skyline-one"></div>
+            <div class="skyline skyline-two"></div>
+            <div class="street"></div>
+            <div id="ambient-layer"></div>
+          </div>
+          <div id="hitbox-layer"></div>
+          <canvas id="effects-canvas"></canvas>
+        </div>
+        <div class="viewport-help">
+          GLISSER POUR EXPLORER &nbsp; • &nbsp; SCROLLER POUR ZOOMER
+        </div>
+      </main>
+      <footer id="ui-footer">
+        <div class="targets-label">
+          <span>À LOCALISER <em>← GLISSER →</em></span
+          ><small id="difficulty-label">—</small>
+        </div>
+        <div
+          id="object-list-container"
+          aria-label="Liste des anomalies à localiser"
+          tabindex="0"
+        >
+          <ul id="object-list"></ul>
+        </div>
+      </footer>
+      <div id="menu-overlay" class="overlay">
+        <section class="menu-panel">
+          <div class="eyebrow">// PROTOCOLE DE RECHERCHE</div>
+          <h1>CYBER<span>FIND</span></h1>
+          <p>
+            Des anomalies sont disséminées dans le district. Zoomez, observez
+            les détails et retrouvez-les avant de perdre le fil.
+          </p>
+          <div class="difficulty-grid" id="difficulty-grid">
+            <button class="difficulty-card active" data-difficulty="rookie">
+              <span>01</span><strong>RECRUE</strong
+              ><small>10 anomalies · détente</small>
+            </button>
+            <button class="difficulty-card" data-difficulty="agent">
+              <span>02</span><strong>AGENT</strong
+              ><small>16 anomalies · dense</small>
+            </button>
+            <button class="difficulty-card" data-difficulty="ghost">
+              <span>03</span><strong>FANTÔME</strong
+              ><small>24 anomalies · exigeant</small>
+            </button>
+            <button class="difficulty-card" data-difficulty="overload">
+              <span>04</span><strong>SURCHARGE</strong
+              ><small>32 anomalies · chaos total</small>
+            </button>
+          </div>
+          <button id="btn-start" class="btn-primary">
+            LANCER LA MISSION <b>→</b>
+          </button>
+          <p class="menu-tip">
+            Chaque mission génère une nouvelle scène. Échap ouvre la pause.
+          </p>
+        </section>
+      </div>
+      <div id="pause-overlay" class="overlay hidden">
+        <section class="overlay-card">
+          <div class="eyebrow">// TRANSMISSION SUSPENDUE</div>
+          <h2>MISSION EN PAUSE</h2>
+          <p>Le district reste en mémoire. Reprenez quand vous êtes prêt.</p>
+          <button id="btn-resume" class="btn-primary">REPRENDRE <b>→</b></button
+          ><button id="btn-menu" class="btn-secondary">RETOUR AU MENU</button>
+        </section>
+      </div>
+      <div id="victory-overlay" class="overlay hidden">
+        <section class="overlay-card">
+          <div class="eyebrow">// SIGNAL STABILISÉ</div>
+          <h2>MISSION ACCOMPLIE</h2>
+          <p id="victory-stats"></p>
+          <div class="best-score-box">
+            MEILLEUR TEMPS <strong id="best-time">--:--</strong>
+          </div>
+          <button id="btn-restart" class="btn-primary">
+            NOUVELLE MISSION <b>→</b></button
+          ><button id="btn-victory-menu" class="btn-secondary">
+            CHOISIR UNE DIFFICULTÉ
+          </button>
+        </section>
+      </div>
+    </div>
+    <script src="cyberfind.js"></script>
+    <script src="../../js/core/arcade-config.js"></script>
+    <script src="../../js/core/arcade-local-store.js"></script>
+    <script src="../../js/core/arcade-game-bridge.js"></script>
+  </body>
+</html>

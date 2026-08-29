@@ -1,6 +1,6 @@
 # Mode temporaire des Coins fictifs
 
-Le mode actif est défini par `mode: "local-test"` dans `arcade-config.js`. Il ne contacte ni
+Le mode actif est défini par `mode: "local-test"` dans `js/core/arcade-config.js`. Il ne contacte ni
 Supabase, ni un réseau publicitaire, ni PayPal.
 
 ## Profils
@@ -17,7 +17,7 @@ de l’argent ou des récompenses réelles.
 
 ## Paramètres d’équilibrage
 
-Toutes les valeurs temporaires sont regroupées dans `arcade-config.js` :
+Toutes les valeurs temporaires sont regroupées dans `js/core/arcade-config.js` :
 
 ```js
 localEconomy: {
@@ -50,7 +50,7 @@ Le détail du protocole commun se trouve dans `docs/COMMUNICATION-JEUX.md`.
 
 ## Passage futur aux comptes réels
 
-Le stockage local est isolé dans `arcade-local-store.js`. La grille utilise la façade
+Le stockage local est isolé dans `js/core/arcade-local-store.js`. La grille utilise la façade
 `ArcadePlatform`, tandis que les pages de jeu passent par `ArcadeGameSession`. Le stockage pourra
 donc être remplacé par l’adaptateur Supabase déjà préparé sans disperser les opérations de solde
 dans les jeux.

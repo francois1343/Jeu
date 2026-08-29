@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <!-- Meta essentiels pour mobile -->
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"
+    />
+    <meta name="theme-color" content="#0a0e27" />
+    <meta
+      name="description"
+      content="Pixel Forge — clicker rétro à travers 4 ères technologiques, du 8-bits au Synthwave."
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Pixel Forge" />
+
+    <title>🕹️ Pixel Forge</title>
+
+    <link rel="stylesheet" href="clickerbit.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+  </head>
+  <body>
+    <a
+      class="arcade-home-link"
+      href="../../index.html"
+      aria-label="Retour à l'accueil"
+      title="Retour à l'accueil"
+      ><span class="arcade-home-icon" aria-hidden="true">⌂</span
+      ><span class="arcade-home-label">Accueil</span></a
+    >
+    <!-- ============================================================ -->
+    <!-- ÉCRAN D'ACCUEIL (SPA - visible par défaut)                    -->
+    <!-- ============================================================ -->
+    <section
+      id="menuScreen"
+      class="screen screen-active"
+      aria-label="Écran d'accueil"
+    >
+      <div class="menu-container">
+        <p class="menu-eyebrow">
+          <span></span> NEURAL ARCADE SYSTEM <span></span>
+        </p>
+
+        <div class="logo-container">
+          <div class="logo-core" aria-hidden="true">PF</div>
+          <h1 class="logo-title">PIXEL <span>FORGE</span></h1>
+          <p class="logo-subtitle">FORGEUR DE MONDES NUMÉRIQUES</p>
+        </div>
+
+        <div class="press-start-container">
+          <p class="press-start-text">[ SYSTÈME PRÊT ]</p>
+        </div>
+
+        <div class="menu-info">
+          <p class="menu-description">
+            Construis la console rétro ultime en cliquant frénétiquement ! 🎮
+          </p>
+          <p class="menu-version">v1.0 — Années 80 à l'infini</p>
+        </div>
+
+        <div class="menu-features" aria-label="Caractéristiques du jeu">
+          <span><strong>4</strong>ÈRES</span>
+          <span><strong>∞</strong>FORGE</span>
+          <span><i></i>AUTO-SAVE</span>
+        </div>
+
+        <button id="startButton" class="btn btn-primary" type="button">
+          <span>INITIALISER LA FORGE</span>
+          <small>APPUYER POUR COMMENCER</small>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ÉCRAN PRINCIPAL DU JEU (SPA - masqué par défaut)              -->
+    <!-- ============================================================ -->
+    <section id="gameScreen" class="screen" aria-label="Écran de jeu">
+      <!-- Barre supérieure : ère technologique actuelle -->
+      <header class="game-header">
+        <div class="system-status">
+          <span class="system-online"><i></i>SYSTÈME EN LIGNE</span>
+          <span id="prestigeStatus" class="core-status">CORE x1.00</span>
+        </div>
+
+        <div class="era-heading">
+          <span class="era-kicker">TECHNOLOGIE ACTIVE</span>
+          <div class="era-badge">
+            <span id="eraName" class="era-label" aria-live="polite"
+              >8-BITS</span
+            >
+            <span id="eraProgress" class="era-progress" aria-live="polite"
+              >0%</span
+            >
+          </div>
+        </div>
+
+        <div
+          id="eraTrack"
+          class="era-track"
+          role="progressbar"
+          aria-label="Progression vers l'ère suivante"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <span id="eraProgressFill" class="era-progress-fill"></span>
+        </div>
+        <p id="eraObjective" class="era-objective">PROCHAINE ÈRE À 5K BITS</p>
+      </header>
+
+      <!-- Zone centrale : score, bouton de clic, upgrades -->
+      <main class="game-main">
+        <div class="score-display">
+          <p class="score-label">💾 BITS COLLECTÉS</p>
+          <p id="scoreValue" class="score-value" aria-live="polite">0</p>
+          <div class="score-rates">
+            <p id="bitsPerSecond" class="cps-label">+0 bits/sec</p>
+            <p class="click-rate">+1 PAR CLIC</p>
+          </div>
+        </div>
+
+        <!-- Le GROS PIXEL CLICKABLE (cœur du gameplay) -->
+        <div id="reactorZone" class="reactor-zone">
+          <span
+            class="reactor-orbit reactor-orbit-one"
+            aria-hidden="true"
+          ></span>
+          <span
+            class="reactor-orbit reactor-orbit-two"
+            aria-hidden="true"
+          ></span>
+          <button
+            id="clickButton"
+            class="click-button"
+            type="button"
+            aria-label="Cliquer pour générer des bits"
+          >
+            <span class="click-button-grid" aria-hidden="true"></span>
+            <span class="click-button-inner">⚡</span>
+          </button>
+          <div id="streakBadge" class="streak-badge" aria-live="polite">
+            SÉRIE x1
+          </div>
+        </div>
+        <p class="click-hint">
+          <span></span> TOUCHEZ LE CŒUR POUR FORGER <span></span>
+        </p>
+
+        <!-- Nombres flottants "+1" générés dynamiquement en JS -->
+        <div
+          id="floatingContainer"
+          class="floating-numbers-container"
+          aria-hidden="true"
+        ></div>
+
+        <!-- Zone d'upgrade (remplie dynamiquement en JS) -->
+        <section class="upgrades-section" aria-label="Améliorations">
+          <div class="upgrades-heading">
+            <div>
+              <span class="section-kicker">ATELIER // MODULES</span>
+              <h2 class="upgrades-title">AMÉLIORATIONS</h2>
+            </div>
+            <span class="shop-status"><i></i>OUVERT</span>
+          </div>
+          <div id="upgradesList" class="upgrades-list">
+            <!-- Les upgrades sont insérés ici par game.js -->
+          </div>
+        </section>
+      </main>
+
+      <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+      <div id="eraTransition" class="era-transition" aria-hidden="true">
+        <span>NOUVELLE ÈRE DÉVERROUILLÉE</span>
+        <strong id="eraTransitionName">16-BITS</strong>
+      </div>
+
+      <!-- Barre inférieure : boutons d'action -->
+      <footer class="game-footer">
+        <div class="save-status">
+          <i></i><span id="saveStatusLabel">AUTO-SAVE</span>
+        </div>
+        <div class="footer-actions">
+          <button
+            id="menuButton"
+            class="btn btn-icon"
+            type="button"
+            aria-label="Retour au menu"
+            title="Retour au menu"
+          >
+            &#127968;
+          </button>
+          <button
+            id="saveButton"
+            class="btn btn-icon"
+            type="button"
+            aria-label="Enregistrer la progression"
+            title="Enregistrer la progression"
+          >
+            &#128190;
+          </button>
+          <button
+            id="settingsButton"
+            class="btn btn-icon"
+            type="button"
+            aria-label="Paramètres"
+            title="Paramètres"
+          >
+            ⚙️
+          </button>
+        </div>
+        <button
+          id="prestigeButton"
+          class="btn btn-prestige"
+          type="button"
+          style="display: none"
+        >
+          ✨ RESET MATRIX
+        </button>
+        <span class="footer-build">PF.OS // 1.0</span>
+      </footer>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- MODAL : ÉCRAN DE PRESTIGE                                     -->
+    <!-- ============================================================ -->
+    <div
+      id="prestigeModal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="prestigeModalTitle"
+    >
+      <div class="modal-content">
+        <h2 id="prestigeModalTitle" class="modal-title">⚡ RESET MATRIX ⚡</h2>
+
+        <div class="prestige-info">
+          <p class="prestige-description">
+            Sacrifie tous tes bits pour obtenir un bonus de puissance permanent
+            !
+          </p>
+
+          <div class="prestige-calculation">
+            <p id="prestigeCalculation">
+              Bits actuels : <span id="prestigeBits">0</span><br />
+              Bonus de prestige : <span id="prestigeBonus">0</span>%
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-buttons">
+          <button
+            id="cancelPrestigeButton"
+            class="btn btn-secondary"
+            type="button"
+          >
+            ANNULER
+          </button>
+          <button
+            id="confirmPrestigeButton"
+            class="btn btn-prestige"
+            type="button"
+          >
+            CONFIRMER RESET
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL : PARAMÈTRES (Settings)                                 -->
+    <!-- ============================================================ -->
+    <div
+      id="settingsModal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settingsModalTitle"
+    >
+      <div class="modal-content">
+        <h2 id="settingsModalTitle" class="modal-title">⚙️ PARAMÈTRES ⚙️</h2>
+
+        <!-- Options de son et vibrations -->
+        <div class="settings-options">
+          <div class="setting-item">
+            <label for="soundToggle" class="setting-label"
+              >🔊 Activer le son</label
+            >
+            <input
+              type="checkbox"
+              id="soundToggle"
+              class="setting-toggle"
+              checked
+            />
+          </div>
+
+          <div class="setting-item">
+            <label for="vibrationToggle" class="setting-label"
+              >📳 Activer les vibrations</label
+            >
+            <input
+              type="checkbox"
+              id="vibrationToggle"
+              class="setting-toggle"
+              checked
+            />
+          </div>
+        </div>
+
+        <!-- Zone de réinitialisation des données -->
+        <div class="settings-danger-zone">
+          <p class="danger-label">⚠️ ZONE DANGEREUSE</p>
+          <button id="wipeDataButton" class="btn btn-danger" type="button">
+            🗑️ EFFACER TOUTES LES DONNÉES
+          </button>
+        </div>
+
+        <button
+          id="closeSettingsButton"
+          class="btn btn-secondary"
+          type="button"
+        >
+          FERMER
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCRIPTS                                                       -->
+    <!-- ============================================================ -->
+    <script src="clickerbit.js"></script>
+    <script src="../../js/core/arcade-config.js"></script>
+    <script src="../../js/core/arcade-local-store.js"></script>
+    <script src="../../js/core/arcade-game-bridge.js"></script>
+  </body>
+</html>

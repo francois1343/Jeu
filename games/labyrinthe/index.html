@@ -1,0 +1,1756 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>🧭 Safari Maze - Labyrinthe Aventure</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :root {
+        --bg-primary: #1a120b;
+        --bg-secondary: #2d1f14;
+        --bg-card: rgba(45, 31, 20, 0.95);
+        --accent-primary: #f4a460;
+        --accent-secondary: #90ee90;
+        --accent-gold: #ffd700;
+        --accent-danger: #ff6b6b;
+        --text-primary: #fff8dc;
+        --text-secondary: rgba(255, 248, 220, 0.7);
+        --wall-color: #3d2914;
+        --path-color: #c4a574;
+        --grass-color: #228b22;
+      }
+
+      body {
+        font-family: "Trebuchet MS", "Lucida Sans", Arial, sans-serif;
+        background: var(--bg-primary);
+        min-height: 100vh;
+        min-height: 100dvh;
+        color: var(--text-primary);
+        overflow: hidden;
+      }
+
+      /* ===== ÉCRANS ===== */
+      .screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        transition:
+          opacity 0.4s ease,
+          visibility 0.4s ease;
+        z-index: 10;
+      }
+
+      .screen.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      /* ===== FOND SAFARI ===== */
+      .safari-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+        background: linear-gradient(
+          180deg,
+          #87ceeb 0%,
+          #f4a460 30%,
+          #deb887 50%,
+          #c4a574 70%,
+          #1a120b 100%
+        );
+      }
+
+      .safari-element {
+        position: absolute;
+        font-size: 30px;
+        opacity: 0.3;
+        animation: sway 4s ease-in-out infinite;
+      }
+
+      @keyframes sway {
+        0%,
+        100% {
+          transform: rotate(-5deg);
+        }
+        50% {
+          transform: rotate(5deg);
+        }
+      }
+
+      .sun {
+        position: absolute;
+        top: 5%;
+        right: 10%;
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(
+          circle,
+          #ffd700 0%,
+          #ff8c00 70%,
+          transparent 100%
+        );
+        border-radius: 50%;
+        box-shadow:
+          0 0 60px #ffd700,
+          0 0 120px #ff8c00;
+        animation: pulse 3s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.9;
+        }
+        50% {
+          transform: scale(1.1);
+          opacity: 1;
+        }
+      }
+
+      /* ===== MENU PRINCIPAL ===== */
+      .menu-container {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        max-width: 450px;
+        width: 100%;
+      }
+
+      .logo {
+        font-size: 70px;
+        margin-bottom: 5px;
+        animation: bounce 2s ease-in-out infinite;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .title {
+        font-size: 42px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        background: linear-gradient(
+          135deg,
+          var(--accent-gold),
+          var(--accent-primary)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+        filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+      }
+
+      .subtitle {
+        font-size: 16px;
+        color: var(--text-secondary);
+        margin-bottom: 30px;
+        font-style: italic;
+      }
+
+      /* ===== BOUTONS ===== */
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 16px 24px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent-primary), #e07b30);
+        color: var(--bg-primary);
+        box-shadow: 0 4px 20px rgba(244, 164, 96, 0.4);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(244, 164, 96, 0.6);
+      }
+
+      .btn-secondary {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        border: 2px solid var(--accent-primary);
+      }
+
+      .btn-secondary:hover {
+        background: var(--accent-primary);
+        color: var(--bg-primary);
+      }
+
+      .btn-difficulty {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        border: 2px solid transparent;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+      }
+
+      .btn-difficulty:hover {
+        border-color: var(--accent-primary);
+        transform: translateX(5px);
+      }
+
+      .btn-difficulty.selected {
+        border-color: var(--accent-gold);
+        background: rgba(255, 215, 0, 0.15);
+      }
+
+      .btn-difficulty .emoji {
+        font-size: 28px;
+      }
+
+      .btn-difficulty .info {
+        text-align: left;
+        flex: 1;
+        margin-left: 15px;
+      }
+
+      .btn-difficulty .name {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .btn-difficulty .desc {
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+
+      /* ===== SECTIONS ===== */
+      .section-title {
+        font-size: 14px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin: 25px 0 15px;
+        text-align: left;
+      }
+
+      /* ===== STATS BOX ===== */
+      .stats-box {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 20px;
+        margin: 20px 0;
+        border: 1px solid rgba(244, 164, 96, 0.2);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: var(--accent-gold);
+      }
+
+      .stat-label {
+        font-size: 11px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* ===== ÉCRAN DE JEU ===== */
+      #game-screen {
+        background: linear-gradient(180deg, #87ceeb 0%, #c4a574 100%);
+        padding: 0;
+      }
+
+      .game-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background: linear-gradient(
+          180deg,
+          rgba(26, 18, 11, 0.95),
+          transparent
+        );
+        z-index: 100;
+      }
+
+      .game-stat {
+        text-align: center;
+        min-width: 70px;
+      }
+
+      .game-stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--accent-gold);
+      }
+
+      .game-stat-label {
+        font-size: 10px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+      }
+
+      .btn-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: none;
+        background: var(--bg-card);
+        color: var(--text-primary);
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-icon:hover {
+        background: var(--accent-primary);
+        transform: scale(1.1);
+      }
+
+      /* ===== CANVAS LABYRINTHE ===== */
+      .maze-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+        padding: 80px 10px 180px;
+        overflow: auto;
+      }
+
+      #maze-canvas {
+        border-radius: 12px;
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.4),
+          inset 0 0 60px rgba(0, 0, 0, 0.2);
+        image-rendering: pixelated;
+        max-width: 95vw;
+        max-height: 60vh;
+      }
+
+      /* ===== CONTRÔLES MOBILE ===== */
+      .mobile-controls {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        display: grid;
+        grid-template-areas:
+          ". up ."
+          "left down right";
+        gap: 8px;
+      }
+
+      .ctrl-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 3px solid var(--accent-primary);
+        background: rgba(26, 18, 11, 0.9);
+        color: var(--accent-primary);
+        font-size: 24px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .ctrl-btn:active {
+        background: var(--accent-primary);
+        color: var(--bg-primary);
+        transform: scale(0.95);
+      }
+
+      .ctrl-btn.up {
+        grid-area: up;
+      }
+      .ctrl-btn.down {
+        grid-area: down;
+      }
+      .ctrl-btn.left {
+        grid-area: left;
+      }
+      .ctrl-btn.right {
+        grid-area: right;
+      }
+
+      /* Masquer sur desktop */
+      @media (min-width: 769px) and (hover: hover) {
+        .mobile-controls {
+          display: none;
+        }
+      }
+
+      /* ===== MINI-MAP ===== */
+      .minimap-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 100;
+      }
+
+      #minimap {
+        border: 2px solid var(--accent-primary);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+
+      @media (max-width: 768px) {
+        .minimap-container {
+          bottom: auto;
+          top: 70px;
+          right: 10px;
+        }
+
+        #minimap {
+          width: 60px !important;
+          height: 60px !important;
+        }
+      }
+
+      /* ===== MESSAGE LEVEL UP ===== */
+      .level-up-msg {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: linear-gradient(
+          135deg,
+          var(--accent-gold),
+          var(--accent-primary)
+        );
+        color: var(--bg-primary);
+        padding: 30px 50px;
+        border-radius: 20px;
+        font-size: 32px;
+        font-weight: bold;
+        z-index: 200;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .level-up-msg.show {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .level-up-msg .level-num {
+        font-size: 60px;
+        display: block;
+        margin: 10px 0;
+      }
+
+      .level-up-msg .level-size {
+        font-size: 16px;
+        opacity: 0.8;
+      }
+
+      /* ===== ÉCRAN FIN ===== */
+      .result-container {
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .result-emoji {
+        font-size: 100px;
+        margin-bottom: 15px;
+        animation: bounce 1s ease-in-out infinite;
+      }
+
+      .result-title {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: var(--accent-gold);
+      }
+
+      .result-subtitle {
+        font-size: 16px;
+        color: var(--text-secondary);
+        margin-bottom: 25px;
+      }
+
+      .result-stats {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 25px;
+      }
+
+      .result-stat-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .result-stat-row:last-child {
+        border-bottom: none;
+      }
+
+      .result-stat-row.highlight {
+        color: var(--accent-gold);
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      /* ===== MODAL PAUSE ===== */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 300;
+        backdrop-filter: blur(5px);
+      }
+
+      .modal-overlay.hidden {
+        display: none;
+      }
+
+      .modal-content {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 350px;
+        width: 90%;
+        text-align: center;
+        border: 2px solid var(--accent-primary);
+      }
+
+      .modal-title {
+        font-size: 28px;
+        margin-bottom: 20px;
+        color: var(--accent-gold);
+      }
+
+      /* ===== ANIMATIONS ===== */
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        75% {
+          transform: translateX(5px);
+        }
+      }
+
+      .shake {
+        animation: shake 0.3s ease;
+      }
+
+      /* ===== FOOTER CONTROLS ===== */
+      .controls-hint {
+        position: fixed;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        color: var(--text-secondary);
+        text-align: center;
+        z-index: 50;
+      }
+
+      @media (max-width: 768px) {
+        .controls-hint {
+          display: none;
+        }
+      }
+
+      /* ===== COLLECTIBLES ===== */
+      .collectible-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 60px;
+        z-index: 150;
+        animation: collectPop 0.6s ease forwards;
+        pointer-events: none;
+      }
+
+      @keyframes collectPop {
+        0% {
+          transform: translate(-50%, -50%) scale(0);
+          opacity: 0;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.5);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -100%) scale(1);
+          opacity: 0;
+        }
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 480px) {
+        .title {
+          font-size: 32px;
+        }
+
+        .logo {
+          font-size: 50px;
+        }
+
+        .ctrl-btn {
+          width: 55px;
+          height: 55px;
+          font-size: 20px;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+  </head>
+  <body>
+    <a
+      class="arcade-home-link"
+      href="../../index.html"
+      aria-label="Retour à l'accueil"
+      title="Retour à l'accueil"
+      ><span class="arcade-home-icon" aria-hidden="true">⌂</span
+      ><span class="arcade-home-label">Accueil</span></a
+    >
+
+    <!-- FOND SAFARI -->
+    <div class="safari-bg">
+      <div class="sun"></div>
+    </div>
+
+    <!-- ===== ÉCRAN MENU ===== -->
+    <div id="menu-screen" class="screen">
+      <div class="menu-container">
+        <div class="logo">🦁</div>
+        <h1 class="title">Safari Maze</h1>
+        <p class="subtitle">Trouve la sortie... si tu peux ! 🧭</p>
+
+        <button class="btn btn-primary" onclick="startGame()">
+          🚀 Nouvelle Aventure
+        </button>
+
+        <div class="section-title">🎯 Difficulté</div>
+
+        <button
+          class="btn btn-difficulty selected"
+          onclick="selectDifficulty('easy', this)"
+        >
+          <span class="emoji">🐣</span>
+          <div class="info">
+            <div class="name">Explorateur</div>
+            <div class="desc">Labyrinthes 11x11 → 21x21</div>
+          </div>
+        </button>
+
+        <button
+          class="btn btn-difficulty"
+          onclick="selectDifficulty('medium', this)"
+        >
+          <span class="emoji">🦊</span>
+          <div class="info">
+            <div class="name">Aventurier</div>
+            <div class="desc">Labyrinthes 15x15 → 31x31</div>
+          </div>
+        </button>
+
+        <button
+          class="btn btn-difficulty"
+          onclick="selectDifficulty('hard', this)"
+        >
+          <span class="emoji">🦁</span>
+          <div class="info">
+            <div class="name">Roi de la Jungle</div>
+            <div class="desc">Labyrinthes 21x21 → 51x51</div>
+          </div>
+        </button>
+
+        <div class="stats-box">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value" id="stat-games">0</div>
+              <div class="stat-label">Parties</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="stat-best-level">0</div>
+              <div class="stat-label">Niveau Max</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="stat-gems">0</div>
+              <div class="stat-label">💎 Total</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-secondary" onclick="showHelp()">
+          ❓ Comment jouer
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== ÉCRAN JEU ===== -->
+    <div id="game-screen" class="screen hidden">
+      <div class="game-header">
+        <button class="btn-icon" onclick="pauseGame()">⏸️</button>
+
+        <div class="game-stat">
+          <div class="game-stat-value" id="game-level">1</div>
+          <div class="game-stat-label">Niveau</div>
+        </div>
+
+        <div class="game-stat">
+          <div class="game-stat-value" id="game-time">0:00</div>
+          <div class="game-stat-label">Temps</div>
+        </div>
+
+        <div class="game-stat">
+          <div class="game-stat-value" id="game-moves">0</div>
+          <div class="game-stat-label">Pas</div>
+        </div>
+
+        <div class="game-stat">
+          <div class="game-stat-value" id="game-gems">0</div>
+          <div class="game-stat-label">💎</div>
+        </div>
+      </div>
+
+      <div class="maze-container">
+        <canvas id="maze-canvas"></canvas>
+      </div>
+
+      <div class="minimap-container">
+        <canvas id="minimap" width="80" height="80"></canvas>
+      </div>
+
+      <div class="mobile-controls">
+        <button class="ctrl-btn up" onclick="move('up')">▲</button>
+        <button class="ctrl-btn left" onclick="move('left')">◀</button>
+        <button class="ctrl-btn down" onclick="move('down')">▼</button>
+        <button class="ctrl-btn right" onclick="move('right')">▶</button>
+      </div>
+
+      <div class="controls-hint">
+        ⌨️ Utilisez les flèches ou ZQSD pour vous déplacer
+      </div>
+
+      <div class="level-up-msg" id="level-up-msg">
+        🎉 Niveau
+        <span class="level-num" id="level-num">2</span>
+        <span class="level-size" id="level-size">13x13</span>
+      </div>
+    </div>
+
+    <!-- ===== MODAL PAUSE ===== -->
+    <div id="pause-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h2 class="modal-title">⏸️ Pause</h2>
+        <p style="margin-bottom: 20px; color: var(--text-secondary)">
+          Niveau <span id="pause-level">1</span> •
+          <span id="pause-time">0:00</span>
+        </p>
+        <button class="btn btn-primary" onclick="resumeGame()">
+          ▶️ Reprendre
+        </button>
+        <button class="btn btn-secondary" onclick="restartGame()">
+          🔄 Recommencer
+        </button>
+        <button class="btn btn-secondary" onclick="quitToMenu()">
+          🏠 Menu
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== MODAL AIDE ===== -->
+    <div id="help-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h2 class="modal-title">❓ Comment jouer</h2>
+        <div style="text-align: left; line-height: 1.8; margin-bottom: 20px">
+          <p>🎯 <strong>Objectif :</strong> Atteindre la sortie 🏁</p>
+          <p>🧭 <strong>Déplacement :</strong></p>
+          <p style="margin-left: 20px">• Flèches ou ZQSD (clavier)</p>
+          <p style="margin-left: 20px">• Boutons tactiles (mobile)</p>
+          <p>💎 <strong>Bonus :</strong> Collectez les gemmes !</p>
+          <p>
+            📈 <strong>Progression :</strong> Chaque niveau = labyrinthe plus
+            grand
+          </p>
+          <p>⏱️ <strong>Score :</strong> Temps + Pas + Gemmes</p>
+        </div>
+        <button class="btn btn-primary" onclick="hideHelp()">
+          👍 Compris !
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== ÉCRAN RÉSULTAT ===== -->
+    <div id="result-screen" class="screen hidden">
+      <div class="result-container">
+        <div class="result-emoji" id="result-emoji">🏆</div>
+        <h2 class="result-title" id="result-title">Bravo !</h2>
+        <p class="result-subtitle" id="result-subtitle">
+          Tu as terminé le niveau 10 !
+        </p>
+
+        <div class="result-stats">
+          <div class="result-stat-row">
+            <span>🎯 Niveau atteint</span>
+            <span id="result-level">10</span>
+          </div>
+          <div class="result-stat-row">
+            <span>⏱️ Temps total</span>
+            <span id="result-time">5:32</span>
+          </div>
+          <div class="result-stat-row">
+            <span>👣 Total pas</span>
+            <span id="result-moves">234</span>
+          </div>
+          <div class="result-stat-row">
+            <span>💎 Gemmes collectées</span>
+            <span id="result-gems">15</span>
+          </div>
+          <div class="result-stat-row highlight">
+            <span>🏆 Score final</span>
+            <span id="result-score">12,450</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="startGame()">
+          🔄 Rejouer
+        </button>
+        <button class="btn btn-secondary" onclick="quitToMenu()">
+          🏠 Menu
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // ============================================
+      // CONFIGURATION
+      // ============================================
+      const CONFIG = {
+        difficulties: {
+          easy: { startSize: 11, increment: 2, maxSize: 21, gemChance: 0.03 },
+          medium: {
+            startSize: 15,
+            increment: 2,
+            maxSize: 31,
+            gemChance: 0.025,
+          },
+          hard: { startSize: 21, increment: 3, maxSize: 51, gemChance: 0.02 },
+        },
+        cellSize: 28,
+        colors: {
+          wall: "#3d2914",
+          wallShadow: "#2a1c0d",
+          path: "#e8dcc8",
+          pathAlt: "#d4c8b4",
+          player: "#ff6b35",
+          playerGlow: "rgba(255, 107, 53, 0.4)",
+          exit: "#4ade80",
+          exitGlow: "rgba(74, 222, 128, 0.5)",
+          gem: "#60a5fa",
+          gemGlow: "rgba(96, 165, 250, 0.5)",
+          visited: "rgba(244, 164, 96, 0.15)",
+          grass: "#228b22",
+          grassAlt: "#32cd32",
+        },
+        emojis: {
+          player: "🦁",
+          exit: "🏁",
+          gem: "💎",
+          tree: "🌴",
+          rock: "🪨",
+        },
+      };
+
+      // ============================================
+      // ÉTAT DU JEU
+      // ============================================
+      let state = {
+        difficulty: "easy",
+        level: 1,
+        maze: null,
+        player: { x: 1, y: 1 },
+        exit: { x: 0, y: 0 },
+        gems: [],
+        collected: 0,
+        moves: 0,
+        time: 0,
+        timer: null,
+        isPaused: false,
+        isPlaying: false,
+        visited: new Set(),
+        stats: {
+          gamesPlayed: 0,
+          bestLevel: 0,
+          totalGems: 0,
+        },
+      };
+
+      // ============================================
+      // ÉLÉMENTS DOM
+      // ============================================
+      const elements = {
+        menuScreen: document.getElementById("menu-screen"),
+        gameScreen: document.getElementById("game-screen"),
+        resultScreen: document.getElementById("result-screen"),
+        pauseModal: document.getElementById("pause-modal"),
+        helpModal: document.getElementById("help-modal"),
+        canvas: document.getElementById("maze-canvas"),
+        minimap: document.getElementById("minimap"),
+        levelUpMsg: document.getElementById("level-up-msg"),
+      };
+
+      const ctx = elements.canvas.getContext("2d");
+      const minimapCtx = elements.minimap.getContext("2d");
+
+      // ============================================
+      // GÉNÉRATION DU LABYRINTHE (Recursive Backtracking)
+      // ============================================
+      function generateMaze(width, height) {
+        // Initialiser la grille avec des murs
+        const maze = [];
+        for (let y = 0; y < height; y++) {
+          maze[y] = [];
+          for (let x = 0; x < width; x++) {
+            maze[y][x] = 1; // 1 = mur
+          }
+        }
+
+        // Algorithme de génération
+        function carve(x, y) {
+          maze[y][x] = 0; // 0 = chemin
+
+          // Directions mélangées aléatoirement
+          const directions = [
+            { dx: 0, dy: -2 }, // Haut
+            { dx: 2, dy: 0 }, // Droite
+            { dx: 0, dy: 2 }, // Bas
+            { dx: -2, dy: 0 }, // Gauche
+          ].sort(() => Math.random() - 0.5);
+
+          for (const dir of directions) {
+            const nx = x + dir.dx;
+            const ny = y + dir.dy;
+
+            if (
+              nx > 0 &&
+              nx < width - 1 &&
+              ny > 0 &&
+              ny < height - 1 &&
+              maze[ny][nx] === 1
+            ) {
+              // Creuser le passage
+              maze[y + dir.dy / 2][x + dir.dx / 2] = 0;
+              carve(nx, ny);
+            }
+          }
+        }
+
+        // Commencer depuis (1, 1)
+        carve(1, 1);
+
+        return maze;
+      }
+
+      // ============================================
+      // PLACEMENT DES GEMMES
+      // ============================================
+      function placeGems() {
+        state.gems = [];
+        const { maze } = state;
+        const gemChance = CONFIG.difficulties[state.difficulty].gemChance;
+
+        for (let y = 1; y < maze.length - 1; y++) {
+          for (let x = 1; x < maze[0].length - 1; x++) {
+            if (maze[y][x] === 0 && Math.random() < gemChance) {
+              // Pas sur le joueur ni la sortie
+              if (
+                !(x === state.player.x && y === state.player.y) &&
+                !(x === state.exit.x && y === state.exit.y)
+              ) {
+                state.gems.push({ x, y });
+              }
+            }
+          }
+        }
+      }
+
+      // ============================================
+      // TROUVER LA SORTIE (la plus éloignée du départ)
+      // ============================================
+      function findExit(maze) {
+        const height = maze.length;
+        const width = maze[0].length;
+
+        // BFS pour trouver le point le plus éloigné
+        const visited = new Set();
+        const queue = [{ x: 1, y: 1, dist: 0 }];
+        let farthest = { x: 1, y: 1, dist: 0 };
+
+        while (queue.length > 0) {
+          const current = queue.shift();
+          const key = `${current.x},${current.y}`;
+
+          if (visited.has(key)) continue;
+          visited.add(key);
+
+          if (current.dist > farthest.dist) {
+            farthest = current;
+          }
+
+          const directions = [
+            { dx: 0, dy: -1 },
+            { dx: 1, dy: 0 },
+            { dx: 0, dy: 1 },
+            { dx: -1, dy: 0 },
+          ];
+
+          for (const dir of directions) {
+            const nx = current.x + dir.dx;
+            const ny = current.y + dir.dy;
+
+            if (
+              nx > 0 &&
+              nx < width - 1 &&
+              ny > 0 &&
+              ny < height - 1 &&
+              maze[ny][nx] === 0 &&
+              !visited.has(`${nx},${ny}`)
+            ) {
+              queue.push({ x: nx, y: ny, dist: current.dist + 1 });
+            }
+          }
+        }
+
+        return { x: farthest.x, y: farthest.y };
+      }
+
+      // ============================================
+      // INITIALISATION DU NIVEAU
+      // ============================================
+      function initLevel() {
+        const difficulty = CONFIG.difficulties[state.difficulty];
+        const size = Math.min(
+          difficulty.startSize + (state.level - 1) * difficulty.increment,
+          difficulty.maxSize,
+        );
+
+        // Toujours impair pour un labyrinthe propre
+        const mazeSize = size % 2 === 0 ? size + 1 : size;
+
+        // Générer le labyrinthe
+        state.maze = generateMaze(mazeSize, mazeSize);
+
+        // Position du joueur
+        state.player = { x: 1, y: 1 };
+
+        // Trouver la sortie
+        state.exit = findExit(state.maze);
+
+        // Placer les gemmes
+        placeGems();
+
+        // Reset des mouvements et visités
+        state.moves = 0;
+        state.visited = new Set();
+        state.visited.add(`${state.player.x},${state.player.y}`);
+
+        // Mettre à jour le canvas
+        setupCanvas();
+        render();
+        renderMinimap();
+        updateUI();
+      }
+
+      // ============================================
+      // CONFIGURATION DU CANVAS
+      // ============================================
+      function setupCanvas() {
+        const maze = state.maze;
+        const width = maze[0].length * CONFIG.cellSize;
+        const height = maze.length * CONFIG.cellSize;
+
+        elements.canvas.width = width;
+        elements.canvas.height = height;
+
+        // Minimap
+        const minimapSize = 80;
+        elements.minimap.width = minimapSize;
+        elements.minimap.height = minimapSize;
+      }
+
+      // ============================================
+      // RENDU DU LABYRINTHE
+      // ============================================
+      function render() {
+        const { maze, player, exit, gems, visited } = state;
+        const cellSize = CONFIG.cellSize;
+        const colors = CONFIG.colors;
+
+        // Clear
+        ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
+
+        // Dessiner le labyrinthe
+        for (let y = 0; y < maze.length; y++) {
+          for (let x = 0; x < maze[0].length; x++) {
+            const px = x * cellSize;
+            const py = y * cellSize;
+
+            if (maze[y][x] === 1) {
+              // Mur
+              ctx.fillStyle = colors.wall;
+              ctx.fillRect(px, py, cellSize, cellSize);
+
+              // Effet 3D
+              ctx.fillStyle = colors.wallShadow;
+              ctx.fillRect(px, py + cellSize - 3, cellSize, 3);
+              ctx.fillRect(px + cellSize - 3, py, 3, cellSize);
+            } else {
+              // Chemin
+              const isAlt = (x + y) % 2 === 0;
+              ctx.fillStyle = isAlt ? colors.path : colors.pathAlt;
+              ctx.fillRect(px, py, cellSize, cellSize);
+
+              // Cases visitées
+              if (visited.has(`${x},${y}`)) {
+                ctx.fillStyle = colors.visited;
+                ctx.fillRect(px, py, cellSize, cellSize);
+              }
+            }
+          }
+        }
+
+        // Dessiner la sortie
+        ctx.fillStyle = colors.exitGlow;
+        ctx.beginPath();
+        ctx.arc(
+          exit.x * cellSize + cellSize / 2,
+          exit.y * cellSize + cellSize / 2,
+          cellSize * 0.6,
+          0,
+          Math.PI * 2,
+        );
+        ctx.fill();
+
+        ctx.font = `${cellSize * 0.8}px Arial`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(
+          CONFIG.emojis.exit,
+          exit.x * cellSize + cellSize / 2,
+          exit.y * cellSize + cellSize / 2,
+        );
+
+        // Dessiner les gemmes
+        for (const gem of gems) {
+          ctx.fillStyle = colors.gemGlow;
+          ctx.beginPath();
+          ctx.arc(
+            gem.x * cellSize + cellSize / 2,
+            gem.y * cellSize + cellSize / 2,
+            cellSize * 0.4,
+            0,
+            Math.PI * 2,
+          );
+          ctx.fill();
+
+          ctx.font = `${cellSize * 0.6}px Arial`;
+          ctx.fillText(
+            CONFIG.emojis.gem,
+            gem.x * cellSize + cellSize / 2,
+            gem.y * cellSize + cellSize / 2,
+          );
+        }
+
+        // Dessiner le joueur
+        ctx.fillStyle = colors.playerGlow;
+        ctx.beginPath();
+        ctx.arc(
+          player.x * cellSize + cellSize / 2,
+          player.y * cellSize + cellSize / 2,
+          cellSize * 0.55,
+          0,
+          Math.PI * 2,
+        );
+        ctx.fill();
+
+        ctx.font = `${cellSize * 0.75}px Arial`;
+        ctx.fillText(
+          CONFIG.emojis.player,
+          player.x * cellSize + cellSize / 2,
+          player.y * cellSize + cellSize / 2,
+        );
+      }
+
+      // ============================================
+      // RENDU MINIMAP
+      // ============================================
+      function renderMinimap() {
+        const { maze, player, exit, gems } = state;
+        const canvas = elements.minimap;
+        const cellSize = Math.min(
+          canvas.width / maze[0].length,
+          canvas.height / maze.length,
+        );
+
+        minimapCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Fond
+        minimapCtx.fillStyle = "#1a120b";
+        minimapCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Labyrinthe
+        for (let y = 0; y < maze.length; y++) {
+          for (let x = 0; x < maze[0].length; x++) {
+            if (maze[y][x] === 0) {
+              minimapCtx.fillStyle = state.visited.has(`${x},${y}`)
+                ? "#c4a574"
+                : "#8b7355";
+              minimapCtx.fillRect(
+                x * cellSize,
+                y * cellSize,
+                cellSize,
+                cellSize,
+              );
+            }
+          }
+        }
+
+        // Gemmes
+        minimapCtx.fillStyle = "#60a5fa";
+        for (const gem of gems) {
+          minimapCtx.fillRect(
+            gem.x * cellSize + cellSize * 0.2,
+            gem.y * cellSize + cellSize * 0.2,
+            cellSize * 0.6,
+            cellSize * 0.6,
+          );
+        }
+
+        // Sortie
+        minimapCtx.fillStyle = "#4ade80";
+        minimapCtx.fillRect(
+          exit.x * cellSize,
+          exit.y * cellSize,
+          cellSize * 1.5,
+          cellSize * 1.5,
+        );
+
+        // Joueur
+        minimapCtx.fillStyle = "#ff6b35";
+        minimapCtx.beginPath();
+        minimapCtx.arc(
+          player.x * cellSize + cellSize / 2,
+          player.y * cellSize + cellSize / 2,
+          cellSize,
+          0,
+          Math.PI * 2,
+        );
+        minimapCtx.fill();
+      }
+
+      // ============================================
+      // MOUVEMENT
+      // ============================================
+      function move(direction) {
+        if (!state.isPlaying || state.isPaused) return;
+
+        const { player, maze } = state;
+        let dx = 0,
+          dy = 0;
+
+        switch (direction) {
+          case "up":
+            dy = -1;
+            break;
+          case "down":
+            dy = 1;
+            break;
+          case "left":
+            dx = -1;
+            break;
+          case "right":
+            dx = 1;
+            break;
+        }
+
+        const nx = player.x + dx;
+        const ny = player.y + dy;
+
+        // Vérifier si le mouvement est valide
+        if (maze[ny] && maze[ny][nx] === 0) {
+          player.x = nx;
+          player.y = ny;
+          state.moves++;
+          state.visited.add(`${nx},${ny}`);
+
+          playSound("step");
+
+          // Vérifier les gemmes
+          checkGems();
+
+          // Vérifier la sortie
+          checkExit();
+
+          render();
+          renderMinimap();
+          updateUI();
+        } else {
+          // Collision avec mur
+          playSound("wall");
+          elements.canvas.classList.add("shake");
+          setTimeout(() => elements.canvas.classList.remove("shake"), 300);
+        }
+      }
+
+      // ============================================
+      // VÉRIFICATIONS
+      // ============================================
+      function checkGems() {
+        const { player, gems } = state;
+
+        for (let i = gems.length - 1; i >= 0; i--) {
+          if (gems[i].x === player.x && gems[i].y === player.y) {
+            gems.splice(i, 1);
+            state.collected++;
+            playSound("gem");
+            showCollectible("💎");
+          }
+        }
+      }
+
+      function checkExit() {
+        const { player, exit } = state;
+
+        if (player.x === exit.x && player.y === exit.y) {
+          window.ArcadeGameSession?.win({
+            level: state.level,
+            moves: state.moves,
+            time: state.time,
+          });
+          // Niveau complété !
+          playSound("complete");
+          state.level++;
+
+          // Sauvegarder le meilleur niveau
+          if (state.level > state.stats.bestLevel) {
+            state.stats.bestLevel = state.level;
+          }
+
+          showLevelUp();
+        }
+      }
+
+      // ============================================
+      // AFFICHAGE LEVEL UP
+      // ============================================
+      function showLevelUp() {
+        const difficulty = CONFIG.difficulties[state.difficulty];
+        const size = Math.min(
+          difficulty.startSize + (state.level - 1) * difficulty.increment,
+          difficulty.maxSize,
+        );
+
+        document.getElementById("level-num").textContent = state.level;
+        document.getElementById("level-size").textContent = `${size}x${size}`;
+
+        elements.levelUpMsg.classList.add("show");
+
+        setTimeout(() => {
+          elements.levelUpMsg.classList.remove("show");
+          initLevel();
+        }, 1500);
+      }
+
+      // ============================================
+      // AFFICHAGE COLLECTIBLE
+      // ============================================
+      function showCollectible(emoji) {
+        const popup = document.createElement("div");
+        popup.className = "collectible-popup";
+        popup.textContent = emoji;
+        document.body.appendChild(popup);
+
+        setTimeout(() => popup.remove(), 600);
+      }
+
+      // ============================================
+      // TIMER
+      // ============================================
+      function startTimer() {
+        state.time = 0;
+        state.timer = setInterval(() => {
+          if (!state.isPaused) {
+            state.time++;
+            updateUI();
+          }
+        }, 1000);
+      }
+
+      function stopTimer() {
+        if (state.timer) {
+          clearInterval(state.timer);
+          state.timer = null;
+        }
+      }
+
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, "0")}`;
+      }
+
+      // ============================================
+      // MISE À JOUR UI
+      // ============================================
+      function updateUI() {
+        document.getElementById("game-level").textContent = state.level;
+        document.getElementById("game-time").textContent = formatTime(
+          state.time,
+        );
+        document.getElementById("game-moves").textContent = state.moves;
+        document.getElementById("game-gems").textContent = state.collected;
+      }
+
+      function updateMenuStats() {
+        document.getElementById("stat-games").textContent =
+          state.stats.gamesPlayed;
+        document.getElementById("stat-best-level").textContent =
+          state.stats.bestLevel;
+        document.getElementById("stat-gems").textContent =
+          state.stats.totalGems;
+      }
+
+      // ============================================
+      // CONTRÔLES
+      // ============================================
+      document.addEventListener("keydown", (e) => {
+        const key = e.key.toLowerCase();
+
+        switch (key) {
+          case "arrowup":
+          case "z":
+          case "w":
+            e.preventDefault();
+            move("up");
+            break;
+          case "arrowdown":
+          case "s":
+            e.preventDefault();
+            move("down");
+            break;
+          case "arrowleft":
+          case "q":
+          case "a":
+            e.preventDefault();
+            move("left");
+            break;
+          case "arrowright":
+          case "d":
+            e.preventDefault();
+            move("right");
+            break;
+          case "escape":
+          case "p":
+            if (state.isPlaying && !state.isPaused) {
+              pauseGame();
+            } else if (state.isPaused) {
+              resumeGame();
+            }
+            break;
+        }
+      });
+
+      // Swipe support
+      let touchStartX = 0;
+      let touchStartY = 0;
+
+      document.addEventListener(
+        "touchstart",
+        (e) => {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        },
+        { passive: true },
+      );
+
+      document.addEventListener(
+        "touchend",
+        (e) => {
+          if (!state.isPlaying || state.isPaused) return;
+
+          const dx = e.changedTouches[0].clientX - touchStartX;
+          const dy = e.changedTouches[0].clientY - touchStartY;
+          const minSwipe = 30;
+
+          if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > minSwipe) {
+            move(dx > 0 ? "right" : "left");
+          } else if (Math.abs(dy) > minSwipe) {
+            move(dy > 0 ? "down" : "up");
+          }
+        },
+        { passive: true },
+      );
+
+      // ============================================
+      // NAVIGATION
+      // ============================================
+      function startGame() {
+        window.ArcadeGameSession?.start({ difficulty: state.difficulty });
+        state.level = 1;
+        state.collected = 0;
+        state.moves = 0;
+        state.stats.gamesPlayed++;
+        saveStats();
+
+        elements.menuScreen.classList.add("hidden");
+        elements.resultScreen.classList.add("hidden");
+        elements.gameScreen.classList.remove("hidden");
+
+        state.isPlaying = true;
+        state.isPaused = false;
+
+        initLevel();
+        startTimer();
+        playSound("start");
+      }
+
+      function pauseGame() {
+        state.isPaused = true;
+        document.getElementById("pause-level").textContent = state.level;
+        document.getElementById("pause-time").textContent = formatTime(
+          state.time,
+        );
+        elements.pauseModal.classList.remove("hidden");
+      }
+
+      function resumeGame() {
+        state.isPaused = false;
+        elements.pauseModal.classList.add("hidden");
+      }
+
+      function restartGame() {
+        elements.pauseModal.classList.add("hidden");
+        state.level = 1;
+        state.collected = 0;
+        state.time = 0;
+        initLevel();
+      }
+
+      function quitToMenu() {
+        stopTimer();
+        state.isPlaying = false;
+        state.stats.totalGems += state.collected;
+        saveStats();
+
+        elements.pauseModal.classList.add("hidden");
+        elements.gameScreen.classList.add("hidden");
+        elements.resultScreen.classList.add("hidden");
+        elements.menuScreen.classList.remove("hidden");
+
+        updateMenuStats();
+      }
+
+      function showHelp() {
+        elements.helpModal.classList.remove("hidden");
+      }
+
+      function hideHelp() {
+        elements.helpModal.classList.add("hidden");
+      }
+
+      function selectDifficulty(difficulty, btn) {
+        state.difficulty = difficulty;
+
+        document.querySelectorAll(".btn-difficulty").forEach((b) => {
+          b.classList.remove("selected");
+        });
+        btn.classList.add("selected");
+
+        playSound("click");
+      }
+
+      // ============================================
+      // SAUVEGARDE
+      // ============================================
+      function saveStats() {
+        localStorage.setItem("safariMaze_stats", JSON.stringify(state.stats));
+      }
+
+      function loadStats() {
+        const saved = localStorage.getItem("safariMaze_stats");
+        if (saved) {
+          state.stats = { ...state.stats, ...JSON.parse(saved) };
+        }
+      }
+
+      // ============================================
+      // FOND ANIMÉ
+      // ============================================
+      function createSafariElements() {
+        const bg = document.querySelector(".safari-bg");
+        const elements = ["🌴", "🌿", "🪨", "🌾", "🦒", "🐘", "🦓", "🌳"];
+
+        for (let i = 0; i < 15; i++) {
+          const el = document.createElement("div");
+          el.className = "safari-element";
+          el.textContent =
+            elements[Math.floor(Math.random() * elements.length)];
+          el.style.left = Math.random() * 100 + "%";
+          el.style.top = 50 + Math.random() * 50 + "%";
+          el.style.animationDelay = Math.random() * 2 + "s";
+          el.style.fontSize = 20 + Math.random() * 25 + "px";
+          bg.appendChild(el);
+        }
+      }
+
+      // ============================================
+      // SONS
+      // ============================================
+      function playSound(type) {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          const now = ctx.currentTime;
+          gain.gain.setValueAtTime(0.08, now);
+
+          switch (type) {
+            case "click":
+              osc.frequency.setValueAtTime(600, now);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+              osc.start(now);
+              osc.stop(now + 0.05);
+              break;
+
+            case "start":
+              osc.frequency.setValueAtTime(300, now);
+              osc.frequency.setValueAtTime(450, now + 0.1);
+              osc.frequency.setValueAtTime(600, now + 0.2);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+              osc.start(now);
+              osc.stop(now + 0.3);
+              break;
+
+            case "step":
+              osc.type = "sine";
+              osc.frequency.setValueAtTime(200 + Math.random() * 100, now);
+              gain.gain.setValueAtTime(0.03, now);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+              osc.start(now);
+              osc.stop(now + 0.05);
+              break;
+
+            case "wall":
+              osc.type = "square";
+              osc.frequency.setValueAtTime(80, now);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+              osc.start(now);
+              osc.stop(now + 0.1);
+              break;
+
+            case "gem":
+              osc.type = "sine";
+              osc.frequency.setValueAtTime(800, now);
+              osc.frequency.setValueAtTime(1000, now + 0.05);
+              osc.frequency.setValueAtTime(1200, now + 0.1);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+              osc.start(now);
+              osc.stop(now + 0.2);
+              break;
+
+            case "complete":
+              osc.type = "sine";
+              const notes = [523, 659, 784, 1047];
+              notes.forEach((f, i) => {
+                osc.frequency.setValueAtTime(f, now + i * 0.12);
+              });
+              gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+              osc.start(now);
+              osc.stop(now + 0.6);
+              break;
+          }
+        } catch (e) {}
+      }
+
+      // ============================================
+      // INITIALISATION
+      // ============================================
+      function init() {
+        loadStats();
+        updateMenuStats();
+        createSafariElements();
+      }
+
+      init();
+    </script>
+    <script src="../../js/core/arcade-config.js"></script>
+    <script src="../../js/core/arcade-local-store.js"></script>
+    <script src="../../js/core/arcade-game-bridge.js"></script>
+  </body>
+</html>

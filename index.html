@@ -3,13 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0e1a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Arcade Station" />
     <title>🎮 Mini Jeux Arcade</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="assets/icons/arcade-favicon.png" />
+    <link rel="apple-touch-icon" href="assets/icons/arcade-icon-180.png" />
     <link
       href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="css/home.css" />
   </head>
   <body>
     <!-- Particules décoratives -->
@@ -157,7 +165,7 @@
           <br />
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('calculation.html', event)"
+            onclick="launchGame('games/calculation/index.html', event)"
           >
             Jouer au Calcul
           </button>
@@ -185,7 +193,7 @@
           <br />
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('HiFuMi.html', event)"
+            onclick="launchGame('games/hifumi/index.html', event)"
           >
             Jouer à HiFuMi
           </button>
@@ -212,7 +220,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('reflex.html', event)"
+            onclick="launchGame('games/reflex/index.html', event)"
           >
             Jouer au Chrono
           </button>
@@ -241,7 +249,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('memory.html', event)"
+            onclick="launchGame('games/memory/index.html', event)"
           >
             Jouer au Memory
           </button>
@@ -268,7 +276,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('enigme.html', event)"
+            onclick="launchGame('games/enigme/index.html', event)"
           >
             Jouer à l'Enigme Cosmique
           </button>
@@ -296,7 +304,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('tetris.html', event)"
+            onclick="launchGame('games/tetris/index.html', event)"
           >
             Jouer à Tetris
           </button>
@@ -324,7 +332,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('snake.html', event)"
+            onclick="launchGame('games/snake/index.html', event)"
           >
             Jouer à Snake
           </button>
@@ -351,7 +359,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('pong.html', event)"
+            onclick="launchGame('games/pong/index.html', event)"
           >
             Jouer à Pong
           </button>
@@ -378,7 +386,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('demineur.html', event)"
+            onclick="launchGame('games/demineur/index.html', event)"
           >
             Jouer au Démineur
           </button>
@@ -406,7 +414,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('bataillenavale.html', event)"
+            onclick="launchGame('games/bataille-navale/index.html', event)"
           >
             Jouer à la Bataille
           </button>
@@ -435,7 +443,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('2048.html', event)"
+            onclick="launchGame('games/2048/index.html', event)"
           >
             Jouer à 2048
           </button>
@@ -463,7 +471,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('cassebloc.html', event)"
+            onclick="launchGame('games/casse-bloc/index.html', event)"
           >
             Jouer à Casse-Briques
           </button>
@@ -491,7 +499,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('labyrinthe.html', event)"
+            onclick="launchGame('games/labyrinthe/index.html', event)"
           >
             Jouer au Labyrinthe
           </button>
@@ -518,7 +526,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('neonrunner.html', event)"
+            onclick="launchGame('games/neon-runner/index.html', event)"
           >
             Jouer au Puzzle Mystique
           </button>
@@ -546,7 +554,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('cyberflux.html', event)"
+            onclick="launchGame('games/cyberflux/index.html', event)"
           >
             Jouer à Cyber Flux
           </button>
@@ -575,7 +583,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('crossyturfu.html', event)"
+            onclick="launchGame('games/crossy-turfu/index.html', event)"
           >
             Jouer à Crossy Turfu
           </button>
@@ -602,7 +610,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('openworld.html', event)"
+            onclick="launchGame('games/openworld/index.html', event)"
           >
             Jouer à Open World
           </button>
@@ -631,7 +639,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('clickerbit.html', event)"
+            onclick="launchGame('games/pixel-forge/index.html', event)"
           >
             Jouer à Pixel Forge
           </button>
@@ -660,7 +668,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('cyberfind.html', event)"
+            onclick="launchGame('games/cyberfind/index.html', event)"
           >
             Lancer la mission
           </button>
@@ -688,7 +696,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('neon-overdrive.html', event)"
+            onclick="launchGame('games/neon-overdrive/index.html', event)"
           >
             Jouer à Neon Overdrive
           </button>
@@ -718,7 +726,7 @@
           <br />
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('simon.html', event)"
+            onclick="launchGame('games/simon/index.html', event)"
           >
             Jouer à Simon Néon
           </button>
@@ -747,7 +755,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('SpiderSolitaire.html', event)"
+            onclick="launchGame('games/spider-solitaire/index.html', event)"
           >
             Jouer au Spider Solitaire
           </button>
@@ -776,7 +784,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('sudoku.html', event)"
+            onclick="launchGame('games/sudoku/index.html', event)"
           >
             Jouer au Sudoku
           </button>
@@ -804,7 +812,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('synthwave-runner.html', event)"
+            onclick="launchGame('games/synthwave-runner/index.html', event)"
           >
             Jouer à Synthwave Runner
           </button>
@@ -833,7 +841,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('taquin.html', event)"
+            onclick="launchGame('games/taquin/index.html', event)"
           >
             Jouer à Pixel Taquin
           </button>
@@ -861,7 +869,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('geominds.html', event)"
+            onclick="launchGame('games/geominds/index.html', event)"
           >
             Jouer à GeoMinds
           </button>
@@ -889,7 +897,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('cybermorpion.html', event)"
+            onclick="launchGame('games/cybermorpion/index.html', event)"
           >
             Jouer au Cyber-Morpion
           </button>
@@ -917,7 +925,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('marmotte.html', event)"
+            onclick="launchGame('games/marmotte/index.html', event)"
           >
             Jouer à Tape-Taupe
           </button>
@@ -945,7 +953,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('neontron.html', event)"
+            onclick="launchGame('games/neontron/index.html', event)"
           >
             Entrer dans l'arène
           </button>
@@ -973,7 +981,7 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('puissance4.html', event)"
+            onclick="launchGame('games/puissance4/index.html', event)"
           >
             Jouer à Puissance 4
           </button>
@@ -1115,10 +1123,38 @@
       </div>
     </dialog>
 
-    <script src="arcade-config.js"></script>
-    <script src="arcade-local-store.js"></script>
-    <script src="arcade-platform.js"></script>
-    <script src="arcade-game-sdk.js"></script>
-    <script src="index.js"></script>
+    <aside class="pwa-prompt" id="pwaInstallPrompt" aria-labelledby="pwaInstallTitle" hidden>
+      <span class="pwa-prompt-icon" aria-hidden="true">📲</span>
+      <div class="pwa-prompt-copy">
+        <strong id="pwaInstallTitle">Installer l’Arcade</strong>
+        <p>Installe l’application pour accéder plus rapidement à tes jeux.</p>
+        <p class="pwa-ios-help" id="pwaInstallIosHelp" hidden>
+          Dans Safari, touche Partager puis <strong>Sur l’écran d’accueil</strong>.
+        </p>
+      </div>
+      <div class="pwa-prompt-actions">
+        <button class="btn btn-primary pwa-install-button" id="pwaInstallButton" type="button">Installer</button>
+        <button class="pwa-later-button" id="pwaInstallLater" type="button">Plus tard</button>
+      </div>
+    </aside>
+
+    <aside class="pwa-prompt pwa-update-prompt" id="pwaUpdatePrompt" aria-labelledby="pwaUpdateTitle" hidden>
+      <span class="pwa-prompt-icon" aria-hidden="true">✨</span>
+      <div class="pwa-prompt-copy">
+        <strong id="pwaUpdateTitle">Mise à jour disponible</strong>
+        <p>Une nouvelle version de l’Arcade est prête.</p>
+      </div>
+      <div class="pwa-prompt-actions">
+        <button class="btn btn-primary pwa-install-button" id="pwaUpdateButton" type="button">Mettre à jour</button>
+      </div>
+    </aside>
+
+    <script src="js/core/arcade-config.js"></script>
+    <script src="js/core/arcade-local-store.js"></script>
+    <script src="js/core/arcade-platform.js"></script>
+    <script src="js/core/arcade-game-sdk.js"></script>
+    <script src="js/home.js"></script>
+    <script src="js/pwa-config.js"></script>
+    <script src="js/pwa-install.js"></script>
   </body>
 </html>
