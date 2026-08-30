@@ -1,179 +1,102 @@
-# 🎮 Francis Arcade — Version 1.1
+<div align="center">
+  <img src="assets/icons/arcade-icon-v2-192.png" alt="Logo Francis Arcade" width="112" />
 
-**Francis Arcade** est une WebApp d’arcade au style néon, composée de mini-jeux, de défis et d’un système de profil joueur local.
+# Francis Arcade
 
-La version **1.1** marque une étape importante du projet : l’arcade devient progressivement une véritable plateforme, avec une économie basée sur les **Coins 🪙**, une boutique cosmétique, un catalogue mieux organisé, des statistiques et un système de retours utilisateurs.
+### L'arcade néon où chaque partie compte.
 
----
+  <p>
+    <a href="#-démarrer"><img src="https://img.shields.io/badge/Version-1.1-9b5cff?style=for-the-badge" alt="Version 1.1" /></a>
+    <img src="https://img.shields.io/badge/HTML-CSS-JavaScript-00e5ff?style=for-the-badge" alt="HTML, CSS et JavaScript" />
+    <img src="https://img.shields.io/badge/PWA-Ready-47f5a0?style=for-the-badge" alt="PWA prête" />
+  </p>
 
-## ✨ Nouveautés de la version 1.1
+  <p>Mini-jeux, défis, collection cosmétique et progression locale dans une expérience arcade pensée pour le web et le mobile.</p>
 
-### 🪙 Coins & profils
+<a href="#-démarrer">Démarrer</a> · <a href="#-fonctionnalités">Fonctionnalités</a> · <a href="#-feuille-de-route">Feuille de route</a>
 
-- profil joueur local basé sur un pseudo ;
-- portefeuille de Coins ;
-- historique des gains et dépenses ;
-- structure prévue pour évoluer vers de vrais comptes utilisateurs ;
-- économie commune aux différents jeux de l’arcade.
-
-Les Coins serviront progressivement à jouer, débloquer des éléments cosmétiques et participer à certaines fonctionnalités de l’arcade.
-
----
-
-### 🛍️ Boutique Arcade
-
-Une boutique permet désormais de dépenser les Coins gagnés.
-
-Les objets disponibles restent principalement **cosmétiques** :
-
-- thèmes / skins ;
-- avatars ;
-- cadres de profil ;
-- effets visuels ;
-- sons et ambiances ;
-- badges.
-
-Le système gère :
-
-- le contrôle du solde avant achat ;
-- l’inventaire du joueur ;
-- l’équipement des objets ;
-- l’impossibilité d’acheter inutilement deux fois le même objet ;
-- le changement d’équipement sans coût supplémentaire.
-
-> Les achats ne donnent aucun avantage direct dans les jeux.
-> **Francis Arcade reste une expérience équitable et non pay-to-win.**
-
-Le catalogue est centralisé dans :
-
-`ARCADE_CONFIG.shop.items`
-
-Cette structure permet d’ajouter facilement de nouveaux objets et pourra être synchronisée avec une base de données plus tard.
+</div>
 
 ---
 
-## 🔎 Catalogue de jeux
+## ✨ Version 1.1 — l'arcade prend forme
 
-Le catalogue a été amélioré pour faciliter la découverte des jeux :
+La version 1.1 fait évoluer Francis Arcade vers une vraie plateforme : une économie commune, une boutique cosmétique, un catalogue plus clair, des statistiques et un canal de retours pour les joueurs.
 
-- barre de recherche ;
-- filtres par catégorie ;
-- tri des jeux ;
-- niveau de difficulté ;
-- classement et popularité ;
-- navigation améliorée sur ordinateur et mobile.
+| 🪙 Progression                    | 🛍️ Personnalisation                 | 📊 Pilotage                       |
+| :-------------------------------- | :---------------------------------- | :-------------------------------- |
+| Coins, profil et historique local | Boutique, inventaire et équipements | Statistiques par jeu et catégorie |
 
-Les catégories pourront notamment distinguer :
-
-- arcade ;
-- réflexe ;
-- mémoire ;
-- logique ;
-- énigme ;
-- stratégie ;
-- autres catégories futures.
+> Les achats restent exclusivement cosmétiques : Francis Arcade est et restera **non pay-to-win**.
 
 ---
 
-## 📊 Statistiques
+## 🎮 Fonctionnalités
 
-Francis Arcade commence également à enregistrer des statistiques locales.
+<details open>
+<summary><b>🪙 Profil & économie</b></summary>
 
-Selon les données disponibles pour chaque jeu :
+- Pseudo, portefeuille de Coins et historique des mouvements ;
+- Économie partagée entre les jeux ;
+- Architecture prête à évoluer vers de vrais comptes utilisateurs.
+</details>
 
-- nombre de parties ;
-- victoires ;
-- défaites ;
-- abandons ;
-- taux de réussite ;
-- popularité ;
-- score moyen ;
-- temps moyen ;
-- difficulté réellement observée.
+<details open>
+<summary><b>🛍️ Boutique Arcade</b></summary>
 
-Ces données peuvent aussi être regroupées **par catégorie de jeu**.
+- Thèmes, avatars, cadres, effets, ambiances et badges ;
+- Vérification du solde, inventaire et équipement sans coût supplémentaire ;
+- Catalogue centralisé dans `ARCADE_CONFIG.shop.items`.
+</details>
 
-Elles serviront plus tard à alimenter un véritable tableau de bord administrateur : jeux les plus joués, plus difficiles, taux d’abandon, catégories populaires, etc.
+<details open>
+<summary><b>🔎 Catalogue de jeux</b></summary>
 
----
+- Recherche, filtres par catégorie et tri ;
+- Difficulté, classement et popularité ;
+- Navigation adaptée aux écrans d'ordinateur comme aux mobiles.
+</details>
 
-## 🐛 Retours utilisateurs
+<details>
+<summary><b>📊 Statistiques & retours</b></summary>
 
-Un formulaire discret **« Signaler un problème / Donner un avis »** permet aux joueurs de transmettre :
+- Parties, victoires, défaites, abandons, scores et temps de jeu ;
+- Regroupement possible par catégorie ;
+- Formulaire « Signaler un problème / Donner un avis » avec intégration EmailJS.
+</details>
 
-- bugs ;
-- suggestions ;
-- problèmes visuels ;
-- problèmes liés à un jeu ;
-- problèmes liés au profil ;
-- autres remarques.
+<details>
+<summary><b>📱 Expérience PWA</b></summary>
 
-Les retours peuvent notamment contenir :
-
-- le pseudo ;
-- le jeu concerné ;
-- le type de signalement ;
-- le niveau d’urgence ;
-- une description.
-
-L’envoi peut être effectué via **EmailJS**, avec un stockage local permettant de conserver les informations nécessaires pour le futur espace administrateur.
-
-À terme, ces signalements pourront être classés par :
-
-`Nouveau → À vérifier → En cours → Résolu`
+- Installation sur ordinateur et mobile ;
+- Manifest, icônes et mode autonome ;
+- Service Worker, cache et amélioration progressive du hors-ligne.
+</details>
 
 ---
 
-## 📲 WebApp / PWA
+## 🕹️ Aperçu
 
-Francis Arcade est également pensée pour fonctionner comme une **Progressive Web App**.
+<div align="center">
+  <img src="assets/icons/arcade-icon-v2-512.png" alt="Identité visuelle Francis Arcade" width="180" />
+  <p><i>Une identité néon, des parties rapides et une progression à collectionner.</i></p>
+</div>
 
-Le projet prévoit notamment :
-
-- installation sur ordinateur et mobile ;
-- manifest WebApp ;
-- icônes dédiées ;
-- fonctionnement en mode `standalone` ;
-- gestion propre des propositions d’installation ;
-- Service Worker et gestion du cache ;
-- amélioration progressive du fonctionnement hors connexion.
-
-L’objectif est de proposer une expérience proche d’une véritable application tout en conservant la simplicité du Web.
+> Ajoute ici tes futures captures de l'accueil, du catalogue et de la boutique pour rendre la page encore plus immersive.
 
 ---
 
-## 🎨 Interface & expérience utilisateur
+## 🚀 Démarrer
 
-La version 1.1 apporte également plusieurs ajustements :
-
-- meilleure visibilité des boutons ;
-- amélioration des contrastes ;
-- états `hover` et `focus` plus cohérents ;
-- amélioration de certaines fenêtres et actions ;
-- meilleure adaptation mobile ;
-- conservation de l’identité visuelle néon de Francis Arcade.
-
----
-
-## 🚀 Lancer le projet
-
-Francis Arcade utilise principalement :
-
-**HTML • CSS • JavaScript**
-
-Aucune compilation complexe n’est nécessaire.
+**Prérequis :** Python 3 et un navigateur moderne.
 
 ```bash
 npm run serve
 ```
 
-Puis ouvrir :
+Puis ouvre [http://127.0.0.1:4173](http://127.0.0.1:4173).
 
-```text
-http://127.0.0.1:4173
-```
-
-Pour lancer les vérifications du projet :
+Pour lancer les vérifications :
 
 ```bash
 npm test
@@ -181,78 +104,49 @@ npm test
 
 ---
 
-## 📁 Organisation principale
+## 🧩 Organisation du projet
 
-| Emplacement                     | Rôle                                                   |
-| ------------------------------- | ------------------------------------------------------ |
-| `index.html`                    | Accueil, catalogue, profil, boutique et retours        |
-| `css/home.css`                  | Interface, identité néon, responsive                   |
-| `js/core/arcade-config.js`      | Configuration des jeux, Coins, récompenses et boutique |
-| `js/core/arcade-local-store.js` | Profils, Coins, inventaire et historique               |
-| `js/core/arcade-shop.js`        | Boutique et cosmétiques                                |
-| `js/core/arcade-stats.js`       | Statistiques des jeux et catégories                    |
-| `js/core/arcade-feedback.js`    | Signalements et intégration EmailJS                    |
-| `supabase/`                     | Préparation d’une future synchronisation serveur       |
-
----
-
-## 💾 Données & confidentialité
-
-Pour cette version, une grande partie des données est encore conservée dans le **stockage local du navigateur** :
-
-- profil ;
-- pseudo ;
-- Coins ;
-- inventaire ;
-- équipements ;
-- statistiques ;
-- certains retours utilisateurs.
-
-Ces données restent donc actuellement associées au navigateur et à l’appareil utilisés.
-
-La structure Supabase est conservée afin de permettre plus tard :
-
-- de vrais comptes utilisateurs ;
-- la synchronisation multi-appareils ;
-- la sauvegarde distante ;
-- un espace administrateur ;
-- des statistiques globales.
+| Emplacement                     | Rôle                                            |
+| :------------------------------ | :---------------------------------------------- |
+| `index.html`                    | Accueil, catalogue, profil, boutique et retours |
+| `css/home.css`                  | Interface néon et responsive                    |
+| `js/core/arcade-config.js`      | Jeux, Coins, récompenses et boutique            |
+| `js/core/arcade-local-store.js` | Profils, inventaire et historique local         |
+| `js/core/arcade-shop.js`        | Boutique et cosmétiques                         |
+| `js/core/arcade-stats.js`       | Statistiques des jeux et catégories             |
+| `js/core/arcade-feedback.js`    | Signalements et EmailJS                         |
+| `supabase/`                     | Préparation de la synchronisation serveur       |
 
 ---
 
-## 🔮 Et ensuite ?
+## 🔐 Données & confidentialité
 
-Francis Arcade continuera progressivement à évoluer avec notamment :
+Pour le moment, le profil, les Coins, l'inventaire, les équipements, les statistiques et certains retours sont stockés localement dans le navigateur. Les données restent donc liées à l'appareil utilisé.
 
-- 👤 comptes utilisateurs complets ;
-- ☁️ synchronisation Supabase ;
-- 📼 publicités récompensées contre des Coins ;
-- ❤️ soutien / dons PayPal ;
-- 🏆 succès et défis ;
-- 🎁 récompenses quotidiennes ;
-- 🥇 classements ;
-- 📊 espace administrateur ;
-- 🛒 nouveaux objets de boutique ;
-- 🎮 nouveaux jeux ;
-- 📱 amélioration continue de la PWA.
-
-L’objectif reste simple :
-
-> **Créer une arcade accessible, fun, qualitative et capable de grandir avec sa communauté.**
+La structure Supabase prépare la suite : comptes utilisateurs, synchronisation multi-appareils, sauvegarde distante, statistiques globales et espace administrateur.
 
 ---
 
-## ✅ Avant un déploiement
+## 🔮 Feuille de route
+
+- [ ] Comptes utilisateurs et synchronisation Supabase
+- [ ] Succès, défis et récompenses quotidiennes
+- [ ] Classements et nouveaux jeux
+- [ ] Nouveaux objets de boutique
+- [ ] Publicités récompensées et soutien PayPal
+- [ ] Espace administrateur et statistiques globales
+- [ ] Améliorations continues de l'expérience PWA
+
+---
+
+## ✅ Avant le déploiement
 
 1. Lancer `npm test`.
-2. Vérifier l’accueil et les jeux sur ordinateur et mobile.
-3. Tester les Coins et les achats de la boutique.
-4. Vérifier l’installation de la PWA.
-5. Contrôler la configuration EmailJS.
-6. Vérifier qu’aucune clé privée ou donnée sensible n’est présente côté frontend.
+2. Vérifier l'accueil et les jeux sur ordinateur et mobile.
+3. Tester les Coins, la boutique et l'installation PWA.
+4. Contrôler la configuration EmailJS.
+5. Vérifier qu'aucune clé privée n'est exposée côté frontend.
 
----
-
-**Version : 1.1**
-
-© 2026 **Francis Arcade** • Fait avec 💜
+<div align="center">
+  <sub>© 2026 Francis Arcade · Fait avec 💜</sub>
+</div>
