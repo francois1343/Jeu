@@ -13,6 +13,7 @@
     game_loss: "Défaite",
     game_abandoned: "Partie abandonnée",
     game_cancelled: "Partie quittée avant démarrage",
+    shop_purchase: "Achat boutique",
     admin_adjustment: "Ajustement test",
   };
 

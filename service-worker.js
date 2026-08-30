@@ -1,4 +1,4 @@
-const CACHE = "arcade-station-v4";
+const CACHE = "arcade-station-v10";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -10,7 +10,10 @@ const APP_SHELL = [
   "./js/pwa-install.js",
   "./js/core/arcade-config.js",
   "./js/core/arcade-local-store.js",
+  "./js/core/arcade-stats.js",
+  "./js/core/arcade-feedback.js",
   "./js/core/arcade-platform.js",
+  "./js/core/arcade-shop.js",
   "./js/core/arcade-game-sdk.js",
   "./assets/icons/arcade-favicon.png",
   "./assets/icons/arcade-icon-v2-180.png",
@@ -19,7 +22,11 @@ const APP_SHELL = [
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(APP_SHELL)));
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await cache.addAll(APP_SHELL);
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener("activate", (event) => {
@@ -69,5 +76,8 @@ async function staleWhileRevalidate(request) {
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
-  event.respondWith(request.mode === "navigate" ? networkFirst(request) : staleWhileRevalidate(request));
+  const needsFreshVersion = request.mode === "navigate"
+    || request.destination === "style"
+    || request.destination === "script";
+  event.respondWith(needsFreshVersion ? networkFirst(request) : staleWhileRevalidate(request));
 });

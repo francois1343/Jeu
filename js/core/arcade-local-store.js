@@ -9,6 +9,7 @@
   const unitsPerCoin = Number(config.coins?.unitsPerCoin || 100);
   const maxHistory = Number(economy.maxHistoryEntries || 60);
   const maxSessions = Number(economy.maxSessionEntries || 40);
+  const shopItems = new Map((config.shop?.items || []).map((item) => [item.id, item]));
   let memoryFallback = null;
 
   function clone(value) {
@@ -30,6 +31,21 @@
     return { version: 2, activeProfileId: null, profiles: {} };
   }
 
+  function normalizeProfileShop(profile) {
+    if (!profile) return profile;
+    const entries = Array.isArray(profile.inventory) ? profile.inventory : [];
+    const seen = new Set();
+    profile.inventory = entries
+      .map((entry) => typeof entry === "string"
+        ? { itemId: entry, purchasedAt: profile.createdAt || new Date().toISOString() }
+        : entry)
+      .filter((entry) => entry?.itemId && !seen.has(entry.itemId) && seen.add(entry.itemId));
+    profile.equipped = profile.equipped && typeof profile.equipped === "object"
+      ? profile.equipped
+      : {};
+    return profile;
+  }
+
   function migrateLegacy(legacy) {
     const migrated = emptyState();
     migrated.activeProfileId = legacy?.activeProfileId || null;
@@ -38,6 +54,8 @@
         ...oldProfile,
         sessions: [],
         activeSessionId: null,
+        inventory: [],
+        equipped: {},
       };
       if (oldProfile.pendingGame) {
         const oldGame = oldProfile.pendingGame;
@@ -59,7 +77,7 @@
         profile.activeSessionId = session.id;
       }
       delete profile.pendingGame;
-      migrated.profiles[profileId] = profile;
+      migrated.profiles[profileId] = normalizeProfileShop(profile);
     });
     return migrated;
   }
@@ -75,7 +93,10 @@
   function readState() {
     try {
       const current = parseStored(STORAGE_KEY);
-      if (current?.version === 2 && typeof current.profiles === "object") return current;
+      if (current?.version === 2 && typeof current.profiles === "object") {
+        Object.values(current.profiles).forEach(normalizeProfileShop);
+        return current;
+      }
       const legacy = parseStored(LEGACY_STORAGE_KEY);
       if (legacy?.version === 1 && typeof legacy.profiles === "object") {
         const migrated = migrateLegacy(legacy);
@@ -161,6 +182,8 @@
         sessions: [],
         activeSessionId: null,
         history: [],
+        inventory: [],
+        equipped: {},
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -176,6 +199,7 @@
       profile.isAdmin = isAdminPseudo(profile.pseudo);
       profile.sessions ||= [];
       profile.activeSessionId ||= null;
+      normalizeProfileShop(profile);
     }
 
     state.activeProfileId = profileId;
@@ -343,6 +367,47 @@
     return finishSession(session.id, "abandoned", { reason });
   }
 
+  function purchaseShopItem(itemId) {
+    const state = readState();
+    const profile = normalizeProfileShop(state.profiles[state.activeProfileId]);
+    if (!profile) throw new Error("profile_required");
+    const item = shopItems.get(String(itemId || ""));
+    if (!item || item.active === false) throw new Error("shop_item_not_found");
+    if (profile.inventory.some((entry) => entry.itemId === item.id)) throw new Error("shop_item_owned");
+
+    const priceUnits = coinsToUnits(item.priceCoins);
+    if (!Number.isFinite(priceUnits) || priceUnits < 0) throw new Error("invalid_shop_price");
+    if (profile.balanceUnits < priceUnits) throw new Error("insufficient_balance");
+
+    profile.balanceUnits -= priceUnits;
+    profile.inventory.push({ itemId: item.id, purchasedAt: new Date().toISOString() });
+    if (item.slot) profile.equipped[item.slot] = item.id;
+    appendTransaction(
+      profile,
+      transaction("shop_purchase", -priceUnits, profile.balanceUnits, {
+        label: item.name,
+        referenceId: item.id,
+      }),
+    );
+    writeState(state);
+    return clone(profile);
+  }
+
+  function equipShopItem(itemId) {
+    const state = readState();
+    const profile = normalizeProfileShop(state.profiles[state.activeProfileId]);
+    if (!profile) throw new Error("profile_required");
+    const item = shopItems.get(String(itemId || ""));
+    if (!item || item.active === false) throw new Error("shop_item_not_found");
+    if (!profile.inventory.some((entry) => entry.itemId === item.id)) throw new Error("shop_item_not_owned");
+    if (!item.slot) throw new Error("shop_item_not_equippable");
+
+    profile.equipped[item.slot] = item.id;
+    profile.updatedAt = new Date().toISOString();
+    writeState(state);
+    return clone(profile);
+  }
+
   function adminAdjust(targetProfileId, coins, direction) {
     const state = readState();
     const admin = state.profiles[state.activeProfileId];
@@ -380,6 +445,8 @@
     startSession,
     finishSession,
     recoverActiveSession,
+    purchaseShopItem,
+    equipShopItem,
     adminAdjust,
   });
 })(window);

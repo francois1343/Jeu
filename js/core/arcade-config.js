@@ -13,7 +13,9 @@ window.ARCADE_CONFIG = Object.freeze({
     maxHistoryEntries: 60,
     maxSessionEntries: 40,
     adminPseudos: Object.freeze(["ADMIN"]),
-    gamePolicies: Object.freeze({
+    gameCategories: Object.freeze({
+      "pile-face": Object.freeze(["chance"]), de: Object.freeze(["chance"]), calculation: Object.freeze(["logic"]), hifumi: Object.freeze(["strategy"]), reflex: Object.freeze(["reflex"]), memory: Object.freeze(["memory", "puzzle"]), enigme: Object.freeze(["enigma", "logic"]), tetris: Object.freeze(["arcade", "reflex", "puzzle"]), snake: Object.freeze(["arcade", "reflex"]), pong: Object.freeze(["arcade", "reflex"]), demineur: Object.freeze(["logic", "puzzle"]), bataille: Object.freeze(["strategy"]), "2048": Object.freeze(["logic", "puzzle"]), "casse-blocs": Object.freeze(["arcade", "reflex"]), labyrinthe: Object.freeze(["enigma", "logic"]), neon: Object.freeze(["enigma", "puzzle"]), cyberflux: Object.freeze(["arcade", "reflex"]), crossyturfu: Object.freeze(["arcade", "reflex"]), openworld: Object.freeze(["adventure"]), "pixel-forge": Object.freeze(["progression", "arcade"]), cyberfind: Object.freeze(["enigma", "logic"]), "neon-overdrive": Object.freeze(["arcade", "reflex"]), simon: Object.freeze(["memory", "reflex"]), "spider-solitaire": Object.freeze(["strategy", "puzzle"]), sudoku: Object.freeze(["logic", "puzzle"]), "synthwave-runner": Object.freeze(["arcade", "reflex"]), taquin: Object.freeze(["logic", "puzzle"]), geominds: Object.freeze(["logic", "enigma"]), cybermorpion: Object.freeze(["strategy", "logic"]), marmotte: Object.freeze(["arcade", "reflex"]), neontron: Object.freeze(["arcade", "reflex"]), puissance4: Object.freeze(["strategy", "logic"]),
+    }),    gamePolicies: Object.freeze({
       "pixel-forge": Object.freeze({ economyMode: "practice" }),
       openworld: Object.freeze({ economyMode: "practice" }),
       geominds: Object.freeze({
@@ -33,10 +35,29 @@ window.ARCADE_CONFIG = Object.freeze({
       simon: Object.freeze({ victoryLevel: 5 }),
     }),
   }),
+  shop: Object.freeze({
+    items: Object.freeze([
+      Object.freeze({ id: "theme-cyber-violet", name: "Cyber Violet", description: "Une palette violette et magenta pour toute l’arcade.", category: "theme", slot: "theme", priceCoins: 2.5, icon: "🌌", rarity: "rare", appearance: "violet" }),
+      Object.freeze({ id: "theme-sunset-grid", name: "Sunset Grid", description: "Des néons orange et rose inspirés des bornes rétro.", category: "theme", slot: "theme", priceCoins: 2.5, icon: "🌅", rarity: "rare", appearance: "sunset" }),
+      Object.freeze({ id: "avatar-neon-ghost", name: "Fantôme Néon", description: "Un avatar discret venu hanter les meilleurs scores.", category: "avatar", slot: "avatar", priceCoins: 1, icon: "👻", rarity: "common", appearance: "ghost" }),
+      Object.freeze({ id: "avatar-arcade-bot", name: "Arcade Bot", description: "Le compagnon mécanique officiel de la station.", category: "avatar", slot: "avatar", priceCoins: 1.5, icon: "🤖", rarity: "uncommon", appearance: "robot" }),
+      Object.freeze({ id: "frame-prismatic", name: "Cadre Prismatique", description: "Un contour animé autour de votre bandeau de profil.", category: "frame", slot: "frame", priceCoins: 1.75, icon: "💠", rarity: "rare", appearance: "prismatic" }),
+      Object.freeze({ id: "effect-scanlines", name: "Scanlines CRT", description: "Un léger voile rétro, purement visuel et désactivable.", category: "effect", slot: "effect", priceCoins: 1.25, icon: "📺", rarity: "uncommon", appearance: "scanlines" }),
+      Object.freeze({ id: "effect-stardust", name: "Poussière d’Étoiles", description: "Des particules plus lumineuses sur l’accueil de l’arcade.", category: "effect", slot: "effect", priceCoins: 2, icon: "✨", rarity: "rare", appearance: "stardust" }),
+      Object.freeze({ id: "sound-chipwave", name: "Pack Chipwave", description: "Des interactions aux sonorités 8-bit plus franches.", category: "sound", slot: "sound", priceCoins: 1, icon: "🎵", rarity: "uncommon", appearance: "chipwave" }),
+      Object.freeze({ id: "badge-pioneer", name: "Badge Pionnier", description: "Un badge de profil pour les premiers explorateurs.", category: "badge", slot: "badge", priceCoins: 1.5, icon: "🏅", rarity: "rare", appearance: "pioneer" }),
+    ]),
+  }),
   rewardedAds: Object.freeze({
     enabled: false,
     providerName: "",
     placement: "arcade_home_reward",
+  }),
+  feedbackEmail: Object.freeze({
+    enabled: true,
+    serviceId: "service_3g3bx9n",
+    templateId: "template_259m9sn",
+    publicKey: "9eazkhyZansevbriB",
   }),
   paypal: Object.freeze({
     environment: "production",

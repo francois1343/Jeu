@@ -37,8 +37,9 @@
           </div>
           <span class="platform-state" id="platformState">Initialisation…</span>
           <button class="account-button" id="accountButton" type="button">
-            <span aria-hidden="true">◉</span>
+            <span id="accountAvatar" aria-hidden="true">👤</span>
             <span id="accountLabel">Connexion</span>
+            <span class="account-badge" id="accountBadge" aria-hidden="true" hidden></span>
           </button>
         </div>
       </header>
@@ -69,6 +70,16 @@
             <span><strong>Profil local</strong><small>Nouveau profil : <span id="starterCoins">5 Coins</span></small></span>
           </button>
           <button
+            class="platform-action shop-action"
+            id="openShopButton"
+            type="button"
+            data-open-dialog="shopDialog"
+            data-requires-account
+          >
+            <span aria-hidden="true">🛍️</span>
+            <span><strong>Boutique Arcade</strong><small>Cosmétiques, thèmes et objets de profil</small></span>
+          </button>
+          <button
             class="platform-action admin-action"
             id="openAdminButton"
             type="button"
@@ -83,7 +94,47 @@
 
       <div class="platform-message" id="platformMessage" role="status" aria-live="polite" hidden></div>
 
-      <!-- Grille de jeux -->
+      <section class="catalog-controls" aria-labelledby="catalogTitle">
+        <div class="catalog-heading">
+          <div>
+            <p class="catalog-kicker">Catalogue Arcade</p>
+            <h2 id="catalogTitle">Choisissez votre prochain défi</h2>
+            <p>Recherchez un jeu ou affinez la sélection par univers et difficulté.</p>
+          </div>
+          <p class="catalog-results" id="catalogResults" aria-live="polite"></p>
+        </div>
+        <div class="catalog-search-row">
+          <label class="catalog-search" for="gameSearch">
+            <span class="catalog-search-icon" aria-hidden="true">⌕</span>
+            <span class="sr-only">Rechercher un jeu</span>
+            <input id="gameSearch" type="search" placeholder="Rechercher : Snake, puzzle, logique…" autocomplete="off" />
+          </label>
+          <div class="catalog-selects">
+            <label class="catalog-select-label" for="gameSort">Classement
+              <select id="gameSort"><option value="recommended">Sélection</option><option value="popularity">Les plus joués</option><option value="difficulty-desc">Les plus difficiles</option><option value="difficulty-asc">Les plus accessibles</option><option value="name">A → Z</option></select>
+            </label>
+            <label class="catalog-select-label" for="difficultyFilter">Difficulté
+              <select id="difficultyFilter"><option value="all">Toutes</option><option value="easy">Facile</option><option value="medium">Moyenne</option><option value="hard">Difficile</option></select>
+            </label>
+          </div>
+        </div>
+        <div class="catalog-filter-row">
+          <span class="catalog-filter-label">Catégories</span>
+          <div class="catalog-filter-group" role="group" aria-label="Catégorie de jeu">
+            <button class="catalog-filter is-active" type="button" data-category-filter="all" aria-pressed="true">Tous</button>
+            <button class="catalog-filter" type="button" data-category-filter="arcade" aria-pressed="false">Arcade</button>
+            <button class="catalog-filter" type="button" data-category-filter="reflex" aria-pressed="false">Réflexes</button>
+            <button class="catalog-filter" type="button" data-category-filter="memory" aria-pressed="false">Mémoire</button>
+            <button class="catalog-filter" type="button" data-category-filter="logic" aria-pressed="false">Logique</button>
+            <button class="catalog-filter" type="button" data-category-filter="enigma" aria-pressed="false">Énigmes</button>
+            <button class="catalog-filter" type="button" data-category-filter="strategy" aria-pressed="false">Stratégie</button>
+            <button class="catalog-filter" type="button" data-category-filter="puzzle" aria-pressed="false">Puzzle</button>
+            <button class="catalog-filter" type="button" data-category-filter="adventure" aria-pressed="false">Aventure</button>
+          </div>
+          <button class="catalog-reset" id="clearCatalogFilters" type="button" hidden>Effacer</button>
+        </div>
+      </section>
+      <p class="catalog-empty" id="catalogEmpty" hidden>Aucun jeu ne correspond à ces critères. Essayez une autre recherche ou effacez les filtres.</p><!-- Grille de jeux -->
       <main class="games-grid">
         <!-- Pile ou Face -->
         <article
@@ -990,15 +1041,131 @@
 
       <!-- Footer -->
       <footer class="footer">
-        <div class="footer-links">
-          <a href="#" class="footer-link">À propos</a>
-          <a href="#" class="footer-link">Paramètres</a>
-          <a href="#" class="footer-link">Crédits</a>
-        </div>
-        <p>© 2026 Francis Arcade • Fait avec 💜</p>
+        <nav class="footer-links" aria-label="Informations et préférences">
+          <a href="#aboutDialog" class="footer-link" data-open-dialog="aboutDialog" aria-haspopup="dialog">À propos</a>
+          <a href="#settingsDialog" class="footer-link" data-open-dialog="settingsDialog" aria-haspopup="dialog">Paramètres</a>
+          <a href="#creditsDialog" class="footer-link" data-open-dialog="creditsDialog" aria-haspopup="dialog">Crédits</a>
+          <a href="README.md" class="footer-link" target="_blank" rel="noopener">Guide 1.1</a>
+        </nav>
+        <button class="feedback-trigger" id="feedbackButton" type="button" data-open-dialog="feedbackDialog" aria-haspopup="dialog">
+          <span aria-hidden="true">💬</span>
+          Signaler un problème / Donner un avis
+        </button>
+        <p>© 2026 Francis Arcade <span aria-hidden="true">•</span> Fait avec 💜</p>
       </footer>
     </div>
 
+    <dialog class="arcade-dialog info-dialog" id="aboutDialog" aria-labelledby="aboutDialogTitle">
+      <div class="dialog-shell">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer la fenêtre À propos">×</button>
+        <div class="dialog-heading info-heading">
+          <span class="platform-kicker">FRANCIS ARCADE</span>
+          <h2 id="aboutDialogTitle">Une salle d’arcade, partout avec vous</h2>
+          <p class="dialog-copy">Une collection indépendante de jeux classiques revisités avec une esthétique néon, pensée pour des parties rapides sur ordinateur comme sur mobile.</p>
+        </div>
+        <div class="info-highlight" aria-label="La philosophie de Francis Arcade">
+          <span class="info-highlight-icon" aria-hidden="true">👾</span>
+          <div><strong>Le plaisir de jouer, sans détour</strong><p>Choisissez un jeu, comprenez les règles en quelques secondes et tentez de battre votre meilleur score.</p></div>
+        </div>
+        <div class="info-card-grid">
+          <article class="info-card"><span aria-hidden="true">⚡</span><h3>Parties instantanées</h3><p>Des expériences courtes, variées et faciles à relancer.</p></article>
+          <article class="info-card"><span aria-hidden="true">📱</span><h3>Partout avec vous</h3><p>Une interface responsive et installable comme une application.</p></article>
+          <article class="info-card"><span aria-hidden="true">🔒</span><h3>Données locales</h3><p>Profils, Coins fictifs et préférences restent sur cet appareil.</p></article>
+        </div>
+        <div class="dialog-actions"><button class="btn btn-primary dialog-primary-action" id="exploreGamesButton" type="button" data-close-dialog>Explorer les jeux</button></div>
+      </div>
+    </dialog>
+
+    <dialog class="arcade-dialog info-dialog" id="settingsDialog" aria-labelledby="settingsDialogTitle">
+      <div class="dialog-shell">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer les paramètres">×</button>
+        <div class="dialog-heading info-heading">
+          <span class="platform-kicker">VOTRE EXPÉRIENCE</span>
+          <h2 id="settingsDialogTitle">Paramètres</h2>
+          <p class="dialog-copy">Adaptez l’accueil à vos préférences. Les changements sont enregistrés automatiquement sur cet appareil.</p>
+        </div>
+        <form class="settings-list" id="preferencesForm">
+          <label class="setting-row" for="soundEffectsSetting">
+            <span class="setting-icon" aria-hidden="true">🔊</span>
+            <span class="setting-copy"><strong>Effets sonores</strong><small>Sons des interactions et mini-jeux de l’accueil.</small></span>
+            <span class="switch-control"><input id="soundEffectsSetting" name="soundEffects" type="checkbox" /><span class="switch-track" aria-hidden="true"></span></span>
+          </label>
+          <label class="setting-row" for="animationsSetting">
+            <span class="setting-icon" aria-hidden="true">✨</span>
+            <span class="setting-copy"><strong>Animations d’interface</strong><small>Mouvements, transitions et particules décoratives.</small></span>
+            <span class="switch-control"><input id="animationsSetting" name="animations" type="checkbox" /><span class="switch-track" aria-hidden="true"></span></span>
+          </label>
+          <label class="setting-row" for="highContrastSetting">
+            <span class="setting-icon" aria-hidden="true">◐</span>
+            <span class="setting-copy"><strong>Contraste renforcé</strong><small>Éclaircit les textes secondaires et accentue les contours.</small></span>
+            <span class="switch-control"><input id="highContrastSetting" name="highContrast" type="checkbox" /><span class="switch-track" aria-hidden="true"></span></span>
+          </label>
+        </form>
+        <div class="settings-footer">
+          <p class="settings-status" id="preferencesStatus" role="status" aria-live="polite">Préférences enregistrées sur cet appareil.</p>
+          <button class="settings-reset-button" id="resetPreferencesButton" type="button"><span aria-hidden="true">↺</span> Réinitialiser les paramètres</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="arcade-dialog info-dialog" id="creditsDialog" aria-labelledby="creditsDialogTitle">
+      <div class="dialog-shell">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer les crédits">×</button>
+        <div class="dialog-heading info-heading">
+          <span class="platform-kicker">DERRIÈRE LES PIXELS</span>
+          <h2 id="creditsDialogTitle">Crédits</h2>
+          <p class="dialog-copy">Merci à toutes les personnes qui jouent, testent et font vivre cette petite salle d’arcade.</p>
+        </div>
+        <div class="credits-list">
+          <article class="credit-row"><span class="credit-monogram" aria-hidden="true">FA</span><div><small>CONCEPTION &amp; DÉVELOPPEMENT</small><strong>Francis Arcade</strong></div></article>
+          <article class="credit-row"><span class="credit-monogram" aria-hidden="true">Aa</span><div><small>TYPOGRAPHIES</small><strong>Orbitron &amp; Rajdhani · Google Fonts</strong></div></article>
+          <article class="credit-row"><span class="credit-monogram" aria-hidden="true">&lt;/&gt;</span><div><small>TECHNOLOGIES</small><strong>HTML, CSS &amp; JavaScript</strong></div></article>
+        </div>
+        <div class="credits-note"><span aria-hidden="true">💜</span><p><strong>Et surtout, merci à vous.</strong><br />Chaque partie aide l’arcade à progresser.</p></div>
+        <div class="version-line"><span>Francis Arcade</span><span>Version 1.0.0 · 2026</span></div>
+      </div>
+    </dialog>
+
+    <dialog class="arcade-dialog info-dialog feedback-dialog" id="feedbackDialog" aria-labelledby="feedbackDialogTitle">
+      <div class="dialog-shell">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer le formulaire de retour">×</button>
+        <div class="dialog-heading info-heading">
+          <span class="platform-kicker">CENTRE DE RETOURS</span>
+          <h2 id="feedbackDialogTitle">Signaler un problème ou donner un avis</h2>
+          <p class="dialog-copy">Décrivez simplement ce que vous avez rencontré. Le retour est envoyé par email et une copie locale permet d’en suivre le statut.</p>
+        </div>
+        <form class="feedback-form" id="feedbackForm">
+          <div class="feedback-form-grid">
+            <label>Type de retour
+              <select name="type" required>
+                <option value="bug">Bug</option><option value="suggestion">Suggestion</option><option value="problème visuel">Problème visuel</option><option value="jeu">Jeu</option><option value="compte">Compte</option><option value="autre">Autre</option>
+              </select>
+            </label>
+            <label>Niveau d’urgence
+              <select name="urgency" required>
+                <option value="faible">Faible</option><option value="normale" selected>Normale</option><option value="élevée">Élevée</option><option value="critique">Critique — bloque l’utilisation</option>
+              </select>
+            </label>
+          </div>
+          <label>Jeu ou zone concernée
+            <select name="gameKey" id="feedbackGame" required>
+              <option value="home">Accueil / interface générale</option><option value="account">Profil et compte local</option>
+            </select>
+          </label>
+          <label>Description
+            <textarea name="description" rows="5" minlength="10" maxlength="2000" placeholder="Que s’est-il passé ? Qu’attendiez-vous à la place ?" required></textarea>
+            <small>10 caractères minimum. Évitez d’indiquer des informations personnelles.</small>
+          </label>
+          <label><span class="field-label">Pseudo <span class="optional-label">facultatif</span></span>
+            <input type="text" name="reporterPseudo" autocomplete="nickname" maxlength="20" placeholder="Ex. NeoPlayer" />
+          </label>
+          <div class="feedback-form-actions">
+            <p class="feedback-status" id="feedbackStatus" role="status" aria-live="polite"></p>
+            <button class="btn btn-primary dialog-primary-action" type="submit">Enregistrer le retour</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
     <dialog class="arcade-dialog" id="accountDialog" aria-labelledby="accountDialogTitle">
       <div class="dialog-shell">
         <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer">×</button>
@@ -1027,7 +1194,7 @@
               />
             </label>
             <div class="auth-actions">
-              <button class="btn btn-primary" type="submit">Entrer dans l’arcade</button>
+              <button class="btn btn-primary dialog-primary-action" type="submit">Entrer dans l’arcade</button>
             </div>
           </form>
           <p class="local-admin-hint">
@@ -1095,6 +1262,41 @@
       </div>
     </dialog>
 
+    <dialog class="arcade-dialog shop-dialog" id="shopDialog" aria-labelledby="shopDialogTitle">
+      <div class="dialog-shell shop-shell">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer la boutique">×</button>
+        <div class="shop-heading">
+          <div>
+            <span class="platform-kicker">BOUTIQUE ARCADE</span>
+            <h2 id="shopDialogTitle">Personnalisez votre station</h2>
+            <p class="dialog-copy">Dépensez vos Coins dans des objets cosmétiques. Aucun achat ne donne d’avantage dans les jeux.</p>
+          </div>
+          <div class="shop-balance" aria-label="Solde disponible dans la boutique">
+            <span>Votre solde</span>
+            <strong><span id="shopCoinBalance">—</span> 🪙</strong>
+          </div>
+        </div>
+
+        <section class="shop-loadout-panel" aria-labelledby="shopLoadoutTitle">
+          <div><span aria-hidden="true">✦</span><strong id="shopLoadoutTitle">Équipement actif</strong></div>
+          <div class="shop-loadout" id="shopLoadout"></div>
+        </section>
+
+        <div class="shop-category-tabs" role="group" aria-label="Filtrer les objets de la boutique">
+          <button class="shop-category is-active" type="button" data-shop-category="all" aria-pressed="true">Tout</button>
+          <button class="shop-category" type="button" data-shop-category="theme" aria-pressed="false">Thèmes</button>
+          <button class="shop-category" type="button" data-shop-category="avatar" aria-pressed="false">Avatars</button>
+          <button class="shop-category" type="button" data-shop-category="frame" aria-pressed="false">Cadres</button>
+          <button class="shop-category" type="button" data-shop-category="effect" aria-pressed="false">Effets</button>
+          <button class="shop-category" type="button" data-shop-category="sound" aria-pressed="false">Sons</button>
+          <button class="shop-category" type="button" data-shop-category="badge" aria-pressed="false">Badges</button>
+        </div>
+
+        <div class="shop-grid" id="shopGrid"></div>
+        <p class="shop-status" id="shopStatus" role="status" aria-live="polite"></p>
+      </div>
+    </dialog>
+
     <dialog class="arcade-dialog" id="adminDialog" aria-labelledby="adminDialogTitle">
       <div class="dialog-shell">
         <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer">×</button>
@@ -1151,7 +1353,10 @@
 
     <script src="js/core/arcade-config.js"></script>
     <script src="js/core/arcade-local-store.js"></script>
+    <script src="js/core/arcade-stats.js"></script>
+    <script src="js/core/arcade-feedback.js"></script>
     <script src="js/core/arcade-platform.js"></script>
+    <script src="js/core/arcade-shop.js"></script>
     <script src="js/core/arcade-game-sdk.js"></script>
     <script src="js/home.js"></script>
     <script src="js/pwa-config.js"></script>
