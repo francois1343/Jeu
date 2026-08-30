@@ -812,6 +812,66 @@
           </button>
         </article>
 
+        <!-- Neon Card Match -->
+        <article
+          class="game-card neon-card-match fade-in"
+          onclick="focusCard(this)"
+          data-game="neon-card-match"
+        >
+          <div class="game-icon">🃏</div>
+          <h2 class="game-title">Neon Card Match</h2>
+          <div class="game-tags">
+            <span class="tag difficulty-medium">Moyen</span>
+            <span class="tag">Cartes</span>
+            <span class="tag">Réflexe</span>
+          </div>
+          <p class="game-description">
+            Repérez la carte signalée, glissez la bonne carte et atteignez le
+            sommet du classement quotidien.
+          </p>
+          <br />
+          <div class="game-interactive">
+            <div class="result-display">♥ ♠ ✦</div>
+          </div>
+          <br />
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="launchGame('games/jeuxdescartes/jeuxdescartes.html', event)"
+          >
+            Jouer à Neon Card Match
+          </button>
+        </article>
+
+        <!-- Forge à histoires -->
+        <article
+          class="game-card phrase-forge fade-in"
+          onclick="focusCard(this)"
+          data-game="phrase-forge"
+        >
+          <div class="game-icon">✨</div>
+          <h2 class="game-title">Forge à histoires</h2>
+          <div class="game-tags">
+            <span class="tag difficulty-easy">Accessible</span>
+            <span class="tag">Créativité</span>
+            <span class="tag">Fantaisie</span>
+          </div>
+          <p class="game-description">
+            En manque d'imagination ? Mélangez héros, actions et décors pour
+            faire surgir une idée drôle, étrange ou merveilleuse.
+          </p>
+          <br />
+          <div class="game-interactive">
+            <div class="result-display">🦄 ✦ 🐉</div>
+          </div>
+          <br />
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="launchGame('games/jeuxdesphrases/jeuxdesphrases.html', event)"
+          >
+            Ouvrir la Forge à histoires
+          </button>
+        </article>
+
         <!-- Sudoku -->
         <article
           class="game-card sudoku fade-in"

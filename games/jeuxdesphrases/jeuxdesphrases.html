@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#080a1a" />
+    <title>Forge à histoires | Francis Arcade</title>
+    <link rel="stylesheet" href="jeuxdesphrases.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <script src="jeuxdesphrases.js" defer></script>
+    <script src="../../js/core/arcade-config.js" defer></script>
+    <script src="../../js/core/arcade-local-store.js" defer></script>
+    <script src="../../js/core/arcade-game-bridge.js" defer></script>
+  </head>
+  <body>
+    <a class="arcade-home-link" href="../../index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil">
+      <span class="arcade-home-icon" aria-hidden="true">←</span>
+      <span class="arcade-home-label">Accueil</span>
+    </a>
+
+    <main class="story-forge">
+      <header class="forge-header">
+        <p class="eyebrow">Francis Arcade · Atelier imaginaire</p>
+        <h1>Forge à <span>histoires</span></h1>
+        <p class="intro">En manque d’imagination ? Branchez votre cerveau sur le générateur : ici, les dragons éternuent et les licornes font leur comptabilité.</p>
+      </header>
+
+      <section class="forge-console" aria-labelledby="forge-title">
+        <div class="console-topline">
+          <span class="console-light" aria-hidden="true"></span>
+          <p id="forge-title">Portail à idées instables</p>
+          <span class="console-status">En ligne</span>
+        </div>
+
+        <p id="sentence" class="generator__sentence" role="status" aria-live="polite">La machine réveille ses gobelins scénaristes…</p>
+        <p id="forge-status" class="forge-status">Mélangez les ingrédients pour invoquer une phrase.</p>
+
+        <div class="forge-actions">
+          <button id="generate-sentence" type="button">Invoquer une idée</button>
+          <button id="copy-sentence" class="button-ghost" type="button">Copier la phrase</button>
+        </div>
+      </section>
+
+      <section class="phrase-history" aria-labelledby="history-title">
+        <div class="history-heading">
+          <div>
+            <p class="eyebrow">Votre grimoire</p>
+            <h2 id="history-title">📜 Historique des phrases</h2>
+          </div>
+          <button id="clear-history" class="history-clear" type="button">Effacer</button>
+        </div>
+        <p id="history-empty" class="history-empty">Votre grimoire attend sa première idée.</p>
+        <ol id="sentence-history" class="history-list" aria-live="polite"></ol>
+      </section>
+
+      <section class="imagination-guide" aria-labelledby="guide-title">
+        <div class="guide-icon" aria-hidden="true">✦</div>
+        <div>
+          <p class="eyebrow">Petit sort d’inspiration</p>
+          <h2 id="guide-title">Comment jouer avec la Forge ?</h2>
+          <p>Chaque clic assemble un héros, une action et un décor. Gardez la phrase telle quelle, transformez-la en histoire, en dessin ou en défi à raconter à quelqu’un.</p>
+        </div>
+      </section>
+
+      <details class="code-lore">
+        <summary>Les coulisses magiques de la page</summary>
+        <p><strong>HTML</strong> installe le décor : le titre, les boutons et la zone où la phrase apparaît. <strong>CSS</strong> ajoute les néons, la grille rétro et les étincelles. <strong>JavaScript</strong> mélange les trois colonnes du CSV pour faire surgir une idée imprévisible.</p>
+      </details>
+    </main>
+  </body>
+</html>

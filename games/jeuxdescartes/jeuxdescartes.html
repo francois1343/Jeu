@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#070916" />
+    <title>Neon Card Match | Francis Arcade</title>
+    <link rel="stylesheet" href="jeuxdescartes.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <script src="jeuxdescartes.js" defer></script>
+    <script src="../../js/core/arcade-config.js" defer></script>
+    <script src="../../js/core/arcade-local-store.js" defer></script>
+    <script src="../../js/core/arcade-game-bridge.js" defer></script>
+  </head>
+  <body>
+    <a class="arcade-home-link" href="../../index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil">
+      <span class="arcade-home-icon" aria-hidden="true">←</span>
+      <span class="arcade-home-label">Accueil</span>
+    </a>
+
+    <main class="app-shell">
+      <section id="menu-screen" class="screen menu-screen">
+        <div class="game-container">
+          <header class="game-header">
+            <p class="eyebrow">Francis Arcade · 198X Edition</p>
+            <h1><span>Neon</span> Card Match</h1>
+            <p class="game-subtitle">Repérez le signal, glissez la bonne carte et faites monter le score.</p>
+          </header>
+
+          <div class="menu-grid">
+            <section class="menu-panel rules-panel" aria-labelledby="rules-title">
+              <p class="panel-kicker">Préparez la transmission</p>
+              <h2 id="rules-title">Une règle, trois niveaux</h2>
+              <ol class="rules-list">
+                <li>Repérez la carte envoyée par l'ordinateur.</li>
+                <li>Glissez la même carte depuis votre main.</li>
+                <li>Marquez un point avant la fin des 10 signaux.</li>
+              </ol>
+
+              <div class="difficulty-control">
+                <span class="difficulty-label">Niveau de difficulté</span>
+                <div class="difficulty-selector" aria-label="Choisir la difficulté">
+                  <button class="difficulty-button" type="button" data-difficulty="easy" aria-pressed="false">Facile <small>1 couleur</small></button>
+                  <button class="difficulty-button active" type="button" data-difficulty="normal" aria-pressed="true">Normal <small>2 couleurs</small></button>
+                  <button class="difficulty-button" type="button" data-difficulty="hard" aria-pressed="false">Difficile <small>4 couleurs</small></button>
+                </div>
+                <p id="difficulty-description" class="difficulty-description"></p>
+              </div>
+
+              <p class="menu-note">Une partie dure 60 secondes. Les cartes de votre main sont toujours uniques.</p>
+            </section>
+          </div>
+
+          <div class="menu-actions">
+            <button id="btn-start" type="button">Lancer une partie</button>
+            <button id="btn-leaderboard" class="button-ghost" type="button">Classement du jour</button>
+            <a class="secondary-action" href="../../index.html">Retour à l'arcade</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="game-screen" class="screen game-screen hidden" aria-hidden="true">
+        <div class="game-container">
+          <header class="game-header compact-header">
+            <p class="eyebrow">Canal de jeu actif</p>
+            <h1><span>Neon</span> Card Match</h1>
+            <p id="game-difficulty" class="game-difficulty"></p>
+          </header>
+
+          <section class="header-stats" aria-label="Statistiques de la partie">
+            <div class="stat"><span class="stat-label">Score</span><strong id="score">0</strong><span class="stat-unit">pts</span></div>
+            <div class="stat"><span class="stat-label">Tirage</span><strong id="turn">0</strong><span class="stat-unit">/ 10</span></div>
+            <div class="stat"><span class="stat-label">Temps</span><strong id="timer">60</strong><span class="stat-unit">sec</span></div>
+          </section>
+
+          <section class="play-table" aria-label="Zone de jeu">
+            <div class="card-zone card-zone-target">
+              <h2 class="zone-title">Signal ordinateur</h2>
+              <div id="computer-card-display" class="computer-card" aria-live="polite"><div class="card">?</div></div>
+            </div>
+            <div id="drop-zone" class="drop-zone" aria-label="Déposez votre carte ici"><p class="drop-label">Glissez votre carte dans le portail</p></div>
+          </section>
+
+          <div id="game-message" class="message-box" role="status" aria-live="polite"></div>
+          <hr class="divider" />
+
+          <section class="card-zone player-zone" aria-label="Main du joueur">
+            <h2 class="zone-title">Votre main</h2>
+            <p class="hand-hint">Faites glisser la carte qui correspond au signal.</p>
+            <div id="player-hand" class="player-cards"></div>
+          </section>
+
+          <div class="actions">
+            <button id="btn-pass" type="button">Passer le signal</button>
+            <button id="btn-menu" class="button-ghost" type="button">Menu</button>
+          </div>
+
+          <section id="result-panel" class="result-panel hidden" aria-live="assertive">
+            <p class="panel-kicker">Transmission terminée</p>
+            <h2 id="result-title">Partie terminée</h2>
+            <p id="result-message"></p>
+            <p class="result-score"><strong id="result-score">0</strong> <span>points</span></p>
+            <div class="result-actions">
+              <button id="btn-replay" type="button">Rejouer</button>
+              <button id="btn-result-menu" class="button-ghost" type="button">Voir le classement</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="leaderboard-modal" class="leaderboard-modal hidden" role="dialog" aria-modal="true" aria-labelledby="daily-leaderboard-title">
+        <div class="leaderboard-dialog">
+          <button id="btn-close-leaderboard" class="modal-close" type="button" aria-label="Fermer le classement">×</button>
+          <section class="menu-panel leaderboard-panel">
+            <div class="leaderboard-heading">
+              <div>
+                <p class="panel-kicker">Top local</p>
+                <h2 id="daily-leaderboard-title">Les 5 meilleurs scores du jour</h2>
+              </div>
+              <span class="leaderboard-trophy" aria-hidden="true">★</span>
+            </div>
+            <p id="leaderboard-mode" class="leaderboard-mode"></p>
+            <p id="leaderboard-date" class="leaderboard-date"></p>
+            <ol id="daily-leaderboard" class="leaderboard-list" aria-live="polite"></ol>
+            <p id="leaderboard-empty" class="leaderboard-empty">Aucun signal enregistré pour ce niveau aujourd'hui. À vous d'ouvrir le classement.</p>
+          </section>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
