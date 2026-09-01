@@ -390,6 +390,8 @@ h1 span {
 
 .card[draggable="true"] {
   cursor: grab;
+  touch-action: none;
+  -webkit-user-drag: none;
 }
 
 .card[draggable="true"]:hover {

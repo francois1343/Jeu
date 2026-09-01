@@ -24,6 +24,7 @@ let resetAtMidnightTimer = null;
 let difficulteSelectionnee = "normal";
 let carteEnCoursDeDrag = null;
 let indexCarteDragguee = null;
+let touchDragState = null;
 
 const elScore = document.getElementById("score");
 const elTour = document.getElementById("turn");
@@ -310,8 +311,47 @@ function afficherMainJoueur() {
       event.dataTransfer.effectAllowed = "move";
     });
     divCarte.addEventListener("dragend", (event) => event.target.classList.remove("active"));
+    initialiserGestesTactiles(divCarte, carte, index);
     elMainJoueur.appendChild(divCarte);
   });
+}
+
+function initialiserGestesTactiles(divCarte, carte, index) {
+  const nettoyerGlisserTactile = () => {
+    divCarte.classList.remove("active");
+    elDropZone.classList.remove("active");
+    touchDragState = null;
+  };
+
+  const estDansZoneDepot = (event) => {
+    const elementSousLeDoigt = document.elementFromPoint(event.clientX, event.clientY);
+    return Boolean(elementSousLeDoigt && elDropZone.contains(elementSousLeDoigt));
+  };
+
+  divCarte.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" || !event.isPrimary || jeuFini) return;
+    event.preventDefault();
+    touchDragState = { pointerId: event.pointerId, carte, index };
+    divCarte.classList.add("active");
+    divCarte.setPointerCapture?.(event.pointerId);
+  });
+
+  divCarte.addEventListener("pointermove", (event) => {
+    if (!touchDragState || touchDragState.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    elDropZone.classList.toggle("active", estDansZoneDepot(event));
+  });
+
+  divCarte.addEventListener("pointerup", (event) => {
+    if (!touchDragState || touchDragState.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    const doitDeposer = estDansZoneDepot(event);
+    const tentative = touchDragState;
+    nettoyerGlisserTactile();
+    if (doitDeposer && !jeuFini) traiterTentative(tentative.carte, tentative.index);
+  });
+
+  divCarte.addEventListener("pointercancel", nettoyerGlisserTactile);
 }
 
 function initialiserEventsDrop() {
