@@ -49,9 +49,10 @@
           <span class="platform-kicker">MODE ÉCONOMIE · TEST LOCAL</span>
           <h2 id="arcadeEconomyTitle">Testez vos Coins fictifs</h2>
           <p>
-            Une partie coûte <strong id="challengeCost">1 Coin</strong>. Une victoire
-            verse <strong id="challengeReward">1,25 Coin</strong>. Les profils, soldes et
-            transactions restent uniquement sur cet appareil, sans argent ni publicité réels.
+            Les jeux de la grille coûtent <strong id="gamePlayCost">1 Coin</strong>. Les trois défis quotidiens sont gratuits :
+            chacun rapporte <strong id="dailyChallengeReward">1,25 Coin</strong> en cas de réussite. Réussissez les trois pour obtenir
+            un bonus de <strong id="dailyCompletionBonus">5 Coins</strong>. Une fois terminés, ils reviennent demain.
+            Les profils, soldes et transactions restent uniquement sur cet appareil, sans argent ni publicité réels.
             Open World et Pixel Forge restent en entraînement gratuit pendant leur adaptation.
           </p>
         </div>
@@ -63,7 +64,7 @@
             data-requires-account
           >
             <span aria-hidden="true">⚡</span>
-            <span><strong>Défis économiques</strong><small>3 défis de test disponibles</small></span>
+            <span><strong>Défi quotidien</strong><small>Gratuit · une tentative par jour</small></span>
           </button>
           <button class="platform-action" id="openAccountButton" type="button">
             <span aria-hidden="true">👤</span>
@@ -209,11 +210,9 @@
             Testez vos compétences en calcul mental. Répondez aux questions en
             temps limité.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">?</div>
           </div>
-          <br />
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/calculation/index.html', event)"
@@ -237,11 +236,9 @@
           <p class="game-description">
             Le jeu de la Pierre, Feuille, Ciseaux avec une variante améliorée.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">🪨 📄 ✂️</div>
           </div>
-          <br />
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/hifumi/index.html', event)"
@@ -265,7 +262,6 @@
           <p class="game-description">
             Testez vos réflexes ! Appuyez dès que le chrono atteint zéro.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">3... 2... 1...</div>
           </div>
@@ -294,7 +290,6 @@
             Retournez les cartes et trouvez toutes les paires le plus rapidement
             possible.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">🂠 🂠 🂠 🂠</div>
           </div>
@@ -349,7 +344,6 @@
           <p class="game-description">
             Le célèbre jeu de puzzle ! Empilez les blocs et faites des lignes.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">▣ ▤ ▥ ▦</div>
           </div>
@@ -488,7 +482,6 @@
             Combinez les tuiles pour atteindre le nombre 2048. Un défi addictif
             !
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">2 4 8 16 ...</div>
           </div>
@@ -516,7 +509,6 @@
           <p class="game-description">
             Détruisez toutes les briques sans laisser aucune !
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">🧱 → 💥</div>
           </div>
@@ -544,7 +536,6 @@
           <p class="game-description">
             Trouvez la sortie du labyrinthe en évitant les obstacles !
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">🧭 → 🚪</div>
           </div>
@@ -599,7 +590,6 @@
             Vous incarnez un néon poussin qui doit naviguer dans les flux
             cybernétiques pour ne pas se cogner à un obstacle !
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">🌐🐣</div>
           </div>
@@ -628,7 +618,6 @@
             Un jeu de réflexion où vous devez traverser un terrain en évitant
             les obstacles !
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">🐔 → 🚧</div>
           </div>
@@ -684,7 +673,6 @@
             Générez des bits, achetez des améliorations et traversez les ères
             technologiques.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">💾⚡🌐</div>
           </div>
@@ -713,7 +701,6 @@
             Zoomez dans le district cyberpunk et repérez toutes les anomalies
             dissimulées dans la scène.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">🌆 🔍 ⚠️</div>
           </div>
@@ -770,11 +757,9 @@
             Observez la séquence lumineuse, reproduisez-la sans erreur et tenez
             le rythme qui accélère.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">🔴🟢🔵🟡</div>
           </div>
-          <br />
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/simon/index.html', event)"
@@ -800,7 +785,6 @@
             Rangez les cartes en suites complètes et relevez le défi avec une,
             deux ou quatre couleurs.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">🂡 🂮 🕸️</div>
           </div>
@@ -829,11 +813,9 @@
             Repérez la carte signalée, glissez la bonne carte et atteignez le
             sommet du classement quotidien.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">♥ ♠ ✦</div>
           </div>
-          <br />
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/jeuxdescartes/jeuxdescartes.html', event)"
@@ -859,11 +841,9 @@
             En manque d'imagination ? Mélangez héros, actions et décors pour
             faire surgir une idée drôle, étrange ou merveilleuse.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">🦄 ✦ 🐉</div>
           </div>
-          <br />
           <button
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/jeuxdesphrases/jeuxdesphrases.html', event)"
@@ -889,7 +869,6 @@
             Complétez la grille grâce à votre logique, avec plusieurs niveaux et
             un solveur pour les défis libres.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">1 ➡️​ 9</div>
           </div>
@@ -946,7 +925,6 @@
             Faites glisser les tuiles, remettez-les dans le bon ordre et tentez
             de résoudre le puzzle en un minimum de coups.
           </p>
-          <br />
           <div class="game-interactive">
             <div class="result-display">1 2 3 · 4 5</div>
           </div>
@@ -1284,20 +1262,20 @@
       <div class="dialog-shell">
         <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer">×</button>
         <div class="dialog-heading">
-          <span class="platform-kicker">DÉFIS DE TEST</span>
-          <h2 id="challengeDialogTitle">Choisissez votre épreuve</h2>
+          <span class="platform-kicker">DÉFI QUOTIDIEN</span>
+          <h2 id="challengeDialogTitle">Votre épreuve du jour</h2>
         </div>
         <section id="challengeLobby">
-          <p class="dialog-copy">Chaque défi utilise l’économie fictive locale. Une réponse règle immédiatement la partie.</p>
+          <p class="dialog-copy">Trois défis fixes sont proposés chaque jour. Chacun est gratuit et rapporte <strong>1,25 Coin</strong> si vous le réussissez. Les trois réussis ajoutent <strong>5 Coins</strong>.</p>
           <div class="challenge-grid">
-            <button type="button" class="challenge-card" data-challenge-key="challenge_math">
-              <span>➗</span><strong>Calcul éclair</strong><small>Rapidité et précision</small>
+            <button type="button" class="challenge-card" data-challenge-key="daily-challenge-math">
+              <span>➗</span><strong>Calcul éclair</strong><small>Gratuit · une tentative par jour</small>
             </button>
-            <button type="button" class="challenge-card" data-challenge-key="challenge_sequence">
-              <span>🔢</span><strong>Suite néon</strong><small>Trouvez le nombre suivant</small>
+            <button type="button" class="challenge-card" data-challenge-key="daily-challenge-sequence">
+              <span>🔢</span><strong>Suite néon</strong><small>Gratuit · une tentative par jour</small>
             </button>
-            <button type="button" class="challenge-card" data-challenge-key="challenge_intruder">
-              <span>🔍</span><strong>Intrus logique</strong><small>Repérez l’exception</small>
+            <button type="button" class="challenge-card" data-challenge-key="daily-challenge-intruder">
+              <span>🔍</span><strong>Intrus logique</strong><small>Gratuit · une tentative par jour</small>
             </button>
           </div>
         </section>
@@ -1317,7 +1295,7 @@
             <button class="btn btn-primary" id="challengeSubmit" type="submit">Valider ma réponse</button>
           </form>
           <p class="challenge-result" id="challengeResult" role="status" hidden></p>
-          <button class="btn btn-secondary" id="backToChallenges" type="button" hidden>Choisir un autre défi</button>
+          <button class="btn btn-secondary" id="backToChallenges" type="button" hidden>Voir mes défis quotidiens</button>
         </section>
       </div>
     </dialog>

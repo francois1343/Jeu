@@ -10,6 +10,7 @@
     starter_grant: "Coins de départ",
     game_entry: "Partie lancée",
     game_win: "Victoire",
+    daily_challenge_bonus: "Bonus quotidien",
     game_loss: "Défaite",
     game_abandoned: "Partie abandonnée",
     game_cancelled: "Partie quittée avant démarrage",
@@ -58,6 +59,7 @@
       profile_not_found: "Le profil sélectionné n’existe plus.",
       invalid_adjustment: "Saisissez un montant supérieur à zéro.",
       negative_balance: "Le solde d’un profil ne peut pas devenir négatif.",
+      daily_challenge_completed: "Le défi quotidien est déjà terminé. Revenez demain.",
     };
     return messages[error?.message] || "Une erreur locale est survenue.";
   }
@@ -94,8 +96,9 @@
   }
 
   function updateEconomyCopy() {
-    setText("challengeCost", `${formatCoins(coinsToUnits(economy.playCostCoins ?? 1))} Coin`);
-    setText("challengeReward", `${formatCoins(coinsToUnits(economy.winPayoutCoins ?? 1.25))} Coins`);
+    setText("gamePlayCost", `${formatCoins(coinsToUnits(economy.playCostCoins ?? 1))} Coin`);
+    setText("dailyChallengeReward", `${formatCoins(coinsToUnits(economy.dailyChallengePayoutCoins ?? 1.25))} Coins`);
+    setText("dailyCompletionBonus", `${formatCoins(coinsToUnits(economy.dailyCompletionBonusCoins ?? 5))} Coins`);
     setText("starterCoins", `${formatCoins(coinsToUnits(economy.starterCoins ?? 5))} Coins`);
     setText("starterCoinsDialog", `${formatCoins(coinsToUnits(economy.starterCoins ?? 5))} Coins de départ`);
     setText("adminPseudoHint", (economy.adminPseudos || ["ADMIN"]).join(", "));
@@ -155,6 +158,17 @@
     if ([...select.options].some((option) => option.value === selected)) select.value = selected;
   }
 
+  function renderDailyChallengeCards(profile) {
+    const dayKey = dailyChallengeKey();
+    document.querySelectorAll("[data-challenge-key]").forEach((button) => {
+      const completed = (profile?.sessions || []).find((session) => session.gameKey === button.dataset.challengeKey && session.metadata?.dailyKey === dayKey && ["won", "lost"].includes(session.state));
+      button.disabled = Boolean(completed);
+      const description = button.querySelector("small");
+      if (!description) return;
+      description.textContent = completed?.state === "won" ? "Réussi · récompense obtenue" : completed?.state === "lost" ? "Terminé · nouvelle série demain" : "Gratuit · une tentative par jour";
+    });
+  }
+
   function refreshAccount() {
     state.profile = store.getActiveProfile();
     if (!state.profile) {
@@ -163,6 +177,7 @@
     }
     renderSignedIn(state.profile);
     renderTransactions(state.profile.history || []);
+    renderDailyChallengeCards(state.profile);
     if (state.profile.isAdmin) renderAdminTargets();
     return state.profile;
   }
@@ -235,7 +250,43 @@
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  function dailyChallengeKey() {
+    return new Intl.DateTimeFormat("fr-CA", {
+      timeZone: "Europe/Brussels",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date());
+  }
+
+  function dailySeed(gameKey) {
+    return [...(dailyChallengeKey() + ":" + gameKey)].reduce((sum, character) => (
+      ((sum * 31) + character.charCodeAt(0)) >>> 0
+    ), 17);
+  }
+
+  function createDailyChallenge(gameKey) {
+    const seed = dailySeed(gameKey);
+    if (gameKey === "daily-challenge-math") {
+      const left = 10 + (seed % 31);
+      const right = 4 + (Math.floor(seed / 31) % 17);
+      return { gameKey, title: "Calcul éclair", prompt: `${left} + ${right} = ?`, input_mode: "number", answer: String(left + right) };
+    }
+    if (gameKey === "daily-challenge-sequence") {
+      const start = 2 + (seed % 14);
+      const step = 2 + (Math.floor(seed / 17) % 7);
+      const sequence = Array.from({ length: 5 }, (_, index) => start + index * step);
+      return { gameKey, title: "Suite néon", prompt: `${sequence.join(" · ")} · ?`, input_mode: "number", answer: String(start + sequence.length * step) };
+    }
+    const parity = seed % 2;
+    const choices = Array.from({ length: 6 }, (_, index) => (2 + (seed % 16) + index * 2) * 2 + parity);
+    const answer = Math.floor(seed / 13) % choices.length;
+    choices[answer] += 1;
+    return { gameKey, title: "Intrus logique", prompt: "Quel nombre ne suit pas la règle ?", input_mode: "choice", choices, answer: String(answer) };
+  }
+
   function createChallenge(gameKey) {
+    if (gameKey.startsWith("daily-challenge-")) return createDailyChallenge(gameKey);
     if (gameKey === "challenge_math") {
       const left = randomInt(8, 40);
       const right = randomInt(3, 20);
@@ -260,7 +311,7 @@
   function startChallenge(gameKey) {
     const challenge = createChallenge(gameKey);
     if (!state.profile) throw new Error("profile_required");
-    const session = store.createSession({ gameKey, title: challenge.title, url: "index.html" });
+    const session = store.createSession({ gameKey, title: challenge.title, url: "index.html", metadata: { dailyKey: dailyChallengeKey() } });
     store.startSession(session.id, { source: "home_challenge" });
     refreshAccount();
     state.currentChallenge = {
@@ -308,11 +359,13 @@
       throw new Error("no_active_challenge");
     }
     const won = String(answer).trim() === state.currentChallenge.challenge.answer;
-    const payoutUnits = won ? coinsToUnits(economy.winPayoutCoins ?? 1.25) : 0;
-    store.finishSession(sessionId, won ? "won" : "lost", { source: "home_challenge" });
+    const settledSession = store.finishSession(sessionId, won ? "won" : "lost", { source: "home_challenge" });
+    const dailyBonus = won && settledSession.gameKey.startsWith("daily-challenge-")
+      ? store.claimDailyChallengeBonus(settledSession.metadata.dailyKey)
+      : { awarded: false, payoutUnits: 0 };
     state.currentChallenge = null;
     refreshAccount();
-    return { status: won ? "won" : "lost", payout_units: payoutUnits, balance_units: state.profile.balanceUnits };
+    return { status: won ? "won" : "lost", payout_units: won ? settledSession.payoutUnits : 0, bonus_awarded: dailyBonus.awarded, bonus_units: dailyBonus.payoutUnits, balance_units: state.profile.balanceUnits };
   }
 
   function submitChallenge(event) {
@@ -327,7 +380,8 @@
     try {
       const result = settleChallenge(state.currentChallenge.session_id, answer);
       const won = result.status === "won";
-      setText("challengeResult", won ? `Victoire ! +${formatCoins(result.payout_units)} Coins fictifs.` : "Défi perdu. Le Coin engagé est dépensé.");
+      const bonusMessage = result.bonus_awarded ? ` Bonus quotidien : +${formatCoins(result.bonus_units)} Coins.` : "";
+      setText("challengeResult", won ? `Victoire ! +${formatCoins(result.payout_units)} Coins fictifs.${bonusMessage}` : "Défi terminé. Aucun Coin dépensé.");
       element("challengeResult").dataset.status = won ? "won" : "lost";
       element("challengeResult").hidden = false;
       element("challengeAnswer").disabled = true;

@@ -208,6 +208,8 @@
         --card-color: var(--neon-cyan);
         --card-color-rgb: 0, 255, 255;
 
+        display: flex;
+        flex-direction: column;
         background: var(--bg-card);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: var(--radius-lg);
@@ -651,6 +653,7 @@
 
       .btn-launch {
         width: 100%;
+        margin-top: auto;
         padding: 16px;
         font-size: 1.1rem;
       }
@@ -2056,7 +2059,24 @@
       .pwa-install-button {
         min-height: 38px;
         padding: 0 13px;
+        border: 1px solid var(--neon-cyan);
+        background: linear-gradient(135deg, var(--neon-cyan), #38bdf8);
+        color: #06111d;
+        box-shadow: 0 5px 16px rgba(0, 255, 255, 0.32);
         white-space: nowrap;
+      }
+
+      .pwa-update-prompt .pwa-install-button {
+        border-color: var(--neon-green);
+        background: linear-gradient(135deg, var(--neon-green), #34d399);
+        box-shadow: 0 5px 16px rgba(0, 255, 136, 0.3);
+      }
+
+      .pwa-install-button:hover,
+      .pwa-install-button:focus-visible {
+        filter: brightness(1.08);
+        outline: 3px solid rgba(255, 255, 255, 0.72);
+        outline-offset: 3px;
       }
 
       .pwa-later-button {

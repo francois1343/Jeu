@@ -39,7 +39,7 @@
       .arcade-session-hud{position:fixed;right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom));z-index:2147483000;display:flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid rgba(0,255,255,.42);border-radius:999px;background:rgba(5,10,22,.9);box-shadow:0 0 24px rgba(0,255,255,.16);backdrop-filter:blur(10px);color:#fff;font:600 12px Rajdhani,system-ui,sans-serif;pointer-events:none}
       .arcade-session-hud strong{color:#00ffff;font-family:Orbitron,system-ui,sans-serif;font-size:10px;letter-spacing:.5px;text-transform:uppercase}.arcade-session-hud span:last-child{color:#ffe66d}
       .arcade-session-hud[data-state="won"]{border-color:#00ff88}.arcade-session-hud[data-state="won"] strong{color:#00ff88}.arcade-session-hud[data-state="lost"],.arcade-session-hud[data-state="abandoned"]{border-color:#ff4757}.arcade-session-hud[data-state="lost"] strong,.arcade-session-hud[data-state="abandoned"] strong{color:#ff8d98}
-      .arcade-session-blocker{position:fixed;inset:0;z-index:2147483500;display:grid;place-items:center;padding:20px;background:rgba(2,6,16,.88);backdrop-filter:blur(9px)}.arcade-session-blocker>div{width:min(92vw,460px);padding:28px;border:1px solid rgba(255,71,87,.45);border-radius:18px;background:#0d1422;color:#fff;text-align:center;box-shadow:0 0 55px rgba(255,71,87,.16);font-family:Rajdhani,system-ui,sans-serif}.arcade-session-blocker h2{margin:0 0 10px;color:#ff8d98;font-family:Orbitron,system-ui,sans-serif;font-size:20px}.arcade-session-blocker p{margin:0 0 20px;color:#a5afc7;line-height:1.5}.arcade-session-blocker a{display:inline-flex;min-height:44px;align-items:center;padding:0 18px;border:1px solid #00ffff;border-radius:9px;color:#00ffff;text-decoration:none;font-weight:700}
+      .arcade-session-blocker{position:fixed;inset:0;z-index:2147483500;display:grid;place-items:center;padding:20px;background:rgba(2,6,16,.88);backdrop-filter:blur(9px)}.arcade-session-blocker>div{width:min(92vw,460px);padding:28px;border:1px solid rgba(255,71,87,.45);border-radius:18px;background:#0d1422;color:#fff;text-align:center;box-shadow:0 0 55px rgba(255,71,87,.16);font-family:Rajdhani,system-ui,sans-serif}.arcade-session-blocker h2{margin:0 0 10px;color:#ff8d98;font-family:Orbitron,system-ui,sans-serif;font-size:20px}.arcade-session-blocker p{margin:0 0 20px;color:#a5afc7;line-height:1.5}.arcade-session-blocker-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}.arcade-session-blocker a,.arcade-session-replay{display:inline-flex;min-height:44px;align-items:center;justify-content:center;padding:0 18px;border:1px solid #00ffff;border-radius:9px;background:transparent;color:#00ffff;text-decoration:none;font:700 16px Rajdhani,system-ui,sans-serif;cursor:pointer}.arcade-session-replay{border-color:#00ff88;color:#00ff88}.arcade-session-replay:disabled{opacity:.5;cursor:not-allowed}
       @media(max-width:520px){.arcade-session-hud{right:8px;bottom:8px;padding:7px 10px}.arcade-session-hud span:last-child{display:none}}
     `;
     document.head.appendChild(style);
@@ -71,12 +71,33 @@
     const panel = document.createElement("div");
     const heading = document.createElement("h2");
     const copy = document.createElement("p");
+    const actions = document.createElement("div");
     const link = document.createElement("a");
+    actions.className = "arcade-session-blocker-actions";
     heading.textContent = title;
     copy.textContent = message;
+    if (session && terminalStates.has(session.state)) {
+      const replay = document.createElement("button");
+      replay.type = "button";
+      replay.className = "arcade-session-replay";
+      replay.textContent = "Rejouer";
+      replay.addEventListener("click", () => {
+        try {
+          const nextSession = store.createSession({ gameKey: session.gameKey, title: session.title, url: session.url || global.location.pathname });
+          const destination = new URL(global.location.href);
+          destination.searchParams.set("arcadeSession", nextSession.id);
+          global.location.assign(destination.href);
+        } catch (error) {
+          replay.disabled = true;
+          copy.textContent = error.message === "insufficient_balance" ? "Solde insuffisant pour lancer une nouvelle partie." : "Impossible de créer une nouvelle session pour le moment.";
+        }
+      });
+      actions.appendChild(replay);
+    }
     link.href = new URL("../../index.html", global.location.href).href;
-    link.textContent = "Retour à l’arcade";
-    panel.append(heading, copy, link);
+    link.textContent = "Accueil arcade";
+    actions.appendChild(link);
+    panel.append(heading, copy, actions);
     overlay.appendChild(panel);
     document.body.appendChild(overlay);
   }
@@ -187,11 +208,11 @@
   function guardTerminalInput(event) {
     if (!session || !terminalStates.has(session.state)) return false;
     const target = event.target;
-    if (target?.closest?.("a[href*='index'],.home-button,.arcade-home")) return false;
+    if (target?.closest?.("a[href*='index'],.home-button,.arcade-home,.arcade-session-replay")) return false;
     if (event.type === "keydown" || target?.closest?.("canvas,button,[role='button'],.game-board,.board")) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      showBlocker("Session terminée", "Revenez à l’arcade pour créer une nouvelle session et rejouer.");
+      showBlocker("Session terminée", "Choisissez Rejouer pour rester dans ce jeu.");
       return true;
     }
     return false;
@@ -241,7 +262,7 @@
         "Session déjà terminée",
         session.state === "abandoned"
           ? "Cette partie a été quittée ou rechargée. Relancez-la depuis la grille."
-          : "Revenez à l’arcade pour créer une nouvelle session et rejouer.",
+          : "Choisissez Rejouer pour créer une nouvelle session dans ce jeu.",
       );
       return;
     }

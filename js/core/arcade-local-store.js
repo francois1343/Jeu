@@ -10,6 +10,7 @@
   const maxHistory = Number(economy.maxHistoryEntries || 60);
   const maxSessions = Number(economy.maxSessionEntries || 40);
   const shopItems = new Map((config.shop?.items || []).map((item) => [item.id, item]));
+  const dailyChallengeKeys = new Set(economy.dailyChallengeKeys || []);
   let memoryFallback = null;
 
   function clone(value) {
@@ -42,6 +43,9 @@
       .filter((entry) => entry?.itemId && !seen.has(entry.itemId) && seen.add(entry.itemId));
     profile.equipped = profile.equipped && typeof profile.equipped === "object"
       ? profile.equipped
+      : {};
+    profile.dailyChallengeBonusClaims = profile.dailyChallengeBonusClaims && typeof profile.dailyChallengeBonusClaims === "object"
+      ? profile.dailyChallengeBonusClaims
       : {};
     return profile;
   }
@@ -230,20 +234,29 @@
       .sort((left, right) => left.pseudo.localeCompare(right.pseudo, "fr"));
   }
 
-  function createSession({ gameKey, title, url }) {
+  function createSession({ gameKey, title, url, metadata = {} }) {
     const state = readState();
     const profile = state.profiles[state.activeProfileId];
     if (!profile) throw new Error("profile_required");
     profile.sessions ||= [];
+    const policy = gamePolicy(gameKey);
+    const dailyKey = policy.dailyLimit ? String(metadata.dailyKey || "") : "";
+    const alreadyCompletedToday = dailyKey && profile.sessions.some((session) => (
+      session.gameKey === gameKey
+      && session.metadata?.dailyKey === dailyKey
+      && ["won", "lost"].includes(session.state)
+    ));
+    if (alreadyCompletedToday) throw new Error("daily_challenge_completed");
 
     const active = profile.activeSessionId ? findSession(profile, profile.activeSessionId) : null;
     if (active && !TERMINAL_STATES.has(active.state)) throw new Error("active_session_exists");
 
-    const policy = gamePolicy(gameKey);
-    const economyMode = policy.economyMode === "practice" ? "practice" : "paid";
-    const wagerUnits = economyMode === "practice"
-      ? 0
-      : coinsToUnits(policy.playCostCoins ?? economy.playCostCoins ?? 1);
+    const economyMode = ["practice", "free"].includes(policy.economyMode)
+      ? policy.economyMode
+      : "paid";
+    const wagerUnits = economyMode === "paid"
+      ? coinsToUnits(policy.playCostCoins ?? economy.playCostCoins ?? 1)
+      : 0;
     if (profile.balanceUnits < wagerUnits) throw new Error("insufficient_balance");
 
     const session = {
@@ -256,11 +269,11 @@
       wagerUnits,
       payoutUnits: economyMode === "practice"
         ? 0
-        : coinsToUnits(policy.winPayoutCoins ?? economy.winPayoutCoins ?? 1.25),
+        : coinsToUnits(policy.winPayoutCoins ?? (policy.dailyLimit ? economy.dailyChallengePayoutCoins : economy.winPayoutCoins) ?? 1.25),
       createdAt: new Date().toISOString(),
       startedAt: null,
       resolvedAt: null,
-      metadata: {},
+      metadata: { ...metadata },
     };
     profile.sessions = [session, ...profile.sessions].slice(0, maxSessions);
     profile.activeSessionId = session.id;
@@ -361,6 +374,36 @@
     return clone(session);
   }
 
+  function claimDailyChallengeBonus(dailyKey) {
+    const key = String(dailyKey || "");
+    const state = readState();
+    const profile = state.profiles[state.activeProfileId];
+    if (!profile) throw new Error("profile_required");
+    normalizeProfileShop(profile);
+    if (!key || profile.dailyChallengeBonusClaims[key]) return { awarded: false, payoutUnits: 0 };
+    const allChallengesWon = dailyChallengeKeys.size > 0 && [...dailyChallengeKeys].every((gameKey) => (
+      (profile.sessions || []).some((session) => (
+        session.gameKey === gameKey
+        && session.metadata?.dailyKey === key
+        && session.state === "won"
+      ))
+    ));
+    if (!allChallengesWon) return { awarded: false, payoutUnits: 0 };
+    const payoutUnits = coinsToUnits(economy.dailyCompletionBonusCoins ?? 5);
+    profile.balanceUnits += payoutUnits;
+    profile.dailyChallengeBonusClaims[key] = new Date().toISOString();
+    appendTransaction(
+      profile,
+      transaction("daily_challenge_bonus", payoutUnits, profile.balanceUnits, {
+        label: "Défi quotidien complété",
+        gameKey: "daily-challenge-bonus",
+        referenceId: "daily-bonus:" + key,
+      }),
+    );
+    writeState(state);
+    return { awarded: true, payoutUnits };
+  }
+
   function recoverActiveSession(reason = "returned_to_grid") {
     const session = getActiveSession();
     if (!session || TERMINAL_STATES.has(session.state)) return null;
@@ -444,6 +487,7 @@
     getActiveSession,
     startSession,
     finishSession,
+    claimDailyChallengeBonus,
     recoverActiveSession,
     purchaseShopItem,
     equipShopItem,
