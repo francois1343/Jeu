@@ -144,20 +144,6 @@
     });
   }
 
-  function renderAdminTargets() {
-    const select = element("adminTargetProfile");
-    if (!select) return;
-    const selected = select.value;
-    select.replaceChildren();
-    store.listProfiles().forEach((profile) => {
-      const option = document.createElement("option");
-      option.value = profile.id;
-      option.textContent = `${profile.pseudo} · ${formatCoins(profile.balanceUnits)} 🪙`;
-      select.appendChild(option);
-    });
-    if ([...select.options].some((option) => option.value === selected)) select.value = selected;
-  }
-
   function renderDailyChallengeCards(profile) {
     const dayKey = dailyChallengeKey();
     document.querySelectorAll("[data-challenge-key]").forEach((button) => {
@@ -178,7 +164,6 @@
     renderSignedIn(state.profile);
     renderTransactions(state.profile.history || []);
     renderDailyChallengeCards(state.profile);
-    if (state.profile.isAdmin) renderAdminTargets();
     return state.profile;
   }
 
@@ -201,7 +186,7 @@
       refreshAccount();
       form.reset();
       setMessage(`Profil ${profile.pseudo} actif · ${formatCoins(profile.balanceUnits)} Coins disponibles.`, "success");
-      if (profile.isAdmin) openDialog("adminDialog");
+      if (profile.isAdmin) global.dispatchEvent(new CustomEvent("arcade:admin-request"));
     } catch (error) {
       setMessage(readableError(error), "error");
     }
@@ -406,22 +391,6 @@
     element("challengeAnswer").value = "";
   }
 
-  function handleAdminAdjustment(event) {
-    event.preventDefault();
-    const direction = event.submitter?.value || "add";
-    const form = event.currentTarget;
-    const data = new FormData(form);
-    try {
-      const target = store.adminAdjust(String(data.get("targetProfile")), Number(data.get("amount")), direction);
-      refreshAccount();
-      renderAdminTargets();
-      setText("adminResult", `${target.pseudo} possède maintenant ${formatCoins(target.balanceUnits)} Coins fictifs.`);
-      form.elements.amount.value = "";
-    } catch (error) {
-      setText("adminResult", readableError(error));
-    }
-  }
-
   function bindUi() {
     element("accountButton")?.addEventListener("click", openAccountDialog);
     element("openAccountButton")?.addEventListener("click", openAccountDialog);
@@ -431,12 +400,10 @@
       refreshAccount();
       setMessage("Profil local fermé. Les données restent enregistrées sur cet appareil.", "success");
     });
-    element("adminForm")?.addEventListener("submit", handleAdminAdjustment);
     element("challengeForm")?.addEventListener("submit", submitChallenge);
     element("backToChallenges")?.addEventListener("click", resetChallengeLobby);
     document.querySelectorAll("[data-open-dialog]").forEach((button) => {
       button.addEventListener("click", () => {
-        if (button.dataset.openDialog === "adminDialog") renderAdminTargets();
         openDialog(button.dataset.openDialog);
       });
     });

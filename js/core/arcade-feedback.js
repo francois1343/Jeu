@@ -110,6 +110,91 @@
     });
   }
 
+  function requireLocalAdmin() {
+    if (!global.ArcadeLocalStore?.adminExportState) throw new Error("admin_required");
+    try {
+      global.ArcadeLocalStore.adminExportState();
+    } catch (_) {
+      throw new Error("admin_required");
+    }
+  }
+
+  function adminUpdate(reportId, input = {}) {
+    requireLocalAdmin();
+    return mutateReport(reportId, (report) => {
+      const type = clean(input.type ?? report.type, 40).toLocaleLowerCase("fr-BE");
+      const urgency = clean(input.urgency ?? report.urgency, 20).toLocaleLowerCase("fr-BE");
+      const status = clean(input.status ?? report.status, 30).toLocaleLowerCase("fr-BE");
+      const description = clean(input.description ?? report.description, 2000);
+      if (!TYPES.includes(type)) throw new Error("invalid_feedback_type");
+      if (!URGENCIES.includes(urgency)) throw new Error("invalid_feedback_urgency");
+      if (!STATUSES.includes(status)) throw new Error("invalid_feedback_status");
+      if (description.length < 10) throw new Error("feedback_description_too_short");
+      report.type = type;
+      report.urgency = urgency;
+      report.status = status;
+      report.gameKey = clean(input.gameKey ?? report.gameKey, 80) || "home";
+      report.gameTitle = clean(input.gameTitle ?? report.gameTitle, 120) || "Accueil / interface générale";
+      report.reporterPseudo = clean(input.reporterPseudo ?? report.reporterPseudo, 20) || null;
+      report.description = description;
+    });
+  }
+
+  function adminRemove(reportId) {
+    requireLocalAdmin();
+    const state = readState();
+    const index = state.reports.findIndex((report) => report.id === reportId);
+    if (index < 0) throw new Error("feedback_not_found");
+    const [removed] = state.reports.splice(index, 1);
+    writeState(state);
+    return clone(removed);
+  }
+
+  function normalizeImportedReport(candidate) {
+    const type = clean(candidate?.type, 40).toLocaleLowerCase("fr-BE");
+    const urgency = clean(candidate?.urgency, 20).toLocaleLowerCase("fr-BE");
+    const status = clean(candidate?.status, 30).toLocaleLowerCase("fr-BE");
+    const description = clean(candidate?.description, 2000);
+    if (!candidate?.id || !TYPES.includes(type) || !URGENCIES.includes(urgency)
+      || !STATUSES.includes(status) || description.length < 10) throw new Error("invalid_import");
+    return {
+      ...clone(candidate),
+      id: clean(candidate.id, 120),
+      type,
+      urgency,
+      status,
+      description,
+      gameKey: clean(candidate.gameKey, 80) || "home",
+      gameTitle: clean(candidate.gameTitle, 120) || "Accueil / interface générale",
+      reporterPseudo: clean(candidate.reporterPseudo, 20) || null,
+      createdAt: candidate.createdAt || new Date().toISOString(),
+      updatedAt: candidate.updatedAt || candidate.createdAt || new Date().toISOString(),
+      delivery: candidate.delivery && typeof candidate.delivery === "object"
+        ? clone(candidate.delivery)
+        : { channel: "import", status: "pending", attempts: 0 },
+    };
+  }
+
+  function adminExportState() {
+    requireLocalAdmin();
+    return clone(readState());
+  }
+
+  function adminImportState(payload, mode = "merge") {
+    requireLocalAdmin();
+    const source = payload?.data?.feedback || payload?.feedback || payload;
+    if (source?.version !== 1 || !Array.isArray(source.reports)) throw new Error("invalid_import");
+    const imported = source.reports.map(normalizeImportedReport);
+    const reports = mode === "replace"
+      ? imported
+      : [...imported, ...readState().reports].filter((report, index, all) => (
+        all.findIndex((candidate) => candidate.id === report.id) === index
+      ));
+    const next = { version: 1, reports: reports.slice(0, MAX_REPORTS) };
+    writeState(next);
+    return clone(next);
+  }
+
   function templateParams(report) {
     const pseudo = report.reporterPseudo || "Visiteur anonyme";
     const subject = `[Francis Arcade] ${report.type} · ${report.gameTitle} · ${report.urgency}`;
@@ -203,5 +288,9 @@
     list,
     updateStatus,
     sendByEmail,
+    adminUpdate,
+    adminRemove,
+    adminExportState,
+    adminImportState,
   });
 })(window);

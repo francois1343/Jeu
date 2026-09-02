@@ -4,7 +4,7 @@
   "scripts": {
     "build": "echo 'Files ready'",
     "pwa:icons": "node scripts/generate-pwa-icons.js",
-    "test": "node tests/local-economy-v2.test.js && node tests/shop-store.test.js && node tests/feedback-store.test.js && node tests/arcade-stats.test.js && node tests/dice-hub.test.js && node tests/html-inline-syntax.test.js && node tests/local-links.test.js && node tests/pwa.test.js",
+    "test": "node tests/local-economy-v2.test.js && node tests/game-common.test.js && node tests/eco-architecture.test.js && node tests/shop-store.test.js && node tests/feedback-store.test.js && node tests/arcade-stats.test.js && node tests/audit-store.test.js && node tests/admin-data.test.js && node tests/admin-visual.test.js && node tests/dice-hub.test.js && node tests/html-inline-syntax.test.js && node tests/local-links.test.js && node tests/pwa.test.js",
     "serve": "python -m http.server 4173 --bind 127.0.0.1",
     "supabase:start": "npx supabase start",
     "supabase:push": "npx supabase db push",

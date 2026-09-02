@@ -6,11 +6,14 @@
     <meta name="theme-color" content="#0a0e1a" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <meta name="apple-mobile-web-app-title" content="Arcade Station" />
     <title>🎮 Mini Jeux Arcade</title>
     <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="icon" type="image/png" href="assets/icons/arcade-favicon.png" />
+    <link rel="icon" type="image/png" href="assets/icons/arcade-icon-v2-192.png" />
     <link rel="apple-touch-icon" href="assets/icons/arcade-icon-v2-180.png" />
     <link
       href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;700&display=swap"
@@ -39,7 +42,12 @@
           <button class="account-button" id="accountButton" type="button">
             <span id="accountAvatar" aria-hidden="true">👤</span>
             <span id="accountLabel">Connexion</span>
-            <span class="account-badge" id="accountBadge" aria-hidden="true" hidden></span>
+            <span
+              class="account-badge"
+              id="accountBadge"
+              aria-hidden="true"
+              hidden
+            ></span>
           </button>
         </div>
       </header>
@@ -49,11 +57,16 @@
           <span class="platform-kicker">MODE ÉCONOMIE · TEST LOCAL</span>
           <h2 id="arcadeEconomyTitle">Testez vos Coins fictifs</h2>
           <p>
-            Les jeux de la grille coûtent <strong id="gamePlayCost">1 Coin</strong>. Les trois défis quotidiens sont gratuits :
-            chacun rapporte <strong id="dailyChallengeReward">1,25 Coin</strong> en cas de réussite. Réussissez les trois pour obtenir
-            un bonus de <strong id="dailyCompletionBonus">5 Coins</strong>. Une fois terminés, ils reviennent demain.
-            Les profils, soldes et transactions restent uniquement sur cet appareil, sans argent ni publicité réels.
-            Open World et Pixel Forge restent en entraînement gratuit pendant leur adaptation.
+            Les jeux de la grille coûtent
+            <strong id="gamePlayCost">1 Coin</strong>. Les trois défis
+            quotidiens sont gratuits : chacun rapporte
+            <strong id="dailyChallengeReward">1,25 Coin</strong> en cas de
+            réussite. Réussissez les trois pour obtenir un bonus de
+            <strong id="dailyCompletionBonus">5 Coins</strong>. Une fois
+            terminés, ils reviennent demain. Les profils, soldes et transactions
+            restent uniquement sur cet appareil, sans argent ni publicité réels.
+            Open World et Pixel Forge restent en entraînement gratuit pendant
+            leur adaptation.
           </p>
         </div>
         <div class="platform-actions">
@@ -64,11 +77,19 @@
             data-requires-account
           >
             <span aria-hidden="true">⚡</span>
-            <span><strong>Défi quotidien</strong><small>Gratuit · une tentative par jour</small></span>
+            <span
+              ><strong>Défi quotidien</strong
+              ><small>Gratuit · une tentative par jour</small></span
+            >
           </button>
           <button class="platform-action" id="openAccountButton" type="button">
             <span aria-hidden="true">👤</span>
-            <span><strong>Profil local</strong><small>Nouveau profil : <span id="starterCoins">5 Coins</span></small></span>
+            <span
+              ><strong>Profil local</strong
+              ><small
+                >Nouveau profil : <span id="starterCoins">5 Coins</span></small
+              ></span
+            >
           </button>
           <button
             class="platform-action shop-action"
@@ -78,7 +99,10 @@
             data-requires-account
           >
             <span aria-hidden="true">🛍️</span>
-            <span><strong>Boutique Arcade</strong><small>Cosmétiques, thèmes et objets de profil</small></span>
+            <span
+              ><strong>Boutique Arcade</strong
+              ><small>Cosmétiques, thèmes et objets de profil</small></span
+            >
           </button>
           <button
             class="platform-action admin-action"
@@ -87,20 +111,32 @@
             data-open-dialog="adminDialog"
             hidden
           >
-            <span aria-hidden="true">🛠️</span>
-            <span><strong>Panneau de test</strong><small>Ajouter ou retirer des Coins</small></span>
+            <span aria-hidden="true">🛡️</span>
+            <span
+              ><strong>Console administrateur</strong
+              ><small>Données, audit et apparence exclusive</small></span
+            >
           </button>
         </div>
       </section>
 
-      <div class="platform-message" id="platformMessage" role="status" aria-live="polite" hidden></div>
+      <div
+        class="platform-message"
+        id="platformMessage"
+        role="status"
+        aria-live="polite"
+        hidden
+      ></div>
 
       <section class="catalog-controls" aria-labelledby="catalogTitle">
         <div class="catalog-heading">
           <div>
             <p class="catalog-kicker">Catalogue Arcade</p>
             <h2 id="catalogTitle">Choisissez votre prochain défi</h2>
-            <p>Recherchez un jeu ou affinez la sélection par univers et difficulté.</p>
+            <p>
+              Recherchez un jeu ou affinez la sélection par univers et
+              difficulté.
+            </p>
           </div>
           <p class="catalog-results" id="catalogResults" aria-live="polite"></p>
         </div>
@@ -108,36 +144,146 @@
           <label class="catalog-search" for="gameSearch">
             <span class="catalog-search-icon" aria-hidden="true">⌕</span>
             <span class="sr-only">Rechercher un jeu</span>
-            <input id="gameSearch" type="search" placeholder="Rechercher : Snake, puzzle, logique…" autocomplete="off" />
+            <input
+              id="gameSearch"
+              type="search"
+              placeholder="Rechercher : Snake, puzzle, logique…"
+              autocomplete="off"
+            />
           </label>
           <div class="catalog-selects">
-            <label class="catalog-select-label" for="gameSort">Classement
-              <select id="gameSort"><option value="recommended">Sélection</option><option value="popularity">Les plus joués</option><option value="difficulty-desc">Les plus difficiles</option><option value="difficulty-asc">Les plus accessibles</option><option value="name">A → Z</option></select>
+            <label class="catalog-select-label" for="gameSort"
+              >Classement
+              <select id="gameSort">
+                <option value="recommended">Sélection</option>
+                <option value="popularity">Les plus joués</option>
+                <option value="difficulty-desc">Les plus difficiles</option>
+                <option value="difficulty-asc">Les plus accessibles</option>
+                <option value="name">A → Z</option>
+              </select>
             </label>
-            <label class="catalog-select-label" for="difficultyFilter">Difficulté
-              <select id="difficultyFilter"><option value="all">Toutes</option><option value="easy">Facile</option><option value="medium">Moyenne</option><option value="hard">Difficile</option></select>
+            <label class="catalog-select-label" for="difficultyFilter"
+              >Difficulté
+              <select id="difficultyFilter">
+                <option value="all">Toutes</option>
+                <option value="easy">Facile</option>
+                <option value="medium">Moyenne</option>
+                <option value="hard">Difficile</option>
+              </select>
             </label>
           </div>
         </div>
         <div class="catalog-filter-row">
           <span class="catalog-filter-label">Catégories</span>
-          <div class="catalog-filter-group" role="group" aria-label="Catégorie de jeu">
-            <button class="catalog-filter is-active" type="button" data-category-filter="all" aria-pressed="true">Tous</button>
-            <button class="catalog-filter" type="button" data-category-filter="arcade" aria-pressed="false">Arcade</button>
-            <button class="catalog-filter" type="button" data-category-filter="reflex" aria-pressed="false">Réflexes</button>
-            <button class="catalog-filter" type="button" data-category-filter="memory" aria-pressed="false">Mémoire</button>
-            <button class="catalog-filter" type="button" data-category-filter="logic" aria-pressed="false">Logique</button>
-            <button class="catalog-filter" type="button" data-category-filter="enigma" aria-pressed="false">Énigmes</button>
-            <button class="catalog-filter" type="button" data-category-filter="strategy" aria-pressed="false">Stratégie</button>
-            <button class="catalog-filter" type="button" data-category-filter="cards" aria-pressed="false">Jeux de cartes</button>
-            <button class="catalog-filter" type="button" data-category-filter="dice" aria-pressed="false">Jeux de dés</button>
-            <button class="catalog-filter" type="button" data-category-filter="puzzle" aria-pressed="false">Puzzle</button>
-            <button class="catalog-filter" type="button" data-category-filter="adventure" aria-pressed="false">Aventure</button>
+          <div
+            class="catalog-filter-group"
+            role="group"
+            aria-label="Catégorie de jeu"
+          >
+            <button
+              class="catalog-filter is-active"
+              type="button"
+              data-category-filter="all"
+              aria-pressed="true"
+            >
+              Tous
+            </button>
+            <button
+              class="catalog-filter"
+              type="button"
+              data-category-filter="arcade"
+              aria-pressed="false"
+            >
+              Arcade
+            </button>
+            <button
+              class="catalog-filter"
+              type="button"
+              data-category-filter="reflex"
+              aria-pressed="false"
+            >
+              Réflexes
+            </button>
+            <button
+              class="catalog-filter"
+              type="button"
+              data-category-filter="memory"
+              aria-pressed="false"
+            >
+              Mémoire
+            </button>
+            <button
+              class="catalog-filter"
+              type="button"
+              data-category-filter="logic"
+              aria-pressed="false"
+            >
+              Logique
+            </button>
+            <button
+              class="catalog-filter"
+              type="button"
+              data-category-filter="enigma"
+              aria-pressed="false"
+            >
+              Énigmes
+            </button>
+            <button
+              class="catalog-filter"
+              type="button"
+              data-category-filter="strategy"
+              aria-pressed="false"
+            >
+              Stratégie
+            </button>
+            <button
+              class="catalog-filter"
+              type="button"
+              data-category-filter="cards"
+              aria-pressed="false"
+            >
+              Jeux de cartes
+            </button>
+            <button
+              class="catalog-filter"
+              type="button"
+              data-category-filter="dice"
+              aria-pressed="false"
+            >
+              Jeux de dés
+            </button>
+            <button
+              class="catalog-filter"
+              type="button"
+              data-category-filter="puzzle"
+              aria-pressed="false"
+            >
+              Puzzle
+            </button>
+            <button
+              class="catalog-filter"
+              type="button"
+              data-category-filter="adventure"
+              aria-pressed="false"
+            >
+              Aventure
+            </button>
           </div>
-          <button class="catalog-reset" id="clearCatalogFilters" type="button" hidden>Effacer</button>
+          <button
+            class="catalog-reset"
+            id="clearCatalogFilters"
+            type="button"
+            hidden
+          >
+            Effacer
+          </button>
         </div>
       </section>
-      <p class="catalog-empty" id="catalogEmpty" hidden>Aucun jeu ne correspond à ces critères. Essayez une autre recherche ou effacez les filtres.</p><!-- Grille de jeux -->
+      <p class="catalog-empty" id="catalogEmpty" hidden>
+        Aucun jeu ne correspond à ces critères. Essayez une autre recherche ou
+        effacez les filtres.
+      </p>
+      <!-- Grille de jeux -->
       <main class="games-grid">
         <!-- Pile ou Face -->
         <article
@@ -176,13 +322,17 @@
             <span class="tag">Mini-hub</span>
           </div>
           <p class="game-description">
-            Votre espace jeux de dés : lancers personnalisés, statistiques, 421 et Yahtzee à venir.
+            Votre espace jeux de dés : lancers personnalisés, statistiques, 421
+            et Yahtzee à venir.
           </p>
           <div class="game-interactive">
             <div class="result-display">1–12</div>
           </div>
-          <button class="btn btn-primary btn-launch" onclick="launchGame('games/dice-hub/dice-hub.html', event)">
-            Entrer dans Dice District
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="launchGame('games/dice-hub/dice-hub.html', event)"
+          >
+            Entrer dans le District
           </button>
         </article>
 
@@ -810,7 +960,9 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('games/jeuxdescartes/jeuxdescartes.html', event)"
+            onclick="
+              launchGame('games/jeuxdescartes/jeuxdescartes.html', event)
+            "
           >
             Jouer à Neon Card Match
           </button>
@@ -838,7 +990,9 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('games/jeuxdesphrases/jeuxdesphrases.html', event)"
+            onclick="
+              launchGame('games/jeuxdesphrases/jeuxdesphrases.html', event)
+            "
           >
             Ouvrir la Forge à histoires
           </button>
@@ -970,8 +1124,8 @@
             <span class="tag">VS IA</span>
           </div>
           <p class="game-description">
-            Alignez vos symboles sur une grille 3 × 3 ou 5 × 5, en duel local
-            ou face à l'intelligence artificielle.
+            Alignez vos symboles sur une grille 3 × 3 ou 5 × 5, en duel local ou
+            face à l'intelligence artificielle.
           </p>
           <div class="game-interactive">
             <div class="result-display">X · O</div>
@@ -1117,7 +1271,9 @@
           </div>
           <button
             class="btn btn-primary btn-launch"
-            onclick="launchGame('games/BubbleShooter/BubbleShooter.html', event)"
+            onclick="
+              launchGame('games/BubbleShooter/BubbleShooter.html', event)
+            "
           >
             Lancer Bubble Shooter
           </button>
@@ -1127,133 +1283,385 @@
       <!-- Footer -->
       <footer class="footer">
         <nav class="footer-links" aria-label="Informations et préférences">
-          <a href="#aboutDialog" class="footer-link" data-open-dialog="aboutDialog" aria-haspopup="dialog">À propos</a>
-          <a href="#settingsDialog" class="footer-link" data-open-dialog="settingsDialog" aria-haspopup="dialog">Paramètres</a>
-          <a href="#creditsDialog" class="footer-link" data-open-dialog="creditsDialog" aria-haspopup="dialog">Crédits</a>
-          <a href="README.md" class="footer-link" target="_blank" rel="noopener">Guide 1.1</a>
+          <a
+            href="#aboutDialog"
+            class="footer-link"
+            data-open-dialog="aboutDialog"
+            aria-haspopup="dialog"
+            >À propos</a
+          >
+          <a
+            href="#settingsDialog"
+            class="footer-link"
+            data-open-dialog="settingsDialog"
+            aria-haspopup="dialog"
+            >Paramètres</a
+          >
+          <a
+            href="#creditsDialog"
+            class="footer-link"
+            data-open-dialog="creditsDialog"
+            aria-haspopup="dialog"
+            >Crédits</a
+          >
+          <a href="README.md" class="footer-link" target="_blank" rel="noopener"
+            >Guide 1.1</a
+          >
         </nav>
-        <button class="feedback-trigger" id="feedbackButton" type="button" data-open-dialog="feedbackDialog" aria-haspopup="dialog">
+        <button
+          class="feedback-trigger"
+          id="feedbackButton"
+          type="button"
+          data-open-dialog="feedbackDialog"
+          aria-haspopup="dialog"
+        >
           <span aria-hidden="true">💬</span>
           Signaler un problème / Donner un avis
         </button>
-        <p>© 2026 Francis Arcade <span aria-hidden="true">•</span> Fait avec 💜</p>
+        <p>
+          © 2026 Francis Arcade <span aria-hidden="true">•</span> Fait avec 💜
+        </p>
       </footer>
     </div>
 
-    <dialog class="arcade-dialog info-dialog" id="aboutDialog" aria-labelledby="aboutDialogTitle">
+    <dialog
+      class="arcade-dialog info-dialog"
+      id="aboutDialog"
+      aria-labelledby="aboutDialogTitle"
+    >
       <div class="dialog-shell">
-        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer la fenêtre À propos">×</button>
+        <button
+          class="dialog-close"
+          type="button"
+          data-close-dialog
+          aria-label="Fermer la fenêtre À propos"
+        >
+          ×
+        </button>
         <div class="dialog-heading info-heading">
           <span class="platform-kicker">FRANCIS ARCADE</span>
           <h2 id="aboutDialogTitle">Une salle d’arcade, partout avec vous</h2>
-          <p class="dialog-copy">Une collection indépendante de jeux classiques revisités avec une esthétique néon, pensée pour des parties rapides sur ordinateur comme sur mobile.</p>
+          <p class="dialog-copy">
+            Une collection indépendante de jeux classiques revisités avec une
+            esthétique néon, pensée pour des parties rapides sur ordinateur
+            comme sur mobile.
+          </p>
         </div>
-        <div class="info-highlight" aria-label="La philosophie de Francis Arcade">
+        <div
+          class="info-highlight"
+          aria-label="La philosophie de Francis Arcade"
+        >
           <span class="info-highlight-icon" aria-hidden="true">👾</span>
-          <div><strong>Le plaisir de jouer, sans détour</strong><p>Choisissez un jeu, comprenez les règles en quelques secondes et tentez de battre votre meilleur score.</p></div>
+          <div>
+            <strong>Le plaisir de jouer, sans détour</strong>
+            <p>
+              Choisissez un jeu, comprenez les règles en quelques secondes et
+              tentez de battre votre meilleur score.
+            </p>
+          </div>
         </div>
         <div class="info-card-grid">
-          <article class="info-card"><span aria-hidden="true">⚡</span><h3>Parties instantanées</h3><p>Des expériences courtes, variées et faciles à relancer.</p></article>
-          <article class="info-card"><span aria-hidden="true">📱</span><h3>Partout avec vous</h3><p>Une interface responsive et installable comme une application.</p></article>
-          <article class="info-card"><span aria-hidden="true">🔒</span><h3>Données locales</h3><p>Profils, Coins fictifs et préférences restent sur cet appareil.</p></article>
+          <article class="info-card">
+            <span aria-hidden="true">⚡</span>
+            <h3>Parties instantanées</h3>
+            <p>Des expériences courtes, variées et faciles à relancer.</p>
+          </article>
+          <article class="info-card">
+            <span aria-hidden="true">📱</span>
+            <h3>Partout avec vous</h3>
+            <p>
+              Une interface responsive et installable comme une application.
+            </p>
+          </article>
+          <article class="info-card">
+            <span aria-hidden="true">🔒</span>
+            <h3>Données locales</h3>
+            <p>
+              Profils, Coins fictifs et préférences restent sur cet appareil.
+            </p>
+          </article>
         </div>
-        <div class="dialog-actions"><button class="btn btn-primary dialog-primary-action" id="exploreGamesButton" type="button" data-close-dialog>Explorer les jeux</button></div>
+        <div class="dialog-actions">
+          <button
+            class="btn btn-primary dialog-primary-action"
+            id="exploreGamesButton"
+            type="button"
+            data-close-dialog
+          >
+            Explorer les jeux
+          </button>
+        </div>
       </div>
     </dialog>
 
-    <dialog class="arcade-dialog info-dialog" id="settingsDialog" aria-labelledby="settingsDialogTitle">
+    <dialog
+      class="arcade-dialog info-dialog"
+      id="settingsDialog"
+      aria-labelledby="settingsDialogTitle"
+    >
       <div class="dialog-shell">
-        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer les paramètres">×</button>
+        <button
+          class="dialog-close"
+          type="button"
+          data-close-dialog
+          aria-label="Fermer les paramètres"
+        >
+          ×
+        </button>
         <div class="dialog-heading info-heading">
           <span class="platform-kicker">VOTRE EXPÉRIENCE</span>
           <h2 id="settingsDialogTitle">Paramètres</h2>
-          <p class="dialog-copy">Adaptez l’accueil à vos préférences. Les changements sont enregistrés automatiquement sur cet appareil.</p>
+          <p class="dialog-copy">
+            Adaptez l’accueil à vos préférences. Les changements sont
+            enregistrés automatiquement sur cet appareil.
+          </p>
         </div>
         <form class="settings-list" id="preferencesForm">
           <label class="setting-row" for="soundEffectsSetting">
             <span class="setting-icon" aria-hidden="true">🔊</span>
-            <span class="setting-copy"><strong>Effets sonores</strong><small>Sons des interactions et mini-jeux de l’accueil.</small></span>
-            <span class="switch-control"><input id="soundEffectsSetting" name="soundEffects" type="checkbox" /><span class="switch-track" aria-hidden="true"></span></span>
+            <span class="setting-copy"
+              ><strong>Effets sonores</strong
+              ><small
+                >Sons des interactions et mini-jeux de l’accueil.</small
+              ></span
+            >
+            <span class="switch-control"
+              ><input
+                id="soundEffectsSetting"
+                name="soundEffects"
+                type="checkbox" /><span
+                class="switch-track"
+                aria-hidden="true"
+              ></span
+            ></span>
           </label>
           <label class="setting-row" for="animationsSetting">
             <span class="setting-icon" aria-hidden="true">✨</span>
-            <span class="setting-copy"><strong>Animations d’interface</strong><small>Mouvements, transitions et particules décoratives.</small></span>
-            <span class="switch-control"><input id="animationsSetting" name="animations" type="checkbox" /><span class="switch-track" aria-hidden="true"></span></span>
+            <span class="setting-copy"
+              ><strong>Animations d’interface</strong
+              ><small
+                >Mouvements, transitions et particules décoratives.</small
+              ></span
+            >
+            <span class="switch-control"
+              ><input
+                id="animationsSetting"
+                name="animations"
+                type="checkbox" /><span
+                class="switch-track"
+                aria-hidden="true"
+              ></span
+            ></span>
           </label>
           <label class="setting-row" for="highContrastSetting">
             <span class="setting-icon" aria-hidden="true">◐</span>
-            <span class="setting-copy"><strong>Contraste renforcé</strong><small>Éclaircit les textes secondaires et accentue les contours.</small></span>
-            <span class="switch-control"><input id="highContrastSetting" name="highContrast" type="checkbox" /><span class="switch-track" aria-hidden="true"></span></span>
+            <span class="setting-copy"
+              ><strong>Contraste renforcé</strong
+              ><small
+                >Éclaircit les textes secondaires et accentue les
+                contours.</small
+              ></span
+            >
+            <span class="switch-control"
+              ><input
+                id="highContrastSetting"
+                name="highContrast"
+                type="checkbox" /><span
+                class="switch-track"
+                aria-hidden="true"
+              ></span
+            ></span>
           </label>
         </form>
         <div class="settings-footer">
-          <p class="settings-status" id="preferencesStatus" role="status" aria-live="polite">Préférences enregistrées sur cet appareil.</p>
-          <button class="settings-reset-button" id="resetPreferencesButton" type="button"><span aria-hidden="true">↺</span> Réinitialiser les paramètres</button>
+          <p
+            class="settings-status"
+            id="preferencesStatus"
+            role="status"
+            aria-live="polite"
+          >
+            Préférences enregistrées sur cet appareil.
+          </p>
+          <button
+            class="settings-reset-button"
+            id="resetPreferencesButton"
+            type="button"
+          >
+            <span aria-hidden="true">↺</span> Réinitialiser les paramètres
+          </button>
         </div>
       </div>
     </dialog>
 
-    <dialog class="arcade-dialog info-dialog" id="creditsDialog" aria-labelledby="creditsDialogTitle">
+    <dialog
+      class="arcade-dialog info-dialog"
+      id="creditsDialog"
+      aria-labelledby="creditsDialogTitle"
+    >
       <div class="dialog-shell">
-        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer les crédits">×</button>
+        <button
+          class="dialog-close"
+          type="button"
+          data-close-dialog
+          aria-label="Fermer les crédits"
+        >
+          ×
+        </button>
         <div class="dialog-heading info-heading">
           <span class="platform-kicker">DERRIÈRE LES PIXELS</span>
           <h2 id="creditsDialogTitle">Crédits</h2>
-          <p class="dialog-copy">Merci à toutes les personnes qui jouent, testent et font vivre cette petite salle d’arcade.</p>
+          <p class="dialog-copy">
+            Merci à toutes les personnes qui jouent, testent et font vivre cette
+            petite salle d’arcade.
+          </p>
         </div>
         <div class="credits-list">
-          <article class="credit-row"><span class="credit-monogram" aria-hidden="true">FA</span><div><small>CONCEPTION &amp; DÉVELOPPEMENT</small><strong>Francis Arcade</strong></div></article>
-          <article class="credit-row"><span class="credit-monogram" aria-hidden="true">Aa</span><div><small>TYPOGRAPHIES</small><strong>Orbitron &amp; Rajdhani · Google Fonts</strong></div></article>
-          <article class="credit-row"><span class="credit-monogram" aria-hidden="true">&lt;/&gt;</span><div><small>TECHNOLOGIES</small><strong>HTML, CSS &amp; JavaScript</strong></div></article>
+          <article class="credit-row">
+            <span class="credit-monogram" aria-hidden="true">FA</span>
+            <div>
+              <small>CONCEPTION &amp; DÉVELOPPEMENT</small
+              ><strong>Francis Arcade</strong>
+            </div>
+          </article>
+          <article class="credit-row">
+            <span class="credit-monogram" aria-hidden="true">Aa</span>
+            <div>
+              <small>TYPOGRAPHIES</small
+              ><strong>Orbitron &amp; Rajdhani · Google Fonts</strong>
+            </div>
+          </article>
+          <article class="credit-row">
+            <span class="credit-monogram" aria-hidden="true">&lt;/&gt;</span>
+            <div>
+              <small>TECHNOLOGIES</small
+              ><strong>HTML, CSS &amp; JavaScript</strong>
+            </div>
+          </article>
         </div>
-        <div class="credits-note"><span aria-hidden="true">💜</span><p><strong>Et surtout, merci à vous.</strong><br />Chaque partie aide l’arcade à progresser.</p></div>
-        <div class="version-line"><span>Francis Arcade</span><span>Version 1.0.0 · 2026</span></div>
+        <div class="credits-note">
+          <span aria-hidden="true">💜</span>
+          <p>
+            <strong>Et surtout, merci à vous.</strong><br />Chaque partie aide
+            l’arcade à progresser.
+          </p>
+        </div>
+        <div class="version-line">
+          <span>Francis Arcade</span><span>Version 1.0.0 · 2026</span>
+        </div>
       </div>
     </dialog>
 
-    <dialog class="arcade-dialog info-dialog feedback-dialog" id="feedbackDialog" aria-labelledby="feedbackDialogTitle">
+    <dialog
+      class="arcade-dialog info-dialog feedback-dialog"
+      id="feedbackDialog"
+      aria-labelledby="feedbackDialogTitle"
+    >
       <div class="dialog-shell">
-        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer le formulaire de retour">×</button>
+        <button
+          class="dialog-close"
+          type="button"
+          data-close-dialog
+          aria-label="Fermer le formulaire de retour"
+        >
+          ×
+        </button>
         <div class="dialog-heading info-heading">
           <span class="platform-kicker">CENTRE DE RETOURS</span>
-          <h2 id="feedbackDialogTitle">Signaler un problème ou donner un avis</h2>
-          <p class="dialog-copy">Décrivez simplement ce que vous avez rencontré. Le retour est envoyé par email et une copie locale permet d’en suivre le statut.</p>
+          <h2 id="feedbackDialogTitle">
+            Signaler un problème ou donner un avis
+          </h2>
+          <p class="dialog-copy">
+            Décrivez simplement ce que vous avez rencontré. Le retour est envoyé
+            par email et une copie locale permet d’en suivre le statut.
+          </p>
         </div>
         <form class="feedback-form" id="feedbackForm">
           <div class="feedback-form-grid">
-            <label>Type de retour
+            <label
+              >Type de retour
               <select name="type" required>
-                <option value="bug">Bug</option><option value="suggestion">Suggestion</option><option value="problème visuel">Problème visuel</option><option value="jeu">Jeu</option><option value="compte">Compte</option><option value="autre">Autre</option>
+                <option value="bug">Bug</option>
+                <option value="suggestion">Suggestion</option>
+                <option value="problème visuel">Problème visuel</option>
+                <option value="jeu">Jeu</option>
+                <option value="compte">Compte</option>
+                <option value="autre">Autre</option>
               </select>
             </label>
-            <label>Niveau d’urgence
+            <label
+              >Niveau d’urgence
               <select name="urgency" required>
-                <option value="faible">Faible</option><option value="normale" selected>Normale</option><option value="élevée">Élevée</option><option value="critique">Critique — bloque l’utilisation</option>
+                <option value="faible">Faible</option>
+                <option value="normale" selected>Normale</option>
+                <option value="élevée">Élevée</option>
+                <option value="critique">
+                  Critique — bloque l’utilisation
+                </option>
               </select>
             </label>
           </div>
-          <label>Jeu ou zone concernée
+          <label
+            >Jeu ou zone concernée
             <select name="gameKey" id="feedbackGame" required>
-              <option value="home">Accueil / interface générale</option><option value="account">Profil et compte local</option>
+              <option value="home">Accueil / interface générale</option>
+              <option value="account">Profil et compte local</option>
             </select>
           </label>
-          <label>Description
-            <textarea name="description" rows="5" minlength="10" maxlength="2000" placeholder="Que s’est-il passé ? Qu’attendiez-vous à la place ?" required></textarea>
-            <small>10 caractères minimum. Évitez d’indiquer des informations personnelles.</small>
+          <label
+            >Description
+            <textarea
+              name="description"
+              rows="5"
+              minlength="10"
+              maxlength="2000"
+              placeholder="Que s’est-il passé ? Qu’attendiez-vous à la place ?"
+              required
+            ></textarea>
+            <small
+              >10 caractères minimum. Évitez d’indiquer des informations
+              personnelles.</small
+            >
           </label>
-          <label><span class="field-label">Pseudo <span class="optional-label">facultatif</span></span>
-            <input type="text" name="reporterPseudo" autocomplete="nickname" maxlength="20" placeholder="Ex. NeoPlayer" />
+          <label
+            ><span class="field-label"
+              >Pseudo <span class="optional-label">facultatif</span></span
+            >
+            <input
+              type="text"
+              name="reporterPseudo"
+              autocomplete="nickname"
+              maxlength="20"
+              placeholder="Ex. NeoPlayer"
+            />
           </label>
           <div class="feedback-form-actions">
-            <p class="feedback-status" id="feedbackStatus" role="status" aria-live="polite"></p>
-            <button class="btn btn-primary dialog-primary-action" type="submit">Enregistrer le retour</button>
+            <p
+              class="feedback-status"
+              id="feedbackStatus"
+              role="status"
+              aria-live="polite"
+            ></p>
+            <button class="btn btn-primary dialog-primary-action" type="submit">
+              Enregistrer le retour
+            </button>
           </div>
         </form>
       </div>
     </dialog>
-    <dialog class="arcade-dialog" id="accountDialog" aria-labelledby="accountDialogTitle">
+    <dialog
+      class="arcade-dialog"
+      id="accountDialog"
+      aria-labelledby="accountDialogTitle"
+    >
       <div class="dialog-shell">
-        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer">×</button>
+        <button
+          class="dialog-close"
+          type="button"
+          data-close-dialog
+          aria-label="Fermer"
+        >
+          ×
+        </button>
         <div class="dialog-heading">
           <span class="platform-kicker">PROFIL LOCAL</span>
           <h2 id="accountDialogTitle">Choisissez votre pseudo</h2>
@@ -1261,9 +1669,10 @@
 
         <section id="signedOutPanel">
           <p class="dialog-copy">
-            Un pseudo suffit. S’il n’existe pas encore sur cet appareil, il recevra
-            <strong id="starterCoinsDialog">quelques Coins de départ</strong>. Aucun mot de passe
-            ni donnée personnelle n’est demandé.
+            Un pseudo suffit. S’il n’existe pas encore sur cet appareil, il
+            recevra
+            <strong id="starterCoinsDialog">quelques Coins de départ</strong>.
+            Aucun mot de passe ni donnée personnelle n’est demandé.
           </p>
           <form class="auth-form" id="authForm">
             <label>
@@ -1279,11 +1688,17 @@
               />
             </label>
             <div class="auth-actions">
-              <button class="btn btn-primary dialog-primary-action" type="submit">Entrer dans l’arcade</button>
+              <button
+                class="btn btn-primary dialog-primary-action"
+                type="submit"
+              >
+                Entrer dans l’arcade
+              </button>
             </div>
           </form>
           <p class="local-admin-hint">
-            Profil administrateur de test : <strong id="adminPseudoHint">ADMIN</strong>
+            Profil administrateur de test :
+            <strong id="adminPseudoHint">ADMIN</strong>
           </p>
         </section>
 
@@ -1300,29 +1715,65 @@
           </div>
           <h3 class="dialog-section-title">Dernières transactions</h3>
           <ul class="transaction-list" id="transactionList"></ul>
-          <button class="btn btn-secondary signout-button" id="signOutButton" type="button">Changer de pseudo</button>
+          <button
+            class="btn btn-secondary signout-button"
+            id="signOutButton"
+            type="button"
+          >
+            Changer de pseudo
+          </button>
         </section>
       </div>
     </dialog>
 
-    <dialog class="arcade-dialog" id="challengeDialog" aria-labelledby="challengeDialogTitle">
+    <dialog
+      class="arcade-dialog"
+      id="challengeDialog"
+      aria-labelledby="challengeDialogTitle"
+    >
       <div class="dialog-shell">
-        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer">×</button>
+        <button
+          class="dialog-close"
+          type="button"
+          data-close-dialog
+          aria-label="Fermer"
+        >
+          ×
+        </button>
         <div class="dialog-heading">
           <span class="platform-kicker">DÉFI QUOTIDIEN</span>
           <h2 id="challengeDialogTitle">Votre épreuve du jour</h2>
         </div>
         <section id="challengeLobby">
-          <p class="dialog-copy">Trois défis fixes sont proposés chaque jour. Chacun est gratuit et rapporte <strong>1,25 Coin</strong> si vous le réussissez. Les trois réussis ajoutent <strong>5 Coins</strong>.</p>
+          <p class="dialog-copy">
+            Trois défis fixes sont proposés chaque jour. Chacun est gratuit et
+            rapporte <strong>1,25 Coin</strong> si vous le réussissez. Les trois
+            réussis ajoutent <strong>5 Coins</strong>.
+          </p>
           <div class="challenge-grid">
-            <button type="button" class="challenge-card" data-challenge-key="daily-challenge-math">
-              <span>➗</span><strong>Calcul éclair</strong><small>Gratuit · une tentative par jour</small>
+            <button
+              type="button"
+              class="challenge-card"
+              data-challenge-key="daily-challenge-math"
+            >
+              <span>➗</span><strong>Calcul éclair</strong
+              ><small>Gratuit · une tentative par jour</small>
             </button>
-            <button type="button" class="challenge-card" data-challenge-key="daily-challenge-sequence">
-              <span>🔢</span><strong>Suite néon</strong><small>Gratuit · une tentative par jour</small>
+            <button
+              type="button"
+              class="challenge-card"
+              data-challenge-key="daily-challenge-sequence"
+            >
+              <span>🔢</span><strong>Suite néon</strong
+              ><small>Gratuit · une tentative par jour</small>
             </button>
-            <button type="button" class="challenge-card" data-challenge-key="daily-challenge-intruder">
-              <span>🔍</span><strong>Intrus logique</strong><small>Gratuit · une tentative par jour</small>
+            <button
+              type="button"
+              class="challenge-card"
+              data-challenge-key="daily-challenge-intruder"
+            >
+              <span>🔍</span><strong>Intrus logique</strong
+              ><small>Gratuit · une tentative par jour</small>
             </button>
           </div>
         </section>
@@ -1339,100 +1790,408 @@
               autocomplete="off"
               aria-label="Votre réponse"
             />
-            <button class="btn btn-primary" id="challengeSubmit" type="submit">Valider ma réponse</button>
+            <button class="btn btn-primary" id="challengeSubmit" type="submit">
+              Valider ma réponse
+            </button>
           </form>
-          <p class="challenge-result" id="challengeResult" role="status" hidden></p>
-          <button class="btn btn-secondary" id="backToChallenges" type="button" hidden>Voir mes défis quotidiens</button>
+          <p
+            class="challenge-result"
+            id="challengeResult"
+            role="status"
+            hidden
+          ></p>
+          <button
+            class="btn btn-secondary"
+            id="backToChallenges"
+            type="button"
+            hidden
+          >
+            Voir mes défis quotidiens
+          </button>
         </section>
       </div>
     </dialog>
 
-    <dialog class="arcade-dialog shop-dialog" id="shopDialog" aria-labelledby="shopDialogTitle">
+    <dialog
+      class="arcade-dialog shop-dialog"
+      id="shopDialog"
+      aria-labelledby="shopDialogTitle"
+    >
       <div class="dialog-shell shop-shell">
-        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer la boutique">×</button>
+        <button
+          class="dialog-close"
+          type="button"
+          data-close-dialog
+          aria-label="Fermer la boutique"
+        >
+          ×
+        </button>
         <div class="shop-heading">
           <div>
             <span class="platform-kicker">BOUTIQUE ARCADE</span>
             <h2 id="shopDialogTitle">Personnalisez votre station</h2>
-            <p class="dialog-copy">Dépensez vos Coins dans des objets cosmétiques. Aucun achat ne donne d’avantage dans les jeux.</p>
+            <p class="dialog-copy">
+              Dépensez vos Coins dans des objets cosmétiques. Aucun achat ne
+              donne d’avantage dans les jeux.
+            </p>
           </div>
-          <div class="shop-balance" aria-label="Solde disponible dans la boutique">
+          <div
+            class="shop-balance"
+            aria-label="Solde disponible dans la boutique"
+          >
             <span>Votre solde</span>
             <strong><span id="shopCoinBalance">—</span> 🪙</strong>
           </div>
         </div>
 
         <section class="shop-loadout-panel" aria-labelledby="shopLoadoutTitle">
-          <div><span aria-hidden="true">✦</span><strong id="shopLoadoutTitle">Équipement actif</strong></div>
+          <div>
+            <span aria-hidden="true">✦</span
+            ><strong id="shopLoadoutTitle">Équipement actif</strong>
+          </div>
           <div class="shop-loadout" id="shopLoadout"></div>
         </section>
 
-        <div class="shop-category-tabs" role="group" aria-label="Filtrer les objets de la boutique">
-          <button class="shop-category is-active" type="button" data-shop-category="all" aria-pressed="true">Tout</button>
-          <button class="shop-category" type="button" data-shop-category="theme" aria-pressed="false">Thèmes</button>
-          <button class="shop-category" type="button" data-shop-category="avatar" aria-pressed="false">Avatars</button>
-          <button class="shop-category" type="button" data-shop-category="frame" aria-pressed="false">Cadres</button>
-          <button class="shop-category" type="button" data-shop-category="effect" aria-pressed="false">Effets</button>
-          <button class="shop-category" type="button" data-shop-category="sound" aria-pressed="false">Sons</button>
-          <button class="shop-category" type="button" data-shop-category="badge" aria-pressed="false">Badges</button>
+        <div
+          class="shop-category-tabs"
+          role="group"
+          aria-label="Filtrer les objets de la boutique"
+        >
+          <button
+            class="shop-category is-active"
+            type="button"
+            data-shop-category="all"
+            aria-pressed="true"
+          >
+            Tout
+          </button>
+          <button
+            class="shop-category"
+            type="button"
+            data-shop-category="theme"
+            aria-pressed="false"
+          >
+            Thèmes
+          </button>
+          <button
+            class="shop-category"
+            type="button"
+            data-shop-category="avatar"
+            aria-pressed="false"
+          >
+            Avatars
+          </button>
+          <button
+            class="shop-category"
+            type="button"
+            data-shop-category="frame"
+            aria-pressed="false"
+          >
+            Cadres
+          </button>
+          <button
+            class="shop-category"
+            type="button"
+            data-shop-category="effect"
+            aria-pressed="false"
+          >
+            Effets
+          </button>
+          <button
+            class="shop-category"
+            type="button"
+            data-shop-category="sound"
+            aria-pressed="false"
+          >
+            Sons
+          </button>
+          <button
+            class="shop-category"
+            type="button"
+            data-shop-category="badge"
+            aria-pressed="false"
+          >
+            Badges
+          </button>
         </div>
 
         <div class="shop-grid" id="shopGrid"></div>
-        <p class="shop-status" id="shopStatus" role="status" aria-live="polite"></p>
+        <p
+          class="shop-status"
+          id="shopStatus"
+          role="status"
+          aria-live="polite"
+        ></p>
       </div>
     </dialog>
 
-    <dialog class="arcade-dialog" id="adminDialog" aria-labelledby="adminDialogTitle">
+    <dialog
+      class="arcade-dialog admin-data-dialog"
+      id="adminDialog"
+      aria-labelledby="adminDialogTitle"
+    >
       <div class="dialog-shell">
-        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer">×</button>
-        <div class="dialog-heading">
-          <span class="platform-kicker">ADMINISTRATEUR LOCAL</span>
-          <h2 id="adminDialogTitle">Ajuster un solde de test</h2>
-        </div>
-        <p class="dialog-copy">
-          Ces opérations sont fictives et enregistrées dans l’historique du profil ciblé.
-        </p>
-        <form class="auth-form admin-form" id="adminForm">
-          <label>
-            Profil à modifier
-            <select name="targetProfile" id="adminTargetProfile" required></select>
-          </label>
-          <label>
-            Nombre de Coins
-            <input type="number" name="amount" min="0.01" step="0.01" inputmode="decimal" required />
-          </label>
-          <div class="auth-actions">
-            <button class="btn btn-primary" type="submit" name="direction" value="add">Ajouter</button>
-            <button class="btn btn-danger" type="submit" name="direction" value="remove">Retirer</button>
+        <button
+          class="dialog-close"
+          type="button"
+          data-close-dialog
+          aria-label="Fermer"
+        >
+          ×
+        </button>
+        <div class="dialog-heading admin-dialog-heading">
+          <div>
+            <span class="platform-kicker">ESPACE DE GESTION</span>
+            <h2 id="adminDialogTitle">Console administrateur</h2>
           </div>
-        </form>
-        <p class="admin-result" id="adminResult" role="status"></p>
+          <div class="admin-privilege-badge" title="Fonctions exclusives au profil ADMIN local">
+            <span aria-hidden="true">◆</span>
+            <p><strong>Accès privilégié</strong><small>Gestion et personnalisation exclusive</small></p>
+          </div>
+        </div>
+        <div class="admin-local-notice" role="note">
+          <span aria-hidden="true">💾</span>
+          <p>
+            <strong>Données de test locales</strong>
+            Les changements concernent uniquement ce navigateur. L’export JSON
+            sert de sauvegarde ; cette console ne modifie aucun fichier du dépôt.
+          </p>
+        </div>
+
+        <section class="admin-summary" aria-label="Résumé des données locales">
+          <article><strong id="adminSummaryProfiles">0</strong><span>Profils</span></article>
+          <article><strong id="adminSummaryCoins">0</strong><span>Coins</span></article>
+          <article><strong id="adminSummarySessions">0</strong><span>Parties</span></article>
+          <article><strong id="adminSummaryAudit">0</strong><span>Audits ouverts</span></article>
+          <article><strong id="adminSummaryFeedback">0</strong><span>Retours ouverts</span></article>
+        </section>
+
+        <nav class="admin-section-nav" aria-label="Sections administrateur" role="tablist">
+          <button id="adminDataTab" type="button" role="tab" aria-controls="adminDataWorkspace" aria-selected="true">Gestion des données</button>
+          <button id="adminAppearanceTab" type="button" role="tab" aria-controls="adminAppearancePanel" aria-selected="false">Personnalisation</button>
+        </nav>
+
+        <section id="adminDataWorkspace" role="tabpanel" aria-labelledby="adminDataTab">
+        <div class="admin-toolbar">
+          <label>
+            Données
+            <select id="adminDataset"></select>
+          </label>
+          <label class="admin-search-label">
+            Rechercher
+            <input
+              id="adminDataSearch"
+              type="search"
+              placeholder="Pseudo, jeu, statut…"
+              autocomplete="off"
+            />
+          </label>
+          <button class="btn btn-primary admin-add" id="adminAddRecord" type="button">
+            + Ajouter
+          </button>
+        </div>
+
+        <div class="admin-export-bar">
+          <div>
+            <button class="admin-secondary-button" id="adminExportJson" type="button">Exporter JSON</button>
+            <button class="admin-secondary-button" id="adminExportCsv" type="button">Exporter CSV</button>
+          </div>
+          <div class="admin-import-controls">
+            <label>
+              Import
+              <select id="adminImportMode">
+                <option value="merge">Fusionner</option>
+                <option value="replace">Remplacer tout</option>
+              </select>
+            </label>
+            <button class="admin-secondary-button" id="adminImportButton" type="button">Importer JSON / CSV</button>
+            <input id="adminImportFile" type="file" accept="application/json,text/csv,.json,.csv" hidden />
+          </div>
+        </div>
+
+        <div class="admin-dataset-meta">
+          <span id="adminDataCount">0 résultat</span>
+          <span id="adminDatasetMode" data-mode="read">Lecture seule</span>
+        </div>
+
+        <div class="admin-table-scroll" tabindex="0" aria-label="Tableau des données administrateur">
+          <table class="admin-data-table" id="adminDataTable">
+            <caption class="sr-only">Données locales Francis Arcade</caption>
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        </section>
+
+        <section class="admin-appearance-panel" id="adminAppearancePanel" role="tabpanel" aria-labelledby="adminAppearanceTab adminAppearanceTitle" hidden>
+          <div class="admin-appearance-heading">
+            <div>
+              <span>Préférences du profil ADMIN</span>
+              <h3 id="adminAppearanceTitle">Personnaliser la console</h3>
+              <p>Les changements sont prévisualisés ici avant d’être enregistrés dans ce profil local.</p>
+            </div>
+            <span class="admin-exclusive-chip">Exclusif ADMIN</span>
+          </div>
+
+          <fieldset class="admin-theme-fieldset">
+            <legend>Thème du dashboard</legend>
+            <div class="admin-theme-choices" id="adminThemeChoices"></div>
+          </fieldset>
+
+          <div class="admin-appearance-controls">
+            <label>Police de la console
+              <select id="adminFontChoice"></select>
+              <small id="adminFontDescription"></small>
+            </label>
+            <label>Intensité des effets
+              <select id="adminEffectsChoice"></select>
+              <small id="adminEffectsDescription"></small>
+            </label>
+          </div>
+
+          <div class="admin-preview-card" aria-label="Aperçu du thème sélectionné">
+            <div><span>Aperçu en direct</span><strong>Francis Arcade · Administration</strong></div>
+            <span class="admin-preview-action">Action principale</span>
+          </div>
+
+          <div class="admin-appearance-actions">
+            <button class="admin-secondary-button" id="adminAppearanceReset" type="button">Valeurs par défaut</button>
+            <div>
+              <button class="admin-secondary-button" id="adminAppearanceCancel" type="button">Annuler l’aperçu</button>
+              <button class="btn btn-primary" id="adminAppearanceApply" type="button">Appliquer à mon profil</button>
+            </div>
+          </div>
+          <p id="adminAppearanceStatus" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="admin-record-editor" id="adminRecordEditor" aria-labelledby="adminRecordEditorTitle" hidden>
+          <div class="admin-editor-heading">
+            <h3 id="adminRecordEditorTitle">Modifier</h3>
+            <button id="adminRecordCancel" type="button" aria-label="Fermer l’éditeur">×</button>
+          </div>
+          <form id="adminRecordForm">
+            <input type="hidden" name="recordId" />
+            <fieldset id="adminAuditFields" hidden>
+              <legend>Élément de l’audit global</legend>
+              <div class="admin-form-grid">
+                <label>Identifiant <input name="auditId" maxlength="40" placeholder="UX-002" required /></label>
+                <label>Catégorie <input name="category" maxlength="80" required /></label>
+                <label>Priorité
+                  <select name="priority">
+                    <option value="critique">Critique</option><option value="importante">Importante</option>
+                    <option value="confort">Confort</option><option value="future">Future</option>
+                  </select>
+                </label>
+                <label>Statut
+                  <select name="auditStatus">
+                    <option value="backlog">Backlog</option><option value="a_faire">À faire</option>
+                    <option value="en_cours">En cours</option><option value="bloque">Bloqué</option>
+                    <option value="termine">Terminé</option>
+                  </select>
+                </label>
+                <label class="admin-wide-field">Titre <input name="title" maxlength="160" required /></label>
+              </div>
+              <label>Objectif
+                <textarea name="objective" maxlength="600" rows="3" required></textarea>
+              </label>
+              <label>Checklist <small>Une ligne par contrôle</small>
+                <textarea name="checklist" maxlength="5000" rows="5"></textarea>
+              </label>
+            </fieldset>
+            <fieldset id="adminProfileFields">
+              <legend>Profil local</legend>
+              <label>Pseudo <input name="pseudo" minlength="2" maxlength="20" required /></label>
+              <label>Solde en Coins <input name="balanceCoins" type="number" min="0" step="0.01" inputmode="decimal" required /></label>
+            </fieldset>
+            <fieldset id="adminFeedbackFields" hidden>
+              <legend>Feedback / bug</legend>
+              <div class="admin-form-grid">
+                <label>Type
+                  <select name="type">
+                    <option value="bug">Bug</option><option value="suggestion">Suggestion</option>
+                    <option value="problème visuel">Problème visuel</option><option value="jeu">Jeu</option>
+                    <option value="compte">Compte</option><option value="autre">Autre</option>
+                  </select>
+                </label>
+                <label>Urgence
+                  <select name="urgency">
+                    <option value="faible">Faible</option><option value="normale">Normale</option>
+                    <option value="élevée">Élevée</option><option value="critique">Critique</option>
+                  </select>
+                </label>
+                <label>Statut
+                  <select name="status">
+                    <option value="nouveau">Nouveau</option><option value="à vérifier">À vérifier</option>
+                    <option value="en cours">En cours</option><option value="résolu">Résolu</option>
+                  </select>
+                </label>
+                <label>Pseudo <input name="reporterPseudo" maxlength="20" /></label>
+                <label>Jeu / zone <input name="gameTitle" maxlength="120" /></label>
+                <label>Clé du jeu <input name="gameKey" maxlength="80" /></label>
+              </div>
+              <label>Description
+                <textarea name="description" minlength="10" maxlength="2000" rows="4" required></textarea>
+              </label>
+            </fieldset>
+            <div class="admin-editor-actions">
+              <button class="admin-secondary-button" id="adminRecordCancelBottom" type="button">Annuler</button>
+              <button class="btn btn-primary" type="submit">Enregistrer localement</button>
+            </div>
+          </form>
+        </section>
+
+        <p class="admin-result" id="adminDataStatus" role="status" aria-live="polite"></p>
       </div>
     </dialog>
 
-    <aside class="pwa-prompt" id="pwaInstallPrompt" aria-labelledby="pwaInstallTitle" hidden>
+    <aside
+      class="pwa-prompt"
+      id="pwaInstallPrompt"
+      aria-labelledby="pwaInstallTitle"
+      hidden
+    >
       <span class="pwa-prompt-icon" aria-hidden="true">📲</span>
       <div class="pwa-prompt-copy">
         <strong id="pwaInstallTitle">Installer l’Arcade</strong>
         <p>Installe l’application pour accéder plus rapidement à tes jeux.</p>
         <p class="pwa-ios-help" id="pwaInstallIosHelp" hidden>
-          Dans Safari, touche Partager puis <strong>Sur l’écran d’accueil</strong>.
+          Dans Safari, touche Partager puis
+          <strong>Sur l’écran d’accueil</strong>.
         </p>
       </div>
       <div class="pwa-prompt-actions">
-        <button class="btn btn-primary pwa-install-button" id="pwaInstallButton" type="button">Installer</button>
-        <button class="pwa-later-button" id="pwaInstallLater" type="button">Plus tard</button>
+        <button
+          class="btn btn-primary pwa-install-button"
+          id="pwaInstallButton"
+          type="button"
+        >
+          Installer
+        </button>
+        <button class="pwa-later-button" id="pwaInstallLater" type="button">
+          Plus tard
+        </button>
       </div>
     </aside>
 
-    <aside class="pwa-prompt pwa-update-prompt" id="pwaUpdatePrompt" aria-labelledby="pwaUpdateTitle" hidden>
+    <aside
+      class="pwa-prompt pwa-update-prompt"
+      id="pwaUpdatePrompt"
+      aria-labelledby="pwaUpdateTitle"
+      hidden
+    >
       <span class="pwa-prompt-icon" aria-hidden="true">✨</span>
       <div class="pwa-prompt-copy">
         <strong id="pwaUpdateTitle">Mise à jour disponible</strong>
         <p>Une nouvelle version de l’Arcade est prête.</p>
       </div>
       <div class="pwa-prompt-actions">
-        <button class="btn btn-primary pwa-install-button" id="pwaUpdateButton" type="button">Mettre à jour</button>
+        <button
+          class="btn btn-primary pwa-install-button"
+          id="pwaUpdateButton"
+          type="button"
+        >
+          Mettre à jour
+        </button>
       </div>
     </aside>
 
@@ -1440,6 +2199,7 @@
     <script src="js/core/arcade-local-store.js"></script>
     <script src="js/core/arcade-stats.js"></script>
     <script src="js/core/arcade-feedback.js"></script>
+    <script src="js/arcade-admin-loader.js"></script>
     <script src="js/core/arcade-platform.js"></script>
     <script src="js/core/arcade-shop.js"></script>
     <script src="js/core/arcade-game-sdk.js"></script>

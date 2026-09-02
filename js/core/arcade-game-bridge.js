@@ -3,11 +3,13 @@
 
   const store = global.ArcadeLocalStore;
   const config = global.ARCADE_CONFIG || {};
+  const bridgeScriptUrl = document.currentScript?.src || "";
   const params = new URLSearchParams(global.location.search);
   const sessionId = params.get("arcadeSession");
   let session = sessionId && store ? store.getSession(sessionId) : null;
   let blocked = false;
   let outcomeObserver = null;
+  const stateListeners = new Set();
   const originalAlert = global.alert?.bind(global);
 
   const terminalStates = new Set(["won", "lost", "abandoned"]);
@@ -62,6 +64,45 @@
     hud.querySelector("span").textContent = `${coins(profile?.balanceUnits)} 🪙`;
   }
 
+  function sessionSnapshot() {
+    if (!session) return null;
+    return {
+      ...session,
+      metadata: { ...(session.metadata || {}) },
+    };
+  }
+
+  function announceState(previousState, source = "bridge") {
+    const detail = {
+      previousState: previousState || null,
+      state: session?.state || null,
+      session: sessionSnapshot(),
+      source,
+    };
+    stateListeners.forEach((listener) => listener(detail));
+    global.dispatchEvent?.(new CustomEvent("arcade:session-state", { detail }));
+  }
+
+  function subscribe(listener) {
+    if (typeof listener !== "function") return () => {};
+    stateListeners.add(listener);
+    listener({ previousState: null, state: session?.state || null, session: sessionSnapshot(), source: "subscribe" });
+    return () => stateListeners.delete(listener);
+  }
+
+  function replay() {
+    if (!session || !terminalStates.has(session.state)) return null;
+    const nextSession = store.createSession({
+      gameKey: session.gameKey,
+      title: session.title,
+      url: session.url || global.location.pathname,
+    });
+    const destination = new URL(global.location.href);
+    destination.searchParams.set("arcadeSession", nextSession.id);
+    global.location.assign(destination.href);
+    return nextSession;
+  }
+
   function showBlocker(title, message) {
     if (document.getElementById("arcadeSessionBlocker")) return;
     blocked = true;
@@ -77,22 +118,19 @@
     heading.textContent = title;
     copy.textContent = message;
     if (session && terminalStates.has(session.state)) {
-      const replay = document.createElement("button");
-      replay.type = "button";
-      replay.className = "arcade-session-replay";
-      replay.textContent = "Rejouer";
-      replay.addEventListener("click", () => {
+      const replayButton = document.createElement("button");
+      replayButton.type = "button";
+      replayButton.className = "arcade-session-replay";
+      replayButton.textContent = "Rejouer";
+      replayButton.addEventListener("click", () => {
         try {
-          const nextSession = store.createSession({ gameKey: session.gameKey, title: session.title, url: session.url || global.location.pathname });
-          const destination = new URL(global.location.href);
-          destination.searchParams.set("arcadeSession", nextSession.id);
-          global.location.assign(destination.href);
+          replay();
         } catch (error) {
-          replay.disabled = true;
+          replayButton.disabled = true;
           copy.textContent = error.message === "insufficient_balance" ? "Solde insuffisant pour lancer une nouvelle partie." : "Impossible de créer une nouvelle session pour le moment.";
         }
       });
-      actions.appendChild(replay);
+      actions.appendChild(replayButton);
     }
     link.href = new URL("../../index.html", global.location.href).href;
     link.textContent = "Accueil arcade";
@@ -112,15 +150,18 @@
     if (!session || blocked) return null;
     if (session.state === "started") return session;
     if (terminalStates.has(session.state)) return session;
+    const previousState = session.state;
     try {
       session = store.startSession(session.id, metadata);
       renderHud();
+      announceState(previousState, metadata.source || "game_start");
       return session;
     } catch (error) {
       if (session.state === "created") {
         session = store.finishSession(session.id, "abandoned", { reason: error.message });
       }
       renderHud();
+      announceState(previousState, "start_failed");
       showBlocker("Partie non démarrée", error.message === "insufficient_balance" ? "Votre solde est insuffisant. Aucun Coin n’a été débité." : "Cette session ne peut plus être démarrée.");
       return null;
     }
@@ -132,9 +173,11 @@
       if (!start({ outcomeReportedAtStart: true })) return session;
     }
     try {
+      const previousState = session.state;
       session = store.finishSession(session.id, outcome, metadata);
       renderHud();
       outcomeObserver?.disconnect();
+      announceState(previousState, metadata.source || `game_${outcome}`);
       return session;
     } catch (_) {
       return updateSession();
@@ -269,6 +312,7 @@
     renderHud();
     bindLifecycle();
     observeOutcomes();
+    announceState(null, "session_ready");
     if (originalAlert) {
       global.alert = (message) => {
         reportFromText(message);
@@ -289,7 +333,32 @@
     completeByScore,
     completeByAccuracy,
     reportFromText,
+    replay,
+    subscribe,
+    get snapshot() { return sessionSnapshot(); },
   });
+
+  function loadSharedScript(filename) {
+    if (!bridgeScriptUrl) return Promise.resolve(null);
+    const source = new URL(filename, bridgeScriptUrl).href;
+    const existing = [...document.scripts].find((script) => script.src === source);
+    if (existing) return Promise.resolve(existing);
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = source;
+      script.onload = () => resolve(script);
+      script.onerror = () => resolve(null);
+      document.head.appendChild(script);
+    });
+  }
+
+  async function loadSharedExperience() {
+    await loadSharedScript("arcade-game-config.js");
+    await loadSharedScript("arcade-game-preferences.js");
+    if (document.body?.dataset.arcadeShell === "true") await loadSharedScript("arcade-game-shell.js");
+  }
+
+  loadSharedExperience();
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
   else init();

@@ -1,0 +1,860 @@
+{
+  "project": {
+    "name": "Francis Arcade",
+    "version": "1.1",
+    "type": "WebApp / PWA Arcade",
+    "objective": "Faire évoluer Francis Arcade vers une plateforme arcade qualitative, cohérente, responsive, ludique, maintenable, évolutive et prête pour une mise en ligne publique.",
+    "main_branch": "main"
+  },
+  "statuses": [
+    "backlog",
+    "a_faire",
+    "en_cours",
+    "bloque",
+    "termine"
+  ],
+  "priorities": [
+    "critique",
+    "importante",
+    "confort",
+    "future"
+  ],
+  "labels": [
+    {
+      "id": "critical",
+      "name": "Critique",
+      "icon": "🔴"
+    },
+    {
+      "id": "important",
+      "name": "Important",
+      "icon": "🟠"
+    },
+    {
+      "id": "uxui",
+      "name": "UX/UI",
+      "icon": "🟡"
+    },
+    {
+      "id": "improvement",
+      "name": "Amélioration",
+      "icon": "🟢"
+    },
+    {
+      "id": "mobile_pwa",
+      "name": "Mobile/PWA",
+      "icon": "🔵"
+    },
+    {
+      "id": "backend",
+      "name": "Backend",
+      "icon": "🟣"
+    },
+    {
+      "id": "coins",
+      "name": "Coins/Économie",
+      "icon": "🪙"
+    },
+    {
+      "id": "games",
+      "name": "Jeux",
+      "icon": "🎮"
+    },
+    {
+      "id": "future",
+      "name": "Future",
+      "icon": "🔮"
+    }
+  ],
+  "audit_items": [
+    {
+      "id": "UX-001",
+      "category": "UX/UI",
+      "title": "Audit UX/UI globale",
+      "objective": "Vérifier si le site donne une impression réellement professionnelle.",
+      "priority": "importante",
+      "status": "a_faire",
+      "checklist": [
+        "Navigation claire",
+        "Hiérarchie visuelle",
+        "Cohérence des boutons",
+        "Menus et modales",
+        "Lisibilité des textes",
+        "Surcharge visuelle éventuelle",
+        "Cohérence des couleurs",
+        "Cohérence entre index et jeux",
+        "Animations utiles et non gênantes",
+        "Première impression utilisateur"
+      ]
+    },
+    {
+      "id": "RESP-001",
+      "category": "Responsive",
+      "title": "Desktop / Tablette / Mobile",
+      "objective": "Garantir une expérience cohérente sur tous les écrans.",
+      "priority": "critique",
+      "status": "a_faire",
+      "checklist": [
+        "Desktop",
+        "Tablette",
+        "Smartphone",
+        "Portrait / paysage",
+        "Tailles des boutons",
+        "Zones tactiles",
+        "Scroll horizontal involontaire",
+        "Modales trop grandes",
+        "Textes trop petits",
+        "Grilles de jeux",
+        "Menus mobiles",
+        "Interactions tactiles"
+      ]
+    },
+    {
+      "id": "ACC-001",
+      "category": "Accessibilité",
+      "title": "Accessibilité générale",
+      "objective": "Rendre le site lisible et utilisable par davantage d’utilisateurs.",
+      "priority": "importante",
+      "status": "a_faire",
+      "checklist": [
+        "Contraste",
+        "Focus clavier",
+        "Navigation clavier",
+        "Labels de formulaires",
+        "Tailles de texte",
+        "États hover / focus / disabled",
+        "Utilisation sans son",
+        "Réduction des animations"
+      ]
+    },
+    {
+      "id": "PERF-001",
+      "category": "Performance",
+      "title": "Performance globale",
+      "objective": "Réduire les lenteurs et ressources inutiles.",
+      "priority": "importante",
+      "status": "a_faire",
+      "checklist": [
+        "Poids des images",
+        "Scripts inutiles",
+        "CSS dupliqué",
+        "Temps de chargement",
+        "Animations coûteuses",
+        "Cache",
+        "Service Worker",
+        "PWA",
+        "Erreurs console",
+        "Ressources inutilisées"
+      ]
+    },
+    {
+      "id": "ARCH-001",
+      "category": "Architecture",
+      "title": "Structure HTML / CSS / JS",
+      "objective": "Rendre le projet plus maintenable.",
+      "priority": "importante",
+      "status": "a_faire",
+      "checklist": [
+        "Structure des dossiers",
+        "Séparation des responsabilités",
+        "Fichiers trop volumineux",
+        "Code dupliqué",
+        "Fonctions réutilisables",
+        "Configuration centralisée",
+        "Chemins cassés",
+        "Imports incorrects",
+        "Anciennes ressources inutilisées"
+      ]
+    },
+    {
+      "id": "BUG-001",
+      "category": "Qualité",
+      "title": "Bugs bloquants",
+      "objective": "Supprimer les problèmes bloquants avant production.",
+      "priority": "critique",
+      "status": "a_faire",
+      "checklist": [
+        "Erreurs JavaScript",
+        "Erreurs console",
+        "Jeux impossibles à lancer",
+        "Navigation cassée",
+        "Boutons sans action",
+        "Ressources 404",
+        "Sauvegardes corrompues",
+        "Incohérences mobile / desktop"
+      ]
+    },
+    {
+      "id": "GAME-001",
+      "category": "Jeux",
+      "title": "Gestion réelle des parties",
+      "objective": "Distinguer précisément victoire, défaite, abandon et partie non commencée.",
+      "priority": "critique",
+      "status": "a_faire",
+      "state_model": [
+        "created",
+        "started",
+        "won",
+        "lost",
+        "abandoned"
+      ],
+      "checklist": [
+        "Détection du début réel",
+        "Victoire",
+        "Défaite",
+        "Abandon",
+        "Fermeture du jeu",
+        "Retour à l’index",
+        "Rafraîchissement",
+        "Remboursement éventuel",
+        "Anti-triche Coins"
+      ]
+    },
+    {
+      "id": "COIN-001",
+      "category": "Coins",
+      "title": "Portefeuille Coins",
+      "objective": "Garantir un solde cohérent sur l’ensemble de l’arcade.",
+      "priority": "critique",
+      "status": "a_faire",
+      "checklist": [
+        "Solde",
+        "Coût des parties",
+        "Récompenses",
+        "Historique",
+        "Victoire / défaite",
+        "Abandon",
+        "Stockage local",
+        "Protection contre modification manuelle",
+        "Configuration centralisée",
+        "Préparation serveur / Supabase"
+      ]
+    },
+    {
+      "id": "SEC-001",
+      "category": "Sécurité",
+      "title": "Sécurité avant production",
+      "objective": "Éviter les fuites de clés et comportements dangereux.",
+      "priority": "critique",
+      "status": "a_faire",
+      "checklist": [
+        "Aucune Private Key dans le frontend",
+        "EmailJS correctement configuré",
+        "Validation des formulaires",
+        "Nettoyage des entrées utilisateur",
+        "Gestion du pseudo",
+        "Stockage local",
+        "Future authentification",
+        "Règles Supabase"
+      ]
+    },
+    {
+      "id": "CAT-001",
+      "category": "Catalogue",
+      "title": "Recherche, filtres et tri",
+      "objective": "Faciliter la découverte des jeux.",
+      "priority": "importante",
+      "status": "a_faire",
+      "checklist": [
+        "Barre de recherche",
+        "Filtres",
+        "Catégories",
+        "Difficulté",
+        "Tri",
+        "Popularité",
+        "Jeux récents",
+        "Cartes lisibles",
+        "Retour rapide vers l’arcade"
+      ],
+      "suggested_categories": [
+        "arcade",
+        "reflexe",
+        "memoire",
+        "logique",
+        "enigme",
+        "strategie",
+        "des",
+        "rapidite"
+      ]
+    },
+    {
+      "id": "STAT-001",
+      "category": "Statistiques",
+      "title": "Statistiques par jeu et catégorie",
+      "objective": "Mesurer usage, difficulté et engagement.",
+      "priority": "importante",
+      "status": "a_faire",
+      "metrics": [
+        "parties",
+        "victoires",
+        "defaites",
+        "abandons",
+        "taux_reussite",
+        "score_moyen",
+        "meilleur_score",
+        "temps_moyen",
+        "popularite",
+        "difficulte_observee"
+      ]
+    },
+    {
+      "id": "LEAD-001",
+      "category": "Leaderboard",
+      "title": "Classements",
+      "objective": "Ajouter des classements cohérents et lisibles.",
+      "priority": "importante",
+      "status": "a_faire",
+      "checklist": [
+        "Classement global",
+        "Classement par jeu",
+        "Meilleur score",
+        "Pseudo",
+        "Statistiques",
+        "Période éventuelle",
+        "Popup / modale",
+        "Responsive mobile",
+        "Préparation serveur"
+      ]
+    },
+    {
+      "id": "SHOP-001",
+      "category": "Boutique",
+      "title": "Boutique Arcade",
+      "objective": "Donner une utilité aux Coins sans pay-to-win.",
+      "priority": "importante",
+      "status": "a_faire",
+      "item_types": [
+        "theme",
+        "skin",
+        "avatar",
+        "frame",
+        "effect",
+        "sound",
+        "badge"
+      ],
+      "checklist": [
+        "Prix",
+        "Contrôle du solde",
+        "Achat",
+        "Inventaire",
+        "Objet équipé",
+        "Anti-doublon",
+        "Changement gratuit",
+        "Aperçu avant achat"
+      ]
+    },
+    {
+      "id": "FEED-001",
+      "category": "Feedback",
+      "title": "Signalement et avis utilisateur",
+      "objective": "Collecter et classer les problèmes et suggestions.",
+      "priority": "importante",
+      "status": "a_faire",
+      "fields": [
+        "pseudo",
+        "type",
+        "jeu",
+        "urgence",
+        "description",
+        "email_optionnel"
+      ],
+      "feedback_types": [
+        "bug",
+        "suggestion",
+        "ui",
+        "jeu",
+        "profil",
+        "coins",
+        "boutique",
+        "autre"
+      ],
+      "workflow": [
+        "nouveau",
+        "a_verifier",
+        "en_cours",
+        "resolu"
+      ],
+      "delivery": {
+        "email_provider": "EmailJS",
+        "local_fallback": true
+      }
+    },
+    {
+      "id": "HOME-001",
+      "category": "UX/UI",
+      "title": "Accueil / Index",
+      "objective": "Clarifier l’entrée dans Francis Arcade.",
+      "priority": "importante",
+      "status": "a_faire",
+      "checklist": [
+        "CTA principal",
+        "Recherche",
+        "Filtres",
+        "Coins visibles",
+        "Pseudo / profil",
+        "Boutique",
+        "Paramètres",
+        "Feedback",
+        "Installation PWA",
+        "Cohérence néon",
+        "Responsive"
+      ]
+    },
+    {
+      "id": "MENU-001",
+      "category": "Jeux",
+      "title": "Standardiser les menus des jeux",
+      "objective": "Créer une structure cohérente entre les jeux.",
+      "priority": "confort",
+      "status": "a_faire",
+      "menu_items": [
+        "Jouer",
+        "Leaderboard",
+        "Paramètres",
+        "Règles",
+        "Retour Arcade"
+      ]
+    },
+    {
+      "id": "SET-001",
+      "category": "Paramètres",
+      "title": "Paramètres utilisateurs",
+      "objective": "Centraliser les préférences du joueur.",
+      "priority": "confort",
+      "status": "a_faire",
+      "settings": [
+        "son",
+        "musique",
+        "vibration",
+        "volume",
+        "animations",
+        "theme",
+        "reinitialisation"
+      ]
+    },
+    {
+      "id": "STATE-001",
+      "category": "UX/UI",
+      "title": "États visuels",
+      "objective": "Uniformiser les réactions de l’interface.",
+      "priority": "confort",
+      "status": "a_faire",
+      "states": [
+        "hover",
+        "focus",
+        "active",
+        "disabled",
+        "loading",
+        "success",
+        "error",
+        "locked",
+        "purchased",
+        "equipped"
+      ]
+    },
+    {
+      "id": "MOB-001",
+      "category": "Mobile",
+      "title": "Expérience mobile",
+      "objective": "Rendre les jeux réellement agréables au tactile.",
+      "priority": "critique",
+      "status": "a_faire",
+      "checklist": [
+        "Commandes tactiles",
+        "Boutons suffisamment grands",
+        "Pas de hover indispensable",
+        "Modales mobiles",
+        "Clavier virtuel",
+        "Scrolling",
+        "Jeux petits écrans",
+        "Orientation",
+        "Vibration si supportée"
+      ]
+    },
+    {
+      "id": "PWA-001",
+      "category": "PWA",
+      "title": "Installation PWA",
+      "objective": "Fiabiliser l’installation desktop et mobile.",
+      "priority": "importante",
+      "status": "a_faire",
+      "checklist": [
+        "Manifest",
+        "Favicon",
+        "Icônes 192x192",
+        "Icônes 512x512",
+        "Maskable",
+        "Service Worker",
+        "Cache",
+        "Standalone",
+        "Installation PC",
+        "Android",
+        "iOS"
+      ]
+    },
+    {
+      "id": "PWA-002",
+      "category": "PWA",
+      "title": "Proposition d’installation",
+      "objective": "Ne pas harceler l’utilisateur.",
+      "priority": "confort",
+      "status": "a_faire",
+      "rules": [
+        "Ne pas afficher immédiatement",
+        "Bouton Installer",
+        "Bouton Plus tard",
+        "Mémoriser le refus",
+        "Délai avant nouvelle proposition",
+        "Augmenter éventuellement le délai après plusieurs refus",
+        "Ne plus proposer si déjà installée"
+      ]
+    },
+    {
+      "id": "PROF-001",
+      "category": "Comptes",
+      "title": "Profil fictif actuel",
+      "objective": "Structurer le profil local avant l’auth complète.",
+      "priority": "importante",
+      "status": "a_faire",
+      "fields": [
+        "pseudo",
+        "coins",
+        "inventaire",
+        "statistiques",
+        "parametres",
+        "historique"
+      ],
+      "storage": "localStorage"
+    },
+    {
+      "id": "AUTH-001",
+      "category": "Comptes",
+      "title": "Futur compte utilisateur",
+      "objective": "Préparer une authentification complète.",
+      "priority": "future",
+      "status": "backlog",
+      "checklist": [
+        "Inscription",
+        "Connexion",
+        "Synchronisation",
+        "Récupération profil",
+        "Multi-appareils",
+        "Statistiques globales",
+        "Inventaire serveur",
+        "Sécurité"
+      ]
+    },
+    {
+      "id": "ADS-001",
+      "category": "Monétisation",
+      "title": "Rewarded Ads",
+      "objective": "Permettre de gagner des Coins sans créer un paywall.",
+      "priority": "future",
+      "status": "backlog",
+      "checklist": [
+        "Facultatif",
+        "Récompense claire",
+        "Limite quotidienne",
+        "Validation de la pub",
+        "Anti-farming",
+        "Économie équilibrée"
+      ]
+    },
+    {
+      "id": "PAY-001",
+      "category": "Monétisation",
+      "title": "PayPal / Soutien",
+      "objective": "Ajouter un soutien volontaire séparé des Coins.",
+      "priority": "future",
+      "status": "backlog",
+      "checklist": [
+        "Bouton Faire un don",
+        "Section Soutenir le projet",
+        "Interface discrète",
+        "Aucune obligation pour jouer"
+      ]
+    },
+    {
+      "id": "ECO-001",
+      "category": "Économie",
+      "title": "Équilibrage Coins",
+      "objective": "Créer une boucle agréable et potentiellement rentable.",
+      "priority": "importante",
+      "status": "a_faire",
+      "parameters": [
+        "coins_depart",
+        "cout_partie",
+        "recompense_victoire",
+        "perte_defaite",
+        "recompense_pub",
+        "bonus_quotidien",
+        "prix_boutique"
+      ],
+      "principle": "Un bon joueur doit pouvoir continuer à jouer longtemps sans être obligé de regarder des pubs."
+    },
+    {
+      "id": "NOTIF-001",
+      "category": "Confort",
+      "title": "Notifications",
+      "objective": "Donner un feedback clair sans surcharge.",
+      "priority": "confort",
+      "status": "backlog",
+      "types": [
+        "achat_reussi",
+        "coins_gagnes",
+        "record_battu",
+        "succes",
+        "erreur",
+        "installation",
+        "feedback_envoye"
+      ]
+    },
+    {
+      "id": "PROG-001",
+      "category": "Progression",
+      "title": "Progression joueur",
+      "objective": "Créer de la rétention sans pay-to-win.",
+      "priority": "future",
+      "status": "backlog",
+      "features": [
+        "niveau",
+        "xp",
+        "badges",
+        "succes",
+        "series_victoires",
+        "defis_quotidiens",
+        "stats_personnelles"
+      ]
+    },
+    {
+      "id": "DISC-001",
+      "category": "Découverte",
+      "title": "Découverte de jeux",
+      "objective": "Aider l’utilisateur à choisir rapidement.",
+      "priority": "confort",
+      "status": "backlog",
+      "features": [
+        "recommande",
+        "jeu_aleatoire",
+        "tendance",
+        "nouveau",
+        "difficile",
+        "rapide",
+        "je_ne_sais_pas_quoi_jouer"
+      ]
+    },
+    {
+      "id": "ADMIN-001",
+      "category": "Admin",
+      "title": "Espace administrateur",
+      "objective": "Centraliser supervision, statistiques et feedback.",
+      "priority": "future",
+      "status": "backlog",
+      "modules": [
+        "joueurs",
+        "statistiques",
+        "bugs",
+        "feedback",
+        "jeux",
+        "coins",
+        "boutique",
+        "popularite",
+        "abandons",
+        "erreurs"
+      ],
+      "planned_actions": [
+        "view",
+        "search",
+        "filter",
+        "create",
+        "edit",
+        "delete",
+        "export_json",
+        "export_csv",
+        "import"
+      ]
+    },
+    {
+      "id": "SUPA-001",
+      "category": "Backend",
+      "title": "Synchronisation Supabase",
+      "objective": "Passer progressivement du local au serveur.",
+      "priority": "future",
+      "status": "backlog",
+      "modules": [
+        "auth",
+        "profils",
+        "coins",
+        "transactions",
+        "scores",
+        "statistiques",
+        "feedback",
+        "boutique",
+        "inventaire"
+      ]
+    },
+    {
+      "id": "FUT-001",
+      "category": "Roadmap",
+      "title": "Nouveaux systèmes",
+      "objective": "Préparer les versions futures.",
+      "priority": "future",
+      "status": "backlog",
+      "features": [
+        "defis",
+        "tournois",
+        "evenements",
+        "recompenses_quotidiennes",
+        "classements_saisonniers",
+        "collections",
+        "nouveaux_jeux"
+      ]
+    }
+  ],
+  "user_journeys": [
+    {
+      "id": "journey_new",
+      "name": "Nouveau joueur",
+      "steps": [
+        "Arrivée",
+        "Comprendre le site",
+        "Choisir un pseudo",
+        "Trouver un jeu",
+        "Jouer",
+        "Comprendre les Coins",
+        "Retour Arcade"
+      ],
+      "goal": "Chaque étape doit être évidente sans explication externe."
+    },
+    {
+      "id": "journey_regular",
+      "name": "Joueur régulier",
+      "steps": [
+        "Retour",
+        "Voir profil / Coins",
+        "Voir statistiques",
+        "Choisir un jeu",
+        "Jouer rapidement"
+      ],
+      "goal": "Réduire les clics inutiles."
+    },
+    {
+      "id": "journey_mobile",
+      "name": "Joueur mobile",
+      "steps": [
+        "Site",
+        "Installation PWA éventuelle",
+        "Jeu tactile",
+        "Fin de partie",
+        "Retour Arcade"
+      ],
+      "goal": "Aucune friction mobile."
+    },
+    {
+      "id": "journey_no_coins",
+      "name": "Joueur sans Coins",
+      "steps": [
+        "Solde à 0",
+        "Comprendre pourquoi",
+        "Récupérer des Coins",
+        "Rejouer"
+      ],
+      "goal": "Éviter toute sensation de blocage ou de paywall agressif."
+    }
+  ],
+  "roadmap": [
+    {
+      "horizon": "avant_mise_en_ligne",
+      "item": "Audit bugs bloquants",
+      "priority": "critique"
+    },
+    {
+      "horizon": "avant_mise_en_ligne",
+      "item": "Responsive et tactile",
+      "priority": "critique"
+    },
+    {
+      "horizon": "avant_mise_en_ligne",
+      "item": "Gestion fiable des parties et Coins",
+      "priority": "critique"
+    },
+    {
+      "horizon": "v1.1_plus",
+      "item": "Recherche, filtres et difficulté",
+      "priority": "importante"
+    },
+    {
+      "horizon": "v1.1_plus",
+      "item": "Statistiques jeux / catégories",
+      "priority": "importante"
+    },
+    {
+      "horizon": "v1.1_plus",
+      "item": "Boutique cosmétique",
+      "priority": "importante"
+    },
+    {
+      "horizon": "v1.2",
+      "item": "Comptes utilisateurs complets",
+      "priority": "future"
+    },
+    {
+      "horizon": "v1.2",
+      "item": "Rewarded Ads",
+      "priority": "future"
+    },
+    {
+      "horizon": "v1.2",
+      "item": "PayPal",
+      "priority": "future"
+    },
+    {
+      "horizon": "v1.3",
+      "item": "Dashboard administrateur",
+      "priority": "future"
+    },
+    {
+      "horizon": "v1.3",
+      "item": "Défis, succès et tournois",
+      "priority": "future"
+    }
+  ],
+  "admin_data_strategy": {
+    "current": {
+      "storage": "localStorage",
+      "admin_profile_exists": true,
+      "single_deployment": true,
+      "branch": "main"
+    },
+    "short_term": {
+      "formats": [
+        "json",
+        "csv"
+      ],
+      "actions": [
+        "view",
+        "search",
+        "filter",
+        "create",
+        "edit",
+        "delete",
+        "export",
+        "import"
+      ],
+      "scope": [
+        "audit",
+        "feedback",
+        "jeux",
+        "coins",
+        "statistiques",
+        "boutique",
+        "leaderboard"
+      ]
+    },
+    "future": {
+      "backend": "Supabase / base serveur existante",
+      "reason": "Obtenir un CRUD persistant, multi-appareils et sécurisé."
+    }
+  },
+  "product_rule": "À chaque nouvelle fonctionnalité, se demander : est-ce que cela rend réellement Francis Arcade plus agréable pour le joueur, ou est-ce que cela ajoute simplement de la complexité ?"
+}

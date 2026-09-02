@@ -24,7 +24,7 @@ for (const size of [192, 512]) {
 
 const home = fs.readFileSync(path.join(root, "index.html"), "utf8");
 assert.match(home, /rel="manifest" href="manifest\.webmanifest"/);
-assert.match(home, /rel="icon" type="image\/png" href="assets\/icons\/arcade-favicon\.png"/);
+assert.match(home, /rel="icon" type="image\/png" href="assets\/icons\/arcade-icon-v2-192\.png"/);
 assert.match(home, /js\/pwa-config\.js/);
 assert.match(home, /js\/pwa-install\.js/);
 
@@ -35,5 +35,16 @@ const worker = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
 assert.match(worker, /APP_SHELL/);
 assert.match(worker, /SKIP_WAITING/);
 assert.match(worker, /staleWhileRevalidate/);
+assert.match(worker, /arcade-admin-loader\.js/);
+assert.doesNotMatch(worker, /arcade-favicon\.png/, "Le favicon source lourd ne doit pas être précaché");
+assert.doesNotMatch(worker, /francis_arcade_audit_global/, "Les données ADMIN doivent être chargées à la demande");
+for (const sharedAsset of [
+  "arcade-game-config.js",
+  "arcade-game-preferences.js",
+  "arcade-game-shell.js",
+  "arcade-game-shell.css",
+]) {
+  assert.match(worker, new RegExp(sharedAsset.replace(".", "\\.")), `${sharedAsset} doit être disponible hors ligne`);
+}
 
 console.log("Configuration PWA vérifiée : OK");

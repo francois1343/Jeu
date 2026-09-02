@@ -417,7 +417,7 @@
             <div class="value" id="menu-highscore">0</div>
           </div>
           <div class="stat-box">
-            <div class="label">Crédits</div>
+            <div class="label">Jetons du jeu</div>
             <div class="value" id="menu-coins">0</div>
           </div>
         </div>
@@ -478,7 +478,7 @@
             <div class="value" id="go-distance">0m</div>
           </div>
           <div class="go-stat">
-            <div class="label">Pièces</div>
+            <div class="label">Jetons</div>
             <div class="value" id="go-coins">+0</div>
           </div>
           <div class="go-stat">
@@ -1308,7 +1308,10 @@
 
           // Données sauvegardées
           this.highScore = parseInt(localStorage.getItem("crossy_high")) || 0;
-          this.totalCoins = parseInt(localStorage.getItem("crossy_coins")) || 0;
+          // Monnaie interne de Crossy, distincte des Coins Francis Arcade.
+          this.totalCoins = parseInt(
+            localStorage.getItem("crossy_tokens") || localStorage.getItem("crossy_coins"),
+          ) || 0;
           this.unlockedChars = JSON.parse(
             localStorage.getItem("crossy_chars"),
           ) || ["chicken"];
@@ -1816,7 +1819,7 @@
 
         saveData() {
           localStorage.setItem("crossy_high", this.highScore);
-          localStorage.setItem("crossy_coins", this.totalCoins);
+          localStorage.setItem("crossy_tokens", this.totalCoins);
           localStorage.setItem(
             "crossy_chars",
             JSON.stringify(this.unlockedChars),

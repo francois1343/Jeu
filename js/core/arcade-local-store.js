@@ -474,6 +474,202 @@
     return clone(target);
   }
 
+  function requireLocalAdmin(state = readState()) {
+    const admin = state.profiles[state.activeProfileId];
+    if (!admin?.isAdmin || !isAdminPseudo(admin.pseudo)) throw new Error("admin_required");
+    return admin;
+  }
+
+  function normalizeAdminVisualPreferences(value = {}) {
+    const visual = global.ARCADE_ADMIN_CONFIG || {};
+    const defaults = visual.defaults || { themeId: "executive", fontId: "professional", effectsId: "balanced" };
+    const themeIds = new Set((visual.themes || []).map((item) => item.id));
+    const fontIds = new Set((visual.fonts || []).map((item) => item.id));
+    const effectsIds = new Set((visual.effects || []).map((item) => item.id));
+    return {
+      themeId: themeIds.has(value.themeId) ? value.themeId : defaults.themeId,
+      fontId: fontIds.has(value.fontId) ? value.fontId : defaults.fontId,
+      effectsId: effectsIds.has(value.effectsId) ? value.effectsId : defaults.effectsId,
+    };
+  }
+
+  function adminGetVisualPreferences() {
+    const state = readState();
+    const admin = requireLocalAdmin(state);
+    return normalizeAdminVisualPreferences(admin.adminVisualPreferences);
+  }
+
+  function adminSaveVisualPreferences(preferences = {}) {
+    const state = readState();
+    const admin = requireLocalAdmin(state);
+    admin.adminVisualPreferences = normalizeAdminVisualPreferences(preferences);
+    admin.updatedAt = new Date().toISOString();
+    writeState(state);
+    return clone(admin.adminVisualPreferences);
+  }
+
+  function adminSaveProfile(input = {}) {
+    const state = readState();
+    const admin = requireLocalAdmin(state);
+    const previousId = String(input.id || "");
+    const pseudo = normalizePseudo(input.pseudo);
+    if (!validatePseudo(pseudo)) throw new Error("invalid_pseudo");
+
+    const profileId = profileIdFor(pseudo);
+    const existing = previousId ? state.profiles[previousId] : null;
+    if (previousId && !existing) throw new Error("profile_not_found");
+    if (state.profiles[profileId] && profileId !== previousId) throw new Error("profile_exists");
+    if (previousId === state.activeProfileId && profileId !== previousId) throw new Error("admin_self_protected");
+
+    const requestedCoins = Number(input.balanceCoins);
+    if (!Number.isFinite(requestedCoins) || requestedCoins < 0) throw new Error("negative_balance");
+    const nextBalance = coinsToUnits(requestedCoins);
+    const now = new Date().toISOString();
+    const profile = existing || {
+      id: profileId,
+      pseudo,
+      balanceUnits: 0,
+      isAdmin: false,
+      sessions: [],
+      activeSessionId: null,
+      history: [],
+      inventory: [],
+      equipped: {},
+      dailyChallengeBonusClaims: {},
+      createdAt: now,
+      updatedAt: now,
+    };
+    const difference = nextBalance - Number(profile.balanceUnits || 0);
+
+    profile.id = profileId;
+    profile.pseudo = pseudo;
+    profile.isAdmin = isAdminPseudo(pseudo);
+    profile.balanceUnits = nextBalance;
+    profile.sessions = Array.isArray(profile.sessions) ? profile.sessions : [];
+    profile.history = Array.isArray(profile.history) ? profile.history : [];
+    normalizeProfileShop(profile);
+    profile.updatedAt = now;
+
+    if (difference !== 0 || !existing) {
+      appendTransaction(
+        profile,
+        transaction("admin_adjustment", difference, nextBalance, {
+          label: existing ? `Modification par ${admin.pseudo}` : `Création par ${admin.pseudo}`,
+          referenceId: randomId(),
+        }),
+      );
+    }
+
+    if (previousId && previousId !== profileId) delete state.profiles[previousId];
+    state.profiles[profileId] = profile;
+    writeState(state);
+    return clone(profile);
+  }
+
+  function normalizeGamePreferences(value = {}) {
+    const settings = global.ARCADE_GAME_CONFIG?.preferences || {};
+    const defaults = settings.defaults || {
+      sound: true,
+      music: true,
+      vibration: true,
+      animations: true,
+      visualIntensity: "balanced",
+    };
+    const intensities = new Set((settings.visualIntensities || []).map((item) => item.id));
+    return {
+      sound: typeof value.sound === "boolean" ? value.sound : defaults.sound,
+      music: typeof value.music === "boolean" ? value.music : defaults.music,
+      vibration: typeof value.vibration === "boolean" ? value.vibration : defaults.vibration,
+      animations: typeof value.animations === "boolean" ? value.animations : defaults.animations,
+      visualIntensity: intensities.has(value.visualIntensity) ? value.visualIntensity : defaults.visualIntensity,
+    };
+  }
+
+  function getGamePreferences() {
+    const state = readState();
+    const profile = state.profiles[state.activeProfileId];
+    if (!profile) throw new Error("profile_required");
+    return normalizeGamePreferences(profile.gamePreferences);
+  }
+
+  function saveGamePreferences(preferences = {}) {
+    const state = readState();
+    const profile = state.profiles[state.activeProfileId];
+    if (!profile) throw new Error("profile_required");
+    profile.gamePreferences = normalizeGamePreferences({
+      ...profile.gamePreferences,
+      ...preferences,
+    });
+    profile.updatedAt = new Date().toISOString();
+    writeState(state);
+    return clone(profile.gamePreferences);
+  }
+
+  function adminDeleteProfile(profileId) {
+    const state = readState();
+    requireLocalAdmin(state);
+    const id = String(profileId || "");
+    if (!state.profiles[id]) throw new Error("profile_not_found");
+    if (id === state.activeProfileId || state.profiles[id].isAdmin) throw new Error("admin_self_protected");
+    const deleted = clone(state.profiles[id]);
+    delete state.profiles[id];
+    writeState(state);
+    return deleted;
+  }
+
+  function normalizeImportedState(payload) {
+    const source = payload?.data?.localStore || payload?.localStore || payload;
+    if (source?.version !== 2 || !source.profiles || typeof source.profiles !== "object") {
+      throw new Error("invalid_import");
+    }
+    const normalized = emptyState();
+    Object.values(source.profiles).forEach((candidate) => {
+      const pseudo = normalizePseudo(candidate?.pseudo);
+      if (!validatePseudo(pseudo)) throw new Error("invalid_import");
+      const id = profileIdFor(pseudo);
+      if (normalized.profiles[id]) throw new Error("invalid_import");
+      const balanceUnits = Math.round(Number(candidate.balanceUnits));
+      if (!Number.isFinite(balanceUnits) || balanceUnits < 0) throw new Error("invalid_import");
+      const profile = {
+        ...clone(candidate),
+        id,
+        pseudo,
+        balanceUnits,
+        isAdmin: isAdminPseudo(pseudo),
+        sessions: Array.isArray(candidate.sessions) ? clone(candidate.sessions).slice(0, maxSessions) : [],
+        history: Array.isArray(candidate.history) ? clone(candidate.history).slice(0, maxHistory) : [],
+        activeSessionId: null,
+        createdAt: candidate.createdAt || new Date().toISOString(),
+        updatedAt: candidate.updatedAt || new Date().toISOString(),
+      };
+      normalized.profiles[id] = normalizeProfileShop(profile);
+    });
+    return normalized;
+  }
+
+  function adminExportState() {
+    const state = readState();
+    requireLocalAdmin(state);
+    return clone(state);
+  }
+
+  function adminImportState(payload, mode = "merge") {
+    const current = readState();
+    const admin = requireLocalAdmin(current);
+    const imported = normalizeImportedState(payload);
+    const next = mode === "replace"
+      ? imported
+      : {
+        version: 2,
+        activeProfileId: current.activeProfileId,
+        profiles: { ...current.profiles, ...imported.profiles },
+      };
+    if (!next.profiles[admin.id]?.isAdmin) throw new Error("admin_profile_required");
+    next.activeProfileId = admin.id;
+    writeState(next);
+    return clone(next);
+  }
+
   global.ArcadeLocalStore = Object.freeze({
     storageKey: STORAGE_KEY,
     unitsPerCoin,
@@ -491,6 +687,14 @@
     recoverActiveSession,
     purchaseShopItem,
     equipShopItem,
+    getGamePreferences,
+    saveGamePreferences,
     adminAdjust,
+    adminGetVisualPreferences,
+    adminSaveVisualPreferences,
+    adminSaveProfile,
+    adminDeleteProfile,
+    adminExportState,
+    adminImportState,
   });
 })(window);
