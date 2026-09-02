@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#080b18" />
+    <title>Dice District · Francis Arcade</title>
+    <link rel="icon" type="image/png" href="../../assets/icons/arcade-favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="dice-hub.css" />
+    <script src="../../js/core/arcade-config.js" defer></script>
+    <script src="../../js/core/arcade-local-store.js" defer></script>
+    <script src="../../js/core/arcade-game-bridge.js" defer></script>
+    <script src="dice-hub.js" defer></script>
+  </head>
+  <body data-theme="solar">
+    <a class="skip-link" href="#main-content">Aller au contenu</a>
+    <div class="ambient-grid" aria-hidden="true"></div>
+    <div class="sunset-orb" aria-hidden="true"></div>
+
+    <div class="app-shell">
+      <header class="site-header">
+        <a class="brand" href="../../index.html" aria-label="Retour à Francis Arcade">
+          <span class="brand-mark" aria-hidden="true">FA</span>
+          <span><strong>FRANCIS</strong><small>ARCADE / DICE DISTRICT</small></span>
+        </a>
+        <div class="header-actions">
+          <span class="player-chip"><span aria-hidden="true">●</span><b id="player-name">JOUEUR LOCAL</b></span>
+          <button class="icon-button" id="open-settings-header" type="button" aria-label="Ouvrir les paramètres" title="Paramètres">⚙</button>
+          <a class="arcade-return" href="../../index.html" aria-label="Retour à Francis Arcade"><span aria-hidden="true">←</span> ARCADE</a>
+        </div>
+      </header>
+
+      <main id="main-content">
+        <section class="screen is-active" id="menu-screen" aria-labelledby="hub-title">
+          <div class="hero-copy">
+            <span class="eyebrow"><i></i> NOUVEAU SECTEUR DÉVERROUILLÉ</span>
+            <h1 id="hub-title">DICE <span>DISTRICT</span></h1>
+            <p>Le comptoir des jeux de dés de Francis Arcade. Choisissez une table, consultez les règles et lancez votre partie.</p>
+          </div>
+
+          <div class="hub-layout">
+            <section class="mode-section" aria-labelledby="mode-title">
+              <div class="section-heading">
+                <div><span>01 / SÉLECTION</span><h2 id="mode-title">Choisissez un mode</h2></div>
+                <span class="live-badge"><i></i> 1 MODE ACTIF</span>
+              </div>
+
+              <div class="mode-grid" role="radiogroup" aria-label="Modes de jeux de dés">
+                <button class="table-card is-selected" type="button" role="radio" aria-checked="true" data-mode="magic">
+                  <span class="mode-number">01</span>
+                  <span class="mode-icon" aria-hidden="true"><span class="mini-die face-five"><i></i><i></i><i></i><i></i><i></i></span></span>
+                  <span class="mode-content"><strong>LANCER LIBRE</strong><small>1–12 dés · D2 à D100</small><em>DISPONIBLE</em></span>
+                  <span class="mode-arrow" aria-hidden="true">↗</span>
+                </button>
+                <button class="table-card" type="button" role="radio" aria-checked="false" data-mode="421">
+                  <span class="mode-number">02</span>
+                  <span class="mode-icon dice-cluster" aria-hidden="true"><span class="mini-die face-three"><i></i><i></i><i></i></span><span class="mini-die face-one"><i></i></span><span class="mini-die face-four"><i></i><i></i><i></i><i></i></span></span>
+                  <span class="mode-content"><strong>421</strong><small>Combinaisons · 3 dés</small><em>BIENTÔT</em></span>
+                  <span class="mode-arrow" aria-hidden="true">↗</span>
+                </button>
+                <button class="table-card" type="button" role="radio" aria-checked="false" data-mode="yahtzee">
+                  <span class="mode-number">03</span>
+                  <span class="mode-icon dice-cluster" aria-hidden="true"><span class="mini-die face-six"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="mini-die face-six"><i></i><i></i><i></i><i></i><i></i><i></i></span></span>
+                  <span class="mode-content"><strong>YAHTZEE</strong><small>Score · 5 dés</small><em>BIENTÔT</em></span>
+                  <span class="mode-arrow" aria-hidden="true">↗</span>
+                </button>
+                <article class="table-card future-card" aria-label="Emplacement pour un futur jeu de dés">
+                  <span class="mode-number">04</span>
+                  <span class="mode-icon" aria-hidden="true">＋</span>
+                  <span class="mode-content"><strong>PROCHAINE TABLE</strong><small>Architecture prête à évoluer</small><em>À VENIR</em></span>
+                </article>
+              </div>
+            </section>
+
+            <aside class="launch-panel" aria-labelledby="selected-mode-title">
+              <div class="panel-topline"><span>TABLE SÉLECTIONNÉE</span><b id="mode-status">PRÊT</b></div>
+              <div class="dice-emblem" id="menu-dice" aria-hidden="true"><span>●</span><span>●</span><span>●</span><span>●</span><span>●</span></div>
+              <p class="panel-kicker" id="selected-mode-kicker">MODE CLASSIQUE</p>
+              <h2 id="selected-mode-title">Dé Magique</h2>
+              <p id="selected-mode-description">Choisissez le nombre de dés et de faces, puis laissez le hasard décider.</p>
+              <dl class="mode-facts">
+                <div><dt>JOUEURS</dt><dd id="mode-players">1+</dd></div>
+                <div><dt>DURÉE</dt><dd id="mode-duration">LIBRE</dd></div>
+                <div><dt>NIVEAU</dt><dd id="mode-level">FACILE</dd></div>
+              </dl>
+              <button class="primary-button" id="play-button" type="button"><span>JOUER</span><i aria-hidden="true">▶</i></button>
+              <div class="secondary-actions">
+                <button class="text-button" id="open-rules" type="button">RÈGLES</button>
+                <button class="text-button" id="open-leaderboard" type="button">LEADERBOARD</button>
+                <button class="text-button" id="open-settings" type="button">PARAMÈTRES</button>
+              </div>
+              <p class="availability-note" id="availability-note">Mode d’entraînement gratuit · aucun Coin débité</p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="screen" id="game-screen" aria-labelledby="game-title" hidden>
+          <div class="game-toolbar">
+            <button class="back-button" id="back-to-menu" type="button">‹ MENU DES DÉS</button>
+            <div><span>TABLE 01</span><h1 id="game-title">DÉ MAGIQUE</h1></div>
+            <div class="toolbar-actions">
+              <button class="compact-button" id="game-rules" type="button">RÈGLES</button>
+              <button class="compact-button" id="game-leaderboard" type="button">TOP</button>
+              <button class="icon-button" id="game-settings" type="button" aria-label="Paramètres">⚙</button>
+            </div>
+          </div>
+
+          <div class="game-layout">
+            <section class="roll-stage" aria-labelledby="roll-title">
+              <div class="stage-label"><span id="roll-title">GÉNÉRATEUR ALÉATOIRE</span><i id="generator-state">EN ATTENTE</i></div>
+              <button class="dice-tray" id="play-die" type="button" aria-label="Lancer les dés"><span class="result-die" id="dice-result">?</span></button>
+              <div class="roll-summary" id="roll-summary" hidden><span>TOTAL</span><strong id="roll-total">—</strong></div>
+              <p class="result-caption" id="result-caption" role="status" aria-live="polite">Configurez vos dés puis lancez-les.</p>
+              <button class="primary-button roll-button" id="roll-button" type="button"><span>LANCER LES DÉS</span><i aria-hidden="true">↻</i></button>
+              <p class="keyboard-hint"><kbd>Espace</kbd> pour lancer</p>
+            </section>
+
+            <aside class="control-panel">
+              <div class="control-grid">
+                <div class="control-block">
+                  <div class="section-heading compact"><div><span>CONFIGURATION A</span><h2>Faces par dé</h2></div><b id="faces-label">D6</b></div>
+                  <label class="number-input"><span>FACES</span><input id="dice-faces" type="number" value="6" min="2" max="100" inputmode="numeric" aria-describedby="faces-help" /></label>
+                  <p id="faces-help">De 2 à 100 faces, comme dans le jeu original.</p>
+                  <div class="preset-grid" aria-label="Préréglages de faces">
+                    <button type="button" data-faces="4">D4</button><button class="is-active" type="button" data-faces="6">D6</button>
+                    <button type="button" data-faces="8">D8</button><button type="button" data-faces="12">D12</button>
+                    <button type="button" data-faces="20">D20</button><button type="button" data-faces="100">D100</button>
+                  </div>
+                </div>
+                <div class="control-block">
+                  <div class="section-heading compact"><div><span>CONFIGURATION B</span><h2>Nombre de dés</h2></div><b id="count-label">×1</b></div>
+                  <label class="number-input"><span>DÉS</span><input id="dice-count" type="number" value="1" min="1" max="12" inputmode="numeric" aria-describedby="count-help" /></label>
+                  <p id="count-help">Lancez simultanément de 1 à 12 dés.</p>
+                  <div class="preset-grid count-presets" aria-label="Préréglages du nombre de dés">
+                    <button class="is-active" type="button" data-count="1">×1</button><button type="button" data-count="2">×2</button>
+                    <button type="button" data-count="3">×3</button><button type="button" data-count="4">×4</button>
+                    <button type="button" data-count="5">×5</button><button type="button" data-count="6">×6</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stats-grid" aria-label="Statistiques du Dé Magique">
+                <div><span>LANCERS</span><strong id="stat-rolls">0</strong></div>
+                <div><span>MEILLEUR</span><strong id="stat-best">—</strong></div>
+                <div><span>MOYENNE</span><strong id="stat-average">—</strong></div>
+              </div>
+
+              <div class="history-block">
+                <div class="history-heading"><span>DERNIERS LANCERS</span><button id="clear-history" type="button">EFFACER</button></div>
+                <ol class="roll-history" id="roll-history"><li class="empty-state">Aucun lancer enregistré.</li></ol>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="arcade-dialog" id="leaderboard-dialog" aria-labelledby="leaderboard-title">
+      <div class="dialog-panel wide-panel">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer">×</button>
+        <span class="dialog-kicker">HALL OF LUCK</span>
+        <h2 id="leaderboard-title">LEADERBOARD</h2>
+        <p>Les classements sont isolés par mode. Pour les lancers personnalisés, le rang tient compte du total obtenu par rapport au maximum possible.</p>
+        <div class="dialog-tabs" role="tablist" aria-label="Classements par mode">
+          <button class="is-active" type="button" role="tab" aria-selected="true" data-board-mode="magic">DÉ MAGIQUE</button>
+          <button type="button" role="tab" aria-selected="false" data-board-mode="421">421</button>
+          <button type="button" role="tab" aria-selected="false" data-board-mode="yahtzee">YAHTZEE</button>
+        </div>
+        <div class="leaderboard-head"><span>RANG / JOUEUR</span><span>RÉSULTAT</span></div>
+        <ol class="leaderboard-list" id="leaderboard-list"></ol>
+      </div>
+    </dialog>
+
+    <dialog class="arcade-dialog" id="rules-dialog" aria-labelledby="rules-title">
+      <div class="dialog-panel">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer">×</button>
+        <span class="dialog-kicker" id="rules-kicker">TABLE 01</span>
+        <h2 id="rules-title">RÈGLES · DÉ MAGIQUE</h2>
+        <div class="rules-copy" id="rules-copy"></div>
+      </div>
+    </dialog>
+
+    <dialog class="arcade-dialog" id="settings-dialog" aria-labelledby="settings-title">
+      <form class="dialog-panel" method="dialog" id="settings-form">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Fermer">×</button>
+        <span class="dialog-kicker">CONSOLE SYSTÈME</span>
+        <h2 id="settings-title">PARAMÈTRES</h2>
+        <div class="setting-row"><span><strong>EFFETS SONORES</strong><small>Bips et impact du lancer</small></span><label class="switch"><input id="setting-sound" type="checkbox" checked /><i></i></label></div>
+        <div class="setting-row"><span><strong>VIBRATION</strong><small>Retour haptique sur appareil compatible</small></span><label class="switch"><input id="setting-vibration" type="checkbox" checked /><i></i></label></div>
+        <div class="setting-row"><span><strong>ANIMATIONS</strong><small>Animation rapide des valeurs</small></span><label class="switch"><input id="setting-animation" type="checkbox" checked /><i></i></label></div>
+        <div class="setting-row"><span><strong>CLIC SUR LE DÉ</strong><small>Le grand dé déclenche un lancer</small></span><label class="switch"><input id="setting-die-click" type="checkbox" checked /><i></i></label></div>
+        <fieldset class="theme-picker"><legend>THÈME DE LA TABLE</legend><label><input type="radio" name="theme" value="solar" checked /><span class="theme-swatch solar">SOLAR 84</span></label><label><input type="radio" name="theme" value="electric" /><span class="theme-swatch electric">CYBER ICE</span></label><label><input type="radio" name="theme" value="ultraviolet" /><span class="theme-swatch ultraviolet">LASER PURPLE</span></label><label><input type="radio" name="theme" value="emerald" /><span class="theme-swatch emerald">TOXIC GREEN</span></label><label><input type="radio" name="theme" value="crimson" /><span class="theme-swatch crimson">RED ALERT</span></label></fieldset>
+        <button class="primary-button save-settings" value="save" type="submit"><span>ENREGISTRER</span><i aria-hidden="true">✓</i></button>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

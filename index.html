@@ -129,6 +129,8 @@
             <button class="catalog-filter" type="button" data-category-filter="logic" aria-pressed="false">Logique</button>
             <button class="catalog-filter" type="button" data-category-filter="enigma" aria-pressed="false">Énigmes</button>
             <button class="catalog-filter" type="button" data-category-filter="strategy" aria-pressed="false">Stratégie</button>
+            <button class="catalog-filter" type="button" data-category-filter="cards" aria-pressed="false">Jeux de cartes</button>
+            <button class="catalog-filter" type="button" data-category-filter="dice" aria-pressed="false">Jeux de dés</button>
             <button class="catalog-filter" type="button" data-category-filter="puzzle" aria-pressed="false">Puzzle</button>
             <button class="catalog-filter" type="button" data-category-filter="adventure" aria-pressed="false">Aventure</button>
           </div>
@@ -160,37 +162,27 @@
           </button>
         </article>
 
-        <!-- Dé personnalisable -->
+        <!-- Mini-hub des jeux de dés -->
         <article
           class="game-card dice fade-in"
           onclick="focusCard(this)"
           data-game="de"
         >
-          <div class="game-icon">🎲</div>
-          <h2 class="game-title">Dé Magique</h2>
+          <div class="game-icon" aria-hidden="true">🎲</div>
+          <h2 class="game-title">Dice District</h2>
           <div class="game-tags">
             <span class="tag difficulty-easy">Facile</span>
-            <span class="tag">Personnalisable</span>
+            <span class="tag">Jeux de dés</span>
+            <span class="tag">Mini-hub</span>
           </div>
           <p class="game-description">
-            Un dé avec le nombre de faces de votre choix. De 2 à l'infini !
+            Votre espace jeux de dés : lancers personnalisés, statistiques, 421 et Yahtzee à venir.
           </p>
           <div class="game-interactive">
-            <div class="input-group">
-              <span class="input-label">Faces :</span>
-              <input
-                type="number"
-                id="diceFaces"
-                class="custom-input"
-                value="6"
-                min="2"
-                max="100"
-              />
-              <div class="dice-display" id="diceDisplay">?</div>
-            </div>
+            <div class="result-display">1–12</div>
           </div>
-          <button class="btn btn-primary btn-launch" onclick="rollDice(event)">
-            Lancer le dé
+          <button class="btn btn-primary btn-launch" onclick="launchGame('games/dice-hub/dice-hub.html', event)">
+            Entrer dans Dice District
           </button>
         </article>
 
@@ -1073,6 +1065,61 @@
             onclick="launchGame('games/puissance4/index.html', event)"
           >
             Jouer à Puissance 4
+          </button>
+        </article>
+        <!-- River Room Poker -->
+        <article
+          class="game-card poker fade-in"
+          onclick="focusCard(this)"
+          data-game="poker"
+        >
+          <div class="game-icon">&#127137;</div>
+          <h2 class="game-title">River Room Poker</h2>
+          <div class="game-tags">
+            <span class="tag difficulty-hard">Difficile</span>
+            <span class="tag">Strat&#233;gie</span>
+            <span class="tag">Texas Hold'em</span>
+          </div>
+          <p class="game-description">
+            Prenez place &#224; la table, lisez vos adversaires et tentez de
+            remporter le tournoi de Texas Hold'em.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">&spades; &hearts; &diams; &clubs;</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="launchGame('games/Poker/poker.html', event)"
+          >
+            Prendre place &#224; la table
+          </button>
+        </article>
+
+        <!-- Cyber Bubble Shooter -->
+        <article
+          class="game-card bubble-shooter fade-in"
+          onclick="focusCard(this)"
+          data-game="bubble-shooter"
+        >
+          <div class="game-icon">&#128167;</div>
+          <h2 class="game-title">Cyber Bubble Shooter</h2>
+          <div class="game-tags">
+            <span class="tag difficulty-medium">Moyen</span>
+            <span class="tag">Arcade</span>
+            <span class="tag">R&#233;flexes</span>
+          </div>
+          <p class="game-description">
+            Visez, alignez au moins trois bulles et emp&#234;chez le plafond
+            n&#233;on de descendre jusqu'&#224; votre canon.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">&#9679; &#9679; &#9679; &#10022;</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="launchGame('games/BubbleShooter/BubbleShooter.html', event)"
+          >
+            Lancer Bubble Shooter
           </button>
         </article>
       </main>

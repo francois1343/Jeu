@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber-Bubble Shooter 80s</title>
+  <link rel="stylesheet" href="BubbleShooter.css">
+  <link rel="stylesheet" href="../../css/shared/arcade-home.css">
+</head>
+
+<body>
+  <a class="arcade-home-link" href="../../index.html" aria-label="Retour accueil" title="Retour accueil">
+    <span class="arcade-home-icon" aria-hidden="true">⌂</span>
+    <span class="arcade-home-label">Accueil</span>
+  </a>
+  <div id="game-container">
+    <!-- BARRE D'INFORMATIONS SUPÉRIEURE (HUD) -->
+    <header id="hud">
+      <div class="hud-card">
+        <span class="hud-label">SCORE</span>
+        <span id="score-display" class="hud-value neon-text-cyan">0</span>
+      </div>
+      <div class="hud-card">
+        <span class="hud-label">RECORD</span>
+        <span id="highscore-display" class="hud-value neon-text-yellow">0</span>
+      </div>
+      <div class="hud-card">
+        <span class="hud-label">NIVEAU</span>
+        <span id="level-display" class="hud-value neon-text-pink">1</span>
+      </div>
+      <div class="hud-card">
+        <span class="hud-label">FAUTES</span>
+        <div id="faults-container" class="fault-dots">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    </header>
+    <p class="quick-tip"><span>VISE</span> souris ou fleches <b>|</b> <span>TIRE</span> clic ou espace <b>|</b> <span>SWAP</span> X</p>
+
+    <!-- ZONE DE JEU CANVASES & OVERLAYS -->
+        <section id="utility-toolbar" aria-label="Menu rapide">
+      <button id="btn-menu" class="utility-button" type="button" aria-expanded="false">MENU</button>
+      <button id="btn-save-game" class="utility-button utility-save" type="button">SAUVER</button>
+      <button id="btn-leaderboard" class="utility-button" type="button">TOP SCORES</button>
+      <p id="utility-status" class="utility-status" role="status" aria-live="polite"></p>
+    </section>
+    <aside id="utility-menu" class="utility-menu hidden" aria-label="Options de partie">
+      <button id="btn-menu-pause" type="button">PAUSE</button>
+      <button id="btn-menu-save" type="button">SAUVEGARDER</button>
+      <button id="btn-menu-scores" type="button">CLASSEMENT</button>
+      <button id="btn-menu-settings" type="button">PARAMETRES</button>
+    </aside>
+    <!-- ZONE DE JEU CANVASES & OVERLAYS -->
+    <main id="canvas-wrapper">
+      <canvas id="gameCanvas" tabindex="0" aria-label="Zone de jeu. Visez avec la souris ou les flèches, puis tirez avec un clic ou la barre espace."></canvas>
+
+      <!-- Écran Titre / Menu Principal -->
+      <div id="start-overlay" class="overlay start-overlay">
+        <div class="overlay-content start-menu-card">
+          <p class="menu-eyebrow"><span></span> ARCADE PROTOCOL // 1984</p>
+          <h1 class="synth-title menu-title">CYBER<br><span class="pink">BUBBLE</span></h1>
+          <p class="subtitle">SHOOTER 1984</p>
+          <p class="game-help">Aligne trois bulles ou plus, provoque des chutes et garde le plafond a distance.</p>
+          <div class="menu-best-score"><span>MEILLEUR RUN</span><strong id="menu-best-score">0</strong><small>points</small></div>
+          <div class="menu-primary-actions">
+            <button id="btn-start" class="btn-neon btn-play" type="button">JOUER <span aria-hidden="true">&rarr;</span></button>
+            <button id="btn-continue" class="btn-continue hidden" type="button">REPRENDRE LA SAUVEGARDE</button>
+          </div>
+          <div class="menu-secondary-actions">
+            <button id="btn-start-leaderboard" class="menu-action" type="button">TOP SCORES</button>
+            <button id="btn-open-settings" class="menu-action" type="button">PARAMETRES</button>
+          </div>
+          <p class="menu-controls">SOURIS / TOUCHER POUR VISER &middot; ESPACE POUR TIRER &middot; X POUR ECHANGER</p>
+        </div>
+      </div>
+
+      <!-- Écran Game Over / Victoire -->
+      <div id="game-over-overlay" class="overlay hidden">
+        <div class="overlay-content">
+          <h2 id="end-title" class="synth-title-danger">GAME OVER</h2>
+          <p class="summary-text">SCORE FINAL : <span id="final-score" class="neon-text-cyan">0</span></p>
+          <p id="new-record-tag" class="hidden record-pulse">🏆 NOUVEAU RECORD !</p>
+          <button id="btn-restart" class="btn-neon">RÉESSAYER</button>
+        </div>
+      </div>
+
+      <!-- Pause et confirmation avant de quitter la partie -->
+      <div id="quit-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="quit-title">
+        <div class="overlay-content quit-dialog">
+          <div class="pause-icon" aria-hidden="true">Ⅱ</div>
+          <h2 id="quit-title" class="quit-title">PARTIE EN PAUSE</h2>
+          <p class="quit-message">Es-tu sûr de vouloir quitter ?<br><span>Ta progression ne sera pas sauvegardée.</span></p>
+          <div class="quit-actions">
+            <button id="btn-resume" class="btn-neon btn-small">REPRENDRE</button>
+            <button id="btn-save-pause" class="btn-neon btn-small btn-save-pause" type="button">SAUVEGARDER</button>
+            <button id="btn-confirm-quit" class="btn-neon btn-small btn-danger">QUITTER</button>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="settings-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <div class="overlay-content settings-dialog">
+          <p class="dialog-kicker">PERSONNALISE TON RUN</p>
+          <h2 id="settings-title" class="settings-title">PARAMETRES</h2>
+          <div class="settings-list">
+            <button id="toggle-sfx" class="setting-row" type="button" aria-pressed="true"><span>EFFETS SONORES</span><b>ON</b></button>
+            <button id="toggle-music" class="setting-row" type="button" aria-pressed="true"><span>MUSIQUE SYNTH</span><b>ON</b></button>
+            <button id="toggle-vibration" class="setting-row" type="button" aria-pressed="true"><span>VIBRATIONS</span><b>ON</b></button>
+          </div>
+          <div class="theme-picker" aria-label="Theme visuel">
+            <span>THEME</span>
+            <div>
+              <button id="theme-cyber" class="theme-choice is-active" type="button">CYBER</button>
+              <button id="theme-sunset" class="theme-choice" type="button">SUNSET</button>
+              <button id="theme-void" class="theme-choice" type="button">VOID</button>
+            </div>
+          </div>
+          <button id="btn-close-settings" class="btn-neon btn-small" type="button">FERMER</button>
+        </div>
+      </div>
+      <div id="leaderboard-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="leaderboard-title">
+        <div class="overlay-content leaderboard-dialog">
+          <p class="dialog-kicker">ARCADE HALL OF FAME</p>
+          <h2 id="leaderboard-title" class="synth-title-danger">TOP SCORES</h2>
+          <ol id="leaderboard-list" class="leaderboard-list"></ol>
+          <button id="btn-close-leaderboard" class="btn-neon btn-small" type="button">RETOUR AU JEU</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- BARRE INFÉRIEURE : PRÉVISUALISATION & INTERACTION -->
+    <footer id="bottom-bar">
+      <div id="swap-container" title="Cliquer pour échanger les bulles">
+        <div class="bubble-preview-box">
+          <span class="preview-label">ACTUELLE</span>
+          <div id="current-bubble-preview" class="bubble-slot"></div>
+        </div>
+
+        <button id="btn-swap" class="btn-swap" aria-label="Échanger les bulles">
+          <span class="swap-icon">⇄</span>
+        </button>
+
+        <div class="bubble-preview-box">
+          <span class="preview-label">SUIVANTE</span>
+          <div id="next-bubble-preview" class="bubble-slot"></div>
+        </div>
+      </div>
+
+      <div class="controls-panel">
+        <button id="btn-home" class="btn-icon btn-home hidden" aria-label="Mettre en pause ou quitter la partie" title="Pause / Quitter">⌂</button>
+        <button id="btn-audio" class="btn-icon" aria-label="Activer/Désactiver le son">🔊</button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="BubbleShooter.js"></script>
+  <script src="../../js/core/arcade-config.js"></script>
+  <script src="../../js/core/arcade-local-store.js"></script>
+  <script src="../../js/core/arcade-game-bridge.js"></script>
+</body>
+
+</html>

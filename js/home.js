@@ -111,32 +111,6 @@
         }, 600);
       }
 
-      // ===== DÉ PERSONNALISABLE =====
-      function rollDice(event) {
-        event.stopPropagation();
-        const faces = parseInt(document.getElementById("diceFaces").value) || 6;
-        const display = document.getElementById("diceDisplay");
-
-        display.classList.add("rolling");
-        playSound(500, 0.1);
-
-        // Animation de chiffres aléatoires
-        let rolls = 0;
-        const maxRolls = 10;
-        const interval = setInterval(() => {
-          display.textContent = Math.floor(Math.random() * faces) + 1;
-          rolls++;
-
-          if (rolls >= maxRolls) {
-            clearInterval(interval);
-            const result = Math.floor(Math.random() * faces) + 1;
-            display.textContent = result;
-            display.classList.remove("rolling");
-            playSound(700, 0.15);
-          }
-        }, 50);
-      }
-
       // ===== LANCEMENT DES JEUX =====
       function launchGame(url, event) {
         event.stopPropagation();
@@ -204,10 +178,10 @@
 
       // ===== CATALOGUE DE JEUX =====
       const catalogCategoryLabels = Object.freeze({
-        arcade: "Arcade", reflex: "Réflexes", memory: "Mémoire", logic: "Logique", enigma: "Énigmes", strategy: "Stratégie", puzzle: "Puzzle", adventure: "Aventure", chance: "Hasard", progression: "Progression", other: "Autres",
+        arcade: "Arcade", reflex: "Réflexes", memory: "Mémoire", logic: "Logique", enigma: "Énigmes", strategy: "Stratégie", cards: "Jeux de cartes", dice: "Jeux de dés", puzzle: "Puzzle", adventure: "Aventure", chance: "Hasard", progression: "Progression", other: "Autres",
       });
       const catalogTagAliases = Object.freeze({
-        arcade: "arcade", reflexe: "reflex", reflexes: "reflex", memoire: "memory", logique: "logic", reflexion: "logic", enigme: "enigma", enigmes: "enigma", mystere: "enigma", strategie: "strategy", puzzle: "puzzle", aventure: "adventure", exploration: "adventure",
+        arcade: "arcade", reflexe: "reflex", reflexes: "reflex", memoire: "memory", logique: "logic", reflexion: "logic", enigme: "enigma", enigmes: "enigma", mystere: "enigma", strategie: "strategy", carte: "cards", cartes: "cards", card: "cards", cards: "cards", solitaire: "cards", "jeux de des": "dice", dice: "dice", puzzle: "puzzle", aventure: "adventure", exploration: "adventure",
       });
       const catalogDifficultyRank = Object.freeze({ easy: 1, medium: 2, hard: 3 });
 

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07110e">
+  <title>River Room — Texas Hold'em</title>
+  <link rel="stylesheet" href="poker.css">
+  <link rel="stylesheet" href="../../css/shared/arcade-home.css">
+</head>
+<body>
+  <a class="arcade-home-link" href="../../index.html" aria-label="Retour accueil" title="Retour accueil">
+    <span class="arcade-home-icon" aria-hidden="true">⌂</span>
+    <span class="arcade-home-label">Accueil</span>
+  </a>
+  <div id="app">
+    <section id="lobby-screen" class="screen lobby-screen">
+      <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+      <header class="lobby-nav">
+        <a class="brand" href="#" aria-label="River Room"><span class="brand-mark">R</span><span>RIVER ROOM</span></a>
+        <div class="bankroll-card"><span>Banque</span><strong id="player-bankroll">10 000 €</strong></div>
+      </header>
+      <main class="lobby-main">
+        <div class="hero-copy">
+          <div class="eyebrow"><span></span> TABLE PRIVÉE · SOLO</div>
+          <h1>La rivière<br><em>ne pardonne pas.</em></h1>
+          <p>Affrontez des profils uniques dans une partie de Texas Hold'em fluide, lisible et sans inscription.</p>
+          <div class="trust-row"><span>♠ Moteur complet</span><span>◆ Sauvegarde locale</span><span>♣ 2 à 9 joueurs</span></div>
+        </div>
+        <div class="setup-card">
+          <div class="setup-heading">
+            <div><span class="step-label">NOUVELLE PARTIE</span><h2>Choisissez votre table</h2></div>
+            <span class="live-dot"><i></i> Disponible</span>
+          </div>
+          <div class="mode-tabs" role="tablist" aria-label="Mode de jeu">
+            <button class="mode-tab active" data-mode="cash" role="tab" aria-selected="true"><span class="mode-icon">€</span><span><strong>Cash game</strong><small>Blindes fixes · 1 000 €</small></span></button>
+            <button class="mode-tab" data-mode="tournament" role="tab" aria-selected="false"><span class="mode-icon">♛</span><span><strong>Tournoi</strong><small>Blindes progressives</small></span></button>
+          </div>
+          <div class="setup-grid">
+            <label class="field"><span>Nombre de joueurs <b id="player-count-value">6</b></span><input id="player-count" type="range" min="2" max="9" value="6"><span class="range-labels"><i>2</i><i>9</i></span></label>
+            <label class="field hidden" id="speed-field"><span>Vitesse du tournoi</span><select id="tourney-speed"><option value="turbo">Turbo · 3 min</option><option value="standard">Standard · 5 min</option></select></label>
+          </div>
+          <button id="btn-start" class="primary-cta"><span>Prendre place</span><b>→</b></button>
+          <p class="setup-note">Votre progression reste uniquement sur cet appareil.</p>
+        </div>
+      </main>
+    </section>
+
+    <section id="game-screen" class="screen game-screen hidden">
+      <header class="game-topbar">
+        <div class="brand compact"><span class="brand-mark">R</span><span>RIVER ROOM</span></div>
+        <div class="table-meta"><span class="meta-pill" id="game-mode-label">CASH · TABLE 01</span><span id="blind-levels">Blindes 10 / 20</span><span id="tourney-timer" class="hidden">Niveau suivant · 03:00</span></div>
+        <div class="top-actions"><button id="btn-sound" class="icon-button" aria-label="Activer ou couper le son">♪</button><button id="btn-leave" class="leave-button">Quitter la table</button></div>
+      </header>
+      <main class="game-layout">
+        <aside class="side-panel left-panel">
+          <div class="panel-heading"><span>MAIN EN COURS</span><b id="hand-number">#001</b></div>
+          <div class="hero-hand-summary"><small>Votre combinaison</small><strong id="hand-strength">En attente</strong></div>
+          <div class="divider"></div><div class="panel-heading"><span>DERNIÈRES ACTIONS</span></div>
+          <ol id="log-list" class="action-log" aria-live="polite"></ol>
+        </aside>
+        <section class="table-stage">
+          <div class="table-shadow"></div>
+          <div id="poker-table" class="poker-table">
+            <div class="felt-detail"></div>
+            <div class="table-center"><div class="pot-display"><span>POT</span><strong id="main-pot">0 €</strong></div><div id="community-cards" class="community-cards" aria-label="Cartes communes"></div><div id="street-label" class="street-label">PRÉFLOP</div></div>
+            <div id="seats-container"></div>
+          </div>
+        </section>
+        <aside class="side-panel right-panel"><div class="panel-heading"><span>JOUEURS</span><b id="players-left">6 / 6</b></div><div id="players-list" class="players-list"></div></aside>
+      </main>
+      <footer id="player-controls" class="player-controls disabled">
+        <div class="turn-message"><span id="turn-indicator"><i></i> Au tour de l'adversaire</span><small id="action-hint">Observez l'action à la table</small></div>
+        <div class="bet-control">
+          <div class="bet-presets"><button data-preset="half">½ pot</button><button data-preset="pot">Pot</button><button data-preset="max">Tapis</button></div>
+          <div class="slider-row"><input id="bet-slider" type="range" min="20" max="1000" value="20" aria-label="Montant de la relance"><label><span>Relance à</span><input id="bet-input" type="number" value="20"><b>€</b></label></div>
+        </div>
+        <div class="action-buttons"><button id="btn-fold" class="action-button fold"><span>Se coucher</span><kbd>F</kbd></button><button id="btn-check-call" class="action-button call"><span>Parole</span><kbd>C</kbd></button><button id="btn-bet-raise" class="action-button raise"><span>Relancer</span><kbd>R</kbd></button><button id="btn-all-in" class="action-button allin" aria-label="Faire tapis">Tapis</button></div>
+      </footer>
+      <div id="result-overlay" class="result-overlay hidden" role="status"><div class="result-card"><span id="result-kicker">MAIN TERMINÉE</span><h2 id="result-title">Vous remportez le pot</h2><p id="result-detail"></p></div></div>
+    </section>
+  </div>
+  <script src="poker.js"></script>
+  <script src="../../js/core/arcade-config.js"></script>
+  <script src="../../js/core/arcade-local-store.js"></script>
+  <script src="../../js/core/arcade-game-bridge.js"></script>
+</body>
+</html>

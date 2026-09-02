@@ -458,6 +458,18 @@
       }
 
       /* ===== ICÔNE DU JEU ===== */
+      /* River Room Poker - Vert feutre */
+      .game-card.poker {
+        --card-color: #4ade80;
+        --card-color-rgb: 74, 222, 128;
+      }
+
+      /* Cyber Bubble Shooter - Violet neon */
+      .game-card.bubble-shooter {
+        --card-color: #c45cff;
+        --card-color-rgb: 196, 92, 255;
+      }
+
       .game-icon {
         width: 70px;
         height: 70px;
