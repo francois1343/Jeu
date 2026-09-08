@@ -40,19 +40,19 @@
         <p>Son historique et son classement disposent déjà d’un espace séparé de celui du Dé Magique.</p>`,
     }),
     yahtzee: Object.freeze({
-      title: "Yahtzee",
-      kicker: "MODE SCORE",
-      description: "Cinq dés, treize catégories de score et des choix tactiques à chaque tour.",
-      players: "1–4",
-      duration: "15 MIN",
+      title: "Dés de Bohême",
+      kicker: "MODE FARKLE",
+      description: "Six dés, des combinaisons risquées et un duel de taverne contre l'aubergiste.",
+      players: "1–2",
+      duration: "10 MIN",
       level: "MOYEN",
-      ready: false,
+      ready: true,
       table: "TABLE 03",
       rules: `
-        <p class="coming-note">La feuille de score et le moteur à cinq dés seront ajoutés dans une prochaine évolution.</p>
-        <h3>FORMAT PRÉVU</h3>
-        <ol><li>Lancez cinq dés jusqu’à trois fois par tour.</li><li>Gardez les dés utiles entre les lancers.</li><li>Inscrivez le résultat dans une catégorie encore libre de la feuille de score.</li></ol>
-        <p>Les scores Yahtzee resteront séparés des résultats du Dé Magique et du 421.</p>`,
+        <p>Affrontez l'aubergiste au Farkle : marquez avec les 1, les 5, les brelans et les suites, puis encaissez avant de faire bredouille.</p>
+        <h3>COMMENT JOUER</h3>
+        <ol><li>Lancez six dés.</li><li>Gardez au moins une combinaison marquante.</li><li>Encaissez ou relancez les dés restants au risque de perdre les points du tour.</li></ol>
+        <p>Si les six dés marquent, une main pleine vous permet de tous les relancer.</p>`,
     }),
   });
 
@@ -168,6 +168,10 @@
 
   function playSelectedMode() {
     if (!modes[selectedMode].ready) return;
+    if (selectedMode === "yahtzee") {
+      window.location.href = "../Yahtzee/yahtzee.html";
+      return;
+    }
     startMagicSession();
     showScreen("game");
     sound(680, .07, "square");

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Neon Air Hockey - Synthwave Edition</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="SynthwaveEdition.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div id="ui-layer">
+        <div id="main-menu" class="panel glass-panel">
+          <h1 class="title">AIR <span class="neon-cyan">HOCKEY</span></h1>
+
+          <div class="menu-section">
+            <h2>Mode de jeu</h2>
+            <div class="button-group">
+              <button id="mode-1p" class="neon-btn active">
+                1 Joueur (IA)
+              </button>
+              <button id="mode-2p" class="neon-btn">2 Joueurs</button>
+            </div>
+          </div>
+
+          <div id="difficulty-section" class="menu-section">
+            <h2>Niveau de l'IA</h2>
+            <div class="button-group">
+              <button class="neon-btn diff-btn" data-level="easy">
+                Facile
+              </button>
+              <button class="neon-btn diff-btn active" data-level="medium">
+                Moyen
+              </button>
+              <button class="neon-btn diff-btn" data-level="hard">
+                Expert
+              </button>
+            </div>
+          </div>
+
+          <div class="menu-section">
+            <h2>Objectif</h2>
+            <div class="button-group">
+              <button class="neon-btn score-btn active" data-score="3">
+                3 Buts
+              </button>
+              <button class="neon-btn score-btn" data-score="5">5 Buts</button>
+              <button class="neon-btn score-btn" data-score="7">7 Buts</button>
+            </div>
+          </div>
+
+          <button id="btn-start" class="neon-btn play-btn">
+            LANCER LA PARTIE
+          </button>
+          <button id="btn-settings-menu" class="neon-btn secondary-btn">
+            PARAMÈTRES
+          </button>
+        </div>
+
+        <div id="scoreboard" class="hidden">
+          <div class="score-container">
+            <span id="score-p1" class="neon-magenta">0</span>
+            <span class="score-separator">-</span>
+            <span id="score-p2" class="neon-cyan">0</span>
+          </div>
+          <div class="game-actions">
+            <button id="btn-pause" class="icon-btn" type="button" aria-label="Mettre la partie en pause" title="Pause (Échap ou P)">Ⅱ</button>
+            <button id="btn-settings-game" class="icon-btn" type="button" aria-label="Ouvrir les paramètres" title="Paramètres">⚙</button>
+          </div>
+        </div>
+
+        <div id="pause-menu" class="panel glass-panel hidden" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+          <p class="eyebrow">PARTIE EN COURS</p>
+          <h2 id="pause-title" class="title compact-title">PAUSE</h2>
+          <div class="button-group vertical">
+            <button id="btn-resume" class="neon-btn play-btn">REPRENDRE</button>
+            <button id="btn-settings-pause" class="neon-btn">PARAMÈTRES</button>
+            <button id="btn-quit-game" class="neon-btn danger-btn">QUITTER LA PARTIE</button>
+          </div>
+          <p class="shortcut-hint">Échap ou P pour reprendre</p>
+        </div>
+
+        <div id="settings-menu" class="panel glass-panel hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+          <p class="eyebrow">PERSONNALISATION</p>
+          <h2 id="settings-title" class="title compact-title">PARAMÈTRES</h2>
+          <div class="menu-section">
+            <h2>Thème</h2>
+            <div class="button-group theme-grid">
+              <button class="neon-btn theme-btn active" data-theme="neon">Synthwave</button>
+              <button class="neon-btn theme-btn" data-theme="sunset">Sunset</button>
+              <button class="neon-btn theme-btn" data-theme="matrix">Matrix</button>
+              <button class="neon-btn theme-btn" data-theme="ice">Ice</button>
+            </div>
+          </div>
+          <div class="menu-section settings-toggles">
+            <label class="toggle-row"><span>Sons</span><input id="setting-sound" type="checkbox" checked /><span class="toggle"></span></label>
+            <label class="toggle-row"><span>Effet de secousse</span><input id="setting-shake" type="checkbox" checked /><span class="toggle"></span></label>
+          </div>
+          <button id="btn-settings-close" class="neon-btn play-btn">FERMER</button>
+        </div>
+
+        <div id="game-over" class="panel glass-panel hidden">
+          <h2 id="winner-text" class="neon-cyan">VICTOIRE !</h2>
+          <div class="button-group vertical">
+            <button id="btn-restart" class="neon-btn play-btn">REJOUER</button>
+            <button id="btn-menu" class="neon-btn">MENU PRINCIPAL</button>
+          </div>
+        </div>
+      </div>
+
+      <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <script src="SynthwaveEdition.js"></script>
+  </body>
+</html>

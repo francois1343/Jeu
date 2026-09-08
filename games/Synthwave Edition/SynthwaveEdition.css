@@ -1,0 +1,401 @@
+/* =========================================
+   VARIABLES & DESIGN SYSTEM SYNTHWAVE
+   ========================================= */
+:root {
+  --cyan: #00f3ff;
+  --magenta: #ff00ff;
+  --dark-bg: #0a0a16;
+  --glass-bg: rgba(10, 10, 22, 0.7);
+  --glass-border: rgba(0, 243, 255, 0.2);
+
+  --font-main: "Orbitron", sans-serif;
+}
+
+:root[data-theme="sunset"] {
+  --cyan: #ffd166;
+  --magenta: #ff5c8a;
+  --dark-bg: #211024;
+  --glass-bg: rgba(33, 16, 36, 0.76);
+  --glass-border: rgba(255, 209, 102, 0.25);
+}
+
+:root[data-theme="matrix"] {
+  --cyan: #75ff92;
+  --magenta: #28c76f;
+  --dark-bg: #07140c;
+  --glass-bg: rgba(7, 20, 12, 0.78);
+  --glass-border: rgba(117, 255, 146, 0.25);
+}
+
+:root[data-theme="ice"] {
+  --cyan: #7dd3fc;
+  --magenta: #c4b5fd;
+  --dark-bg: #0b1020;
+  --glass-bg: rgba(11, 16, 32, 0.78);
+  --glass-border: rgba(125, 211, 252, 0.26);
+}
+
+/* =========================================
+   RESET & CONFIGURATION MOBILE
+   ========================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* Désactive la sélection de texte et le comportement par défaut du tactile (scroll/zoom) */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+body,
+html {
+  width: 100%;
+  height: 100%;
+  background-color: var(--dark-bg);
+  color: #fff;
+  font-family: var(--font-main);
+  overflow: hidden; /* Empêche tout défilement natif */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Un léger fond quadrillé style Tron pour habiller l'extérieur du canvas */
+  background-image:
+    linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* =========================================
+   CANVAS
+   ========================================= */
+#gameCanvas {
+  position: absolute;
+  z-index: 1;
+  /* Le canvas sera dimensionné via JS pour conserver le ratio de la table de hockey */
+  box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
+}
+
+/* =========================================
+   INTERFACE UTILISATEUR (UI LAYER)
+   ========================================= */
+#ui-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none; /* Laisse passer les clics vers le Canvas quand l'UI est vide */
+}
+
+/* Classes utilitaires */
+.hidden {
+  display: none !important;
+}
+
+.neon-cyan {
+  color: var(--cyan);
+  text-shadow:
+    0 0 10px var(--cyan),
+    0 0 20px var(--cyan);
+}
+
+.neon-magenta {
+  color: var(--magenta);
+  text-shadow:
+    0 0 10px var(--magenta),
+    0 0 20px var(--magenta);
+}
+
+/* =========================================
+   PANNEAUX GLASSMORPHISM & MENUS
+   ========================================= */
+.panel {
+  pointer-events: auto; /* Réactive les clics sur les panneaux */
+  padding: 2.5rem;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 90%;
+  width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.5),
+    inset 0 0 20px rgba(0, 243, 255, 0.05);
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 2rem;
+  color: var(--magenta);
+  text-shadow: 0 0 15px var(--magenta);
+  letter-spacing: 2px;
+}
+
+.menu-section {
+  margin-bottom: 1.5rem;
+}
+
+.menu-section h2 {
+  font-size: 1rem;
+  color: #aaa;
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* =========================================
+   BOUTONS NEON
+   ========================================= */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.button-group.vertical {
+  flex-direction: column;
+}
+
+.neon-btn {
+  background: transparent;
+  color: #fff;
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  padding: 10px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.neon-btn:hover {
+  border-color: var(--cyan);
+  box-shadow:
+    0 0 10px var(--cyan),
+    inset 0 0 10px var(--cyan);
+  color: var(--cyan);
+}
+
+.neon-btn.active {
+  background: rgba(0, 243, 255, 0.1);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  text-shadow: 0 0 5px var(--cyan);
+  box-shadow:
+    0 0 15px rgba(0, 243, 255, 0.3),
+    inset 0 0 10px rgba(0, 243, 255, 0.2);
+}
+
+.play-btn {
+  margin-top: 1.5rem;
+  font-size: 1.2rem;
+  padding: 15px 30px;
+  font-weight: 700;
+  border-color: var(--magenta);
+  color: var(--magenta);
+  width: 100%;
+}
+
+.play-btn:hover,
+.play-btn.active {
+  border-color: var(--magenta);
+  box-shadow:
+    0 0 20px var(--magenta),
+    inset 0 0 15px var(--magenta);
+  color: #fff;
+  background: rgba(255, 0, 255, 0.2);
+  text-shadow: 0 0 10px #fff;
+}
+
+/* =========================================
+   SCOREBOARD (IN-GAME)
+   ========================================= */
+#scoreboard {
+  position: absolute;
+  top: 5%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.game-actions {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  background: var(--glass-bg);
+  color: var(--cyan);
+  font: 700 1.25rem/1 var(--font-main);
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(0, 243, 255, 0.16);
+}
+
+.icon-btn:hover,
+.icon-btn:focus-visible {
+  border-color: var(--cyan);
+  box-shadow: 0 0 16px var(--cyan);
+  outline: none;
+}
+
+.score-container {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(5px);
+  padding: 10px 30px;
+  border-radius: 30px;
+  font-size: 2.5rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.score-separator {
+  color: #fff;
+  opacity: 0.5;
+  font-size: 1.5rem;
+}
+
+#winner-text {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.secondary-btn {
+  margin-top: 0.75rem;
+  width: 100%;
+}
+
+.compact-title {
+  font-size: 2.35rem;
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow,
+.shortcut-hint {
+  color: #aaa;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.shortcut-hint {
+  margin-top: 1.25rem;
+  letter-spacing: 0.05em;
+}
+
+.danger-btn:hover {
+  border-color: #ff5c8a;
+  box-shadow: 0 0 14px #ff5c8a;
+  color: #ffb3c7;
+}
+
+.theme-grid .neon-btn {
+  min-width: 120px;
+}
+
+.settings-toggles {
+  display: grid;
+  gap: 0.7rem;
+  text-align: left;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #ddd;
+  cursor: pointer;
+}
+
+.toggle-row input {
+  position: absolute;
+  opacity: 0;
+}
+
+.toggle {
+  width: 44px;
+  height: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.toggle::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 3px;
+  left: 3px;
+  border-radius: 50%;
+  background: #aaa;
+  transition: all 0.2s ease;
+}
+
+.toggle-row input:checked + .toggle {
+  border-color: var(--cyan);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.45);
+}
+
+.toggle-row input:checked + .toggle::after {
+  transform: translateX(20px);
+  background: var(--cyan);
+}
+
+@media (max-width: 520px) {
+  .panel {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 2.35rem;
+  }
+
+  .game-actions {
+    top: 10px;
+    right: 10px;
+  }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+  }
+}

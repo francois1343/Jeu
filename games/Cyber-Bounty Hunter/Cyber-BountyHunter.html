@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Cyber-Bounty Hunter</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="Cyber-BountyHunter.css" />
+  </head>
+  <body>
+    <div id="flash-overlay"></div>
+
+    <div id="start-screen" class="glass-panel absolute-center">
+      <h1 class="neon-magenta glitch" data-text="CYBER-BOUNTY">CYBER-BOUNTY</h1>
+      <p class="neon-cyan mb-2">
+        Traquez l'IA rebelle dans la foule avant la fin du temps imparti.
+      </p>
+      <button id="btn-start" class="cyber-btn cyan-glow">
+        INITIALISER LE SCANNER
+      </button>
+    </div>
+
+    <div id="game-over" class="glass-panel absolute-center hidden">
+      <h2 class="neon-red">CIBLE PERDUE</h2>
+      <p>SCORE FINAL : <span id="final-score" class="neon-cyan">0</span></p>
+      <button id="btn-restart" class="cyber-btn magenta-glow">
+        NOUVELLE TRAQUE
+      </button>
+    </div>
+
+    <div id="app" class="hidden">
+      <aside id="hud" class="glass-panel">
+        <h2 class="neon-red glitch-text">WANTED</h2>
+        <p class="subtitle">ROGUE AI</p>
+
+        <div id="target-container">
+          <canvas id="targetCanvas" width="120" height="120"></canvas>
+        </div>
+
+        <div class="stats">
+          <div class="stat-box">
+            <span>NIVEAU</span>
+            <span id="level" class="neon-cyan value">1</span>
+          </div>
+          <div class="stat-box">
+            <span>SCORE</span>
+            <span id="score" class="neon-magenta value">0</span>
+          </div>
+        </div>
+      </aside>
+
+      <main id="game-area" class="glass-panel">
+        <div id="timer-container">
+          <div id="timer-bar"></div>
+        </div>
+        <canvas id="crowdCanvas"></canvas>
+      </main>
+    </div>
+
+    <script src="Cyber-BountyHunter.js"></script>
+  </body>
+</html>
