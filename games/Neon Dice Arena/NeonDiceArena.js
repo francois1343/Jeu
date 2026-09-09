@@ -368,7 +368,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ui.mainMenu.classList.add("hidden");
     ui.gameUi.classList.remove("hidden");
     ui.controlsPerudo.classList.remove("hidden");
-    logHistory("Démarrage Liar's Dice. Préparez-vous.");
+    logHistory("Démarrage des Dés menteurs. Préparez-vous.");
     throwDice(5, "#ffaa00");
   });
 
@@ -378,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ui.mainMenu.classList.add("hidden");
     ui.gameUi.classList.remove("hidden");
     ui.controlsCraps.classList.remove("hidden");
-    logHistory("Démarrage Mini Craps. Secouez le gobelet !");
+    logHistory("Démarrage du Craps express. Secouez le gobelet !");
   });
 
   ui.btnQuit.addEventListener("click", () => {

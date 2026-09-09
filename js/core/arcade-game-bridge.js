@@ -41,8 +41,9 @@
       .arcade-session-hud{position:fixed;right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom));z-index:2147483000;display:flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid rgba(0,255,255,.42);border-radius:999px;background:rgba(5,10,22,.9);box-shadow:0 0 24px rgba(0,255,255,.16);backdrop-filter:blur(10px);color:#fff;font:600 12px Rajdhani,system-ui,sans-serif;pointer-events:none}
       .arcade-session-hud strong{color:#00ffff;font-family:Orbitron,system-ui,sans-serif;font-size:10px;letter-spacing:.5px;text-transform:uppercase}.arcade-session-hud span:last-child{color:#ffe66d}
       .arcade-session-hud[data-state="won"]{border-color:#00ff88}.arcade-session-hud[data-state="won"] strong{color:#00ff88}.arcade-session-hud[data-state="lost"],.arcade-session-hud[data-state="abandoned"]{border-color:#ff4757}.arcade-session-hud[data-state="lost"] strong,.arcade-session-hud[data-state="abandoned"] strong{color:#ff8d98}
+      .arcade-home-link{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));z-index:2147483400;display:inline-flex;min-height:42px;align-items:center;gap:8px;padding:0 14px;border:1px solid rgba(0,255,255,.72);border-radius:999px;background:rgba(5,10,22,.9);box-shadow:0 0 22px rgba(0,255,255,.22);backdrop-filter:blur(10px);color:#dffcff;font:700 13px Orbitron,Rajdhani,system-ui,sans-serif;letter-spacing:.04em;text-decoration:none;transition:transform .18s ease,background .18s ease,box-shadow .18s ease}.arcade-home-link:hover,.arcade-home-link:focus-visible{transform:translateY(-2px);background:rgba(0,243,255,.16);box-shadow:0 0 30px rgba(0,255,255,.45);outline:none}.arcade-home-link:focus-visible{outline:2px solid #fff;outline-offset:3px}
       .arcade-session-blocker{position:fixed;inset:0;z-index:2147483500;display:grid;place-items:center;padding:20px;background:rgba(2,6,16,.88);backdrop-filter:blur(9px)}.arcade-session-blocker>div{width:min(92vw,460px);padding:28px;border:1px solid rgba(255,71,87,.45);border-radius:18px;background:#0d1422;color:#fff;text-align:center;box-shadow:0 0 55px rgba(255,71,87,.16);font-family:Rajdhani,system-ui,sans-serif}.arcade-session-blocker h2{margin:0 0 10px;color:#ff8d98;font-family:Orbitron,system-ui,sans-serif;font-size:20px}.arcade-session-blocker p{margin:0 0 20px;color:#a5afc7;line-height:1.5}.arcade-session-blocker-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}.arcade-session-blocker a,.arcade-session-replay{display:inline-flex;min-height:44px;align-items:center;justify-content:center;padding:0 18px;border:1px solid #00ffff;border-radius:9px;background:transparent;color:#00ffff;text-decoration:none;font:700 16px Rajdhani,system-ui,sans-serif;cursor:pointer}.arcade-session-replay{border-color:#00ff88;color:#00ff88}.arcade-session-replay:disabled{opacity:.5;cursor:not-allowed}
-      @media(max-width:520px){.arcade-session-hud{right:8px;bottom:8px;padding:7px 10px}.arcade-session-hud span:last-child{display:none}}
+      @media(max-width:520px){.arcade-session-hud{right:8px;bottom:8px;padding:7px 10px}.arcade-session-hud span:last-child{display:none}.arcade-home-link{top:8px;left:8px;min-height:38px;padding:0 11px;font-size:11px}}
     `;
     document.head.appendChild(style);
   }
@@ -62,6 +63,20 @@
     hud.title = `Session ${session.id}`;
     hud.querySelector("strong").textContent = `${session.economyMode === "practice" ? "Entraînement" : "Coins"} · ${statusLabel(session.state)}`;
     hud.querySelector("span").textContent = `${coins(profile?.balanceUnits)} 🪙`;
+  }
+
+  function injectHomeButton() {
+    if (document.getElementById("arcadeHomeButton")) return;
+    const home = document.createElement("a");
+    home.id = "arcadeHomeButton";
+    home.className = "arcade-home-link";
+    home.href = new URL("../../index.html", global.location.href).href;
+    home.textContent = "← Accueil";
+    home.setAttribute("aria-label", "Retourner à l'accueil de l'Arcade");
+    home.addEventListener("click", () => {
+      if (session?.state === "created" || session?.state === "started") abandon("home_navigation");
+    });
+    document.body.appendChild(home);
   }
 
   function sessionSnapshot() {
@@ -287,8 +302,9 @@
   }
 
   function init() {
-    if (!sessionId || !store) return;
     injectStyles();
+    injectHomeButton();
+    if (!sessionId || !store) return;
     if (!session) {
       showBlocker("Session introuvable", "Relancez ce jeu depuis la grille principale.");
       return;

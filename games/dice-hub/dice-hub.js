@@ -31,8 +31,9 @@
       players: "2–4",
       duration: "10 MIN",
       level: "MOYEN",
-      ready: false,
+      ready: true,
       table: "TABLE 02",
+      externalUrl: "../421/index.html",
       rules: `
         <p class="coming-note">Cette table est préparée dans le hub mais son moteur de jeu n’est pas encore activé.</p>
         <h3>FORMAT PRÉVU</h3>
@@ -53,6 +54,21 @@
         <h3>COMMENT JOUER</h3>
         <ol><li>Lancez six dés.</li><li>Gardez au moins une combinaison marquante.</li><li>Encaissez ou relancez les dés restants au risque de perdre les points du tour.</li></ol>
         <p>Si les six dés marquent, une main pleine vous permet de tous les relancer.</p>`,
+    }),
+    "neon-arena": Object.freeze({
+      title: "Arène de dés néon",
+      kicker: "TABLE CASINO",
+      description: "Deux jeux de dés rapides : Dés menteurs (Perudo) et Craps express, dans une arène synthwave.",
+      players: "1",
+      duration: "LIBRE",
+      level: "MOYEN",
+      ready: true,
+      table: "TABLE 04",
+      externalUrl: "../Neon Dice Arena/NeonDiceArena.html",
+      rules: `
+        <p>Rejoignez l'arène pour choisir les Dés menteurs ou le Craps express. Les crédits affichés dans cette table sont propres au jeu et ne sont pas des Coins Arcade.</p>
+        <h3>COMMENT JOUER</h3>
+        <ol><li>Choisissez un mode dans l'arène.</li><li>Secouez le gobelet pour lancer les dés.</li><li>Suivez le résultat et l'historique de la table.</li></ol>`,
     }),
   });
 
@@ -168,6 +184,10 @@
 
   function playSelectedMode() {
     if (!modes[selectedMode].ready) return;
+    if (modes[selectedMode].externalUrl) {
+      window.location.href = modes[selectedMode].externalUrl;
+      return;
+    }
     if (selectedMode === "yahtzee") {
       window.location.href = "../Yahtzee/yahtzee.html";
       return;
@@ -479,7 +499,9 @@
         selectMode(tableCards[nextIndex].dataset.mode);
       });
     });
-    elements["play-button"].addEventListener("pointerdown", startMagicSession);
+    elements["play-button"].addEventListener("pointerdown", () => {
+      if (selectedMode === "magic") startMagicSession();
+    });
     elements["play-button"].addEventListener("click", playSelectedMode);
     elements["back-to-menu"].addEventListener("click", () => showScreen("menu"));
     elements["open-rules"].addEventListener("click", () => openRules());

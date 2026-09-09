@@ -54,6 +54,10 @@ assert.equal(document.documentElement.dataset.arcadeVisualIntensity, "calm");
 assert.equal(ArcadeLocalStore.getGamePreferences().vibration, false);
 assert.ok(events.some((event) => event.type === "arcade:preferences-change"));
 
+const gameBridge = fs.readFileSync(path.join(root, "js", "core", "arcade-game-bridge.js"), "utf8");
+assert.match(gameBridge, /arcadeHomeButton/, "Le pont commun doit fournir un retour Accueil à chaque jeu");
+assert.match(gameBridge, /← Accueil/, "Le retour commun doit être clairement libellé");
+
 assert.deepEqual(ARCADE_GAME_CONFIG.transitions.created, ["started", "abandoned"]);
 assert.deepEqual(ARCADE_GAME_CONFIG.transitions.started, ["won", "lost", "abandoned"]);
 
@@ -66,7 +70,7 @@ function collect(directory) {
   });
 }
 collect(path.join(root, "games"));
-assert.equal(pages.length, 41, "Le parc de jeux attendu doit rester complet");
+assert.equal(pages.length, 42, "Le parc de jeux attendu doit rester complet");
 pages.forEach((page) => {
   const html = fs.readFileSync(page, "utf8");
   assert.match(html, /arcade-game-bridge\.js/, `${path.relative(root, page)} doit charger le pont central`);

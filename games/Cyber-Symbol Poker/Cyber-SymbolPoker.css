@@ -6,6 +6,7 @@
   --bg-dark: #0b0c10;
   --card-bg: #1f2833;
   --font-main: "Orbitron", sans-serif;
+  --card-ink: #eafcff;
 }
 
 * {
@@ -101,23 +102,38 @@ body {
 }
 .cards-container {
   display: flex;
-  gap: 15px;
+  gap: clamp(6px, 1.2vw, 15px);
   perspective: 1000px;
+  padding: 14px 10px;
 }
 
 /* Cartes (Animation 3D) */
 .card {
-  width: 90px;
-  height: 130px;
+  width: clamp(52px, 8.6vw, 96px);
+  height: clamp(82px, 12.5vw, 140px);
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.2s ease;
   cursor: pointer;
+  filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.45));
 }
 
 .card.held {
-  transform: translateY(-15px) scale(1.05);
-  box-shadow: 0 15px 20px rgba(0, 243, 255, 0.3);
+  transform: translateY(-18px) scale(1.06);
+  filter: drop-shadow(0 16px 14px rgba(0, 243, 255, 0.42));
+}
+.card.held::after {
+  content: "GARDÉE";
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: -18px;
+  transform: translateX(-50%);
+  color: var(--cyan);
+  font-size: 0.5rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 8px var(--cyan);
 }
 .card.flipped .card-inner {
   transform: rotateY(180deg);
@@ -132,7 +148,7 @@ body {
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.6s;
+  transition: transform 0.6s cubic-bezier(0.2, 0.75, 0.2, 1);
 }
 
 .card-face {
@@ -140,30 +156,78 @@ body {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 8px;
+  overflow: hidden;
+  border-radius: 11px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 3rem;
+  font-size: clamp(1.75rem, 4vw, 3.45rem);
+  font-weight: 900;
+  line-height: 1;
+  isolation: isolate;
 }
 
 .card-front {
-  background: var(--card-bg);
+  color: var(--card-ink);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.2), transparent 30%),
+    linear-gradient(145deg, rgba(29, 53, 82, 0.98), rgba(7, 15, 33, 0.98) 52%, rgba(20, 5, 45, 0.98));
   border: 2px solid var(--cyan);
   transform: rotateY(180deg);
-  box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.1);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.07), inset 0 0 24px rgba(0, 243, 255, 0.26), 0 0 13px rgba(0, 243, 255, 0.38);
+  text-shadow: 0 0 8px currentColor, 0 0 20px var(--cyan);
 }
+.card-front::before,
+.card-front::after {
+  position: absolute;
+  z-index: -1;
+  color: var(--cyan);
+  font-size: 0.42em;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 8px var(--cyan);
+}
+.card-front::before { content: "CYBER"; top: 8px; left: 8px; }
+.card-front::after { content: "ARC"; right: 8px; bottom: 8px; transform: rotate(180deg); }
 
 .card-back {
-  background: repeating-linear-gradient(
-    45deg,
-    #1f2833,
-    #1f2833 10px,
-    #0b0c10 10px,
-    #0b0c10 20px
-  );
+  background:
+    linear-gradient(45deg, transparent 46%, rgba(255, 255, 255, 0.12) 47%, transparent 49%),
+    linear-gradient(-45deg, transparent 46%, rgba(255, 255, 255, 0.1) 47%, transparent 49%),
+    radial-gradient(circle at center, rgba(255, 0, 255, 0.32), transparent 29%),
+    linear-gradient(135deg, #100d29, #280b39 50%, #0a1531);
+  background-size: 15px 15px, 15px 15px, auto, auto;
   border: 2px solid var(--magenta);
-  box-shadow: inset 0 0 15px rgba(255, 0, 255, 0.2);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.08), inset 0 0 25px rgba(255, 0, 255, 0.42), 0 0 14px rgba(255, 0, 255, 0.35);
+}
+.card-back::before {
+  content: "✦";
+  width: 48%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(255, 0, 255, 0.75);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1.3em;
+  text-shadow: 0 0 12px var(--magenta);
+  box-shadow: 0 0 18px rgba(255, 0, 255, 0.5), inset 0 0 14px rgba(255, 0, 255, 0.35);
+}
+.card:hover:not(.flipped) .card-back,
+.card:hover .card-front {
+  filter: brightness(1.22);
+}
+
+@media (max-width: 760px) {
+  #game-container { height: 100vh; padding: 10px; gap: 10px; }
+  #paytable { display: none; }
+  #board { flex: 1; }
+  .cards-container { gap: 5px; padding-inline: 2px; }
+  .card.held { transform: translateY(-12px) scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .card-inner { transition-duration: 0.01ms; }
 }
 
 /* Center Info & Controls */

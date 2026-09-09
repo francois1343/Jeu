@@ -86,8 +86,8 @@ class CyberPoker {
     card.className = "card";
     card.innerHTML = `
             <div class="card-inner">
-                <div class="card-back"></div>
-                <div class="card-front"></div>
+                <div class="card-back card-face" aria-hidden="true"></div>
+                <div class="card-front card-face" aria-label="Carte révélée"></div>
             </div>
         `;
     if (isPlayer) {
