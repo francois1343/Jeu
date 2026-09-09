@@ -381,10 +381,41 @@
         color: #ccc;
       }
 
+      .setting-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        text-align: left;
+      }
+
+      .setting-hint {
+        color: #6f7a91;
+        font-size: 10px;
+        line-height: 1.3;
+      }
+
+      .difficulty-badge {
+        display: inline-flex;
+        width: max-content;
+        margin-left: 6px;
+        padding: 2px 6px;
+        color: #ffcc80;
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        border: 1px solid rgba(255, 153, 0, 0.35);
+        border-radius: 999px;
+        background: rgba(255, 153, 0, 0.1);
+      }
+
       .toggle {
         width: 50px;
         height: 26px;
+        flex: 0 0 auto;
+        padding: 0;
         background: #333;
+        border: 0;
         border-radius: 13px;
         cursor: pointer;
         position: relative;
@@ -471,8 +502,8 @@
           </div>
           <div class="mode-btn" onclick="selectMode('walls', this)">
             <span class="icon">🧱</span>
-            <span class="name">Obstacles</span>
-            <span class="desc">Évite les murs</span>
+            <span class="name">Labyrinthe</span>
+            <span class="desc">Obstacles sur la grille</span>
           </div>
           <div class="mode-btn" onclick="selectMode('powerups', this)">
             <span class="icon">✨</span>
@@ -506,12 +537,18 @@
         </div>
 
         <div class="setting-row">
-          <span class="setting-label">Murs mortels</span>
-          <div
+          <span class="setting-copy">
+            <span class="setting-label">Bords mortels <span class="difficulty-badge">Expert</span></span>
+            <span class="setting-hint">Désactivé par défaut : le serpent traverse l'écran.</span>
+          </span>
+          <button
+            type="button"
             id="opt-walls"
-            class="toggle active"
+            class="toggle"
+            aria-label="Activer les bords mortels"
+            aria-pressed="false"
             onclick="toggleOption(this)"
-          ></div>
+          ></button>
         </div>
 
         <div class="setting-row">
@@ -895,7 +932,7 @@
 
           this.mode = "classic";
           this.difficulty = "normal";
-          this.wallsKill = true;
+          this.wallsKill = false;
 
           this.reset();
           this.setupCanvas();
@@ -1021,7 +1058,9 @@
           const opts = Storage.getOptions();
 
           this.difficulty = opts.difficulty || "normal";
-          this.wallsKill = opts.walls !== false;
+          // Depuis la version 2, les bords sont sûrs par défaut. Les anciennes
+          // sauvegardes héritaient implicitement de murs mortels : on les migre.
+          this.wallsKill = Number(opts.optionsVersion) >= 2 && opts.walls === true;
           this.audio.enabled = opts.sound !== false;
           this.particles.enabled = opts.particles !== false;
 
@@ -1030,6 +1069,9 @@
           document
             .getElementById("opt-walls")
             .classList.toggle("active", this.wallsKill);
+          document
+            .getElementById("opt-walls")
+            .setAttribute("aria-pressed", String(this.wallsKill));
           document
             .getElementById("opt-sound")
             .classList.toggle("active", this.audio.enabled);
@@ -1047,6 +1089,7 @@
 
         saveOptions() {
           Storage.saveOptions({
+            optionsVersion: 2,
             difficulty: document.getElementById("opt-difficulty").value,
             walls: document
               .getElementById("opt-walls")
@@ -1819,6 +1862,12 @@
 
       function toggleOption(element) {
         element.classList.toggle("active");
+        if (element.hasAttribute("aria-pressed")) {
+          element.setAttribute(
+            "aria-pressed",
+            String(element.classList.contains("active")),
+          );
+        }
 
         // Appliquer immédiatement
         if (element.id === "opt-touch") {

@@ -789,6 +789,15 @@
           gap: 18px;
         }
       }
+      /* Refonte Memory : une entree plus claire et des cartes plus tactiles. */
+      .menu-screen { overflow-y:auto; justify-content:flex-start; padding:76px 20px 28px; background:radial-gradient(circle at 15% 5%,rgba(0,212,255,.18),transparent 30rem),radial-gradient(circle at 90% 82%,rgba(0,255,136,.13),transparent 28rem),#080d1c; }
+      .menu-container.memory-2026 { max-width:510px; padding:28px; border:1px solid rgba(0,212,255,.22); border-radius:28px; background:linear-gradient(145deg,rgba(16,28,54,.9),rgba(7,12,28,.94)); box-shadow:0 30px 80px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.07); }
+      .memory-eyebrow { display:inline-flex; margin-bottom:13px; padding:7px 10px; border:1px solid rgba(0,212,255,.26); border-radius:999px; color:#91efff; background:rgba(0,212,255,.08); font-size:10px; font-weight:800; letter-spacing:.13em; }.memory-2026 .game-logo{display:grid;place-items:center;width:76px;height:76px;margin:0 auto 14px;border:1px solid rgba(0,212,255,.32);border-radius:23px;background:linear-gradient(145deg,rgba(0,212,255,.18),rgba(0,255,136,.12));font-size:38px;box-shadow:inset 0 1px 0 rgba(255,255,255,.14);}.memory-2026 .game-title{font-size:clamp(35px,9vw,48px);letter-spacing:-.05em}.memory-2026 .game-subtitle{margin:0 auto 23px;max-width:330px;line-height:1.5;color:#b3c2dc}.memory-2026 .section-title{display:flex;align-items:center;gap:10px;margin:20px 0 11px;text-align:left;color:#b6c5df;letter-spacing:.11em}.memory-2026 .section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(0,212,255,.35),transparent)}.memory-2026 .difficulty-section,.memory-2026 .theme-section{margin-bottom:6px}.memory-2026 .diff-card{min-height:120px;padding:14px 7px;border-width:1px;border-radius:18px}.memory-2026 .theme-pill{min-height:40px;padding:8px 12px;border-width:1px}.memory-mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 17px}.memory-mode-btn{min-height:68px;padding:8px 5px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.035);color:#aebed7;font:inherit;font-size:11px;cursor:pointer}.memory-mode-btn strong{display:block;margin-bottom:4px;color:#fff;font-size:12px}.memory-mode-btn.active{border-color:#00d4ff;background:rgba(0,212,255,.13);box-shadow:0 0 18px rgba(0,212,255,.14)}.memory-mode-note{min-height:18px;margin:-10px 0 15px;color:#92a4c6;font-size:12px}.memory-2026 .play-btn{min-height:58px;border-radius:16px;text-transform:none;letter-spacing:.08em}.memory-2026 .secondary-btn{border-width:1px}.card{touch-action:manipulation}.card:hover:not(.flipped):not(.matched){transform:translateY(-4px) rotateY(0)}.card:focus-visible{outline:2px solid #fff;outline-offset:3px}.preview-active .cards-grid{filter:drop-shadow(0 0 18px rgba(0,255,136,.18))}.preview-banner{margin:0 auto 8px;color:#96ffce;font-size:12px;font-weight:800;letter-spacing:.08em;text-align:center}.lb-mode-tag{display:inline-block;margin-top:4px;color:#00d4ff;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}@media(max-width:400px){.menu-screen{padding:63px 12px 20px}.menu-container.memory-2026{padding:22px 15px;border-radius:22px}.memory-2026 .diff-card{min-height:108px}.memory-mode-btn{font-size:10px}.cards-grid{gap:7px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+      .memory-mode-grid { grid-template-columns:repeat(2,1fr); }
+      .memory-lb-filters { display:flex; justify-content:center; gap:7px; flex-wrap:wrap; margin:13px 0 10px; }
+      .memory-lb-filter { min-height:34px; padding:7px 10px; border:1px solid rgba(255,255,255,.13); border-radius:999px; background:rgba(255,255,255,.04); color:#aebed7; font:700 11px inherit; cursor:pointer; }
+      .memory-lb-filter.active { color:#06121b; background:#00d4ff; border-color:#00d4ff; }
+      .memory-lb-summary { min-height:18px; margin:0 0 13px; color:#92a4c6; text-align:center; font-size:12px; }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
   </head>
@@ -1044,6 +1053,12 @@
         ],
       };
 
+      Object.assign(THEMES, {
+        neon: ["◈", "◇", "○", "△", "□", "✦", "✧", "✹", "☄", "⌁", "◉", "◌"],
+        music: ["♫", "♪", "♬", "♩", "♭", "♮", "♯", "𝄞", "𝄢", "𝄫", "𝄪", "𝄡"],
+        travel: ["✈", "⌂", "⌖", "⌘", "⚓", "⛺", "⛰", "☀", "☾", "⌁", "✦", "◉"],
+      });
+
       const GRID_CONFIG = {
         8: { cols: 4, rows: 2, class: "grid-4x2" },
         12: { cols: 4, rows: 3, class: "grid-4x3" },
@@ -1051,6 +1066,12 @@
       };
 
       const SCORE_MULTIPLIER = { 8: 1, 12: 1.5, 24: 2 };
+      const MODE_CONFIG = {
+        classic: { name: "Classique", note: "Trouve toutes les paires a ton rythme.", scoreBonus: 1, previewMs: 0 },
+        preview: { name: "Observation", note: "Observe la grille pendant 2 secondes avant le depart.", scoreBonus: 1.1, previewMs: 2200 },
+        rush: { name: "Rush", note: "Aucun apercu, mais un bonus de score de 25%.", scoreBonus: 1.25, previewMs: 0 },
+        random: { name: "Aleatoire", note: "Theme et format tires au sort a chaque partie.", scoreBonus: 1.15, previewMs: 0, random: true },
+      };
 
       // ============================================
       // ÉTAT DU JEU
@@ -1066,8 +1087,14 @@
         elapsed: 0,
         timer: null,
         locked: false,
+        mode: "classic",
+        activeMode: "classic",
+        activeTheme: "animals",
+        previewTimer: null,
         highscores: { 8: [], 12: [], 24: [] },
       };
+      let leaderboardMode = "all";
+      let leaderboardSize = 8;
 
       // ============================================
       // INITIALISATION
@@ -1075,6 +1102,72 @@
       function init() {
         loadHighscores();
         createParticles();
+        enhanceMemoryMenu();
+      }
+
+      function enhanceMemoryMenu() {
+        const menu = document.querySelector(".menu-container");
+        if (!menu) return;
+        menu.classList.add("memory-2026");
+        const eyebrow = document.createElement("div");
+        eyebrow.className = "memory-eyebrow";
+        eyebrow.textContent = "NEURAL MATCH // MEMOIRE VISUELLE";
+        menu.prepend(eyebrow);
+        const subtitle = menu.querySelector(".game-subtitle");
+        if (subtitle) subtitle.textContent = "Repere les motifs, memorise la grille et enchaine les paires.";
+        menu.querySelectorAll(".diff-card, .theme-pill").forEach((choice) => {
+          choice.setAttribute("role", "button");
+          choice.setAttribute("tabindex", "0");
+          choice.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choice.click(); }
+          });
+        });
+        const themePills = menu.querySelector(".theme-pills");
+        if (themePills) {
+          [
+            ["neon", "Neon"],
+            ["music", "Musique"],
+            ["travel", "Voyage"],
+          ].forEach(([theme, label]) => {
+            const pill = document.createElement("button");
+            pill.type = "button";
+            pill.className = "theme-pill";
+            pill.textContent = label;
+            pill.addEventListener("click", () => selectTheme(theme, pill));
+            themePills.appendChild(pill);
+          });
+        }
+        const leaderboardHeader = document.querySelector(".leaderboard-title");
+        if (leaderboardHeader) leaderboardHeader.textContent = "Mes records";
+        const leaderboardTabs = document.querySelector(".leaderboard-tabs");
+        if (leaderboardTabs && !document.getElementById("memoryLbSummary")) {
+          const controls = document.createElement("div");
+          controls.innerHTML = '<div class="memory-lb-filters"><button class="memory-lb-filter active" data-mode="all">Tous</button><button class="memory-lb-filter" data-mode="classic">Classique</button><button class="memory-lb-filter" data-mode="preview">Observation</button><button class="memory-lb-filter" data-mode="rush">Rush</button></div><p class="memory-lb-summary" id="memoryLbSummary"></p>';
+          leaderboardTabs.after(controls);
+          controls.querySelectorAll(".memory-lb-filter").forEach((button) => button.addEventListener("click", () => setLeaderboardMode(button.dataset.mode, button)));
+        }
+        const playButton = menu.querySelector(".play-btn");
+        if (playButton) {
+          const modes = document.createElement("section");
+          modes.innerHTML = '<div class="section-title">Format de partie</div><div class="memory-mode-grid"><button class="memory-mode-btn active" data-mode="classic"><strong>Classique</strong>Sans pression</button><button class="memory-mode-btn" data-mode="preview"><strong>Observation</strong>Apercu de la grille</button><button class="memory-mode-btn" data-mode="rush"><strong>Rush</strong>Bonus x1,25</button><button class="memory-mode-btn" data-mode="random"><strong>Aleatoire</strong>Tout est tire au sort</button></div><p class="memory-mode-note" id="memoryModeNote"></p>';
+          playButton.before(modes);
+          modes.querySelectorAll(".memory-mode-btn").forEach((button) => button.addEventListener("click", () => selectMode(button.dataset.mode, button)));
+          updateModeNote();
+        }
+      }
+
+      function selectMode(mode, button) {
+        if (!MODE_CONFIG[mode]) return;
+        game.mode = mode;
+        document.querySelectorAll(".memory-mode-btn").forEach((item) => item.classList.remove("active"));
+        if (button) button.classList.add("active");
+        updateModeNote();
+        playSound("click");
+      }
+
+      function updateModeNote() {
+        const note = document.getElementById("memoryModeNote");
+        if (note) note.textContent = MODE_CONFIG[game.mode].note;
       }
 
       function createParticles() {
@@ -1122,7 +1215,16 @@
       // DÉMARRAGE DU JEU
       // ============================================
       function startGame() {
-        window.ArcadeGameSession?.start({ gridSize: game.gridSize, theme: game.theme });
+        if (game.mode === "random") {
+          const modes = ["classic", "preview", "rush"];
+          const themes = Object.keys(THEMES);
+          game.activeMode = modes[Math.floor(Math.random() * modes.length)];
+          game.activeTheme = themes[Math.floor(Math.random() * themes.length)];
+        } else {
+          game.activeMode = game.mode;
+          game.activeTheme = game.theme;
+        }
+        window.ArcadeGameSession?.start({ gridSize: game.gridSize, theme: game.activeTheme, mode: game.activeMode });
         // Reset
         game.cards = [];
         game.flipped = [];
@@ -1132,10 +1234,13 @@
         game.locked = false;
 
         if (game.timer) clearInterval(game.timer);
+        if (game.previewTimer) clearTimeout(game.previewTimer);
+        document.getElementById("previewBanner")?.remove();
+        document.querySelector(".cards-container")?.classList.remove("preview-active");
 
         // Générer les cartes
         const pairCount = game.gridSize / 2;
-        const emojis = THEMES[game.theme].slice(0, pairCount);
+        const emojis = THEMES[game.activeTheme].slice(0, pairCount);
         const deck = [...emojis, ...emojis];
 
         // Mélanger (Fisher-Yates)
@@ -1156,11 +1261,35 @@
         updateStats();
         showScreen("gameScreen");
 
-        // Timer
-        game.startTime = Date.now();
-        game.timer = setInterval(updateTimer, 100);
+        const mode = MODE_CONFIG[game.activeMode];
+        if (mode.previewMs) {
+          game.locked = true;
+          game.cards.forEach((card) => (card.flipped = true));
+          document.getElementById("cardsGrid").closest(".cards-container").classList.add("preview-active");
+          const banner = document.createElement("div");
+          banner.className = "preview-banner";
+          banner.id = "previewBanner";
+          banner.textContent = "OBSERVE LA GRILLE";
+          document.querySelector(".cards-container").prepend(banner);
+          renderGrid();
+          game.previewTimer = setTimeout(() => {
+            game.cards.forEach((card) => (card.flipped = false));
+            game.locked = false;
+            document.getElementById("cardsGrid").closest(".cards-container").classList.remove("preview-active");
+            document.getElementById("previewBanner")?.remove();
+            renderGrid();
+            startTimer();
+          }, mode.previewMs);
+        } else {
+          startTimer();
+        }
 
         playSound("start");
+      }
+
+      function startTimer() {
+        game.startTime = Date.now();
+        game.timer = setInterval(updateTimer, 100);
       }
 
       function renderGrid() {
@@ -1296,7 +1425,7 @@
         const baseScore = 10000;
         const timePenalty = timeSec * 10;
         const movesPenalty = game.moves * 20;
-        const multiplier = SCORE_MULTIPLIER[game.gridSize];
+        const multiplier = SCORE_MULTIPLIER[game.gridSize] * MODE_CONFIG[game.activeMode].scoreBonus;
 
         const score = Math.max(
           100,
@@ -1335,13 +1464,15 @@
           score: score,
           moves: game.moves,
           time: time,
+          mode: game.activeMode,
+          theme: game.activeTheme,
           date: Date.now(),
         };
 
         const scores = game.highscores[game.gridSize];
         scores.push(entry);
         scores.sort((a, b) => b.score - a.score);
-        game.highscores[game.gridSize] = scores.slice(0, 10);
+        game.highscores[game.gridSize] = scores.slice(0, 36);
 
         localStorage.setItem("memory-scores", JSON.stringify(game.highscores));
 
@@ -1361,6 +1492,9 @@
       function confirmQuit() {
         if (confirm("Quitter la partie ?")) {
           clearInterval(game.timer);
+          clearTimeout(game.previewTimer);
+          document.getElementById("previewBanner")?.remove();
+          document.querySelector(".cards-container")?.classList.remove("preview-active");
           showScreen("menuScreen");
         }
       }
@@ -1424,6 +1558,49 @@
     `;
           })
           .join("");
+      }
+
+      // Classement local enrichi : filtres par format et lecture plus rapide.
+      function showLeaderboard() {
+        showScreen("leaderboardScreen");
+        const tab = document.querySelector(`.tab-btn[onclick*="${game.gridSize}"]`);
+        showTab(game.gridSize, tab || document.querySelector(".tab-btn"));
+      }
+
+      function setLeaderboardMode(mode, button) {
+        leaderboardMode = mode;
+        document.querySelectorAll(".memory-lb-filter").forEach((item) => item.classList.remove("active"));
+        if (button) button.classList.add("active");
+        renderLeaderboard();
+      }
+
+      function showTab(size, button) {
+        leaderboardSize = size;
+        document.querySelectorAll(".tab-btn").forEach((item) => item.classList.remove("active"));
+        if (button) button.classList.add("active");
+        renderLeaderboard();
+      }
+
+      function renderLeaderboard() {
+        const list = document.getElementById("leaderboardList");
+        const summary = document.getElementById("memoryLbSummary");
+        const source = Array.isArray(game.highscores[leaderboardSize]) ? game.highscores[leaderboardSize] : [];
+        const scores = source.filter((score) => leaderboardMode === "all" || (score.mode || "classic") === leaderboardMode);
+        if (summary) {
+          const best = scores[0] ? scores[0].score.toLocaleString() + " pts" : "aucun record";
+          summary.textContent = scores.length + " partie" + (scores.length > 1 ? "s" : "") + " - meilleur : " + best + " - appareil local";
+        }
+        if (!scores.length) {
+          list.innerHTML = '<div class="lb-empty"><div class="lb-empty-icon">+</div><p>Pas encore de record ici.</p><p style="font-size:12px;margin-top:8px;">Termine une partie pour l ajouter.</p></div>';
+          return;
+        }
+        list.innerHTML = scores.map((score, index) => {
+          const rank = index === 0 ? "gold" : index === 1 ? "silver" : index === 2 ? "bronze" : "";
+          const mode = MODE_CONFIG[score.mode]?.name || "Classique";
+          const min = Math.floor(score.time / 60);
+          const sec = score.time % 60;
+          return `<div class="lb-item ${rank}"><div class="lb-rank ${rank}">${index + 1}</div><div class="lb-info"><div class="lb-score">${score.score.toLocaleString()} pts</div><div class="lb-details">${score.moves} coups - ${min}:${sec.toString().padStart(2, "0")}</div><span class="lb-mode-tag">${mode}</span></div><div class="lb-date">${new Date(score.date).toLocaleDateString("fr-FR")}</div></div>`;
+        }).join("");
       }
 
       function loadHighscores() {

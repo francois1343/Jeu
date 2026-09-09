@@ -67,6 +67,14 @@
 
   function injectHomeButton() {
     if (document.getElementById("arcadeHomeButton")) return;
+    const existingHome = document.querySelector(".arcade-home-link");
+    if (existingHome) {
+      existingHome.id = "arcadeHomeButton";
+      existingHome.addEventListener("click", () => {
+        if (session?.state === "created" || session?.state === "started") abandon("home_navigation");
+      });
+      return;
+    }
     const home = document.createElement("a");
     home.id = "arcadeHomeButton";
     home.className = "arcade-home-link";

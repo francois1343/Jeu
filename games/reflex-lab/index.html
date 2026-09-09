@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Reflex Lab</title>
+    <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <style>
+      *{box-sizing:border-box}body{margin:0;min-height:100dvh;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 15% 15%,#073e58,transparent 28rem),radial-gradient(circle at 85% 85%,#3c155b,transparent 28rem),#050914;color:#eef8ff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}.shell{width:min(94vw,700px);min-height:min(86dvh,760px);padding:28px;border:1px solid rgba(0,232,255,.25);border-radius:28px;background:rgba(6,14,31,.78);box-shadow:0 30px 100px #0008,inset 0 1px #ffffff12;backdrop-filter:blur(15px)}.eyebrow{color:#8af5ff;font-size:11px;font-weight:800;letter-spacing:.16em}.title{margin:8px 0;font-size:clamp(34px,8vw,55px);letter-spacing:-.06em;background:linear-gradient(120deg,#00e8ff,#9c6cff);-webkit-background-clip:text;color:transparent}.intro{max-width:430px;color:#aebed7;line-height:1.5}.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:30px}.mode{min-height:190px;padding:19px;border:1px solid #ffffff18;border-radius:20px;background:linear-gradient(145deg,#ffffff0c,#ffffff03);color:inherit;text-align:left;cursor:pointer;transition:.2s}.mode:hover{transform:translateY(-5px);border-color:#00e8ff88;box-shadow:0 14px 30px #00e8ff1b}.mode span{font-size:32px}.mode strong{display:block;margin:16px 0 7px;font-size:17px}.mode small{color:#aabbd5;line-height:1.4}.game{display:none;height:100%}.game.show{display:flex;flex-direction:column}.top{display:flex;align-items:center;justify-content:space-between;gap:12px}.back{min-height:42px;padding:0 13px;border:1px solid #ffffff25;border-radius:12px;background:#ffffff0b;color:#fff;cursor:pointer}.metrics{display:flex;gap:10px}.metric{min-width:72px;padding:7px 10px;border:1px solid #ffffff16;border-radius:10px;text-align:center;font-size:11px;color:#9bb0cc}.metric b{display:block;color:#00e8ff;font-size:17px}.instruction{margin:26px 0 18px;text-align:center;color:#b7c7df}.arena{position:relative;display:grid;flex:1;min-height:360px;place-items:center;border:1px solid #ffffff12;border-radius:22px;background:radial-gradient(circle at center,#00e8ff0c,transparent 50%),#020713;overflow:hidden}.grid{width:min(80vw,390px);display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.cell{aspect-ratio:1;border:1px solid #ffffff16;border-radius:12px;background:#ffffff09;cursor:pointer;transition:.12s}.cell.target{background:#00e8ff;box-shadow:0 0 28px #00e8ff;color:#00131a}.lanes{width:min(90%,410px);height:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:10px}.lane{position:relative;border:1px solid #ffffff14;border-radius:12px;background:#ffffff05;cursor:pointer}.tile{position:absolute;left:10%;right:10%;bottom:8%;height:74px;border-radius:10px;background:linear-gradient(145deg,#ff3dc8,#8d5cff);box-shadow:0 0 24px #ff3dc866}.target{position:absolute;width:62px;height:62px;border:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#00e8ff 35%,#4b36ff);box-shadow:0 0 32px #00e8ff;cursor:pointer}.result{position:absolute;inset:0;display:grid;place-items:center;background:#050a16df;text-align:center}.result div{padding:28px}.result h2{margin:0;font-size:31px}.result p{color:#b8c8e1}.result button{min-height:48px;padding:0 20px;border:0;border-radius:13px;background:#00e8ff;color:#03111c;font-weight:800;cursor:pointer}@media(max-width:540px){.shell{padding:20px;min-height:88dvh}.modes{grid-template-columns:1fr}.mode{min-height:auto}.mode span{font-size:25px}.mode strong{margin:5px 0}.arena{min-height:300px}}
+      @media(min-width:541px){.modes{grid-template-columns:repeat(2,1fr)}.mode{min-height:150px}}
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section id="home">
+        <div class="eyebrow">DISTRICT // ENTRAINEMENT</div><h1 class="title">REFLEX LAB</h1>
+        <p class="intro">Trois epreuves courtes. Choisis ton entrainement et travaille vitesse, precision et vision peripherique.</p>
+        <div class="modes">
+          <button class="mode" data-mode="grid"><span>▦</span><strong>Hypergrid</strong><small>Active les dalles LED avant qu elles ne changent.</small></button>
+          <button class="mode" data-mode="piano"><span>♫</span><strong>Piano Tiles</strong><small>Touche la bonne voie, sans rater une note.</small></button>
+          <button class="mode" data-mode="targets"><span>◎</span><strong>Cibles multiples</strong><small>Vise les cibles qui apparaissent dans l arene.</small></button>
+          <button class="mode" data-mode="chrono"><span>⏱</span><strong>Chrono Reflexe</strong><small>Le test pur : clique des que le signal passe au vert.</small></button>
+        </div>
+      </section>
+      <section id="game" class="game">
+        <div class="top"><button class="back" id="quit">Menu</button><div class="metrics"><div class="metric">SCORE<b id="score">0</b></div><div class="metric">TEMPS<b id="time">20</b></div></div></div>
+        <p class="instruction" id="instruction"></p><div class="arena" id="arena"></div>
+      </section>
+    </main>
+    <script>
+      const home=document.getElementById('home'),game=document.getElementById('game'),arena=document.getElementById('arena'),scoreEl=document.getElementById('score'),timeEl=document.getElementById('time'),instruction=document.getElementById('instruction');
+      let state={mode:null,score:0,hits:0,attempts:0,time:20,timer:null,current:0};
+      const labels={grid:'Hypergrid : touche la dalle cyan.',piano:'Piano Tiles : touche la voie illuminee.',targets:'Cibles multiples : vise vite et juste.'};
+      document.querySelectorAll('.mode').forEach(button=>button.addEventListener('click',()=>button.dataset.mode==='chrono'?window.location.assign('../reflex/index.html'):start(button.dataset.mode)));
+      document.getElementById('quit').addEventListener('click',back);
+      function start(mode){state={mode,score:0,hits:0,attempts:0,time:20,timer:null,current:0};home.style.display='none';game.classList.add('show');instruction.textContent=labels[mode];scoreEl.textContent='0';timeEl.textContent='20';window.ArcadeGameSession?.start({mode});render();state.timer=setInterval(()=>{state.time--;timeEl.textContent=state.time;if(state.time<=0)finish()},1000)}
+      function render(){arena.innerHTML='';if(state.mode==='grid')renderGrid();if(state.mode==='piano')renderPiano();if(state.mode==='targets')spawnTarget()}
+      function renderGrid(){const grid=document.createElement('div');grid.className='grid';state.current=Math.floor(Math.random()*16);for(let i=0;i<16;i++){const cell=document.createElement('button');cell.className='cell'+(i===state.current?' target':'');cell.addEventListener('click',()=>{state.attempts++;if(i===state.current){state.hits++;state.score+=10;scoreEl.textContent=state.score;renderGrid()}else{state.score=Math.max(0,state.score-2);scoreEl.textContent=state.score}});grid.appendChild(cell)}arena.appendChild(grid)}
+      function renderPiano(){const lanes=document.createElement('div');lanes.className='lanes';state.current=Math.floor(Math.random()*4);for(let i=0;i<4;i++){const lane=document.createElement('button');lane.className='lane';if(i===state.current)lane.innerHTML='<span class="tile"></span>';lane.addEventListener('click',()=>{state.attempts++;if(i===state.current){state.hits++;state.score+=10;scoreEl.textContent=state.score;renderPiano()}else finish()});lanes.appendChild(lane)}arena.appendChild(lanes)}
+      function spawnTarget(){const target=document.createElement('button');target.className='target';target.style.left=(8+Math.random()*76)+'%';target.style.top=(8+Math.random()*70)+'%';target.addEventListener('click',()=>{state.attempts++;state.hits++;state.score+=10;scoreEl.textContent=state.score;spawnTarget()});arena.appendChild(target)}
+      function finish(){clearInterval(state.timer);const accuracy=state.attempts?state.hits/state.attempts:0;window.ArcadeGameSession?.completeByAccuracy(accuracy,{score:state.score,hits:state.hits,attempts:state.attempts,mode:state.mode});arena.innerHTML='<div class="result"><div><h2>'+state.score+' points</h2><p>'+state.hits+' reussites - '+Math.round(accuracy*100)+'% precision</p><button id="again">Rejouer</button></div></div>';document.getElementById('again').addEventListener('click',()=>start(state.mode))}
+      function back(){clearInterval(state.timer);game.classList.remove('show');home.style.display='block'}
+    </script>
+    <script src="../../js/core/arcade-config.js"></script><script src="../../js/core/arcade-local-store.js"></script><script src="../../js/core/arcade-game-bridge.js"></script>
+  </body>
+</html>

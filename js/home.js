@@ -93,28 +93,38 @@
       createParticles();
 
       // ===== PILE OU FACE =====
-      function playCoin(event) {
-        event.stopPropagation();
-        const display = document.getElementById("coinDisplay");
-        display.classList.add("flipping");
-
-        // Son de flip (optionnel)
-        playSound(800, 0.1);
-
-        setTimeout(() => {
-          const result = Math.random() < 0.5 ? "P" : "F";
-          display.textContent = result;
-          display.classList.remove("flipping");
-
-          // Son de résultat
-          playSound(result === "P" ? 600 : 400, 0.15);
-        }, 600);
+      const coinGame = { mode: "solo", chooser: "Joueur 1", side: "Pile", scores: { "Joueur 1": 0, "Joueur 2": 0 } };
+      function openCoinGame(event) { event.stopPropagation(); const dialog = document.getElementById("coinGameDialog"); if (dialog && !dialog.open) dialog.showModal(); renderCoinGame(); }
+      function renderCoinGame() {
+        const duel = coinGame.mode === "duel";
+        document.querySelectorAll("[data-coin-mode]").forEach((button) => button.classList.toggle("is-selected", button.dataset.coinMode === coinGame.mode));
+        document.querySelectorAll("[data-coin-side]").forEach((button) => button.classList.toggle("is-selected", button.dataset.coinSide === coinGame.side));
+        document.getElementById("coinChooserRow").hidden = !duel;
+        document.getElementById("coinScoreboard").hidden = !duel;
+        document.getElementById("coinChoiceLabel").textContent = duel ? `${coinGame.chooser} choisit` : "Vous choisissez";
+        const other = coinGame.side === "Pile" ? "Face" : "Pile";
+        document.getElementById("coinAssignment").textContent = duel ? `${coinGame.chooser} : ${coinGame.side} · ${coinGame.chooser === "Joueur 1" ? "Joueur 2" : "Joueur 1"} : ${other}` : `Vous avez choisi ${coinGame.side}.`;
+        document.getElementById("coinScoreP1").textContent = coinGame.scores["Joueur 1"];
+        document.getElementById("coinScoreP2").textContent = coinGame.scores["Joueur 2"];
+      }
+      function tossCoin() {
+        const display = document.getElementById("coinMatchDisplay"), button = document.getElementById("coinTossButton"), status = document.getElementById("coinMatchStatus");
+        button.disabled = true; display.textContent = "?"; display.classList.add("flipping"); status.textContent = "La pièce est en l’air…"; playSound(800, .1);
+        setTimeout(() => { const result = Math.random() < .5 ? "Pile" : "Face"; const duel = coinGame.mode === "duel"; display.textContent = result === "Pile" ? "P" : "F"; display.classList.remove("flipping");
+          if (duel) { const winner = result === coinGame.side ? coinGame.chooser : (coinGame.chooser === "Joueur 1" ? "Joueur 2" : "Joueur 1"); coinGame.scores[winner]++; status.textContent = `${result} ! ${winner} remporte la manche.`; } else status.textContent = result === coinGame.side ? `${result} ! Vous avez gagné.` : `${result} ! La pièce gagne cette fois.`;
+          playSound(result === "Pile" ? 600 : 400, .15); button.disabled = false; renderCoinGame(); }, 620);
+      }
+      function initCoinGame() {
+        document.querySelectorAll("[data-coin-mode]").forEach((button) => button.addEventListener("click", () => { coinGame.mode = button.dataset.coinMode; renderCoinGame(); }));
+        document.querySelectorAll("[data-coin-side]").forEach((button) => button.addEventListener("click", () => { coinGame.side = button.dataset.coinSide; renderCoinGame(); }));
+        document.getElementById("coinChooser")?.addEventListener("change", (event) => { coinGame.chooser = event.target.value; renderCoinGame(); });
+        document.getElementById("coinTossButton")?.addEventListener("click", tossCoin);
       }
 
       // ===== LANCEMENT DES JEUX =====
       function launchGame(url, event) {
         event.stopPropagation();
-        const card = event.currentTarget.closest(".game-card");
+        const card = event.currentTarget.closest("[data-game]");
         const gameKey = card?.dataset.game || url.replace(/\.html$/i, "");
         const title = card?.querySelector(".game-title")?.textContent?.trim() || gameKey;
         const launch = window.ArcadePlatform?.beginGame({ gameKey, title, url });
@@ -287,7 +297,7 @@
         const exploreGamesButton = document.getElementById("exploreGamesButton");
         const feedbackButton = document.getElementById("feedbackButton");
         const feedbackForm = document.getElementById("feedbackForm");
-        syncPreferencesForm(); populateFeedbackGames(); initialiseGameCatalog();
+        syncPreferencesForm(); populateFeedbackGames(); initialiseGameCatalog(); initCoinGame();
         preferencesForm?.addEventListener("change", (event) => { const control = event.target; if (!(control instanceof HTMLInputElement) || !(control.name in preferences)) return; preferences = { ...preferences, [control.name]: control.checked }; applyPreferences(); if (preferences.animations) createParticles(); savePreferences(); });
         resetPreferencesButton?.addEventListener("click", () => { preferences = { ...defaultPreferences }; applyPreferences(); syncPreferencesForm(); if (preferences.animations) createParticles(); savePreferences("Paramètres par défaut restaurés."); });
         exploreGamesButton?.addEventListener("click", () => { document.querySelector(".games-grid")?.scrollIntoView({ behavior: preferences.animations ? "smooth" : "auto", block: "start" }); });

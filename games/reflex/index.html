@@ -607,6 +607,11 @@
           opacity: 1;
         }
       }
+      /* Refonte Chrono Reflexe : une surface calme avant le signal, des reglages utiles. */
+      body { background:radial-gradient(circle at 14% 10%,rgba(0,212,255,.16),transparent 30rem),radial-gradient(circle at 85% 92%,rgba(168,85,247,.14),transparent 29rem),#08101f; }
+      .header { padding:78px 20px 10px; }.logo { display:inline-flex; padding:6px 10px; border:1px solid rgba(0,212,255,.24); border-radius:999px; color:#9af1ff; background:rgba(0,212,255,.07); font-size:10px; font-weight:800; letter-spacing:.14em; opacity:1; }.title { margin-top:9px; font-size:clamp(30px,7vw,40px); letter-spacing:-.05em; }
+      .mode-indicator { display:inline-flex; margin-top:9px; color:#a8b8d5; font-size:12px; }.mode-indicator strong{margin-left:5px;color:#00d4ff}
+      .game-area { padding:12px 20px 20px; }.circle { width:min(72vw,330px); height:min(72vw,330px); border-width:1px!important; backdrop-filter:blur(8px); }.state-wait .circle{background:radial-gradient(circle at 35% 25%,rgba(0,212,255,.14),rgba(255,255,255,.025) 60%);}.circle-text{font-size:18px}.circle-subtext{color:#d5def1}.tip{bottom:11px;color:#a9bad4;opacity:.8}.stats-bar{margin:0 12px 12px;padding:13px 18px;border:1px solid rgba(255,255,255,.09);border-radius:17px;background:rgba(4,10,24,.55);}.stat-value{font-family:ui-monospace,SFMono-Regular,monospace;font-size:20px}.history{min-height:30px;padding:10px 20px}.menu-btn{top:max(64px,calc(env(safe-area-inset-top) + 54px));right:14px;width:45px;height:45px;border:1px solid rgba(0,212,255,.35);border-radius:14px;background:rgba(5,12,27,.72);}.menu{max-width:420px;max-height:calc(100dvh - 40px);overflow-y:auto;padding:28px 24px;border:1px solid rgba(0,212,255,.24);border-radius:24px;background:linear-gradient(145deg,rgba(17,31,59,.96),rgba(7,12,28,.96));box-shadow:0 24px 70px rgba(0,0,0,.45);}.menu h2{margin-bottom:18px}.mode-menu-label{margin:20px 0 9px;color:#9fb1d1;font-size:11px;font-weight:800;letter-spacing:.12em;text-align:left}.mode-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.mode-btn{min-height:58px;padding:8px 5px;border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#aebed8;background:rgba(255,255,255,.04);font:700 11px inherit;cursor:pointer}.mode-btn strong{display:block;margin-bottom:3px;color:#fff;font-size:12px}.mode-btn.active{border-color:#00d4ff;background:rgba(0,212,255,.14);box-shadow:0 0 18px rgba(0,212,255,.13)}.menu-btn-action{min-height:48px;border-radius:13px}.menu-btn:focus-visible,.mode-btn:focus-visible,.menu-btn-action:focus-visible{outline:2px solid #fff;outline-offset:3px}@media(max-width:400px){.header{padding-top:62px}.circle{width:min(74vw,280px);height:min(74vw,280px)}.stats-bar{gap:13px;margin:0 8px 8px}.stat-label{font-size:9px}.menu{padding:23px 17px}.tip{font-size:11px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
   </head>
@@ -731,6 +736,12 @@
         ],
       };
 
+      const MODES = {
+        calm: { name: "Calme", description: "Signal plus pose", minDelay: 2400, maxDelay: 5200 },
+        classic: { name: "Classique", description: "Le rythme equilibré", minDelay: 1500, maxDelay: 5000 },
+        flash: { name: "Flash", description: "Signal plus rapide", minDelay: 700, maxDelay: 2600 },
+      };
+
       // ============================================
       // ÉTAT DU JEU
       // ============================================
@@ -741,6 +752,8 @@
         results: [],
         earlyCount: 0,
         bestTime: Infinity,
+        mode: "classic",
+        modeBest: { calm: Infinity, classic: Infinity, flash: Infinity },
       };
 
       // ============================================
@@ -771,8 +784,48 @@
       // ============================================
       // INITIALISATION
       // ============================================
+      function enhanceMenu() {
+        const header = document.querySelector(".header");
+        if (header) {
+          const indicator = document.createElement("div");
+          indicator.className = "mode-indicator";
+          indicator.innerHTML = 'Mode <strong id="modeIndicator">Classique</strong>';
+          header.appendChild(indicator);
+        }
+        const resetButton = document.querySelector(".menu-btn-action.secondary");
+        if (resetButton) {
+          const section = document.createElement("section");
+          section.innerHTML = '<div class="mode-menu-label">FORMAT DE PARTIE</div><div class="mode-selector"><button class="mode-btn" data-mode="calm"><strong>Calme</strong>2,4 - 5,2 s</button><button class="mode-btn active" data-mode="classic"><strong>Classique</strong>1,5 - 5 s</button><button class="mode-btn" data-mode="flash"><strong>Flash</strong>0,7 - 2,6 s</button></div>';
+          resetButton.before(section);
+          section.querySelectorAll(".mode-btn").forEach((button) => {
+            button.addEventListener("click", () => setMode(button.dataset.mode));
+          });
+        }
+      }
+
+      function setMode(mode) {
+        if (!MODES[mode] || state.phase === "ready" || state.phase === "go") return;
+        state.mode = mode;
+        updateModeUI();
+        saveState();
+      }
+
+      function updateModeUI() {
+        const config = MODES[state.mode] || MODES.classic;
+        const indicator = document.getElementById("modeIndicator");
+        if (indicator) indicator.textContent = config.name;
+        document.querySelectorAll(".mode-btn").forEach((button) => {
+          button.classList.toggle("active", button.dataset.mode === state.mode);
+        });
+        if (state.phase === "wait" || state.phase === "result" || state.phase === "early") {
+          elements.circleSubtext.textContent = config.description;
+        }
+      }
+
       function init() {
         loadState();
+        enhanceMenu();
+        updateModeUI();
         updateStats();
         renderHistory();
 
@@ -824,8 +877,9 @@
         elements.tip.textContent = "Ne cliquez pas encore !";
 
         // Délai aléatoire avant le vert
+        const mode = MODES[state.mode] || MODES.classic;
         const delay =
-          CONFIG.minDelay + Math.random() * (CONFIG.maxDelay - CONFIG.minDelay);
+          mode.minDelay + Math.random() * (mode.maxDelay - mode.minDelay);
 
         // Animation de progression (optionnel, pour le suspense)
         animateProgress(delay);
@@ -888,15 +942,17 @@
         setBodyState("result");
 
         // Vérifier si c'est un nouveau record
-        const isNewRecord = reactionTime < state.bestTime;
+        const isNewRecord = reactionTime < (state.modeBest[state.mode] || Infinity);
         if (isNewRecord) {
-          state.bestTime = reactionTime;
+          state.modeBest[state.mode] = reactionTime;
           elements.newRecord.style.display = "block";
           celebrate();
           playSound("record");
         } else {
           playSound("result");
         }
+        const bests = Object.values(state.modeBest).filter(Number.isFinite);
+        state.bestTime = bests.length ? Math.min(...bests) : Infinity;
 
         // Ajouter le résultat
         state.results.push(reactionTime);
@@ -1124,6 +1180,7 @@
           state.results = [];
           state.earlyCount = 0;
           state.bestTime = Infinity;
+          state.modeBest = { calm: Infinity, classic: Infinity, flash: Infinity };
 
           saveState();
           updateStats();
@@ -1140,6 +1197,8 @@
           results: state.results.slice(-100), // Garder les 100 derniers
           earlyCount: state.earlyCount,
           bestTime: state.bestTime,
+          mode: state.mode,
+          modeBest: state.modeBest,
         };
         localStorage.setItem("reflex-game", JSON.stringify(data));
       }
@@ -1152,6 +1211,14 @@
             state.results = data.results || [];
             state.earlyCount = data.earlyCount || 0;
             state.bestTime = data.bestTime || Infinity;
+            state.mode = MODES[data.mode] ? data.mode : "classic";
+            ["calm", "classic", "flash"].forEach((mode) => {
+              const savedBest = data.modeBest?.[mode];
+              state.modeBest[mode] = Number.isFinite(savedBest) ? savedBest : Infinity;
+            });
+            if (!data.modeBest && Number.isFinite(data.bestTime)) {
+              state.modeBest.classic = data.bestTime;
+            }
           }
         } catch (e) {
           console.warn("Erreur chargement sauvegarde");

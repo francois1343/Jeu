@@ -455,6 +455,395 @@ body > * {
   transform: translateX(4px);
 }
 
+/* Main lobby */
+#main-menu {
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(14, 165, 233, 0.16), transparent 28%),
+    radial-gradient(circle at 14% 74%, rgba(99, 102, 241, 0.2), transparent 30%),
+    radial-gradient(circle at 86% 72%, rgba(217, 70, 239, 0.16), transparent 28%),
+    linear-gradient(155deg, rgba(2, 6, 23, 0.95), rgba(5, 3, 18, 0.96));
+}
+
+#main-menu::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: -12%;
+  right: -12%;
+  bottom: -38%;
+  height: 76%;
+  opacity: 0.42;
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.22) 1px, transparent 1px);
+  background-size: 52px 52px;
+  transform: perspective(480px) rotateX(61deg);
+  transform-origin: center top;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 34%, black);
+  mask-image: linear-gradient(to bottom, transparent, black 34%, black);
+  pointer-events: none;
+}
+
+#main-menu::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  opacity: 0.17;
+  background: repeating-linear-gradient(to bottom, transparent 0 3px, rgba(255, 255, 255, 0.055) 4px);
+  pointer-events: none;
+}
+
+.main-menu-panel {
+  z-index: 1;
+  width: min(92%, 500px);
+}
+
+.menu-hero,
+.mode-section,
+.menu-actions {
+  position: relative;
+  z-index: 1;
+}
+
+.menu-brand {
+  min-width: 0;
+}
+
+.menu-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 17px;
+}
+
+.menu-badges span {
+  padding: 6px 9px;
+  color: rgba(224, 242, 254, 0.7);
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  border: 1px solid rgba(103, 232, 249, 0.14);
+  border-radius: 999px;
+  background: rgba(8, 47, 73, 0.22);
+}
+
+.tetris-showcase {
+  display: none;
+}
+
+.mode-section {
+  margin-top: 25px;
+}
+
+.mode-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 11px;
+  color: rgba(224, 242, 254, 0.62);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 2.2px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.mode-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(34, 211, 238, 0.24), transparent);
+}
+
+.mode-grid {
+  display: grid;
+  gap: 9px;
+}
+
+.main-menu-panel .mode-btn {
+  --mode-accent: 34, 211, 238;
+  position: relative;
+  overflow: hidden;
+  min-height: 66px;
+  margin: 0;
+  border-color: rgba(var(--mode-accent), 0.27);
+  background:
+    linear-gradient(115deg, rgba(var(--mode-accent), 0.17), rgba(15, 23, 42, 0.68) 58%),
+    rgba(8, 12, 32, 0.86);
+}
+
+.main-menu-panel .mode-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: rgb(var(--mode-accent));
+  box-shadow: 0 0 15px rgba(var(--mode-accent), 0.76);
+}
+
+.main-menu-panel .mode-btn::after {
+  content: "";
+  position: absolute;
+  top: -90%;
+  right: -16%;
+  width: 120px;
+  height: 120px;
+  border: 1px solid rgba(var(--mode-accent), 0.14);
+  transform: rotate(35deg);
+  transition: transform 0.28s ease, background 0.28s ease;
+}
+
+.main-menu-panel .mode-btn:hover {
+  border-color: rgba(var(--mode-accent), 0.72);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.32), 0 0 22px rgba(var(--mode-accent), 0.15);
+}
+
+.main-menu-panel .mode-btn:hover::after {
+  background: rgba(var(--mode-accent), 0.07);
+  transform: translate(-8px, 8px) rotate(35deg);
+}
+
+.main-menu-panel .mode-marathon { --mode-accent: 34, 211, 238; }
+.main-menu-panel .mode-sprint { --mode-accent: 244, 114, 182; }
+.main-menu-panel .mode-ultra { --mode-accent: 251, 191, 36; }
+.main-menu-panel .mode-zen { --mode-accent: 52, 211, 153; }
+
+.main-menu-panel .mode-icon {
+  position: relative;
+  z-index: 1;
+  color: rgb(var(--mode-accent));
+  border-color: rgba(var(--mode-accent), 0.28);
+  background: rgba(var(--mode-accent), 0.08);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  box-shadow: inset 0 0 14px rgba(var(--mode-accent), 0.08);
+}
+
+.mode-copy,
+.mode-enter {
+  position: relative;
+  z-index: 1;
+}
+
+.mode-copy strong {
+  font-size: 14px;
+  letter-spacing: 0.25px;
+}
+
+.mode-enter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mode-enter kbd {
+  display: none;
+  min-width: 22px;
+  padding: 3px 5px;
+  color: rgba(226, 232, 240, 0.58);
+  font: 700 9px/1 Inter, sans-serif;
+  text-align: center;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 5px;
+  background: rgba(2, 6, 23, 0.46);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.menu-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.main-menu-panel .menu-actions .menu-btn {
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
+  font-size: 12px;
+}
+
+.menu-btn:focus-visible {
+  outline: 2px solid #e0f2fe;
+  outline-offset: 3px;
+  border-color: var(--cyan);
+}
+
+.menu-btn:active {
+  transform: translateY(0) scale(0.985);
+}
+
+@media (min-width: 800px) {
+  #main-menu {
+    padding: 40px 24px;
+  }
+
+  .main-menu-panel {
+    width: min(900px, calc(100% - 64px));
+    padding: 40px 44px 34px;
+    border-radius: 28px;
+    background:
+      linear-gradient(135deg, rgba(18, 31, 64, 0.94), rgba(7, 6, 28, 0.94) 58%, rgba(20, 8, 38, 0.92));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.09),
+      inset 0 0 70px rgba(37, 99, 235, 0.05),
+      0 36px 100px rgba(0, 0, 0, 0.68),
+      0 0 0 1px rgba(103, 232, 249, 0.04),
+      0 0 80px rgba(37, 99, 235, 0.13);
+  }
+
+  .menu-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 230px;
+    align-items: center;
+    gap: 42px;
+    min-height: 178px;
+    text-align: left;
+  }
+
+  .main-menu-panel .menu-eyebrow {
+    justify-content: flex-start;
+  }
+
+  .main-menu-panel .menu-eyebrow::before {
+    display: none;
+  }
+
+  .main-menu-panel h1 {
+    margin-top: 12px;
+    font-size: 64px;
+  }
+
+  .main-menu-panel .menu-subtitle {
+    max-width: 430px;
+    margin-bottom: 0;
+    font-size: 13px;
+  }
+
+  .menu-badges {
+    justify-content: flex-start;
+  }
+
+  .tetris-showcase {
+    position: relative;
+    display: block;
+    width: 210px;
+    height: 170px;
+    padding: 13px;
+    border: 1px solid rgba(103, 232, 249, 0.2);
+    border-radius: 18px;
+    background: linear-gradient(155deg, rgba(8, 47, 73, 0.25), rgba(2, 6, 23, 0.74));
+    box-shadow: inset 0 0 35px rgba(34, 211, 238, 0.06), 0 20px 40px rgba(0, 0, 0, 0.26);
+    transform: perspective(600px) rotateY(-7deg) rotateX(2deg);
+  }
+
+  .showcase-top,
+  .showcase-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: rgba(207, 250, 254, 0.55);
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+  }
+
+  .showcase-top i,
+  .showcase-status i {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-right: 5px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 8px #34d399;
+  }
+
+  .mini-board {
+    position: relative;
+    height: 112px;
+    margin: 9px 0 7px;
+    overflow: hidden;
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    border-radius: 8px;
+    background-color: rgba(2, 6, 23, 0.78);
+    background-image:
+      linear-gradient(rgba(96, 165, 250, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(96, 165, 250, 0.07) 1px, transparent 1px);
+    background-size: 16px 16px;
+    box-shadow: inset 0 0 22px rgba(2, 6, 23, 0.8);
+  }
+
+  .mini-piece {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 3px;
+  }
+
+  .piece-i {
+    top: 19px;
+    left: 37px;
+    background: #22d3ee;
+    box-shadow: 16px 0 #22d3ee, 32px 0 #22d3ee, 48px 0 #22d3ee, 0 0 10px rgba(34, 211, 238, 0.7);
+  }
+
+  .piece-t {
+    right: 55px;
+    bottom: 32px;
+    background: #c084fc;
+    box-shadow: -16px 0 #c084fc, 16px 0 #c084fc, 0 16px #c084fc, 0 0 10px rgba(192, 132, 252, 0.6);
+  }
+
+  .piece-l {
+    right: 23px;
+    bottom: 16px;
+    background: #fbbf24;
+    box-shadow: 0 -16px #fbbf24, 0 -32px #fbbf24, -16px 0 #fbbf24, 0 0 10px rgba(251, 191, 36, 0.55);
+  }
+
+  .piece-s {
+    left: 23px;
+    bottom: 16px;
+    background: #34d399;
+    box-shadow: 16px 0 #34d399, 16px -16px #34d399, 32px -16px #34d399, 0 0 10px rgba(52, 211, 153, 0.55);
+  }
+
+  .showcase-status {
+    justify-content: flex-start;
+  }
+
+  .mode-section {
+    margin-top: 30px;
+  }
+
+  .mode-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
+  }
+
+  .main-menu-panel .mode-btn {
+    min-height: 84px;
+    padding: 15px 16px;
+  }
+
+  .mode-enter kbd {
+    display: inline-block;
+  }
+
+  .menu-actions {
+    margin-left: auto;
+    width: min(100%, 420px);
+  }
+}
+
 /* Stats and settings */
 .stats {
   margin: 20px 0;
@@ -655,32 +1044,60 @@ input[type="checkbox"] {
 
 <!-- Main Menu -->
 <div id="main-menu" class="overlay">
-  <div class="menu">
-    <div class="menu-eyebrow">Neon block protocol</div>
-    <h1><span class="title-icon">▦</span>TETRIS</h1>
-    <p class="menu-subtitle">Empile. Aligne. Fais exploser la grille.</p>
-    <button class="menu-btn mode-btn" onclick="startGame('marathon')">
-      <span class="mode-icon">🏃</span>
-      <span class="mode-copy"><strong>Marathon</strong><small>Progression classique · vitesse croissante</small></span>
-      <span class="mode-arrow">→</span>
-    </button>
-    <button class="menu-btn mode-btn" onclick="startGame('sprint')">
-      <span class="mode-icon">⚡</span>
-      <span class="mode-copy"><strong>Sprint</strong><small>40 lignes · contre-la-montre</small></span>
-      <span class="mode-arrow">→</span>
-    </button>
-    <button class="menu-btn mode-btn" onclick="startGame('ultra')">
-      <span class="mode-icon">⏱️</span>
-      <span class="mode-copy"><strong>Ultra</strong><small>2 minutes · score maximal</small></span>
-      <span class="mode-arrow">→</span>
-    </button>
-    <button class="menu-btn mode-btn" onclick="startGame('zen')">
-      <span class="mode-icon">🧘</span>
-      <span class="mode-copy"><strong>Zen</strong><small>Sans fin · aucune pression</small></span>
-      <span class="mode-arrow">→</span>
-    </button>
-    <button class="menu-btn secondary" onclick="showSettings()">⚙️ Paramètres</button>
-    <button class="menu-btn secondary" onclick="showHighScores()">🏆 Records</button>
+  <div class="menu main-menu-panel">
+    <div class="menu-hero">
+      <div class="menu-brand">
+        <div class="menu-eyebrow">District Arcade · Bloc 07</div>
+        <h1><span class="title-icon">▦</span>TETRIS</h1>
+        <p class="menu-subtitle">Empilez les blocs, complétez les lignes et gardez le contrôle quand le rythme s'accélère.</p>
+        <div class="menu-badges" aria-label="Caractéristiques">
+          <span>4 modes</span>
+          <span>Clavier &amp; tactile</span>
+          <span>Records locaux</span>
+        </div>
+      </div>
+      <div class="tetris-showcase" aria-hidden="true">
+        <div class="showcase-top"><span>Matrice active</span><span>07</span></div>
+        <div class="mini-board">
+          <i class="mini-piece piece-i"></i>
+          <i class="mini-piece piece-t"></i>
+          <i class="mini-piece piece-l"></i>
+          <i class="mini-piece piece-s"></i>
+        </div>
+        <div class="showcase-status"><span><i></i>Système prêt</span></div>
+      </div>
+    </div>
+
+    <section class="mode-section" aria-labelledby="mode-title">
+      <p id="mode-title" class="mode-label">Choisissez votre partie</p>
+      <div class="mode-grid">
+        <button type="button" class="menu-btn mode-btn mode-marathon" onclick="startGame('marathon')">
+          <span class="mode-icon" aria-hidden="true">∞</span>
+          <span class="mode-copy"><strong>Marathon</strong><small>Progression classique · vitesse croissante</small></span>
+          <span class="mode-enter"><kbd>1</kbd><span class="mode-arrow" aria-hidden="true">→</span></span>
+        </button>
+        <button type="button" class="menu-btn mode-btn mode-sprint" onclick="startGame('sprint')">
+          <span class="mode-icon" aria-hidden="true">40</span>
+          <span class="mode-copy"><strong>Sprint</strong><small>40 lignes · contre-la-montre</small></span>
+          <span class="mode-enter"><kbd>2</kbd><span class="mode-arrow" aria-hidden="true">→</span></span>
+        </button>
+        <button type="button" class="menu-btn mode-btn mode-ultra" onclick="startGame('ultra')">
+          <span class="mode-icon" aria-hidden="true">2′</span>
+          <span class="mode-copy"><strong>Ultra</strong><small>2 minutes · score maximal</small></span>
+          <span class="mode-enter"><kbd>3</kbd><span class="mode-arrow" aria-hidden="true">→</span></span>
+        </button>
+        <button type="button" class="menu-btn mode-btn mode-zen" onclick="startGame('zen')">
+          <span class="mode-icon" aria-hidden="true">◇</span>
+          <span class="mode-copy"><strong>Zen</strong><small>Sans fin · aucune pression</small></span>
+          <span class="mode-enter"><kbd>4</kbd><span class="mode-arrow" aria-hidden="true">→</span></span>
+        </button>
+      </div>
+    </section>
+
+    <div class="menu-actions">
+      <button type="button" class="menu-btn secondary" onclick="showSettings()"><span aria-hidden="true">⚙</span> Paramètres</button>
+      <button type="button" class="menu-btn secondary" onclick="showHighScores()"><span aria-hidden="true">🏆</span> Records</button>
+    </div>
   </div>
 </div>
 
@@ -2031,6 +2448,36 @@ function hideHighScores() {
   document.getElementById('highscore-menu').classList.add('hidden');
   document.getElementById('main-menu').classList.remove('hidden');
 }
+
+// Desktop shortcuts shown on the mode cards.
+document.addEventListener('keydown', (event) => {
+  const mainMenu = document.getElementById('main-menu');
+  const target = event.target;
+  if (
+    mainMenu.classList.contains('hidden') ||
+    event.repeat ||
+    target instanceof HTMLInputElement ||
+    target instanceof HTMLButtonElement ||
+    target instanceof HTMLSelectElement ||
+    target instanceof HTMLTextAreaElement
+  ) return;
+
+  const shortcuts = {
+    Digit1: 'marathon',
+    Numpad1: 'marathon',
+    Digit2: 'sprint',
+    Numpad2: 'sprint',
+    Digit3: 'ultra',
+    Numpad3: 'ultra',
+    Digit4: 'zen',
+    Numpad4: 'zen'
+  };
+  const mode = shortcuts[event.code];
+  if (!mode) return;
+
+  event.preventDefault();
+  startGame(mode);
+});
 
 // Initialize on load
 window.onload = () => {

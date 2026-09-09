@@ -534,6 +534,35 @@
           font-size: 24px;
         }
       }
+      /* Refonte NEXUS : arene plus lisible, choix utilisables au tactile. */
+      body { overflow:auto; min-height:100dvh; padding:76px 14px 24px; background:radial-gradient(circle at 12% 8%,rgba(0,212,255,.2),transparent 26rem),radial-gradient(circle at 88% 88%,rgba(255,0,160,.16),transparent 26rem),#060b18; }
+      .game-container { max-width:570px; padding:30px; border:1px solid rgba(0,212,255,.32); border-radius:28px; background:linear-gradient(145deg,rgba(13,25,52,.94),rgba(8,11,29,.94)); box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08); overflow:hidden; }
+      .game-container::before { content:""; position:absolute; inset:0; pointer-events:none; opacity:.5; background:linear-gradient(90deg,transparent 49.8%,rgba(0,212,255,.18) 50%,transparent 50.2%),linear-gradient(rgba(0,212,255,.05) 1px,transparent 1px); background-size:100% 100%,100% 34px; mask-image:linear-gradient(to bottom,black,transparent 78%); }
+      .game-container > * { position:relative; z-index:1; }
+      .match-eyebrow { display:inline-flex; margin:0 0 12px; padding:6px 10px; border:1px solid rgba(0,212,255,.28); border-radius:999px; color:#8eeeff; background:rgba(0,212,255,.08); font-size:10px; font-weight:800; letter-spacing:.14em; }
+      h1 { font-size:clamp(28px,7vw,38px); margin-bottom:8px; letter-spacing:-.04em; }
+      .subtitle { color:#a9bad4; margin-bottom:21px; }
+      .scoreboard { margin-bottom:18px; padding:14px 8px; border:1px solid rgba(255,255,255,.09); border-radius:18px; background:rgba(2,7,20,.42); }
+      .score-label { color:#9bacca; font-weight:700; letter-spacing:.08em; }
+      .score-value { font-family:ui-monospace,SFMono-Regular,monospace; font-size:29px; }
+      .arena { position:relative; min-height:164px; margin-bottom:18px; padding:22px 15px; border:1px solid rgba(0,212,255,.14); border-radius:22px; background:radial-gradient(circle at 50% 50%,rgba(0,212,255,.12),transparent 52%),rgba(3,8,22,.55); }
+      .fighter-label { color:#b5c7e4; font-size:11px; font-weight:800; }
+      .fighter-choice { width:94px; height:94px; font-size:58px; border-width:1px; background:linear-gradient(145deg,rgba(255,255,255,.1),rgba(0,0,0,.22)); }
+      .vs { padding:0 10px; color:#ffe16b; font-size:17px; letter-spacing:.12em; }
+      .result { display:flex; min-height:46px; align-items:center; justify-content:center; margin-bottom:16px; padding:9px; border-radius:12px; background:rgba(255,255,255,.035); font-size:17px; }
+      .choices { gap:10px; margin:0 0 22px; }
+      .choice-btn { width:min(30vw,132px); height:118px; border:1px solid rgba(255,255,255,.22); border-radius:20px; font-size:47px; overflow:visible; touch-action:manipulation; }
+      .choice-btn:hover:not(:disabled) { transform:translateY(-5px) scale(1.02); }
+      .choice-btn:focus-visible, .diff-btn:focus-visible, .reset-btn:focus-visible { outline:2px solid #fff; outline-offset:3px; }
+      .choice-name, .choice-btn:hover .choice-name { bottom:12px; opacity:1; color:#fff; font-size:11px; font-weight:800; letter-spacing:.04em; }
+      .difficulty-selector { margin:0 0 15px; padding:5px; gap:5px; border:1px solid rgba(255,255,255,.08); border-radius:14px; background:rgba(0,0,0,.22); }
+      .diff-btn { flex:1; min-height:40px; padding:7px 5px; border:1px solid transparent; border-radius:10px; color:#9eb0ca; text-transform:none; letter-spacing:0; }
+      .diff-btn.active { box-shadow:0 5px 14px rgba(0,212,255,.22); }
+      .difficulty-hint { min-height:18px; margin:-7px 0 15px; color:#91a4c6; font-size:12px; }
+      .reset-btn { min-height:44px; border-width:1px; border-radius:12px; }
+      .history { margin-top:17px; padding-top:16px; }.history-title{color:#91a4c6}.history-item{width:32px;height:32px}
+      @media (max-width:500px) { body{padding:62px 10px 16px}.game-container{padding:23px 13px;border-radius:22px}.arena{min-height:142px;padding:17px 7px}.fighter-choice{width:76px;height:76px;font-size:45px}.choice-btn{height:102px;font-size:40px}.scoreboard{margin-bottom:14px}.result{font-size:15px}.vs{font-size:13px;padding:0 6px} }
+      @media (prefers-reduced-motion:reduce) { *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important} }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
   </head>
@@ -697,7 +726,54 @@
       function init() {
         createParticles();
         loadState();
+        enhanceArena();
         updateDisplay();
+      }
+
+      function enhanceArena() {
+        const container = document.querySelector(".game-container");
+        const heading = container?.querySelector("h1");
+        if (container && heading) {
+          const eyebrow = document.createElement("div");
+          eyebrow.className = "match-eyebrow";
+          eyebrow.textContent = "AR\u00c8NE NEXUS";
+          heading.before(eyebrow);
+          heading.textContent = "SHIFUMI";
+        }
+        const subtitle = document.querySelector(".subtitle");
+        if (subtitle) subtitle.textContent = "Lis les series, choisis ton geste et garde le rythme.";
+        document.querySelectorAll(".score-label").forEach((label) => {
+          if (label.textContent.trim() === "IA") label.textContent = "NEXUS";
+          if (label.textContent.trim().startsWith("Egal")) label.textContent = "NULS";
+        });
+        document.querySelectorAll(".fighter-label").forEach((label) => {
+          if (label.textContent.trim() === "IA") label.textContent = "NEXUS";
+          if (label.textContent.trim() === "Vous") label.textContent = "TOI";
+        });
+        const labels = { easy: "Detente", medium: "Tactique", hard: "Analyse" };
+        ["easy", "medium", "hard"].forEach((level) => {
+          const button = document.getElementById("diff-" + level);
+          if (button) button.textContent = labels[level];
+        });
+        const selector = document.querySelector(".difficulty-selector");
+        if (selector) {
+          const hint = document.createElement("div");
+          hint.className = "difficulty-hint";
+          hint.id = "difficultyHint";
+          selector.after(hint);
+          updateDifficultyHint();
+        }
+      }
+
+      function updateDifficultyHint() {
+        const hint = document.getElementById("difficultyHint");
+        if (!hint) return;
+        const copy = {
+          easy: "Adversaire aleatoire, ideal pour se chauffer.",
+          medium: "L'adversaire anticipe parfois tes gestes.",
+          hard: "Nexus lit les tendances, mais garde une part d'incertitude.",
+        };
+        hint.textContent = copy[state.difficulty];
       }
 
       // Créer les particules de fond
@@ -786,8 +862,8 @@
             return choices[Math.floor(Math.random() * 3)];
 
           case "medium":
-            // IA avec 40% de chance de faire le bon choix
-            if (Math.random() < 0.4) {
+            // Anticipation legere : le mode normal reste accueillant.
+            if (Math.random() < 0.25) {
               // Trouve le choix qui bat le joueur
               return Object.keys(CHOICES).find(
                 (c) => CHOICES[c].beats === playerChoice,
@@ -827,8 +903,8 @@
           }
         }
 
-        // 70% du temps, contrer le choix le plus fréquent
-        if (Math.random() < 0.7) {
+        // Nexus lit une tendance, sans connaitre le coup a venir.
+        if (Math.random() < 0.45) {
           return Object.keys(CHOICES).find(
             (c) => CHOICES[c].beats === mostCommon,
           );
@@ -955,6 +1031,7 @@
           btn.classList.remove("active");
         });
         document.getElementById("diff-" + level).classList.add("active");
+        updateDifficultyHint();
 
         // Reset l'historique de l'IA
         state.playerHistory = [];

@@ -738,6 +738,7 @@
         }
       }
 
+
       .dice-display {
         width: 80px;
         height: 80px;
@@ -2503,6 +2504,31 @@
         background: rgba(255, 0, 255, 0.05);
       }
 
+      .featured-games { margin: 0 0 30px; padding: 24px; border: 1px solid rgba(0,255,255,.24); border-radius: var(--radius-lg); background: linear-gradient(130deg, rgba(0,255,255,.08), transparent 42%), rgba(11,16,35,.68); box-shadow: 0 18px 42px rgba(0,0,0,.2); }
+      .featured-heading { display:flex; justify-content:space-between; align-items:end; gap:16px; margin-bottom:18px; }
+      .featured-heading p { margin:0 0 5px; color:var(--neon-cyan); font:700 .66rem "Orbitron",sans-serif; letter-spacing:.15em; }
+      .featured-heading h2 { margin:0; font:800 clamp(1.15rem,2.5vw,1.7rem) "Orbitron",sans-serif; }
+      .featured-heading > span { color:var(--text-secondary); font-size:.9rem; }
+      .featured-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+      .featured-game { display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 12px; align-items:center; min-height:112px; padding:15px; border:1px solid color-mix(in srgb,var(--featured-accent) 36%,transparent); border-radius:15px; background:linear-gradient(145deg,color-mix(in srgb,var(--featured-accent) 12%,transparent),rgba(5,10,25,.72)); box-shadow:inset 0 0 22px color-mix(in srgb,var(--featured-accent) 7%,transparent); }
+      .featured-icon { grid-row:1 / 3; display:grid; width:42px; height:42px; place-items:center; border:1px solid color-mix(in srgb,var(--featured-accent) 55%,transparent); border-radius:12px; color:var(--featured-accent); font-size:1.35rem; box-shadow:0 0 18px color-mix(in srgb,var(--featured-accent) 18%,transparent); }
+      .featured-game h3 { margin:0; color:#fff; font:700 1rem "Orbitron",sans-serif; }
+      .featured-game p { margin:3px 0 0; color:var(--text-secondary); font-size:.88rem; }
+      .featured-game button { grid-column:2; justify-self:start; margin-top:6px; border:0; padding:0; color:var(--featured-accent); background:none; font:700 .78rem "Orbitron",sans-serif; letter-spacing:.08em; cursor:pointer; }
+      .featured-game button:hover,.featured-game button:focus-visible { color:#fff; text-shadow:0 0 12px var(--featured-accent); outline:none; }
+      .featured-game button span { font-size:1rem; }
+
+      .coin-dialog .dialog-shell { max-width:560px; }
+      .coin-mode-picker { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:22px 0 16px; }
+      .coin-mode-picker button,.coin-side-picker button { min-height:58px; border:1px solid rgba(0,255,255,.25); border-radius:var(--radius-sm); background:rgba(0,255,255,.05); color:var(--text-primary); font:700 .9rem "Orbitron",sans-serif; cursor:pointer; }
+      .coin-mode-picker small { display:block; margin-top:6px; color:var(--text-secondary); font:600 .78rem "Rajdhani",sans-serif; }
+      .coin-mode-picker button.is-selected,.coin-side-picker button.is-selected { border-color:var(--neon-cyan); background:rgba(0,255,255,.14); color:var(--neon-cyan); box-shadow:0 0 18px rgba(0,255,255,.12); }
+      .coin-setup { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.35fr); gap:14px; align-items:end; padding:15px; border-radius:var(--radius-sm); background:rgba(255,255,255,.035); }
+      .coin-setup label,.coin-setup > div > span { display:grid; gap:7px; color:var(--text-secondary); font-size:.86rem; font-weight:700; }
+      .coin-setup select { min-height:42px; border:1px solid rgba(136,146,176,.35); border-radius:8px; padding:0 10px; color:var(--text-primary); background:#0b1225; font:700 1rem "Rajdhani",sans-serif; }
+      .coin-side-picker { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:7px; }.coin-side-picker button{min-height:42px;font-size:.78rem}
+      .coin-match { padding:20px 0 10px; text-align:center; }.coin-match .coin-display { margin:0 auto 12px; }.coin-match p{margin:0}.coin-assignment{min-height:20px;color:var(--text-secondary);font-size:.92rem}.coin-scoreboard{display:flex;justify-content:center;gap:25px;margin:5px 0 16px;color:var(--text-secondary);font-weight:700}.coin-scoreboard b{margin-left:6px;color:var(--neon-yellow);font:800 1.15rem "Orbitron",sans-serif}
+
       .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
       @media (max-width: 760px) {
@@ -2512,12 +2538,16 @@
         .catalog-selects { grid-template-columns: 1fr 1fr; grid-auto-flow: initial; }
         .catalog-select-label select { min-width: 0; }
         .catalog-filter-row { align-items: flex-start; flex-direction: column; gap: 8px; }
+        .featured-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .coin-setup { grid-template-columns:1fr; }
       }
 
       @media (max-width: 430px) {
         .catalog-controls { padding: 18px; }
         .catalog-selects { grid-template-columns: 1fr; }
         .catalog-filter { padding: 6px 10px; }
+        .featured-games { padding:18px; }.featured-heading { align-items:start; flex-direction:column; }.featured-grid { grid-template-columns:1fr; }
+        .coin-mode-picker { grid-template-columns:1fr; }
       }
 
       /* ===== BOUTIQUE ARCADE ===== */

@@ -948,12 +948,50 @@
           padding: 12px;
         }
       }
+      /* Couche UX : des choix lisibles, des actions tactiles et des records utiles. */
+      .legacy-home-link { display: none; }
+      .menu-container, .leaderboard-container { border: 1px solid rgba(0, 212, 255, .2); box-shadow: 0 28px 80px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.06); }
+      .diff-btn, .mode-pill, .lb-tab, .lb-mode-filter, .btn-primary, .btn-secondary { -webkit-tap-highlight-color: transparent; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease; }
+      .diff-btn:hover, .mode-pill:hover, .lb-tab:hover, .lb-mode-filter:hover { transform: translateY(-2px); }
+      .diff-btn:active, .mode-pill:active, .lb-tab:active, .lb-mode-filter:active, .btn-primary:active, .btn-secondary:active { transform: translateY(1px) scale(.98); }
+      .session-preview { display:grid; gap:5px; margin:-4px 0 20px; padding:14px 16px; text-align:left; border:1px solid rgba(0,212,255,.2); border-radius:14px; background:linear-gradient(125deg,rgba(0,212,255,.1),rgba(168,85,247,.08)); }
+      .session-preview-kicker { color:#00d4ff; font-size:10px; font-weight:800; letter-spacing:.13em; }
+      .session-preview strong { font-size:15px; color:#fff; }
+      .session-preview small { color:#98a6c6; font-size:12px; }
+      .lb-local-note { margin:0 0 14px; color:#8d9abc; font-size:12px; text-align:center; }
+      .lb-mode-filters { display:flex; justify-content:center; gap:7px; flex-wrap:wrap; margin:13px 0 10px; }
+      .lb-mode-filter { min-height:34px; padding:7px 11px; border:1px solid rgba(255,255,255,.13); border-radius:999px; color:#aab6d1; background:rgba(255,255,255,.04); font:inherit; font-size:11px; font-weight:700; cursor:pointer; }
+      .lb-mode-filter.active { color:#07121f; background:#00d4ff; border-color:#00d4ff; box-shadow:0 0 18px rgba(0,212,255,.25); }
+      .lb-summary { min-height:18px; margin:0 0 13px; color:#7f90b6; font-size:12px; text-align:center; }
+      .lb-mode-tag { display:inline-block; margin-top:4px; color:#00d4ff; font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+      @media (max-width:400px) { .session-preview { padding:12px; } .lb-mode-filter { padding:6px 9px; } }
+      /* Accueil Calcul Mental : une vraie porte d'entree de jeu. */
+      .menu-screen { overflow-y:auto; justify-content:flex-start; padding:76px 20px 28px; background:radial-gradient(circle at 12% 4%,rgba(0,212,255,.18),transparent 30%),radial-gradient(circle at 88% 20%,rgba(168,85,247,.18),transparent 28%),#080d1b; }
+      .menu-container.menu-2026 { max-width:500px; padding:28px; border-radius:28px; background:linear-gradient(145deg,rgba(18,29,54,.9),rgba(8,13,29,.92)); }
+      .menu-2026 .menu-eyebrow { display:inline-flex; align-items:center; gap:7px; margin-bottom:13px; padding:7px 10px; border:1px solid rgba(0,212,255,.26); border-radius:999px; color:#8defff; background:rgba(0,212,255,.07); font-size:10px; font-weight:800; letter-spacing:.13em; }
+      .menu-2026 .logo { display:grid; place-items:center; width:76px; height:76px; margin:0 auto 14px; border:1px solid rgba(0,212,255,.35); border-radius:23px; background:linear-gradient(145deg,rgba(0,212,255,.22),rgba(168,85,247,.16)); box-shadow:0 15px 35px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.15); font-size:38px; }
+      .menu-2026 .title { margin-bottom:9px; font-size:clamp(31px,8vw,45px); letter-spacing:-.04em; }
+      .menu-2026 .subtitle { max-width:320px; margin:0 auto 24px; line-height:1.55; }
+      .menu-2026 .section-label { display:flex; align-items:center; gap:10px; margin:20px 0 11px; color:#b7c4df; letter-spacing:.11em; text-align:left; }
+      .menu-2026 .section-label::after { content:""; height:1px; flex:1; background:linear-gradient(90deg,rgba(0,212,255,.35),transparent); }
+      .menu-2026 .difficulty-grid { gap:9px; margin-bottom:7px; }
+      .menu-2026 .diff-btn { min-height:126px; padding:15px 7px; border-width:1px; border-radius:18px; background:rgba(255,255,255,.035); }
+      .menu-2026 .diff-btn:focus-visible, .menu-2026 .mode-pill:focus-visible { outline:2px solid #fff; outline-offset:3px; }
+      .menu-2026 .diff-icon { margin-bottom:5px; font-size:25px; }
+      .menu-2026 .diff-name { font-size:13px; }
+      .menu-2026 .mode-section { margin-bottom:8px; }
+      .menu-2026 .mode-pills { gap:7px; }
+      .menu-2026 .mode-pill { flex:1; min-height:48px; display:grid; place-items:center; padding:8px 5px; border-width:1px; border-radius:13px; font-size:12px; }
+      .menu-2026 .session-preview { margin:16px 0; border-radius:16px; }
+      .menu-2026 .btn-primary { min-height:60px; margin-bottom:10px; border-radius:16px; box-shadow:0 14px 30px rgba(0,212,255,.18); font-size:14px; letter-spacing:.08em; text-transform:none; }
+      .menu-2026 .btn-secondary { min-height:44px; border-width:1px; font-weight:700; }
+      @media (max-width:400px) { .menu-screen { padding:64px 12px 20px; } .menu-container.menu-2026 { padding:21px 16px; border-radius:22px; } .menu-2026 .diff-btn { min-height:112px; } }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
   </head>
   <body>
     <a
-      class="arcade-home-link"
+      class="legacy-home-link"
       href="../../index.html"
       aria-label="Retour à l'accueil"
       title="Retour à l'accueil"
@@ -1270,10 +1308,83 @@
       // ============================================
       // INITIALISATION
       // ============================================
+      let leaderboardMode = "all";
+      let leaderboardDifficulty = "easy";
+
+      function enhanceMenu() {
+        const startButton = document.querySelector(".btn-primary");
+        const modeSection = document.querySelector(".mode-section");
+        const menu = document.querySelector(".menu-container");
+        if (menu) {
+          menu.classList.add("menu-2026");
+          const eyebrow = document.createElement("div");
+          eyebrow.className = "menu-eyebrow";
+          eyebrow.textContent = "ENTRA\u00ceNEMENT C\u00c9R\u00c9BRAL";
+          menu.prepend(eyebrow);
+          const labels = menu.querySelectorAll(".section-label");
+          if (labels[0]) labels[0].textContent = "Choisis ton niveau";
+          if (labels[1]) labels[1].textContent = "Choisis ton format";
+          const subtitle = menu.querySelector(".subtitle");
+          if (subtitle) subtitle.textContent = "Des sessions courtes et pr\u00e9cises pour travailler tes r\u00e9flexes de calcul.";
+          menu.querySelectorAll(".diff-btn, .mode-pill").forEach((choice) => {
+            choice.setAttribute("role", "button");
+            choice.setAttribute("tabindex", "0");
+            choice.addEventListener("keydown", (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                choice.click();
+              }
+            });
+          });
+        }
+        if (startButton && modeSection) {
+          const preview = document.createElement("div");
+          preview.className = "session-preview";
+          preview.id = "sessionPreview";
+          preview.setAttribute("aria-live", "polite");
+          preview.innerHTML = '<span class="session-preview-kicker" id="sessionPreviewKicker">SESSION CLASSIQUE</span><strong id="sessionPreviewTitle"></strong><small id="sessionPreviewDetail"></small>';
+          startButton.before(preview);
+          startButton.id = "startButton";
+        }
+
+        const headerTitle = document.querySelector(".lb-title");
+        if (headerTitle) headerTitle.textContent = "Mes records";
+        const tabs = document.querySelector(".lb-tabs");
+        if (tabs && !document.getElementById("lbSummary")) {
+          const controls = document.createElement("div");
+          controls.innerHTML = '<p class="lb-local-note">Sauvegard\u00e9s uniquement sur cet appareil.</p><div class="lb-mode-filters" role="group" aria-label="Filtrer les records par mode"><button class="lb-mode-filter active" data-lb-mode="all">Tous</button><button class="lb-mode-filter" data-lb-mode="classic">Classique</button><button class="lb-mode-filter" data-lb-mode="survival">Survie</button><button class="lb-mode-filter" data-lb-mode="blitz">Blitz</button></div><p class="lb-summary" id="lbSummary"></p>';
+          tabs.after(controls);
+          controls.querySelectorAll(".lb-mode-filter").forEach((button) => {
+            button.addEventListener("click", () => setLeaderboardMode(button.dataset.lbMode, button));
+          });
+        }
+      }
+
+      function updateSessionPreview() {
+        const title = document.getElementById("sessionPreviewTitle");
+        const detail = document.getElementById("sessionPreviewDetail");
+        const kicker = document.getElementById("sessionPreviewKicker");
+        const startButton = document.getElementById("startButton");
+        if (!title || !detail || !kicker || !startButton) return;
+        const difficultyNames = { easy: "facile", medium: "normal", hard: "expert" };
+        const modeCopy = {
+          classic: ["60 secondes pour faire le meilleur score.", "Commencer"],
+          survival: ["3 vies : une question a la fois, sans rel\u00e2che.", "Jouer en survie"],
+          blitz: ["20 questions : va vite, reste pr\u00e9cis.", "Lancer le blitz"],
+        };
+        const current = modeCopy[game.mode];
+        kicker.textContent = "SESSION " + MODE_CONFIG[game.mode].name.toUpperCase();
+        title.textContent = current[0];
+        detail.textContent = "Niveau " + difficultyNames[game.difficulty] + " - " + MODE_CONFIG[game.mode].desc + ".";
+        startButton.textContent = current[1];
+      }
+
       function init() {
         loadHighscores();
         createBackground();
         setupKeyboard();
+        enhanceMenu();
+        updateSessionPreview();
       }
 
       function createBackground() {
@@ -1337,6 +1448,7 @@
         if (diff === "medium") el.classList.add("medium");
         if (diff === "hard") el.classList.add("hard");
         game.difficulty = diff;
+        updateSessionPreview();
         playSound("click");
       }
 
@@ -1346,6 +1458,7 @@
           .forEach((p) => p.classList.remove("selected"));
         el.classList.add("selected");
         game.mode = mode;
+        updateSessionPreview();
         playSound("click");
       }
 
@@ -1721,7 +1834,15 @@
       function updateDisplay() {
         document.getElementById("scoreDisplay").textContent =
           game.score.toLocaleString();
-        document.getElementById("streakDisplay").textContent = game.streak;
+        const streakDisplay = document.getElementById("streakDisplay");
+        const streakLabel = document.querySelector("#streakDisplay + .info-label");
+        if (game.mode === "survival") {
+          streakDisplay.textContent = "\u2665 " + game.lives;
+          if (streakLabel) streakLabel.textContent = "Vies";
+        } else {
+          streakDisplay.textContent = game.streak;
+          if (streakLabel) streakLabel.textContent = "S\u00e9rie";
+        }
       }
 
       function updateCombo() {
@@ -1840,7 +1961,7 @@
         const scores = game.highscores[game.difficulty];
         scores.push(entry);
         scores.sort((a, b) => b.score - a.score);
-        game.highscores[game.difficulty] = scores.slice(0, 10);
+        game.highscores[game.difficulty] = scores.slice(0, 36);
 
         localStorage.setItem(
           "calcul-mental-scores",
@@ -1929,10 +2050,60 @@
           .join("");
       }
 
+      // Version enrichie : les records restent locaux, mais peuvent etre lus par mode.
+      function showLeaderboard() {
+        showScreen("leaderboardScreen");
+        const tab = document.querySelector(`.lb-tab[onclick*="'${game.difficulty}'"]`);
+        showLbTab(game.difficulty, tab || document.querySelector(".lb-tab"));
+      }
+
+      function setLeaderboardMode(mode, button) {
+        leaderboardMode = mode;
+        document.querySelectorAll(".lb-mode-filter").forEach((item) => item.classList.remove("active"));
+        if (button) button.classList.add("active");
+        renderLeaderboard();
+      }
+
+      function showLbTab(diff, button) {
+        leaderboardDifficulty = diff;
+        document.querySelectorAll(".lb-tab").forEach((item) => item.classList.remove("active"));
+        if (button) button.classList.add("active");
+        renderLeaderboard();
+      }
+
+      function renderLeaderboard() {
+        const list = document.getElementById("lbList");
+        const summary = document.getElementById("lbSummary");
+        const source = Array.isArray(game.highscores[leaderboardDifficulty]) ? game.highscores[leaderboardDifficulty] : [];
+        const scores = source.filter((score) => leaderboardMode === "all" || score.mode === leaderboardMode);
+        const labels = { all: "tous modes", classic: "classique", survival: "survie", blitz: "blitz" };
+        if (summary) {
+          const best = scores[0] ? scores[0].score.toLocaleString() + " pts" : "aucun record";
+          summary.textContent = scores.length + " partie" + (scores.length > 1 ? "s" : "") + " - meilleur : " + best + " - " + labels[leaderboardMode];
+        }
+        if (!scores.length) {
+          list.innerHTML = '<div class="lb-empty"><div class="lb-empty-icon">+</div><p>Pas encore de record dans ce mode.</p><p style="font-size:12px;margin-top:8px;">Lance une partie pour ouvrir le classement.</p></div>';
+          return;
+        }
+        list.innerHTML = scores.map((score, index) => {
+          const rankClass = index === 0 ? "gold" : index === 1 ? "silver" : index === 2 ? "bronze" : "";
+          const accuracy = Math.round((score.correct / (score.correct + score.wrong)) * 100) || 0;
+          const mode = labels[score.mode] || "classique";
+          return `<div class="lb-item ${rankClass}"><div class="lb-rank ${rankClass}">${index + 1}</div><div class="lb-info"><div class="lb-score">${score.score.toLocaleString()} pts</div><div class="lb-details">${score.correct} bonnes - ${score.wrong} erreurs - ${accuracy}% - serie ${score.streak}</div><span class="lb-mode-tag">${mode}</span></div><div class="lb-date">${new Date(score.date).toLocaleDateString("fr-FR")}</div></div>`;
+        }).join("");
+      }
+
       function loadHighscores() {
         try {
           const saved = localStorage.getItem("calcul-mental-scores");
-          if (saved) game.highscores = JSON.parse(saved);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            ["easy", "medium", "hard"].forEach((difficulty) => {
+              game.highscores[difficulty] = Array.isArray(parsed[difficulty])
+                ? parsed[difficulty].filter((score) => score && Number.isFinite(Number(score.score)))
+                : [];
+            });
+          }
         } catch (e) {}
       }
 

@@ -279,6 +279,124 @@
           </button>
         </div>
       </section>
+      <section class="featured-games" aria-labelledby="featuredGamesTitle">
+        <div class="featured-heading">
+          <div>
+            <p>SELECTION ARCADE</p>
+            <h2 id="featuredGamesTitle">À jouer maintenant</h2>
+          </div>
+          <span>6 expériences à découvrir</span>
+        </div>
+        <div class="featured-grid">
+          <article
+            class="featured-game"
+            data-game="crossyturfu"
+            style="--featured-accent: #00ff88"
+          >
+            <span class="featured-icon">🐔</span>
+            <div>
+              <h3>Crossy Turfu</h3>
+              <p>Le défi arcade le plus nerveux.</p>
+            </div>
+            <button
+              type="button"
+              onclick="launchGame('games/crossy-turfu/index.html', event)"
+            >
+              Jouer <span>→</span>
+            </button>
+          </article>
+          <article
+            class="featured-game"
+            data-game="421-duel"
+            style="--featured-accent: #00efff"
+          >
+            <span class="featured-icon">🎲</span>
+            <div>
+              <h3>421 Duel</h3>
+              <p>Trois dés face à l’IA.</p>
+            </div>
+            <button
+              type="button"
+              onclick="launchGame('games/421/index.html', event)"
+            >
+              Jouer <span>→</span>
+            </button>
+          </article>
+          <article
+            class="featured-game"
+            data-game="farkle-boheme"
+            style="--featured-accent: #ffc857"
+          >
+            <span class="featured-icon">6</span>
+            <div>
+              <h3>Dés de Bohême</h3>
+              <p>Le Farkle de la taverne.</p>
+            </div>
+            <button
+              type="button"
+              onclick="launchGame('games/Yahtzee/yahtzee.html', event)"
+            >
+              Jouer <span>→</span>
+            </button>
+          </article>
+          <article
+            class="featured-game"
+            data-game="poker"
+            style="--featured-accent: #ff00ff"
+          >
+            <span class="featured-icon">🃏</span>
+            <div>
+              <h3>River Room Poker</h3>
+              <p>La table stratégique.</p>
+            </div>
+            <button
+              type="button"
+              onclick="launchGame('games/Poker/poker.html', event)"
+            >
+              Jouer <span>→</span>
+            </button>
+          </article>
+          <article
+            class="featured-game"
+            data-game="cyber-core-sorter"
+            style="--featured-accent: #a96cff"
+          >
+            <span class="featured-icon">⚛</span>
+            <div>
+              <h3>Cyber CoreSorter</h3>
+              <p>Triez sous pression.</p>
+            </div>
+            <button
+              type="button"
+              onclick="
+                launchGame(
+                  'games/Cyber-CoreSorter/Cyber-CoreSorter.html',
+                  event,
+                )
+              "
+            >
+              Jouer <span>→</span>
+            </button>
+          </article>
+          <article
+            class="featured-game"
+            data-game="taquin"
+            style="--featured-accent: #00ffff"
+          >
+            <span class="featured-icon">▦</span>
+            <div>
+              <h3>Pixel Taquin</h3>
+              <p>Le puzzle du moment.</p>
+            </div>
+            <button
+              type="button"
+              onclick="launchGame('games/taquin/index.html', event)"
+            >
+              Jouer <span>→</span>
+            </button>
+          </article>
+        </div>
+      </section>
       <p class="catalog-empty" id="catalogEmpty" hidden>
         Aucun jeu ne correspond à ces critères. Essayez une autre recherche ou
         effacez les filtres.
@@ -298,13 +416,17 @@
             <span class="tag">Chance</span>
           </div>
           <p class="game-description">
-            Lancez la pièce et tentez votre chance ! Un classique intemporel.
+            Choisissez Pile ou Face, jouez seul ou décidez qui commence entre
+            amis.
           </p>
           <div class="game-interactive">
             <div class="coin-display" id="coinDisplay">?</div>
           </div>
-          <button class="btn btn-primary btn-launch" onclick="playCoin(event)">
-            Lancer la pièce
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="openCoinGame(event)"
+          >
+            Ouvrir la table
           </button>
         </article>
 
@@ -322,7 +444,8 @@
             <span class="tag">Mini-hub</span>
           </div>
           <p class="game-description">
-            Votre espace jeux de dés : lancers personnalisés, statistiques, 421 et Farkle à six dés.
+            Votre espace jeux de dés : lancers personnalisés, statistiques, 421
+            et Farkle à six dés.
           </p>
           <div class="game-interactive">
             <div class="result-display">1–12</div>
@@ -390,9 +513,10 @@
 
         <!-- Chrono Réflexe -->
         <article
-          class="game-card reflexe fade-in"
+          class="reflex-legacy"
           onclick="focusCard(this)"
           data-game="reflex"
+          hidden
         >
           <div class="game-icon">⏱️</div>
           <h2 class="game-title">Chrono Réflexe</h2>
@@ -411,6 +535,32 @@
             onclick="launchGame('games/reflex/index.html', event)"
           >
             Jouer au Chrono
+          </button>
+        </article>
+
+        <article
+          class="game-card reflexe fade-in"
+          onclick="focusCard(this)"
+          data-game="reflex-lab"
+        >
+          <div class="game-icon">◎</div>
+          <h2 class="game-title">Reflex Lab</h2>
+          <div class="game-tags">
+            <span class="tag difficulty-medium">Nouveau</span
+            ><span class="tag">Réflexes</span>
+          </div>
+          <p class="game-description">
+            Hypergrid LED, Piano Tiles et cibles multiples dans un même
+            laboratoire.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">4 choices</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="launchGame('games/reflex-lab/index.html', event)"
+          >
+            Entrer dans le Lab
           </button>
         </article>
 
@@ -1278,49 +1428,145 @@
           </button>
         </article>
 
-        <article class="game-card dice fade-in" onclick="focusCard(this)" data-game="farkle-boheme">
+        <article
+          class="game-card dice fade-in"
+          onclick="focusCard(this)"
+          data-game="farkle-boheme"
+        >
           <div class="game-icon">🎲</div>
           <h2 class="game-title">Dés de Bohême</h2>
-          <div class="game-tags"><span class="tag difficulty-medium">Moyen</span><span class="tag">Jeux de dés</span><span class="tag">Farkle</span></div>
-          <p class="game-description">Tentez votre chance au Farkle : choisissez vos dés, encaissez vos points et battez l’aubergiste.</p>
-          <div class="game-interactive"><div class="result-display">6 · 4 · 5</div></div>
-          <button class="btn btn-primary btn-launch" onclick="launchGame('games/Yahtzee/yahtzee.html', event)">Jouer aux Dés de Bohême</button>
+          <div class="game-tags">
+            <span class="tag difficulty-medium">Moyen</span
+            ><span class="tag">Jeux de dés</span><span class="tag">Farkle</span>
+          </div>
+          <p class="game-description">
+            Tentez votre chance au Farkle : choisissez vos dés, encaissez vos
+            points et battez l’aubergiste.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">6 · 4 · 5</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="launchGame('games/Yahtzee/yahtzee.html', event)"
+          >
+            Jouer aux Dés de Bohême
+          </button>
         </article>
 
-        <article class="game-card cyberfind fade-in" onclick="focusCard(this)" data-game="cyber-bounty-hunter">
+        <article
+          class="game-card cyberfind fade-in"
+          onclick="focusCard(this)"
+          data-game="cyber-bounty-hunter"
+        >
           <div class="game-icon">🎯</div>
           <h2 class="game-title">Cyber-Bounty Hunter</h2>
-          <div class="game-tags"><span class="tag difficulty-medium">Moyen</span><span class="tag">Réflexes</span><span class="tag">Arcade</span></div>
-          <p class="game-description">Repérez l’IA rebelle dans la foule avant la fin du compte à rebours.</p>
-          <div class="game-interactive"><div class="result-display">CIBLE : IA</div></div>
-          <button class="btn btn-primary btn-launch" onclick="launchGame('games/Cyber-Bounty Hunter/Cyber-BountyHunter.html', event)">Lancer la traque</button>
+          <div class="game-tags">
+            <span class="tag difficulty-medium">Moyen</span
+            ><span class="tag">Réflexes</span><span class="tag">Arcade</span>
+          </div>
+          <p class="game-description">
+            Repérez l’IA rebelle dans la foule avant la fin du compte à rebours.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">CIBLE : IA</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="
+              launchGame(
+                'games/Cyber-Bounty Hunter/Cyber-BountyHunter.html',
+                event,
+              )
+            "
+          >
+            Lancer la traque
+          </button>
         </article>
 
-        <article class="game-card cyberflux fade-in" onclick="focusCard(this)" data-game="cyber-core-sorter">
+        <article
+          class="game-card cyberflux fade-in"
+          onclick="focusCard(this)"
+          data-game="cyber-core-sorter"
+        >
           <div class="game-icon">⚛️</div>
           <h2 class="game-title">Cyber CoreSorter</h2>
-          <div class="game-tags"><span class="tag difficulty-hard">Difficile</span><span class="tag">Réflexes</span><span class="tag">Arcade</span></div>
-          <p class="game-description">Triez les noyaux cybernétiques dans le bon canal avant la surcharge.</p>
-          <div class="game-interactive"><div class="result-display">CYAN → MAGENTA</div></div>
-          <button class="btn btn-primary btn-launch" onclick="launchGame('games/Cyber-CoreSorter/Cyber-CoreSorter.html', event)">Trier les noyaux</button>
+          <div class="game-tags">
+            <span class="tag difficulty-hard">Difficile</span
+            ><span class="tag">Réflexes</span><span class="tag">Arcade</span>
+          </div>
+          <p class="game-description">
+            Triez les noyaux cybernétiques dans le bon canal avant la surcharge.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">NOYAUX</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="
+              launchGame('games/Cyber-CoreSorter/Cyber-CoreSorter.html', event)
+            "
+          >
+            Trier les noyaux
+          </button>
         </article>
 
-        <article class="game-card poker fade-in" onclick="focusCard(this)" data-game="cyber-symbol-poker">
+        <article
+          class="game-card poker fade-in"
+          onclick="focusCard(this)"
+          data-game="cyber-symbol-poker"
+        >
           <div class="game-icon">🃏</div>
           <h2 class="game-title">Cyber Symbol Poker</h2>
-          <div class="game-tags"><span class="tag difficulty-medium">Moyen</span><span class="tag">Cartes</span><span class="tag">Stratégie</span></div>
-          <p class="game-description">Composez les meilleures combinaisons face au croupier dans un poker futuriste.</p>
-          <div class="game-interactive"><div class="result-display">♠ ♥ ♦ ♣</div></div>
-          <button class="btn btn-primary btn-launch" onclick="launchGame('games/Cyber-Symbol Poker/Cyber-SymbolPoker.html', event)">Prendre place</button>
+          <div class="game-tags">
+            <span class="tag difficulty-medium">Moyen</span
+            ><span class="tag">Cartes</span><span class="tag">Stratégie</span>
+          </div>
+          <p class="game-description">
+            Composez les meilleures combinaisons face au croupier dans un poker
+            futuriste.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">♠ ♥ ♦ ♣</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="
+              launchGame(
+                'games/Cyber-Symbol Poker/Cyber-SymbolPoker.html',
+                event,
+              )
+            "
+          >
+            Prendre place
+          </button>
         </article>
 
-        <article class="game-card neon-overdrive fade-in" onclick="focusCard(this)" data-game="synthwave-edition">
+        <article
+          class="game-card neon-overdrive fade-in"
+          onclick="focusCard(this)"
+          data-game="synthwave-edition"
+        >
           <div class="game-icon">🏒</div>
           <h2 class="game-title">Synthwave Edition</h2>
-          <div class="game-tags"><span class="tag difficulty-medium">Moyen</span><span class="tag">Arcade</span><span class="tag">Réflexes</span></div>
-          <p class="game-description">Un duel de palets synthwave, seul contre l’IA ou à deux joueurs.</p>
-          <div class="game-interactive"><div class="result-display">1 — 1</div></div>
-          <button class="btn btn-primary btn-launch" onclick="launchGame('games/Synthwave Edition/SynthwaveEdition.html', event)">Lancer le match</button>
+          <div class="game-tags">
+            <span class="tag difficulty-medium">Moyen</span
+            ><span class="tag">Arcade</span><span class="tag">Réflexes</span>
+          </div>
+          <p class="game-description">
+            Un duel de palets synthwave, seul contre l’IA ou à deux joueurs.
+          </p>
+          <div class="game-interactive">
+            <div class="result-display">1 — 1</div>
+          </div>
+          <button
+            class="btn btn-primary btn-launch"
+            onclick="
+              launchGame('games/Synthwave Edition/SynthwaveEdition.html', event)
+            "
+          >
+            Lancer le match
+          </button>
         </article>
       </main>
 
@@ -1367,6 +1613,77 @@
         </p>
       </footer>
     </div>
+
+    <dialog
+      class="arcade-dialog info-dialog coin-dialog"
+      id="coinGameDialog"
+      aria-labelledby="coinGameTitle"
+    >
+      <div class="dialog-shell">
+        <button
+          class="dialog-close"
+          type="button"
+          data-close-dialog
+          aria-label="Fermer Pile ou Face"
+        >
+          ×
+        </button>
+        <div class="dialog-heading info-heading">
+          <span class="platform-kicker">TABLE EXPRESS</span>
+          <h2 id="coinGameTitle">Pile ou Face</h2>
+          <p class="dialog-copy">
+            Une décision rapide, seul ou à deux. Les crédits et Coins Arcade ne
+            sont pas utilisés ici.
+          </p>
+        </div>
+        <div class="coin-mode-picker" role="group" aria-label="Mode de jeu">
+          <button type="button" data-coin-mode="solo">
+            Au hasard <small>Vous contre la pièce</small>
+          </button>
+          <button type="button" data-coin-mode="duel">
+            Contre un ami <small>Décidez qui commence</small>
+          </button>
+        </div>
+        <div class="coin-setup">
+          <label id="coinChooserRow"
+            >Qui choisit en premier ?
+            <select id="coinChooser">
+              <option value="Joueur 1">Joueur 1</option>
+              <option value="Joueur 2">Joueur 2</option>
+            </select>
+          </label>
+          <div>
+            <span id="coinChoiceLabel">Vous choisissez</span>
+            <div
+              class="coin-side-picker"
+              role="group"
+              aria-label="Choisir Pile ou Face"
+            >
+              <button type="button" data-coin-side="Pile">PILE</button
+              ><button type="button" data-coin-side="Face">FACE</button>
+            </div>
+          </div>
+        </div>
+        <div class="coin-match" aria-live="polite">
+          <div class="coin-display" id="coinMatchDisplay">?</div>
+          <p id="coinMatchStatus">Choisissez une face, puis lancez la pièce.</p>
+          <p class="coin-assignment" id="coinAssignment"></p>
+        </div>
+        <div class="coin-scoreboard" id="coinScoreboard" hidden>
+          <span>Joueur 1 <b id="coinScoreP1">0</b></span
+          ><span>Joueur 2 <b id="coinScoreP2">0</b></span>
+        </div>
+        <div class="dialog-actions">
+          <button
+            class="btn btn-primary dialog-primary-action"
+            id="coinTossButton"
+            type="button"
+          >
+            Lancer la pièce
+          </button>
+        </div>
+      </div>
+    </dialog>
 
     <dialog
       class="arcade-dialog info-dialog"
@@ -1988,9 +2305,15 @@
             <span class="platform-kicker">ESPACE DE GESTION</span>
             <h2 id="adminDialogTitle">Console administrateur</h2>
           </div>
-          <div class="admin-privilege-badge" title="Fonctions exclusives au profil ADMIN local">
+          <div
+            class="admin-privilege-badge"
+            title="Fonctions exclusives au profil ADMIN local"
+          >
             <span aria-hidden="true">◆</span>
-            <p><strong>Accès privilégié</strong><small>Gestion et personnalisation exclusive</small></p>
+            <p>
+              <strong>Accès privilégié</strong
+              ><small>Gestion et personnalisation exclusive</small>
+            </p>
           </div>
         </div>
         <div class="admin-local-notice" role="note">
@@ -1998,81 +2321,159 @@
           <p>
             <strong>Données de test locales</strong>
             Les changements concernent uniquement ce navigateur. L’export JSON
-            sert de sauvegarde ; cette console ne modifie aucun fichier du dépôt.
+            sert de sauvegarde ; cette console ne modifie aucun fichier du
+            dépôt.
           </p>
         </div>
 
         <section class="admin-summary" aria-label="Résumé des données locales">
-          <article><strong id="adminSummaryProfiles">0</strong><span>Profils</span></article>
-          <article><strong id="adminSummaryCoins">0</strong><span>Coins</span></article>
-          <article><strong id="adminSummarySessions">0</strong><span>Parties</span></article>
-          <article><strong id="adminSummaryAudit">0</strong><span>Audits ouverts</span></article>
-          <article><strong id="adminSummaryFeedback">0</strong><span>Retours ouverts</span></article>
+          <article>
+            <strong id="adminSummaryProfiles">0</strong><span>Profils</span>
+          </article>
+          <article>
+            <strong id="adminSummaryCoins">0</strong><span>Coins</span>
+          </article>
+          <article>
+            <strong id="adminSummarySessions">0</strong><span>Parties</span>
+          </article>
+          <article>
+            <strong id="adminSummaryAudit">0</strong><span>Audits ouverts</span>
+          </article>
+          <article>
+            <strong id="adminSummaryFeedback">0</strong
+            ><span>Retours ouverts</span>
+          </article>
         </section>
 
-        <nav class="admin-section-nav" aria-label="Sections administrateur" role="tablist">
-          <button id="adminDataTab" type="button" role="tab" aria-controls="adminDataWorkspace" aria-selected="true">Gestion des données</button>
-          <button id="adminAppearanceTab" type="button" role="tab" aria-controls="adminAppearancePanel" aria-selected="false">Personnalisation</button>
+        <nav
+          class="admin-section-nav"
+          aria-label="Sections administrateur"
+          role="tablist"
+        >
+          <button
+            id="adminDataTab"
+            type="button"
+            role="tab"
+            aria-controls="adminDataWorkspace"
+            aria-selected="true"
+          >
+            Gestion des données
+          </button>
+          <button
+            id="adminAppearanceTab"
+            type="button"
+            role="tab"
+            aria-controls="adminAppearancePanel"
+            aria-selected="false"
+          >
+            Personnalisation
+          </button>
         </nav>
 
-        <section id="adminDataWorkspace" role="tabpanel" aria-labelledby="adminDataTab">
-        <div class="admin-toolbar">
-          <label>
-            Données
-            <select id="adminDataset"></select>
-          </label>
-          <label class="admin-search-label">
-            Rechercher
-            <input
-              id="adminDataSearch"
-              type="search"
-              placeholder="Pseudo, jeu, statut…"
-              autocomplete="off"
-            />
-          </label>
-          <button class="btn btn-primary admin-add" id="adminAddRecord" type="button">
-            + Ajouter
-          </button>
-        </div>
-
-        <div class="admin-export-bar">
-          <div>
-            <button class="admin-secondary-button" id="adminExportJson" type="button">Exporter JSON</button>
-            <button class="admin-secondary-button" id="adminExportCsv" type="button">Exporter CSV</button>
-          </div>
-          <div class="admin-import-controls">
+        <section
+          id="adminDataWorkspace"
+          role="tabpanel"
+          aria-labelledby="adminDataTab"
+        >
+          <div class="admin-toolbar">
             <label>
-              Import
-              <select id="adminImportMode">
-                <option value="merge">Fusionner</option>
-                <option value="replace">Remplacer tout</option>
-              </select>
+              Données
+              <select id="adminDataset"></select>
             </label>
-            <button class="admin-secondary-button" id="adminImportButton" type="button">Importer JSON / CSV</button>
-            <input id="adminImportFile" type="file" accept="application/json,text/csv,.json,.csv" hidden />
+            <label class="admin-search-label">
+              Rechercher
+              <input
+                id="adminDataSearch"
+                type="search"
+                placeholder="Pseudo, jeu, statut…"
+                autocomplete="off"
+              />
+            </label>
+            <button
+              class="btn btn-primary admin-add"
+              id="adminAddRecord"
+              type="button"
+            >
+              + Ajouter
+            </button>
           </div>
-        </div>
 
-        <div class="admin-dataset-meta">
-          <span id="adminDataCount">0 résultat</span>
-          <span id="adminDatasetMode" data-mode="read">Lecture seule</span>
-        </div>
+          <div class="admin-export-bar">
+            <div>
+              <button
+                class="admin-secondary-button"
+                id="adminExportJson"
+                type="button"
+              >
+                Exporter JSON
+              </button>
+              <button
+                class="admin-secondary-button"
+                id="adminExportCsv"
+                type="button"
+              >
+                Exporter CSV
+              </button>
+            </div>
+            <div class="admin-import-controls">
+              <label>
+                Import
+                <select id="adminImportMode">
+                  <option value="merge">Fusionner</option>
+                  <option value="replace">Remplacer tout</option>
+                </select>
+              </label>
+              <button
+                class="admin-secondary-button"
+                id="adminImportButton"
+                type="button"
+              >
+                Importer JSON / CSV
+              </button>
+              <input
+                id="adminImportFile"
+                type="file"
+                accept="application/json,text/csv,.json,.csv"
+                hidden
+              />
+            </div>
+          </div>
 
-        <div class="admin-table-scroll" tabindex="0" aria-label="Tableau des données administrateur">
-          <table class="admin-data-table" id="adminDataTable">
-            <caption class="sr-only">Données locales Francis Arcade</caption>
-            <thead></thead>
-            <tbody></tbody>
-          </table>
-        </div>
+          <div class="admin-dataset-meta">
+            <span id="adminDataCount">0 résultat</span>
+            <span id="adminDatasetMode" data-mode="read">Lecture seule</span>
+          </div>
+
+          <div
+            class="admin-table-scroll"
+            tabindex="0"
+            aria-label="Tableau des données administrateur"
+          >
+            <table class="admin-data-table" id="adminDataTable">
+              <caption class="sr-only">
+                Données locales Francis Arcade
+              </caption>
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </section>
 
-        <section class="admin-appearance-panel" id="adminAppearancePanel" role="tabpanel" aria-labelledby="adminAppearanceTab adminAppearanceTitle" hidden>
+        <section
+          class="admin-appearance-panel"
+          id="adminAppearancePanel"
+          role="tabpanel"
+          aria-labelledby="adminAppearanceTab adminAppearanceTitle"
+          hidden
+        >
           <div class="admin-appearance-heading">
             <div>
               <span>Préférences du profil ADMIN</span>
               <h3 id="adminAppearanceTitle">Personnaliser la console</h3>
-              <p>Les changements sont prévisualisés ici avant d’être enregistrés dans ce profil local.</p>
+              <p>
+                Les changements sont prévisualisés ici avant d’être enregistrés
+                dans ce profil local.
+              </p>
             </div>
             <span class="admin-exclusive-chip">Exclusif ADMIN</span>
           </div>
@@ -2083,108 +2484,217 @@
           </fieldset>
 
           <div class="admin-appearance-controls">
-            <label>Police de la console
+            <label
+              >Police de la console
               <select id="adminFontChoice"></select>
               <small id="adminFontDescription"></small>
             </label>
-            <label>Intensité des effets
+            <label
+              >Intensité des effets
               <select id="adminEffectsChoice"></select>
               <small id="adminEffectsDescription"></small>
             </label>
           </div>
 
-          <div class="admin-preview-card" aria-label="Aperçu du thème sélectionné">
-            <div><span>Aperçu en direct</span><strong>Francis Arcade · Administration</strong></div>
+          <div
+            class="admin-preview-card"
+            aria-label="Aperçu du thème sélectionné"
+          >
+            <div>
+              <span>Aperçu en direct</span
+              ><strong>Francis Arcade · Administration</strong>
+            </div>
             <span class="admin-preview-action">Action principale</span>
           </div>
 
           <div class="admin-appearance-actions">
-            <button class="admin-secondary-button" id="adminAppearanceReset" type="button">Valeurs par défaut</button>
+            <button
+              class="admin-secondary-button"
+              id="adminAppearanceReset"
+              type="button"
+            >
+              Valeurs par défaut
+            </button>
             <div>
-              <button class="admin-secondary-button" id="adminAppearanceCancel" type="button">Annuler l’aperçu</button>
-              <button class="btn btn-primary" id="adminAppearanceApply" type="button">Appliquer à mon profil</button>
+              <button
+                class="admin-secondary-button"
+                id="adminAppearanceCancel"
+                type="button"
+              >
+                Annuler l’aperçu
+              </button>
+              <button
+                class="btn btn-primary"
+                id="adminAppearanceApply"
+                type="button"
+              >
+                Appliquer à mon profil
+              </button>
             </div>
           </div>
           <p id="adminAppearanceStatus" role="status" aria-live="polite"></p>
         </section>
 
-        <section class="admin-record-editor" id="adminRecordEditor" aria-labelledby="adminRecordEditorTitle" hidden>
+        <section
+          class="admin-record-editor"
+          id="adminRecordEditor"
+          aria-labelledby="adminRecordEditorTitle"
+          hidden
+        >
           <div class="admin-editor-heading">
             <h3 id="adminRecordEditorTitle">Modifier</h3>
-            <button id="adminRecordCancel" type="button" aria-label="Fermer l’éditeur">×</button>
+            <button
+              id="adminRecordCancel"
+              type="button"
+              aria-label="Fermer l’éditeur"
+            >
+              ×
+            </button>
           </div>
           <form id="adminRecordForm">
             <input type="hidden" name="recordId" />
             <fieldset id="adminAuditFields" hidden>
               <legend>Élément de l’audit global</legend>
               <div class="admin-form-grid">
-                <label>Identifiant <input name="auditId" maxlength="40" placeholder="UX-002" required /></label>
-                <label>Catégorie <input name="category" maxlength="80" required /></label>
-                <label>Priorité
+                <label
+                  >Identifiant
+                  <input
+                    name="auditId"
+                    maxlength="40"
+                    placeholder="UX-002"
+                    required
+                /></label>
+                <label
+                  >Catégorie <input name="category" maxlength="80" required
+                /></label>
+                <label
+                  >Priorité
                   <select name="priority">
-                    <option value="critique">Critique</option><option value="importante">Importante</option>
-                    <option value="confort">Confort</option><option value="future">Future</option>
+                    <option value="critique">Critique</option>
+                    <option value="importante">Importante</option>
+                    <option value="confort">Confort</option>
+                    <option value="future">Future</option>
                   </select>
                 </label>
-                <label>Statut
+                <label
+                  >Statut
                   <select name="auditStatus">
-                    <option value="backlog">Backlog</option><option value="a_faire">À faire</option>
-                    <option value="en_cours">En cours</option><option value="bloque">Bloqué</option>
+                    <option value="backlog">Backlog</option>
+                    <option value="a_faire">À faire</option>
+                    <option value="en_cours">En cours</option>
+                    <option value="bloque">Bloqué</option>
                     <option value="termine">Terminé</option>
                   </select>
                 </label>
-                <label class="admin-wide-field">Titre <input name="title" maxlength="160" required /></label>
+                <label class="admin-wide-field"
+                  >Titre <input name="title" maxlength="160" required
+                /></label>
               </div>
-              <label>Objectif
-                <textarea name="objective" maxlength="600" rows="3" required></textarea>
+              <label
+                >Objectif
+                <textarea
+                  name="objective"
+                  maxlength="600"
+                  rows="3"
+                  required
+                ></textarea>
               </label>
-              <label>Checklist <small>Une ligne par contrôle</small>
+              <label
+                >Checklist <small>Une ligne par contrôle</small>
                 <textarea name="checklist" maxlength="5000" rows="5"></textarea>
               </label>
             </fieldset>
             <fieldset id="adminProfileFields">
               <legend>Profil local</legend>
-              <label>Pseudo <input name="pseudo" minlength="2" maxlength="20" required /></label>
-              <label>Solde en Coins <input name="balanceCoins" type="number" min="0" step="0.01" inputmode="decimal" required /></label>
+              <label
+                >Pseudo
+                <input name="pseudo" minlength="2" maxlength="20" required
+              /></label>
+              <label
+                >Solde en Coins
+                <input
+                  name="balanceCoins"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  inputmode="decimal"
+                  required
+              /></label>
             </fieldset>
             <fieldset id="adminFeedbackFields" hidden>
               <legend>Feedback / bug</legend>
               <div class="admin-form-grid">
-                <label>Type
+                <label
+                  >Type
                   <select name="type">
-                    <option value="bug">Bug</option><option value="suggestion">Suggestion</option>
-                    <option value="problème visuel">Problème visuel</option><option value="jeu">Jeu</option>
-                    <option value="compte">Compte</option><option value="autre">Autre</option>
+                    <option value="bug">Bug</option>
+                    <option value="suggestion">Suggestion</option>
+                    <option value="problème visuel">Problème visuel</option>
+                    <option value="jeu">Jeu</option>
+                    <option value="compte">Compte</option>
+                    <option value="autre">Autre</option>
                   </select>
                 </label>
-                <label>Urgence
+                <label
+                  >Urgence
                   <select name="urgency">
-                    <option value="faible">Faible</option><option value="normale">Normale</option>
-                    <option value="élevée">Élevée</option><option value="critique">Critique</option>
+                    <option value="faible">Faible</option>
+                    <option value="normale">Normale</option>
+                    <option value="élevée">Élevée</option>
+                    <option value="critique">Critique</option>
                   </select>
                 </label>
-                <label>Statut
+                <label
+                  >Statut
                   <select name="status">
-                    <option value="nouveau">Nouveau</option><option value="à vérifier">À vérifier</option>
-                    <option value="en cours">En cours</option><option value="résolu">Résolu</option>
+                    <option value="nouveau">Nouveau</option>
+                    <option value="à vérifier">À vérifier</option>
+                    <option value="en cours">En cours</option>
+                    <option value="résolu">Résolu</option>
                   </select>
                 </label>
-                <label>Pseudo <input name="reporterPseudo" maxlength="20" /></label>
-                <label>Jeu / zone <input name="gameTitle" maxlength="120" /></label>
-                <label>Clé du jeu <input name="gameKey" maxlength="80" /></label>
+                <label
+                  >Pseudo <input name="reporterPseudo" maxlength="20"
+                /></label>
+                <label
+                  >Jeu / zone <input name="gameTitle" maxlength="120"
+                /></label>
+                <label
+                  >Clé du jeu <input name="gameKey" maxlength="80"
+                /></label>
               </div>
-              <label>Description
-                <textarea name="description" minlength="10" maxlength="2000" rows="4" required></textarea>
+              <label
+                >Description
+                <textarea
+                  name="description"
+                  minlength="10"
+                  maxlength="2000"
+                  rows="4"
+                  required
+                ></textarea>
               </label>
             </fieldset>
             <div class="admin-editor-actions">
-              <button class="admin-secondary-button" id="adminRecordCancelBottom" type="button">Annuler</button>
-              <button class="btn btn-primary" type="submit">Enregistrer localement</button>
+              <button
+                class="admin-secondary-button"
+                id="adminRecordCancelBottom"
+                type="button"
+              >
+                Annuler
+              </button>
+              <button class="btn btn-primary" type="submit">
+                Enregistrer localement
+              </button>
             </div>
           </form>
         </section>
 
-        <p class="admin-result" id="adminDataStatus" role="status" aria-live="polite"></p>
+        <p
+          class="admin-result"
+          id="adminDataStatus"
+          role="status"
+          aria-live="polite"
+        ></p>
       </div>
     </dialog>
 

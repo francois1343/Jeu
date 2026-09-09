@@ -70,7 +70,7 @@ function collect(directory) {
   });
 }
 collect(path.join(root, "games"));
-assert.equal(pages.length, 42, "Le parc de jeux attendu doit rester complet");
+assert.equal(pages.length, 43, "Le parc de jeux attendu doit rester complet");
 pages.forEach((page) => {
   const html = fs.readFileSync(page, "utf8");
   assert.match(html, /arcade-game-bridge\.js/, `${path.relative(root, page)} doit charger le pont central`);

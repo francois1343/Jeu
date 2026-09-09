@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
-    <title>🌌 Cosmic Riddles - Énigmes Spatiales</title>
+    <title>Énigme Cosmique · Missions</title>
     <style>
       * {
         margin: 0;
@@ -1124,6 +1124,7 @@
       }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="missions.css" />
   </head>
   <body>
     <a
@@ -1229,11 +1230,11 @@
           <div class="logo-ring"></div>
         </div>
 
-        <h1 class="title">Cosmic Riddles</h1>
-        <p class="subtitle">✨ Énigmes Spatiales ✨</p>
+        <h1 class="title">Énigme Cosmique</h1>
+        <p class="subtitle">Explore, déduis, décode. Une découverte à chaque mission.</p>
 
         <button class="btn btn-primary" onclick="showCategories()">
-          🚀 Commencer l'Aventure
+          Choisir une mission
         </button>
 
         <div class="glass-card">
@@ -1248,16 +1249,16 @@
           </div>
           <div class="stats-grid">
             <div class="stat-item">
-              <div class="stat-value" id="stat-played">0</div>
+              <div class="stat-value" id="menu-games">0</div>
               <div class="stat-label">Parties</div>
             </div>
             <div class="stat-item">
-              <div class="stat-value" id="stat-best">0</div>
+              <div class="stat-value" id="menu-best">0</div>
               <div class="stat-label">Record</div>
             </div>
             <div class="stat-item">
-              <div class="stat-value" id="stat-streak">0</div>
-              <div class="stat-label">Série 🔥</div>
+              <div class="stat-value" id="menu-rate">0 %</div>
+              <div class="stat-label">Réussite</div>
             </div>
           </div>
         </div>
@@ -1604,6 +1605,7 @@
       </div>
     </div>
 
+    <script src="missions.js"></script>
     <script>
       // ============================================
       // BASE DE DONNÉES DES QUESTIONS
@@ -2488,6 +2490,21 @@
       // ============================================
       // ÉTAT DU JEU
       // ============================================
+      const CATEGORIES = {
+        solar: { name: "Système solaire", emoji: "☀️", color: "#ffd378" },
+        universe: { name: "L’Univers", emoji: "🌌", color: "#c4a2ff" },
+        exploration: { name: "Exploration spatiale", emoji: "🛸", color: "#78d8ff" },
+        earth: { name: "Terre & climat", emoji: "🌍", color: "#78e9c0" },
+        ...window.CosmicMissions,
+        mixed: { name: "Mélange cosmique", emoji: "🎲", color: "#f5a6d6" },
+      };
+      for (const [category, mission] of Object.entries(window.CosmicMissions)) {
+        QUESTIONS[category] = mission.rows.map(([question, answers, correct, hint, explanation]) => ({ question, answers, correct, hint, explanation }));
+      }
+      for (const [category, questions] of Object.entries(QUESTIONS)) {
+        questions.forEach(question => { question.category = category; });
+      }
+
       const state = {
         // Menu
         selectedCategory: "solar",
@@ -2598,6 +2615,7 @@
       function init() {
         loadStats();
         loadQuestionHistory();
+        buildMissionMenu();
         updateMenuStats();
         createStars();
         createShootingStars();
@@ -2608,6 +2626,56 @@
       // ============================================
       // EFFETS VISUELS DE FOND
       // ============================================
+      function buildMissionMenu() {
+        const container = document.querySelector("#category-screen .menu-container");
+        const grid = document.createElement("div");
+        grid.className = "mission-grid";
+        const oldButtons = Array.from(container.querySelectorAll(".btn-category"));
+        oldButtons[0].before(grid);
+        const originalKeys = ["solar", "universe", "exploration", "earth", "mixed"];
+        oldButtons.forEach((button, index) => {
+          button.dataset.category = originalKeys[index];
+          button.type = "button";
+          grid.appendChild(button);
+        });
+        for (const [category, mission] of Object.entries(window.CosmicMissions)) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "btn btn-category";
+          button.dataset.category = category;
+          button.innerHTML = `<span class="cat-emoji" aria-hidden="true">${mission.emoji}</span><span class="cat-info"><span class="cat-name">${mission.name}</span><span class="cat-desc">${mission.description}</span></span><span class="cat-count"></span>`;
+          button.addEventListener("click", () => selectCategory(category, button));
+          grid.insertBefore(button, grid.querySelector('[data-category="mixed"]'));
+        }
+        grid.querySelectorAll("button").forEach(button => {
+          button.setAttribute("aria-pressed", String(button.dataset.category === state.selectedCategory));
+          button.style.setProperty("--card-accent", CATEGORIES[button.dataset.category].color);
+        });
+        const options = document.createElement("div");
+        options.className = "mission-options";
+        options.innerHTML = '<label for="mission-length">Durée de mission</label><select id="mission-length"><option value="5">Escale · 5 questions</option><option value="10" selected>Expédition · 10 questions</option></select><p id="mission-brief" role="status"></p>';
+        grid.after(options);
+        options.querySelector("select").addEventListener("change", event => {
+          state.totalQuestions = Number(event.target.value);
+          refreshMissionCounts();
+        });
+        document.querySelector(".btn-quit").setAttribute("aria-label", "Quitter la mission");
+        refreshMissionCounts();
+      }
+
+      function refreshMissionCounts() {
+        const seen = new Set(state.questionHistory);
+        const poolFor = category => category === "mixed" ? Object.values(QUESTIONS).flat() : QUESTIONS[category];
+        document.querySelectorAll(".btn-category[data-category]").forEach(button => {
+          const pool = poolFor(button.dataset.category);
+          const fresh = pool.filter(question => !seen.has(question.question)).length;
+          button.querySelector(".cat-count").textContent = `${pool.length} questions · ${fresh} inédites`;
+        });
+        const pool = poolFor(state.selectedCategory);
+        const fresh = pool.filter(question => !seen.has(question.question)).length;
+        document.getElementById("mission-brief").textContent = `${CATEGORIES[state.selectedCategory].name} · ${state.totalQuestions} questions · 20 s par réponse. ${fresh ? `${fresh} questions encore à découvrir.` : "Toutes explorées : priorité aux plus anciennes."}`;
+      }
+
       function createStars() {
         const container = document.querySelector(".stars");
         if (!container) return;
@@ -2745,6 +2813,7 @@
       }
 
       function showCategories() {
+        refreshMissionCounts();
         showScreen("category-screen");
       }
 
@@ -2786,6 +2855,9 @@
           .querySelectorAll(".btn-category")
           .forEach((b) => b.classList.remove("selected"));
         if (btn) btn.classList.add("selected");
+        document.querySelectorAll(".btn-category").forEach(button => button.setAttribute("aria-pressed", String(button === btn)));
+        document.documentElement.style.setProperty("--mission-accent", CATEGORIES[category].color);
+        refreshMissionCounts();
 
         playSound("click");
       }
@@ -2794,7 +2866,8 @@
       // DÉMARRAGE DU JEU
       // ============================================
       function startGame() {
-        window.ArcadeGameSession?.start({ difficulty: state.difficulty });
+        stopTimer();
+        window.ArcadeGameSession?.start({ category: state.selectedCategory, questions: state.totalQuestions });
         if (!state.selectedCategory) {
           state.selectedCategory = "mixed";
         }
@@ -2843,6 +2916,11 @@
             state.totalQuestions,
           );
         }
+        // Chaque partie réordonne les réponses en conservant leur correction.
+        state.questions = state.questions.map(question => {
+          const order = shuffleArray(question.answers.map((_, index) => index));
+          return { ...question, answers: order.map(index => question.answers[index]), correct: order.indexOf(question.correct) };
+        });
       }
 
       function selectLeastRecentQuestions(pool, count) {
@@ -2912,6 +2990,7 @@
       }
 
       function getCategoryInfo(question) {
+        if (question.category && CATEGORIES[question.category]) return CATEGORIES[question.category];
         // Trouver la catégorie de la question
         for (const [key, questions] of Object.entries(QUESTIONS)) {
           if (questions.includes(question)) {

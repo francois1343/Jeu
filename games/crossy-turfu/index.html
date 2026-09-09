@@ -365,12 +365,46 @@
         opacity: 0;
         z-index: 90;
       }
+      /* Le retour est injecté par le socle Arcade ; ce lien historique reste masqué. */
+      .legacy-home-link { display:none; }
+      /* Refonte visuelle : surface néon plus dense et commandes adaptées au tactile. */
+      body { background: radial-gradient(circle at 50% 0%, rgba(0,255,255,.16), transparent 34rem), linear-gradient(145deg,#02030a,#120522 55%,#03151d); }
+      #game-container { width:min(100vw,560px); height:100dvh; max-width:560px; box-shadow:0 0 0 1px rgba(0,255,255,.18),0 28px 90px rgba(0,0,0,.72),0 0 70px rgba(255,0,255,.12); }
+      .hud { top:max(68px,calc(env(safe-area-inset-top) + 58px)); left:14px; right:14px; }
+      .hud-item { min-width:76px; padding:9px 12px; border-radius:12px; border-color:rgba(0,255,255,.42); background:linear-gradient(145deg,rgba(10,18,39,.92),rgba(3,6,18,.82)); box-shadow:inset 0 0 16px rgba(0,255,255,.08),0 8px 18px rgba(0,0,0,.35); }
+      #pause-btn { top:max(122px,calc(env(safe-area-inset-top) + 112px)); right:14px; width:46px; height:46px; border-radius:14px; }
+      .menu-overlay { padding:max(24px,env(safe-area-inset-top)) 24px max(24px,env(safe-area-inset-bottom)); background:radial-gradient(circle at 50% 18%,rgba(32,17,80,.78),rgba(4,6,20,.96) 58%); backdrop-filter:blur(14px); }
+      .game-title { font-size:clamp(34px,10vw,52px); margin-bottom:7px; letter-spacing:-.06em; filter:drop-shadow(0 0 18px rgba(0,255,255,.32)); }
+      .game-subtitle { color:#b6c4dc; }
+      .stat-box { min-width:132px; padding:15px 22px; border-radius:14px; background:linear-gradient(145deg,rgba(0,255,255,.14),rgba(14,18,45,.62)); box-shadow:inset 0 0 20px rgba(0,255,255,.06); }
+      .menu-btn { width:min(100%,300px); min-height:56px; padding:15px 22px; border-radius:14px; letter-spacing:.05em; transition:transform .2s,box-shadow .2s,filter .2s; }
+      .menu-btn:hover { transform:translateY(-2px); }.btn-primary { box-shadow:0 10px 28px rgba(255,0,255,.28); }.btn-secondary { background:rgba(0,255,255,.07); border-width:1px; }
+      #mobile-controls { bottom:max(18px,env(safe-area-inset-bottom)); }
+      .ctrl-btn { width:clamp(62px,17vw,76px); height:clamp(58px,15vw,70px); margin:4px; border-width:1px; border-radius:16px; background:linear-gradient(145deg,rgba(0,255,255,.28),rgba(8,20,42,.94)); font-size:28px; touch-action:manipulation; box-shadow:inset 0 0 18px rgba(0,255,255,.12),0 8px 16px rgba(0,0,0,.42); }
+      .ctrl-btn:active { transform:scale(.94); }
+      @media (min-width:600px) { #game-container { height:min(92vh,900px); border-radius:28px; } }
+      @media (max-width:390px) { .menu-stats{gap:10px}.stat-box{min-width:118px;padding:12px 14px}.hud-item{min-width:0;padding:8px 9px;font-size:10px}.ctrl-btn{margin:3px} }
+      @media (prefers-reduced-motion:reduce) { *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important} }
+      /* Passe finale Crossy : un menu plus vivant et des controles sans ambiguite. */
+      #main-menu::before { content:""; position:absolute; width:360px; height:360px; top:-150px; right:-130px; border:1px solid rgba(0,255,255,.25); border-radius:50%; box-shadow:0 0 0 28px rgba(255,0,255,.035),0 0 80px rgba(0,255,255,.12); pointer-events:none; }
+      #main-menu::after { content:""; position:absolute; inset:auto -20% 7%; height:90px; opacity:.42; pointer-events:none; background:repeating-linear-gradient(90deg,rgba(0,255,255,.2) 0 1px,transparent 1px 28px),linear-gradient(0deg,rgba(0,255,255,.16),transparent); transform:perspective(180px) rotateX(54deg); }
+      #main-menu > * { position:relative; z-index:1; }
+      .crossy-eyebrow { display:inline-flex; margin:0 0 13px; padding:7px 10px; border:1px solid rgba(0,255,255,.3); border-radius:999px; color:#91f7ff; background:rgba(0,255,255,.08); font:700 10px Orbitron,monospace; letter-spacing:.14em; }
+      .crossy-controls-hint { max-width:300px; margin:-8px 0 18px; color:#9eafca; font-size:13px; text-align:center; line-height:1.45; }
+      .crossy-controls-hint kbd { display:inline-grid; min-width:22px; height:20px; place-items:center; padding:0 4px; border:1px solid rgba(0,255,255,.32); border-radius:5px; color:#dffcff; background:rgba(0,0,0,.35); font:700 10px Orbitron,monospace; }
+      .menu-overlay .menu-btn:focus-visible, .ctrl-btn:focus-visible, #pause-btn:focus-visible { outline:2px solid #fff; outline-offset:3px; }
+      .menu-overlay .btn-primary { position:relative; overflow:hidden; }
+      .menu-overlay .btn-primary::after { content:""; position:absolute; inset:0; transform:translateX(-120%); background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent); transition:transform .55s ease; }
+      .menu-overlay .btn-primary:hover::after { transform:translateX(120%); }
+      .char-card { border-width:1px; border-radius:14px; background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(0,0,0,.12)); }
+      .go-stat { border:1px solid rgba(255,255,255,.08); border-radius:12px; background:rgba(4,8,23,.55); }
+      @media (max-width:390px) { #main-menu{justify-content:flex-start;padding-top:82px}.crossy-controls-hint{font-size:12px;margin-bottom:12px}.menu-btn{min-height:52px;margin:5px}.game-title{font-size:31px} }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
   </head>
   <body>
     <a
-      class="arcade-home-link"
+      class="legacy-home-link"
       href="../../index.html"
       aria-label="Retour à l'accueil"
       title="Retour à l'accueil"
@@ -2051,7 +2085,25 @@
       // ============================================
       let game;
 
+      function enhanceCrossyMenu() {
+        const menu = document.getElementById("main-menu");
+        const title = menu?.querySelector(".game-title");
+        const subtitle = menu?.querySelector(".game-subtitle");
+        if (!menu || !title || !subtitle) return;
+        const eyebrow = document.createElement("div");
+        eyebrow.className = "crossy-eyebrow";
+        eyebrow.textContent = "DISTRICT // COURSE INFINIE";
+        title.before(eyebrow);
+        subtitle.textContent = "Traverse le trafic, collecte les jetons et pousse ton record.";
+        const hint = document.createElement("p");
+        hint.className = "crossy-controls-hint";
+        hint.innerHTML = "Clavier : <kbd>fl\u00e8ches</kbd> ou <kbd>ZQSD</kbd> - Mobile : les boutons ou un glissement.";
+        const firstButton = menu.querySelector(".menu-btn");
+        if (firstButton) firstButton.before(hint);
+      }
+
       document.addEventListener("DOMContentLoaded", () => {
+        enhanceCrossyMenu();
         game = new Game();
       });
     </script>
