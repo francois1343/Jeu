@@ -286,6 +286,7 @@ class CyberBounty {
 
   gameOver() {
     this.state.isRunning = false;
+    window.ArcadeGameSession?.lose?.({ score: this.state.score, reason: "target_lost" });
     this.audio.toggleAlarm(false);
     this.audio.playError();
     document.getElementById("app").classList.add("hidden");

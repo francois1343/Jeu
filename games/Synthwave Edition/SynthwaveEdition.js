@@ -623,6 +623,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function endGame(winner) {
         gameState = 'GAMEOVER';
+        const sessionResult = { playerScore: score.p1, opponentScore: score.p2, mode, targetScore };
+        if (winner === 'p1') window.ArcadeGameSession?.win?.(sessionResult);
+        else window.ArcadeGameSession?.lose?.(sessionResult);
         scoreboard.classList.add('hidden');
         document.getElementById('winner-text').textContent = mode === '1P'
             ? (winner === 'p1' ? 'VICTOIRE !' : 'L’IA GAGNE !')

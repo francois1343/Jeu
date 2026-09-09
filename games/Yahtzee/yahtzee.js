@@ -378,6 +378,9 @@ class FarkleGame {
   schedule(callback, delay) { const token = this.epoch; setTimeout(() => { if (this.gameActive && token === this.epoch) callback(); }, delay); }
   endGame(winner) {
     this.gameActive = false; this.turnLocked = true; this.epoch++; this.sound.playVictory();
+    const sessionResult = { score: this.players[0].score, opponentScore: this.players[1].score, target: this.target, mode: this.mode };
+    if (winner === 0) window.ArcadeGameSession?.win?.(sessionResult);
+    else window.ArcadeGameSession?.lose?.(sessionResult);
     const player = this.players[winner]; this.$("winner-title").textContent = `${player.name.toUpperCase()} L'EMPORTE`;
     this.$("winner-copy").textContent = `${player.name} atteint l'objectif de ${this.format(this.target)} points et remporte la partie.`;
     this.$("final-player-0").textContent = `${this.players[0].name} ${this.format(this.players[0].score)}`;

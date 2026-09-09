@@ -324,7 +324,7 @@ class CyberCoreSorter {
     this.elements["new-record"].classList.toggle("hidden", this.score <= previousBest || this.score === 0);
     this.elements["btn-pause"].classList.add("hidden");
     setTimeout(() => { if (this.mode === "gameover") this.elements["game-over-screen"].classList.remove("hidden"); }, 520);
-    window.ArcadeGameSession?.finish?.({ score: this.score, bestCombo: this.bestCombo, level: difficultyFor(this.totalSorted).level, reason });
+    window.ArcadeGameSession?.lose?.({ score: this.score, bestCombo: this.bestCombo, level: difficultyFor(this.totalSorted).level, reason });
   }
   updateHUD() {
     this.elements.score.textContent = this.score.toLocaleString("fr-FR");
