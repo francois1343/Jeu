@@ -127,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.maxSpeed = 25;
             this.color = '#fff';
             this.trail = [];
+            this.stalledFrames = 0;
         }
 
         update() {
@@ -151,12 +152,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Collisions avec les murs gauche/droite
             if (this.x - this.radius < 0) {
-                this.x = this.radius;
-                this.vx *= -1;
+                this.x = this.radius + 0.5;
+                this.vx = Math.abs(this.vx);
                 playSound('bounce');
             } else if (this.x + this.radius > GAME_WIDTH) {
-                this.x = GAME_WIDTH - this.radius;
-                this.vx *= -1;
+                this.x = GAME_WIDTH - this.radius - 0.5;
+                this.vx = -Math.abs(this.vx);
                 playSound('bounce');
             }
 
@@ -169,19 +170,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (this.x > goalLeft && this.x < goalRight) {
                     handleGoal('p1'); // But pour le Joueur 1 (en bas)
                 } else {
-                    this.y = this.radius;
-                    this.vy *= -1;
+                    this.y = this.radius + 0.5;
+                    this.vy = Math.abs(this.vy);
                     playSound('bounce');
                 }
             } else if (this.y + this.radius > GAME_HEIGHT) {
                 if (this.x > goalLeft && this.x < goalRight) {
                     handleGoal('p2'); // But pour le Joueur 2 (en haut)
                 } else {
-                    this.y = GAME_HEIGHT - this.radius;
-                    this.vy *= -1;
+                    this.y = GAME_HEIGHT - this.radius - 0.5;
+                    this.vy = -Math.abs(this.vy);
                     playSound('bounce');
                 }
             }
+
+            const remainingSpeed = Math.hypot(this.vx, this.vy);
+            const nearEdge = this.x < this.radius + 3 || this.x > GAME_WIDTH - this.radius - 3
+                || this.y < this.radius + 3 || this.y > GAME_HEIGHT - this.radius - 3;
+            this.stalledFrames = remainingSpeed < 0.45 || nearEdge && remainingSpeed < 1.2
+                ? this.stalledFrames + 1
+                : 0;
+            if (this.stalledFrames >= 18) this.release();
+        }
+
+        release() {
+            const horizontal = this.x < GAME_WIDTH / 2 ? 1 : -1;
+            const vertical = this.y < GAME_HEIGHT / 2 ? 1 : -1;
+            this.x = Math.max(this.radius + 2, Math.min(GAME_WIDTH - this.radius - 2, this.x));
+            this.y = Math.max(this.radius + 2, Math.min(GAME_HEIGHT - this.radius - 2, this.y));
+            this.vx = horizontal * (3 + Math.random() * 2);
+            this.vy = vertical * (5 + Math.random() * 2);
+            this.stalledFrames = 0;
+            this.trail = [];
         }
 
         draw(ctx) {
@@ -281,15 +301,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Résolution de collision
+            if (distance < 0.001) {
+                dx = puck.vx || (mallet.isTop ? 1 : -1);
+                dy = puck.vy || (mallet.isTop ? 1 : -1);
+                distance = Math.hypot(dx, dy);
+            }
             let angle = Math.atan2(dy, dx);
             let overlap = (puck.radius + mallet.radius) - distance;
             
             // Repousse le palet en dehors du frappeur
-            puck.x += Math.cos(angle) * overlap;
-            puck.y += Math.sin(angle) * overlap;
+            puck.x += Math.cos(angle) * (overlap + 0.75);
+            puck.y += Math.sin(angle) * (overlap + 0.75);
 
             // Transfert de force & rebond
-            let force = Math.max(10, Math.hypot(mallet.vx, mallet.vy) * 1.2);
+            let force = Math.max(9, Math.hypot(mallet.vx, mallet.vy) * 1.2);
             puck.vx = Math.cos(angle) * force;
             puck.vy = Math.sin(angle) * force;
 
@@ -370,25 +395,35 @@ document.addEventListener('DOMContentLoaded', () => {
         puck.trail = [];
         // Donne un léger avantage à celui qui vient d'encaisser le but
         puck.vy = scorer === 'p1' ? 3 : -3;
+        puck.stalledFrames = 0;
+    }
+
+    function reflectOnSideWalls(x) {
+        const min = p2.radius;
+        const max = GAME_WIDTH - p2.radius;
+        const span = max - min;
+        const shifted = ((x - min) % (span * 2) + span * 2) % (span * 2);
+        return shifted <= span ? min + shifted : max - (shifted - span);
     }
 
     function updateAI() {
         if (mode !== '1P') return;
         
         // Logique IA simple
-        let speedMult = aiDifficulty === 'hard' ? 0.2 : (aiDifficulty === 'medium' ? 0.1 : 0.05);
-        let destX = puck.x;
+        let speedMult = aiDifficulty === 'hard' ? 0.22 : (aiDifficulty === 'medium' ? 0.14 : 0.08);
+        const timeToIntercept = puck.vy < -0.15 ? Math.max(0, (puck.y - 135) / -puck.vy) : 0;
+        let destX = reflectOnSideWalls(puck.x + puck.vx * timeToIntercept);
         
         // L'IA ne réagit que si le palet vient vers elle ou est dans sa zone
-        if (puck.vy < 0 || puck.y < GAME_HEIGHT / 2) {
+        if (puck.vy < -0.15) {
             p2.targetX += (destX - p2.targetX) * speedMult;
             // Essaye de se placer derrière le palet pour le frapper
-            let destY = puck.y < GAME_HEIGHT / 3 ? puck.y - 20 : 100;
+            let destY = 135;
             p2.targetY += (destY - p2.targetY) * speedMult;
         } else {
             // Retour à la position par défaut
-            p2.targetX += (GAME_WIDTH / 2 - p2.targetX) * 0.05;
-            p2.targetY += (100 - p2.targetY) * 0.05;
+            p2.targetX += (GAME_WIDTH / 2 - p2.targetX) * speedMult;
+            p2.targetY += (105 - p2.targetY) * speedMult;
         }
     }
 
