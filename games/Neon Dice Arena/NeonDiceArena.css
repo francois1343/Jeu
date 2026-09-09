@@ -1,0 +1,383 @@
+/* =========================================
+   VARIABLES & DESIGN SYSTEM SYNTHWAVE / CASINO
+   ========================================= */
+:root {
+  --cyan: #00f3ff;
+  --magenta: #ff00ff;
+  --gold: #ffaa00;
+  --dark-bg: #0b0c10;
+  --arena-glow: rgba(0, 243, 255, 0.15);
+
+  --glass-bg: rgba(11, 12, 16, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.1);
+
+  --font-main: "Orbitron", sans-serif;
+}
+
+/* =========================================
+   RESET & CONFIGURATION MOBILE
+   ========================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* Optimisation tactile : désactive la sélection et le comportement par défaut */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+body,
+html {
+  width: 100%;
+  height: 100%;
+  background-color: var(--dark-bg);
+  color: #fff;
+  font-family: var(--font-main);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* Grille Synthwave de fond subtile */
+  background-image:
+    radial-gradient(circle at center, transparent 30%, var(--dark-bg) 70%),
+    linear-gradient(rgba(255, 0, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 255, 0.03) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    50px 50px,
+    50px 50px;
+  background-position: center center;
+}
+
+/* =========================================
+   CANVAS
+   ========================================= */
+#gameCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  /* Effet de lueur d'arène centrale projetée derrière le canvas */
+  box-shadow: inset 0 0 100px var(--arena-glow);
+}
+
+/* =========================================
+   INTERFACE UTILISATEUR (UI LAYER)
+   ========================================= */
+#ui-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none; /* Laisse passer les clics vers le Canvas par défaut */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Classes utilitaires */
+.hidden {
+  display: none !important;
+}
+
+.absolute-top-right {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  pointer-events: auto;
+}
+
+/* Texte Néon */
+.neon-gold {
+  color: var(--gold);
+  text-shadow:
+    0 0 5px var(--gold),
+    0 0 15px var(--gold);
+}
+.value {
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* =========================================
+   PANNEAUX GLASSMORPHISM
+   ========================================= */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.5),
+    inset 0 0 15px rgba(255, 255, 255, 0.02);
+  pointer-events: auto; /* Rend le panneau interactif */
+}
+
+.panel {
+  padding: 2.5rem;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 90%;
+  width: 450px;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin-bottom: 2rem;
+  color: #fff;
+  text-shadow: 0 0 10px #fff;
+  letter-spacing: 2px;
+}
+
+/* =========================================
+   BOUTONS NEON
+   ========================================= */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.button-group.vertical {
+  flex-direction: column;
+}
+
+.neon-btn {
+  background: transparent;
+  color: #fff;
+  font-family: var(--font-main);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 12px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.neon-btn.small {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+}
+
+/* Variations de lueur au survol/actif */
+.magenta-glow:hover,
+.magenta-glow.active {
+  border-color: var(--magenta);
+  color: var(--magenta);
+  box-shadow:
+    0 0 15px var(--magenta),
+    inset 0 0 10px var(--magenta);
+}
+
+.cyan-glow:hover,
+.cyan-glow.active {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow:
+    0 0 15px var(--cyan),
+    inset 0 0 10px var(--cyan);
+}
+
+.danger-glow:hover {
+  border-color: #ff3333;
+  color: #ff3333;
+  box-shadow:
+    0 0 15px #ff3333,
+    inset 0 0 10px #ff3333;
+}
+
+/* =========================================
+   HUD & INTERFACE EN JEU
+   ========================================= */
+#game-ui {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.hud-top {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.game-info {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+#history-panel {
+  position: absolute;
+  top: 80px;
+  left: 15px;
+  width: 250px;
+  max-height: 200px;
+  padding: 15px;
+  border-radius: 10px;
+  overflow-y: auto;
+  font-size: 0.8rem;
+  /* Scrollbar invisible pour un look plus propre */
+  scrollbar-width: none;
+}
+#history-panel::-webkit-scrollbar {
+  display: none;
+}
+
+#history-panel h3 {
+  color: var(--cyan);
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+#history-list {
+  list-style: none;
+  color: #ccc;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* =========================================
+   CONTRÔLES DU BAS (GOBELET & ACTIONS)
+   ========================================= */
+.hud-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: none;
+}
+
+/* Le Gobelet Interactif */
+.cup-container {
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+
+.cup {
+  width: 80px;
+  height: 100px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(0, 0, 0, 0.5)
+  );
+  border: 2px solid var(--magenta);
+  border-radius: 10px 10px 30px 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow:
+    0 0 20px rgba(255, 0, 255, 0.4),
+    inset 0 0 15px rgba(255, 0, 255, 0.2);
+  transition: transform 0.1s;
+}
+
+.cup-text {
+  font-size: 0.7rem;
+  color: var(--magenta);
+  font-weight: 900;
+  text-shadow: 0 0 5px var(--magenta);
+  pointer-events: none;
+}
+
+/* Animation de secousse (ajoutée via JS) */
+.shake-anim {
+  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both infinite;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: rotate(0deg) translate3d(0, 0, 0);
+  }
+  25% {
+    transform: rotate(15deg) translate3d(5px, -5px, 0);
+  }
+  50% {
+    transform: rotate(-15deg) translate3d(-5px, 5px, 0);
+  }
+  75% {
+    transform: rotate(10deg) translate3d(5px, 0, 0);
+  }
+}
+
+/* Composants de Surenchère (Perudo) & Mise (Craps) */
+.controls-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.bid-selectors,
+.bet-selectors {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+.bid-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--cyan);
+  min-width: 30px;
+  text-align: center;
+  text-shadow: 0 0 8px var(--cyan);
+}
+
+.bid-separator {
+  color: #555;
+  font-size: 1.2rem;
+  margin: 0 5px;
+}
+
+/* Media Queries pour petits écrans (Mobiles) */
+@media (max-width: 600px) {
+  .title {
+    font-size: 2rem;
+  }
+  #history-panel {
+    display: none; /* Masque l'historique sur mobile pour la lisibilité */
+  }
+  .hud-bottom {
+    padding: 10px;
+  }
+  .cup {
+    width: 60px;
+    height: 80px;
+  }
+}

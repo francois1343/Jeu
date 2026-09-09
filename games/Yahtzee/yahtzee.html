@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#24150d" />
+    <title>Dés de Bohême — Farkle à 6 dés</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="yahtzee.css" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="gameCanvas" aria-label="Table de jeu et six dés interactifs"></canvas>
+      <div id="ui-layer">
+        <section id="main-menu" class="panel tavern-panel" aria-labelledby="game-title">
+          <p class="eyebrow">La table de l'aubergiste</p>
+          <h1 id="game-title">DÉS DE <span>BOHÊME</span></h1>
+          <p class="intro">Un Farkle à six dés inspiré des tavernes de Kingdom Come Deliverance 2. Marquez, tentez votre chance… et sachez vous arrêter.</p>
+          <div class="menu-options">
+            <label for="game-mode">Adversaire
+              <select id="game-mode"><option value="ai">Henry contre l'aubergiste (IA)</option><option value="pvp">Henry contre Joueur 2</option></select>
+            </label>
+            <label for="target-score">Objectif
+              <select id="target-score"><option value="2000">2 000 points</option><option value="3000">3 000 points</option><option value="5000">5 000 points</option></select>
+            </label>
+          </div>
+          <button id="btn-start" class="action-btn primary play-btn" type="button">PRENDRE PLACE</button>
+          <p class="menu-hint">Sélectionnez les dés directement sur la table ou dans la réglette.</p>
+        </section>
+
+        <section id="game-ui" class="hidden" aria-label="Partie de Farkle">
+          <header class="top-hud tavern-panel">
+            <div class="duel-score" id="player-card-0"><span class="turn-marker" aria-hidden="true"></span><small id="player-name-0">HENRY</small><strong id="player-score-0">0</strong></div>
+            <div class="round-info"><small>OBJECTIF</small><strong id="goal-score">2 000</strong><span id="turn-label">TOUR DE HENRY</span></div>
+            <div class="duel-score opponent" id="player-card-1"><span class="turn-marker" aria-hidden="true"></span><small id="player-name-1">AUBERGISTE</small><strong id="player-score-1">0</strong></div>
+          </header>
+
+          <div id="turn-toast" class="turn-toast" role="status" aria-live="assertive"></div>
+
+          <aside class="score-help tavern-panel" aria-label="Aide des combinaisons">
+            <div><b>1</b><span>100</span></div><div><b>5</b><span>50</span></div>
+            <div><b>BRELAN</b><span>1 = 1 000 · autres = face × 100</span></div>
+            <div><b>4 / 5 / 6 IDENTIQUES</b><span>valeur doublée à chaque dé</span></div>
+            <div><b>1—5</b><span>500</span></div><div><b>2—6</b><span>750</span></div><div><b>1—6</b><span>1 500</span></div>
+          </aside>
+
+          <footer class="control-dock tavern-panel">
+            <div class="turn-points">
+              <div><small>SÉLECTION</small><strong id="selected-score">0</strong></div>
+              <div><small>RÉSERVE DU TOUR</small><strong id="turn-score">0</strong></div>
+              <div><small>DÉS À LANCER</small><strong id="dice-remaining">6</strong></div>
+            </div>
+            <div id="selection-detail" class="selection-detail">Lancez les six dés pour commencer.</div>
+            <div id="dice-container" class="dice-container" aria-label="Réglette de sélection des dés"></div>
+            <div class="actions">
+              <button id="btn-roll" class="action-btn primary" type="button">LANCER LES DÉS</button>
+              <button id="btn-bank" class="action-btn secondary" type="button" disabled>ENCAISSER &amp; FINIR LE TOUR</button>
+            </div>
+          </footer>
+          <button id="btn-quit" class="quiet-btn absolute-top-right" type="button">Quitter</button>
+        </section>
+
+        <div id="bust-alert" class="bust-alert hidden" role="alert"><span>BREDOUILLE !</span><small>Tous les points du tour sont perdus.</small></div>
+
+        <section id="game-over" class="panel tavern-panel hidden" aria-labelledby="winner-title">
+          <p class="eyebrow">La partie est terminée</p><h2 id="winner-title">VICTOIRE</h2><p id="winner-copy"></p>
+          <div class="final-scores"><span id="final-player-0"></span><i>—</i><span id="final-player-1"></span></div>
+          <button id="btn-restart" class="action-btn primary play-btn" type="button">REVANCHE</button>
+          <button id="btn-menu" class="quiet-btn" type="button">Retour au menu</button>
+        </section>
+      </div>
+    </div>
+    <script src="yahtzee.js"></script>
+  </body>
+</html>

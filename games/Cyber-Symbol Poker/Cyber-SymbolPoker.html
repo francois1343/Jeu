@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Cyber-Symbol Poker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="Cyber-SymbolPoker.css" />
+  </head>
+  <body>
+    <div id="game-container">
+      <!-- Sidebar : Table des gains -->
+      <aside id="paytable" class="glass-panel">
+        <h2 class="neon-cyan">GAINS</h2>
+        <ul id="multipliers">
+          <li data-rank="6">
+            5 IDENTIQUES <span class="neon-magenta">x16</span>
+          </li>
+          <li data-rank="5">CARRÉ <span class="neon-magenta">x8</span></li>
+          <li data-rank="4">FULL HOUSE <span class="neon-magenta">x6</span></li>
+          <li data-rank="3">BRELAN <span class="neon-magenta">x4</span></li>
+          <li data-rank="2">
+            DOUBLE PAIRE <span class="neon-magenta">x3</span>
+          </li>
+          <li data-rank="1">PAIRE <span class="neon-magenta">x2</span></li>
+        </ul>
+      </aside>
+
+      <!-- Zone Principale -->
+      <main id="board">
+        <div id="dealer-area" class="hand-area">
+          <div class="player-label neon-red">IA CROUPIER</div>
+          <div id="dealer-cards" class="cards-container"></div>
+        </div>
+
+        <div id="center-info" class="glass-panel">
+          <div class="info-block">
+            <span>CRÉDITS</span>
+            <span id="credits" class="neon-gold value">100</span>
+          </div>
+          <div class="info-block">
+            <span>MISE</span>
+            <span id="current-bet" class="neon-cyan value">5</span>
+          </div>
+          <div id="message" class="neon-white">Placez votre mise</div>
+        </div>
+
+        <div id="player-area" class="hand-area">
+          <div class="player-label neon-cyan">VOTRE MAIN</div>
+          <div id="player-cards" class="cards-container"></div>
+        </div>
+
+        <div id="controls">
+          <button id="btn-minus" class="cyber-btn">-</button>
+          <button id="btn-action" class="cyber-btn action-btn cyan-glow">
+            DISTRIBUER
+          </button>
+          <button id="btn-plus" class="cyber-btn">+</button>
+        </div>
+      </main>
+    </div>
+    <script src="Cyber-SymbolPoker.js"></script>
+  </body>
+</html>

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Viewport strict pour empêcher le zoom et le scroll sur mobile (crucial pour le drag/shake du gobelet) -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Neon Dice Arena - Synthwave Casino</title>
+
+    <!-- Police rétro-futuriste Synthwave -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="NeonDiceArena.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Moteur de Rendu des Dés (Canvas en fond) -->
+      <canvas id="gameCanvas"></canvas>
+
+      <!-- Calque UI (Menus, Contrôles, HUD) en Glassmorphism -->
+      <div id="ui-layer">
+        <!-- MENU PRINCIPAL -->
+        <div id="main-menu" class="panel glass-panel">
+          <h1 class="title">NEON <span class="neon-gold">DICE</span></h1>
+
+          <div class="menu-section">
+            <h2>Choisissez votre jeu</h2>
+            <div class="button-group vertical">
+              <button id="btn-mode-perudo" class="neon-btn magenta-glow">
+                Liar's Dice (Perudo)
+              </button>
+              <button id="btn-mode-craps" class="neon-btn cyan-glow">
+                Mini Craps
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- INTERFACE EN JEU (Masquée par défaut) -->
+        <div id="game-ui" class="hidden">
+          <!-- HUD Supérieur : Banque et Informations -->
+          <header class="hud-top glass-panel">
+            <div class="bank-info">
+              <span class="label">Banque:</span>
+              <span id="player-bank" class="neon-gold value">1000 ¤</span>
+            </div>
+            <div id="game-info" class="game-info">
+              <!-- Ex: "Tour de l'IA 1" ou "Faites vos jeux" -->
+              En attente...
+            </div>
+          </header>
+
+          <!-- Historique des actions (Console) -->
+          <aside id="history-panel" class="glass-panel">
+            <h3>Historique</h3>
+            <ul id="history-list">
+              <li>Bienvenue dans l'arène.</li>
+            </ul>
+          </aside>
+
+          <!-- PANNEAU DE CONTRÔLES (Bas de l'écran) -->
+          <footer class="hud-bottom glass-panel">
+            <!-- Zone Gobelet (Secousse/Clic) -->
+            <div id="cup-area" class="cup-container">
+              <div id="cup-element" class="cup">
+                <span class="cup-text">SECOUER</span>
+              </div>
+            </div>
+
+            <!-- Contrôles spécifiques : LIAR'S DICE (Perudo) -->
+            <div id="controls-perudo" class="controls-panel hidden">
+              <div class="bid-selectors">
+                <button id="btn-bid-qty-minus" class="neon-btn small">-</button>
+                <span id="bid-qty" class="bid-value">1</span>
+                <button id="btn-bid-qty-plus" class="neon-btn small">+</button>
+                <span class="bid-separator">x</span>
+                <button id="btn-bid-face-minus" class="neon-btn small">
+                  -
+                </button>
+                <span id="bid-face" class="bid-value">⚀</span>
+                <button id="btn-bid-face-plus" class="neon-btn small">+</button>
+              </div>
+              <div class="button-group">
+                <button id="btn-perudo-bid" class="neon-btn cyan-glow">
+                  Surenchérir
+                </button>
+                <button id="btn-perudo-liar" class="neon-btn magenta-glow">
+                  MENTEUR !
+                </button>
+              </div>
+            </div>
+
+            <!-- Contrôles spécifiques : MINI CRAPS -->
+            <div id="controls-craps" class="controls-panel hidden">
+              <div class="bet-selectors">
+                <span class="label">Mise :</span>
+                <button class="neon-btn small bet-btn" data-amount="10">
+                  10
+                </button>
+                <button class="neon-btn small bet-btn" data-amount="50">
+                  50
+                </button>
+                <button class="neon-btn small bet-btn" data-amount="100">
+                  100
+                </button>
+              </div>
+              <div class="button-group">
+                <button id="btn-craps-pass" class="neon-btn cyan-glow">
+                  Pass Line
+                </button>
+                <button id="btn-craps-dontpass" class="neon-btn magenta-glow">
+                  Don't Pass
+                </button>
+              </div>
+            </div>
+          </footer>
+
+          <!-- Bouton Quitter -->
+          <button
+            id="btn-quit"
+            class="neon-btn small danger-glow absolute-top-right"
+          >
+            Quitter
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Script de logique séparé (en attente) -->
+    <script src="NeonDiceArena.js"></script>
+  </body>
+</html>

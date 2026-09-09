@@ -322,8 +322,7 @@
             <span class="tag">Mini-hub</span>
           </div>
           <p class="game-description">
-            Votre espace jeux de dés : lancers personnalisés, statistiques, 421
-            et Yahtzee à venir.
+            Votre espace jeux de dés : lancers personnalisés, statistiques, 421 et Farkle à six dés.
           </p>
           <div class="game-interactive">
             <div class="result-display">1–12</div>
@@ -1277,6 +1276,60 @@
           >
             Lancer Bubble Shooter
           </button>
+        </article>
+
+        <article class="game-card dice fade-in" onclick="focusCard(this)" data-game="farkle-boheme">
+          <div class="game-icon">🎲</div>
+          <h2 class="game-title">Dés de Bohême</h2>
+          <div class="game-tags"><span class="tag difficulty-medium">Moyen</span><span class="tag">Jeux de dés</span><span class="tag">Farkle</span></div>
+          <p class="game-description">Tentez votre chance au Farkle : choisissez vos dés, encaissez vos points et battez l’aubergiste.</p>
+          <div class="game-interactive"><div class="result-display">6 · 4 · 5</div></div>
+          <button class="btn btn-primary btn-launch" onclick="launchGame('games/Yahtzee/yahtzee.html', event)">Jouer aux Dés de Bohême</button>
+        </article>
+
+        <article class="game-card cyberfind fade-in" onclick="focusCard(this)" data-game="cyber-bounty-hunter">
+          <div class="game-icon">🎯</div>
+          <h2 class="game-title">Cyber-Bounty Hunter</h2>
+          <div class="game-tags"><span class="tag difficulty-medium">Moyen</span><span class="tag">Réflexes</span><span class="tag">Arcade</span></div>
+          <p class="game-description">Repérez l’IA rebelle dans la foule avant la fin du compte à rebours.</p>
+          <div class="game-interactive"><div class="result-display">CIBLE : IA</div></div>
+          <button class="btn btn-primary btn-launch" onclick="launchGame('games/Cyber-Bounty Hunter/Cyber-BountyHunter.html', event)">Lancer la traque</button>
+        </article>
+
+        <article class="game-card cyberflux fade-in" onclick="focusCard(this)" data-game="cyber-core-sorter">
+          <div class="game-icon">⚛️</div>
+          <h2 class="game-title">Cyber CoreSorter</h2>
+          <div class="game-tags"><span class="tag difficulty-hard">Difficile</span><span class="tag">Réflexes</span><span class="tag">Arcade</span></div>
+          <p class="game-description">Triez les noyaux cybernétiques dans le bon canal avant la surcharge.</p>
+          <div class="game-interactive"><div class="result-display">CYAN → MAGENTA</div></div>
+          <button class="btn btn-primary btn-launch" onclick="launchGame('games/Cyber-CoreSorter/Cyber-CoreSorter.html', event)">Trier les noyaux</button>
+        </article>
+
+        <article class="game-card poker fade-in" onclick="focusCard(this)" data-game="cyber-symbol-poker">
+          <div class="game-icon">🃏</div>
+          <h2 class="game-title">Cyber Symbol Poker</h2>
+          <div class="game-tags"><span class="tag difficulty-medium">Moyen</span><span class="tag">Cartes</span><span class="tag">Stratégie</span></div>
+          <p class="game-description">Composez les meilleures combinaisons face au croupier dans un poker futuriste.</p>
+          <div class="game-interactive"><div class="result-display">♠ ♥ ♦ ♣</div></div>
+          <button class="btn btn-primary btn-launch" onclick="launchGame('games/Cyber-Symbol Poker/Cyber-SymbolPoker.html', event)">Prendre place</button>
+        </article>
+
+        <article class="game-card dice fade-in" onclick="focusCard(this)" data-game="neon-dice-arena">
+          <div class="game-icon">🎰</div>
+          <h2 class="game-title">Neon Dice Arena</h2>
+          <div class="game-tags"><span class="tag difficulty-medium">Moyen</span><span class="tag">Jeux de dés</span><span class="tag">Casino</span></div>
+          <p class="game-description">Affrontez les tables néon avec des lancers de dés et des mises purement internes au jeu.</p>
+          <div class="game-interactive"><div class="result-display">5 + 3</div></div>
+          <button class="btn btn-primary btn-launch" onclick="launchGame('games/Neon Dice Arena/NeonDiceArena.html', event)">Entrer dans l’arène</button>
+        </article>
+
+        <article class="game-card neon-overdrive fade-in" onclick="focusCard(this)" data-game="synthwave-edition">
+          <div class="game-icon">🏒</div>
+          <h2 class="game-title">Synthwave Edition</h2>
+          <div class="game-tags"><span class="tag difficulty-medium">Moyen</span><span class="tag">Arcade</span><span class="tag">Réflexes</span></div>
+          <p class="game-description">Un duel de palets synthwave, seul contre l’IA ou à deux joueurs.</p>
+          <div class="game-interactive"><div class="result-display">1 — 1</div></div>
+          <button class="btn btn-primary btn-launch" onclick="launchGame('games/Synthwave Edition/SynthwaveEdition.html', event)">Lancer le match</button>
         </article>
       </main>
 

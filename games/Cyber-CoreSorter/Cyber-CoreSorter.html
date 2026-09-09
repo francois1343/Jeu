@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#05080f" />
+    <title>Cyber-Core Sorter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="Cyber-CoreSorter.css" />
+  </head>
+  <body>
+    <main id="game-container">
+      <canvas id="gameCanvas" aria-label="Zone de tri des noyaux cyan et magenta"></canvas>
+      <div id="ui-layer">
+        <header id="hud" class="hud hidden" aria-label="Informations de partie">
+          <div class="hud-stat"><small>SCORE</small><strong id="score">0</strong></div>
+          <div class="hud-stat"><small>COMBO</small><strong id="combo">×1</strong></div>
+          <div class="hud-core" aria-hidden="true"><span></span></div>
+          <div class="hud-stat"><small>NIVEAU</small><strong id="level">1</strong></div>
+          <div class="hud-stat"><small>RECORD</small><strong id="best-score">0</strong></div>
+        </header>
+
+        <div id="zone-labels" class="zone-labels hidden" aria-hidden="true">
+          <div class="zone-label cyan"><span>◀</span><strong>SILO CYAN</strong><small id="cyan-count">0 / 40</small></div>
+          <div class="zone-label magenta"><strong>SILO MAGENTA</strong><small id="magenta-count">0 / 40</small><span>▶</span></div>
+        </div>
+        <div id="status-message" class="status-message" role="status" aria-live="polite"></div>
+
+        <section id="start-screen" class="panel glass" aria-labelledby="title">
+          <p class="eyebrow">PROTOCOLE DE CONFINEMENT</p>
+          <h1 id="title" class="title">CYBER-CORE <span class="neon-split">SORTER</span></h1>
+          <p class="lead">Les noyaux deviennent instables. Faites-les glisser vers le canal de leur couleur avant la fin de leur charge.</p>
+          <div class="rule-grid">
+            <div class="rule cyan-rule"><i class="mini-core"></i><span><strong>CYAN À GAUCHE</strong><small>Glisser ou touche ←</small></span></div>
+            <div class="rule magenta-rule"><i class="mini-core"></i><span><strong>MAGENTA À DROITE</strong><small>Glisser ou touche →</small></span></div>
+          </div>
+          <p class="warning"><span>!</span> Mauvais canal ou charge épuisée = explosion</p>
+         <button id="btn-start" class="neon-btn" type="button">INITIALISER</button>
+          <button id="btn-leaderboard" class="leaderboard-btn" type="button"><span aria-hidden="true">◇</span> CLASSEMENT LOCAL</button>
+        </section>
+
+        <dialog id="leaderboard-dialog" class="leaderboard-dialog" aria-labelledby="leaderboard-title">
+          <div class="leaderboard-shell glass">
+            <button id="btn-close-leaderboard" class="dialog-close" type="button" aria-label="Fermer le classement">×</button>
+            <p class="eyebrow">ARCHIVES DU RÉSEAU</p>
+            <h2 id="leaderboard-title">TOP 10</h2>
+            <div class="leaderboard-head" aria-hidden="true"><span>RANG / PARTIE</span><span>SCORE</span></div>
+            <ol id="leaderboard-list" class="leaderboard-list"></ol>
+            <p id="leaderboard-empty" class="leaderboard-empty">Aucun score enregistré.<br />À vous d'ouvrir le classement.</p>
+          </div>
+        </dialog>
+
+        <section id="pause-screen" class="panel glass hidden" aria-labelledby="pause-title">
+          <p class="eyebrow">SYSTÈME SUSPENDU</p><h2 id="pause-title">PAUSE</h2>
+          <button id="btn-resume" class="neon-btn" type="button">REPRENDRE</button>
+          <button id="btn-quit" class="text-btn" type="button">Quitter la partie</button>
+        </section>
+
+        <section id="game-over-screen" class="panel glass hidden" aria-labelledby="game-over-title">
+          <p class="eyebrow danger">INCIDENT CRITIQUE</p><h2 id="game-over-title" class="neon-red">RUPTURE DE CONFINEMENT</h2>
+          <p id="game-over-reason" class="game-over-reason">Un noyau a explosé.</p>
+          <div class="results"><div><small>SCORE FINAL</small><strong id="final-score">0</strong></div><div><small>MEILLEURE SÉRIE</small><strong id="final-combo">0</strong></div></div>
+          <p id="new-record" class="new-record hidden">NOUVEAU RECORD</p>
+          <button id="btn-restart" class="neon-btn" type="button">REDÉMARRER</button>
+          <button id="btn-menu" class="text-btn" type="button">Retour au menu</button>
+        </section>
+
+        <button id="btn-pause" class="icon-btn hidden" type="button" aria-label="Mettre le jeu en pause">Ⅱ</button>
+        <button id="btn-sound" class="icon-btn sound-btn" type="button" aria-label="Désactiver le son" aria-pressed="false">♪</button>
+      </div>
+    </main>
+    <script src="Cyber-CoreSorter.js"></script>
+  </body>
+</html>
