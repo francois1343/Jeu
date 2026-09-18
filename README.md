@@ -27,20 +27,20 @@ Francis Arcade est aujourd'hui une **pré-bêta locale fonctionnelle**. Le socle
 
 La priorité n'est plus d'ajouter des jeux. Le travail porte maintenant sur la cohérence, la fiabilité et la qualité éditoriale des meilleures expériences.
 
-| Domaine | État | Détail |
-| :-- | :--: | :-- |
-| Identité et interface néon | ✅ | Accueil responsive et direction artistique installée |
-| PWA | ✅ | Installation, mises à jour et cache progressif |
-| Profils, Coins et historique | ✅ Local | Données conservées dans le navigateur |
-| Boutique cosmétique | ✅ Local | Achat, inventaire et équipement sans avantage compétitif |
-| Statistiques et retours | ✅ Local | Statistiques par jeu et formulaire EmailJS |
-| Défis quotidiens | ✅ Local | Trois défis gratuits, récompenses et bonus journalier |
-| Vitrine « À jouer maintenant » | ✅ | Six jeux mis en avant sur l'accueil |
-| Bridge de session commun | ✅ | Les 43 pages de jeu communiquent avec la plateforme |
-| Console ADMIN et audit | ✅ Local | Recherche, sauvegarde, import et export des données de test |
-| Expérience Premium unifiée | 🟠 En cours | Pause, tutoriel, fin de partie et contrôles encore hétérogènes |
-| Comptes et synchronisation Cloud | 🟡 Préparé | Backend Supabase présent mais non relié à la production |
-| Production commerciale | ⚪ À venir | RGPD, analytics, support et validation sécurité requis |
+| Domaine                          |    État     | Détail                                                         |
+| :------------------------------- | :---------: | :------------------------------------------------------------- |
+| Identité et interface néon       |     ✅      | Accueil responsive et direction artistique installée           |
+| PWA                              |     ✅      | Installation, mises à jour et cache progressif                 |
+| Profils, Coins et historique     |  ✅ Local   | Données conservées dans le navigateur                          |
+| Boutique cosmétique              |  ✅ Local   | Achat, inventaire et équipement sans avantage compétitif       |
+| Statistiques et retours          |  ✅ Local   | Statistiques par jeu et formulaire EmailJS                     |
+| Défis quotidiens                 |  ✅ Local   | Trois défis gratuits, récompenses et bonus journalier          |
+| Vitrine « À jouer maintenant »   |     ✅      | Six jeux mis en avant sur l'accueil                            |
+| Bridge de session commun         |     ✅      | Les 43 pages de jeu communiquent avec la plateforme            |
+| Console ADMIN et audit           |  ✅ Local   | Recherche, sauvegarde, import et export des données de test    |
+| Expérience Premium unifiée       | 🟠 En cours | Pause, tutoriel, fin de partie et contrôles encore hétérogènes |
+| Comptes et synchronisation Cloud | 🟡 Préparé  | Backend Supabase présent mais non relié à la production        |
+| Production commerciale           | ⚪ À venir  | RGPD, analytics, support et validation sécurité requis         |
 
 > Le mode actif reste `local-test`. Les Coins sont fictifs, non achetables, non transférables et non convertibles en argent réel.
 
@@ -75,14 +75,14 @@ La quantité de jeux ne constitue plus un objectif de version. Une expérience r
 
 La vitrine « À jouer maintenant » présente désormais six candidats. Leur présence dans la sélection ne signifie pas encore qu'ils ont obtenu le label Premium :
 
-| Expérience | Situation actuelle | Prochaine étape |
-| :-- | :-- | :-- |
-| Crossy Turfu | Dans la vitrine, bridge et pause disponibles | Audit mobile et fiabilisation du cycle complet |
-| 421 Duel | Dans la vitrine, jouable en entraînement | Valider règles, fin de partie et rejeu |
-| Farkle / Dés de Bohême | Dans la vitrine, bridge installé | Uniformiser l'entrée de partie et la revanche |
-| River Room Poker | Dans la vitrine, bridge installé | Clarifier les crédits internes et tester les contrôles mobiles |
-| Cyber-Core Sorter | Dans la vitrine, pause et rejeu disponibles | Activer le shell commun et effectuer la recette mobile |
-| Pixel Taquin | Dans la vitrine, bridge et rejeu disponibles | Ajouter le tutoriel court et effectuer la recette mobile |
+| Expérience             | Situation actuelle                           | Prochaine étape                                                |
+| :--------------------- | :------------------------------------------- | :------------------------------------------------------------- |
+| Crossy Turfu           | Dans la vitrine, bridge et pause disponibles | Audit mobile et fiabilisation du cycle complet                 |
+| 421 Duel               | Dans la vitrine, jouable en entraînement     | Valider règles, fin de partie et rejeu                         |
+| Farkle / Dés de Bohême | Dans la vitrine, bridge installé             | Uniformiser l'entrée de partie et la revanche                  |
+| River Room Poker       | Dans la vitrine, bridge installé             | Clarifier les crédits internes et tester les contrôles mobiles |
+| Cyber-Core Sorter      | Dans la vitrine, pause et rejeu disponibles  | Activer le shell commun et effectuer la recette mobile         |
+| Pixel Taquin           | Dans la vitrine, bridge et rejeu disponibles | Ajouter le tutoriel court et effectuer la recette mobile       |
 
 Cette liste constitue la première sélection éditoriale. Aucun de ces jeux ne sera présenté comme certifié Premium avant d'avoir franchi toute la recette qualité.
 
@@ -217,30 +217,30 @@ npm test
 
 ## 🧩 Organisation du projet
 
-| Emplacement | Rôle |
-| :-- | :-- |
-| `index.html` | Accueil, vitrine, catalogue, profil, boutique, défis et retours |
-| `games/` | Pages et ressources propres à chaque jeu |
-| `css/home.css` | Interface principale et responsive |
-| `css/shared/` | Styles et shell partagés entre plusieurs pages |
-| `js/core/arcade-config.js` | Configuration, économie, politiques de jeu et boutique |
-| `js/core/arcade-local-store.js` | Profils, sessions, inventaire et historique local |
-| `js/core/arcade-game-bridge.js` | Communication entre les jeux et la plateforme |
-| `js/core/arcade-game-config.js` | États et configuration des menus communs |
-| `js/core/arcade-game-preferences.js` | Son, musique, vibration et intensité par profil |
-| `js/core/arcade-game-shell.js` | Shell commun activable progressivement sur les jeux |
-| `js/core/arcade-shop.js` | Boutique et personnalisation |
-| `js/core/arcade-stats.js` | Statistiques des jeux et catégories |
-| `js/core/arcade-feedback.js` | Signalements et envoi EmailJS |
-| `js/core/arcade-admin-data.js` | Sauvegarde, import et export des données locales |
-| `js/core/arcade-admin-config.js` | Préférences visuelles de la console ADMIN |
-| `js/core/arcade-audit-store.js` | Copie locale et gestion de l'audit global |
-| `js/arcade-admin.js` | Console de gestion du profil local ADMIN |
-| `francis_arcade_audit_global.json` | Source initiale de l'audit administrable |
-| `francis_arcade_audit_global_export.csv` | Format tabulaire d'import et d'export de l'audit |
-| `supabase/` | Schéma et fonctions préparant la future plateforme serveur |
-| `docs/` | Architecture, économie, migration, PWA et déploiement |
-| `tests/` | Vérifications automatisées du socle |
+| Emplacement                              | Rôle                                                            |
+| :--------------------------------------- | :-------------------------------------------------------------- |
+| `index.html`                             | Accueil, vitrine, catalogue, profil, boutique, défis et retours |
+| `games/`                                 | Pages et ressources propres à chaque jeu                        |
+| `css/home.css`                           | Interface principale et responsive                              |
+| `css/shared/`                            | Styles et shell partagés entre plusieurs pages                  |
+| `js/core/arcade-config.js`               | Configuration, économie, politiques de jeu et boutique          |
+| `js/core/arcade-local-store.js`          | Profils, sessions, inventaire et historique local               |
+| `js/core/arcade-game-bridge.js`          | Communication entre les jeux et la plateforme                   |
+| `js/core/arcade-game-config.js`          | États et configuration des menus communs                        |
+| `js/core/arcade-game-preferences.js`     | Son, musique, vibration et intensité par profil                 |
+| `js/core/arcade-game-shell.js`           | Shell commun activable progressivement sur les jeux             |
+| `js/core/arcade-shop.js`                 | Boutique et personnalisation                                    |
+| `js/core/arcade-stats.js`                | Statistiques des jeux et catégories                             |
+| `js/core/arcade-feedback.js`             | Signalements et envoi EmailJS                                   |
+| `js/core/arcade-admin-data.js`           | Sauvegarde, import et export des données locales                |
+| `js/core/arcade-admin-config.js`         | Préférences visuelles de la console ADMIN                       |
+| `js/core/arcade-audit-store.js`          | Copie locale et gestion de l'audit global                       |
+| `js/arcade-admin.js`                     | Console de gestion du profil local ADMIN                        |
+| `francis_arcade_audit_global.json`       | Source initiale de l'audit administrable                        |
+| `francis_arcade_audit_global_export.csv` | Format tabulaire d'import et d'export de l'audit                |
+| `supabase/`                              | Schéma et fonctions préparant la future plateforme serveur      |
+| `docs/`                                  | Architecture, économie, migration, PWA et déploiement           |
+| `tests/`                                 | Vérifications automatisées du socle                             |
 
 ---
 
