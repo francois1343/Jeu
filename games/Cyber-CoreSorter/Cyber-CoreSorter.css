@@ -136,7 +136,7 @@ button { font: inherit; }
   .status-message { top: 84px; white-space: nowrap; }
   .zone-labels { padding-inline: 12px; bottom: 14px; }
   .zone-label strong { font-size: .52rem; } .zone-label small { font-size: .6rem; }
-  .icon-btn { top: 18px; width: 38px; height: 38px; } #btn-pause { right: 12px; } .sound-btn { left: 12px; }
+  .icon-btn { top: 18px; width: 44px; height: 44px; } #btn-pause { right: 12px; } .sound-btn { left: 12px; }
 }
 
 @media (max-width: 460px) { .rule-grid { grid-template-columns: 1fr; } .panel { padding: 1.35rem; } .lead { margin-block: .85rem; } .warning { margin-block: .85rem; } }

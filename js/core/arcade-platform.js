@@ -4,7 +4,7 @@
   const config = global.ARCADE_CONFIG || {};
   const economy = config.localEconomy || {};
   const store = global.ArcadeLocalStore;
-  const state = { profile: null, currentChallenge: null };
+  const state = { profile: null, currentChallenge: null, pendingGame: null };
 
   const labels = {
     starter_grant: "Coins de départ",
@@ -47,9 +47,18 @@
     node.hidden = !message;
   }
 
+  function setProfileStatus(message, type = "info") {
+    const node = element("profileStatus");
+    if (!node) return;
+    node.textContent = message;
+    node.dataset.type = type;
+    node.hidden = !message;
+  }
+
   function readableError(error) {
     const messages = {
       invalid_pseudo: "Le pseudo doit contenir entre 2 et 20 lettres, chiffres, espaces, _ ou -.",
+      store_unavailable: "Le stockage du profil n'est pas chargé. Rechargez la page Go Live.",
       profile_required: "Choisissez d’abord un pseudo.",
       insufficient_balance: "Solde insuffisant pour lancer cette partie.",
       active_session_exists: "Une autre partie est encore active.",
@@ -70,6 +79,7 @@
 
   function renderSignedOut() {
     state.profile = null;
+    setText("accountDialogTitle", "Choisissez votre pseudo");
     setText("coinBalance", "—");
     setText("accountLabel", "Choisir un pseudo");
     element("signedOutPanel")?.removeAttribute("hidden");
@@ -81,6 +91,7 @@
   }
 
   function renderSignedIn(profile) {
+    setText("accountDialogTitle", "Profil local");
     setText("coinBalance", formatCoins(profile.balanceUnits));
     setText("accountLabel", profile.pseudo);
     setText("accountEmail", profile.pseudo);
@@ -174,6 +185,10 @@
 
   function openAccountDialog() {
     setMessage("");
+    setProfileStatus(
+      isConfigured() ? "" : "Le stockage du profil n'est pas chargé. Rechargez la page Go Live.",
+      "error",
+    );
     openDialog("accountDialog");
   }
 
@@ -181,24 +196,52 @@
     event.preventDefault();
     const form = event.currentTarget;
     const pseudo = String(new FormData(form).get("pseudo") || "");
+    const submit = form.querySelector('[type="submit"]');
+    if (submit) submit.disabled = true;
     try {
+      if (!store) throw new Error("store_unavailable");
       const profile = store.login(pseudo);
       refreshAccount();
       form.reset();
       setMessage(`Profil ${profile.pseudo} actif · ${formatCoins(profile.balanceUnits)} Coins disponibles.`, "success");
-      if (profile.isAdmin) global.dispatchEvent(new CustomEvent("arcade:admin-request"));
+      setProfileStatus(`Profil ${profile.pseudo} actif. Lancement en cours…`, "success");
+      const pendingGame = state.pendingGame;
+      state.pendingGame = null;
+      if (pendingGame) {
+        const launch = beginGame(pendingGame);
+        if (launch?.url) {
+          element("accountDialog")?.close();
+          global.location.assign(launch.url);
+        }
+      } else {
+        element("accountDialog")?.close();
+        element("accountButton")?.focus();
+        if (profile.isAdmin) global.dispatchEvent(new CustomEvent("arcade:admin-request"));
+      }
     } catch (error) {
-      setMessage(readableError(error), "error");
+      const message = readableError(error);
+      setMessage(message, "error");
+      setProfileStatus(message, "error");
+      form.elements.pseudo?.focus();
+    } finally {
+      if (submit) submit.disabled = false;
     }
   }
 
-  function beginGame({ gameKey, title, url }) {
+  function beginGame(game) {
+    const { gameKey, title, url } = game;
     if (!state.profile) {
+      state.pendingGame = { gameKey, title, url };
       openAccountDialog();
       setMessage("Choisissez un pseudo avant de lancer une partie.", "info");
+      setProfileStatus(`Choisissez un pseudo pour lancer ${title}.`, "info");
       return false;
     }
     try {
+      // Un retour forcé, la fermeture d'un onglet ou une déconnexion peut
+      // laisser une ancienne session active dans le profil. Depuis l'accueil,
+      // elle est forcément interrompue : on la clôt avant de créer la suivante.
+      recoverInterruptedSession("new_game_requested");
       const session = store.createSession({ gameKey, title, url });
       refreshAccount();
       const destination = new URL(url, global.location.href);
@@ -211,7 +254,9 @@
       );
       return { sessionId: session.id, url: destination.href, session };
     } catch (error) {
-      setMessage(readableError(error), "error");
+      const message = readableError(error);
+      setMessage(message, "error");
+      setProfileStatus(message, "error");
       return false;
     }
   }
@@ -396,6 +441,7 @@
     element("openAccountButton")?.addEventListener("click", openAccountDialog);
     element("authForm")?.addEventListener("submit", handleProfileSubmit);
     element("signOutButton")?.addEventListener("click", () => {
+      state.pendingGame = null;
       store.logout();
       refreshAccount();
       setMessage("Profil local fermé. Les données restent enregistrées sur cet appareil.", "success");
@@ -423,16 +469,22 @@
         if (event.target === dialog) dialog.close();
       });
     });
+    element("accountDialog")?.addEventListener("close", () => {
+      if (!state.profile) state.pendingGame = null;
+    });
   }
 
   function init() {
+    bindUi();
     if (!isConfigured()) {
-      setMessage("Le stockage local des Coins n’a pas pu être initialisé.", "error");
+      const message = "Le stockage local du profil n’a pas pu être initialisé. Rechargez la page Go Live.";
+      setMessage(message, "error");
+      setProfileStatus(message, "error");
+      setText("platformState", "Mode test local indisponible");
       return;
     }
-    bindUi();
     updateEconomyCopy();
-    setText("platformState", "Mode test local");
+    setText("platformState", "Mode test local · correctif connexion v37");
     refreshAccount();
     setTimeout(() => recoverInterruptedSession("grid_loaded"), 0);
     global.addEventListener("pageshow", () => setTimeout(() => recoverInterruptedSession("returned_to_grid"), 0));
@@ -445,9 +497,15 @@
     getBalance: () => state.profile?.balanceUnits ?? null,
     refreshAccount,
     beginGame,
-    getGameSession: store.getSession,
-    startGameSession: store.startSession,
-    reportGameResult: store.finishSession,
+    getGameSession: (...args) => store?.getSession(...args) ?? null,
+    startGameSession: (...args) => {
+      if (!store) throw new Error("store_unavailable");
+      return store.startSession(...args);
+    },
+    reportGameResult: (...args) => {
+      if (!store) throw new Error("store_unavailable");
+      return store.finishSession(...args);
+    },
     startChallenge,
     settleChallenge,
   });

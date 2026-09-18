@@ -2,15 +2,16 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#05080f" />
     <title>Cyber-Core Sorter</title>
+    <link rel="icon" href="../../assets/icons/arcade-icon-v2-192.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="Cyber-CoreSorter.css" />
   </head>
-  <body>
+  <body data-arcade-shell="true">
     <main id="game-container">
       <canvas id="gameCanvas" aria-label="Zone de tri des noyaux cyan et magenta"></canvas>
       <div id="ui-layer">
@@ -63,7 +64,7 @@
           <p id="game-over-reason" class="game-over-reason">Un noyau a explosé.</p>
           <div class="results"><div><small>SCORE FINAL</small><strong id="final-score">0</strong></div><div><small>MEILLEURE SÉRIE</small><strong id="final-combo">0</strong></div></div>
           <p id="new-record" class="new-record hidden">NOUVEAU RECORD</p>
-          <button id="btn-restart" class="neon-btn" type="button">REDÉMARRER</button>
+          <button id="btn-restart" class="neon-btn arcade-session-replay" type="button">REDÉMARRER</button>
           <button id="btn-menu" class="text-btn" type="button">Retour au menu</button>
         </section>
 

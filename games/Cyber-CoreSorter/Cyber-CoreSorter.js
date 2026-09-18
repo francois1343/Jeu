@@ -30,7 +30,7 @@ class AudioEngine {
     if (this.context.state === "suspended") this.context.resume();
   }
   tone(frequency, duration = .08, type = "sine", volume = .06, delay = 0) {
-    if (this.muted || !this.context) return;
+    if (this.muted || !this.context || window.ArcadeGamePreferences?.allowsSound?.() === false) return;
     const start = this.context.currentTime + delay;
     const oscillator = this.context.createOscillator();
     const gain = this.context.createGain();
@@ -50,7 +50,7 @@ class AudioEngine {
   levelUp() { [523, 659, 784, 1046].forEach((note, index) => this.tone(note, .16, "triangle", .055, index * .055)); }
   explode() {
     [150, 95, 52].forEach((note, index) => this.tone(note, .42, "sawtooth", .12, index * .055));
-    if (this.muted || !this.context) return;
+    if (this.muted || !this.context || window.ArcadeGamePreferences?.allowsSound?.() === false) return;
     const length = Math.floor(this.context.sampleRate * .55); const buffer = this.context.createBuffer(1, length, this.context.sampleRate); const data = buffer.getChannelData(0);
     for (let index = 0; index < length; index++) data[index] = (Math.random() * 2 - 1) * (1 - index / length);
     const source = this.context.createBufferSource(); const gain = this.context.createGain(); source.buffer = buffer; gain.gain.value = .16; source.connect(gain); gain.connect(this.context.destination); source.start();
@@ -67,7 +67,8 @@ class CyberCoreSorter {
     const saved = this.loadSettings();
     this.bestScore = saved.bestScore;
     this.leaderboard = saved.leaderboard;
-    this.audio = new AudioEngine(saved.muted);
+    const sharedSound = window.ArcadeGamePreferences?.get?.().sound;
+    this.audio = new AudioEngine(typeof sharedSound === "boolean" ? !sharedSound : saved.muted);
     this.width = 0; this.height = 0; this.ratio = 1;
     this.mode = "menu"; this.cores = []; this.particles = [];
     this.score = 0; this.combo = 0; this.bestCombo = 0; this.totalSorted = 0;
@@ -77,6 +78,10 @@ class CyberCoreSorter {
     this.lastTime = performance.now(); this.statusTimer = 0; this.wakeLock = null;
 
     this.resize(); this.bindEvents(); this.updateSoundButton(); this.updateHUD(); this.renderLeaderboard();
+    window.ArcadeGamePreferences?.subscribe?.(({ preferences }) => {
+      this.audio.muted = !preferences.sound;
+      this.updateSoundButton();
+    });
     requestAnimationFrame((time) => this.loop(time));
   }
 
@@ -107,11 +112,11 @@ class CyberCoreSorter {
     this.canvas.addEventListener("pointercancel", (event) => this.pointerUp(event, true));
 
     this.elements["btn-start"].addEventListener("click", () => this.start());
-    this.elements["btn-restart"].addEventListener("click", () => this.start());
+    this.elements["btn-restart"].addEventListener("click", () => this.restart());
     this.elements["btn-menu"].addEventListener("click", () => this.showMenu());
     this.elements["btn-pause"].addEventListener("click", () => this.pause());
     this.elements["btn-resume"].addEventListener("click", () => this.resume());
-    this.elements["btn-quit"].addEventListener("click", () => this.showMenu());
+    this.elements["btn-quit"].addEventListener("click", () => this.requestMenu());
     this.elements["btn-sound"].addEventListener("click", () => this.toggleSound());
     this.elements["btn-leaderboard"].addEventListener("click", () => this.openLeaderboard());
     this.elements["btn-close-leaderboard"].addEventListener("click", () => this.elements["leaderboard-dialog"].close());
@@ -162,6 +167,10 @@ class CyberCoreSorter {
     else this.gates.forEach((gate, index) => { gate.x = this.width * positions[index]; });
   }
   start() {
+    if (["won", "lost", "abandoned"].includes(window.ArcadeGameSession?.state)) {
+      window.ArcadeGameSession.replay();
+      return;
+    }
     this.audio.init(); this.requestWakeLock();
     this.mode = "running"; this.cores = []; this.particles = [];
     this.score = 0; this.combo = 0; this.bestCombo = 0; this.totalSorted = 0; this.sorted = { cyan: 0, magenta: 0 }; this.siloFill = { cyan: 0, magenta: 0 };
@@ -176,6 +185,17 @@ class CyberCoreSorter {
     this.elements["btn-pause"].classList.remove("hidden");
     this.updateHUD(); this.showStatus("CONFINEMENT ACTIF", "good");
     window.ArcadeGameSession?.start?.({ game: "cyber-core-sorter", mode: "classic" });
+  }
+  restart() {
+    if (["won", "lost", "abandoned"].includes(window.ArcadeGameSession?.state)) window.ArcadeGameSession.replay();
+    else this.start();
+  }
+  requestMenu() {
+    if (window.ArcadeGameSession?.state === "started") {
+      if (!window.confirm("Quitter cette partie en cours ?")) return;
+      window.ArcadeGameSession.abandon("core_sorter_menu_return");
+    }
+    this.showMenu();
   }
   showMenu() {
     this.mode = "menu"; this.cores = []; this.particles = []; this.draggedId = null; this.releaseWakeLock();
@@ -195,6 +215,7 @@ class CyberCoreSorter {
   }
   toggleSound() {
     this.audio.muted = !this.audio.muted;
+    window.ArcadeGamePreferences?.update?.({ sound: !this.audio.muted });
     if (!this.audio.muted) { this.audio.init(); this.audio.tone(660, .08, "sine", .05); }
     this.updateSoundButton(); this.saveSettings();
   }
@@ -506,4 +527,17 @@ class CyberCoreSorter {
 }
 
 if (typeof module !== "undefined" && module.exports) module.exports = { difficultyFor, zoneForX };
-if (typeof window !== "undefined") window.addEventListener("DOMContentLoaded", () => { window.cyberCoreSorter = new CyberCoreSorter(); });
+function configureCyberCoreShell() {
+  window.ArcadeGameShell?.configure?.({
+    pause: () => window.cyberCoreSorter?.pause(),
+    resume: () => window.cyberCoreSorter?.resume(),
+  });
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener("arcade:shell-ready", configureCyberCoreShell);
+  window.addEventListener("DOMContentLoaded", () => {
+    window.cyberCoreSorter = new CyberCoreSorter();
+    configureCyberCoreShell();
+  });
+}

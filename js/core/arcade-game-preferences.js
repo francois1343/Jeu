@@ -67,6 +67,8 @@
     vibrate,
     allowsSound: () => current.sound,
     allowsMusic: () => current.music,
+    allowsVibration: () => current.vibration,
+    allowsAnimations: () => current.animations,
   });
 
   sync();

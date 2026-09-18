@@ -4,11 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pixel Taquin - Sliding Tile Puzzle</title>
+    <link rel="icon" href="../../assets/icons/arcade-icon-v2-192.png" />
     <link rel="stylesheet" href="taquin.css" />
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
   </head>
 
-  <body>
+  <body data-arcade-shell="true">
     <a
       class="arcade-home-link"
       href="../../index.html"
@@ -190,16 +191,16 @@
 
         <div class="game-area">
           <div class="board-wrapper">
-            <div id="puzzle-board" class="puzzle-board" style="--grid-size: 3">
+            <div id="puzzle-board" class="puzzle-board" style="--grid-size: 3" role="grid" aria-label="Puzzle coulissant">
               <!-- Les tuiles seront générées dynamiquement en JS -->
             </div>
 
             <!-- Overlay de Victoire -->
-            <div id="victory-overlay" class="victory-overlay hidden">
+            <div id="victory-overlay" class="victory-overlay hidden" role="status" aria-live="assertive">
               <div class="victory-content">
                 <h2>🎉 VICTOIRE !</h2>
                 <p id="victory-stats">Résolu en 0 coups et 00:00 !</p>
-                <button id="btn-restart" class="btn btn-action">Rejouer</button>
+                <button id="btn-restart" class="btn btn-action arcade-session-replay">Rejouer</button>
                 <button id="btn-victory-menu" class="btn">
                   Retour au menu
                 </button>

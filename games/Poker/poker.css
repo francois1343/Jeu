@@ -44,3 +44,6 @@ body::after { content:""; position:fixed; inset:0; z-index:2000; pointer-events:
 .result-overlay { background:rgba(6,3,24,.7); }.result-card { border-radius:16px; border-color:var(--neon-cyan); background:linear-gradient(145deg,rgba(23,11,57,.98),rgba(7,5,24,.99)); box-shadow:0 0 42px rgba(93,246,255,.22),0 0 80px rgba(255,79,216,.13); }.result-card span { color:var(--neon-pink); }
 #app ~ .arcade-session-hud { bottom:142px; border-color:rgba(93,246,255,.7); } button:focus-visible,input:focus-visible,select:focus-visible { outline:3px solid var(--neon-yellow); outline-offset:3px; }
 @media (max-width:800px) { .lobby-nav,.game-topbar { padding-left:64px; } } @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+
+.icon-button,.leave-button,.bet-presets button { min-height:44px; }
+.icon-button { min-width:44px; }

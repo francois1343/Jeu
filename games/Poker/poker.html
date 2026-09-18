@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#07110e">
   <title>River Room — Texas Hold'em</title>
+  <link rel="icon" href="../../assets/icons/arcade-icon-v2-192.png">
   <link rel="stylesheet" href="poker.css">
   <link rel="stylesheet" href="../../css/shared/arcade-home.css">
 </head>
-<body>
+<body data-arcade-shell="true">
   <a class="arcade-home-link" href="../../index.html" aria-label="Retour accueil" title="Retour accueil">
     <span class="arcade-home-icon" aria-hidden="true">⌂</span>
     <span class="arcade-home-label">Accueil</span>
@@ -18,7 +19,7 @@
       <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
       <header class="lobby-nav">
         <a class="brand" href="#" aria-label="River Room"><span class="brand-mark">R</span><span>RIVER ROOM</span></a>
-        <div class="bankroll-card"><span>Banque</span><strong id="player-bankroll">10 000 €</strong></div>
+        <div class="bankroll-card"><span>Jetons fictifs</span><strong id="player-bankroll">10 000 jetons</strong></div>
       </header>
       <main class="lobby-main">
         <div class="hero-copy">
@@ -33,7 +34,7 @@
             <span class="live-dot"><i></i> Disponible</span>
           </div>
           <div class="mode-tabs" role="tablist" aria-label="Mode de jeu">
-            <button class="mode-tab active" data-mode="cash" role="tab" aria-selected="true"><span class="mode-icon">€</span><span><strong>Cash game</strong><small>Blindes fixes · 1 000 €</small></span></button>
+            <button class="mode-tab active" data-mode="cash" role="tab" aria-selected="true"><span class="mode-icon">●</span><span><strong>Partie libre</strong><small>Blindes fixes · 1 000 jetons</small></span></button>
             <button class="mode-tab" data-mode="tournament" role="tab" aria-selected="false"><span class="mode-icon">♛</span><span><strong>Tournoi</strong><small>Blindes progressives</small></span></button>
           </div>
           <div class="setup-grid">
@@ -63,7 +64,7 @@
           <div class="table-shadow"></div>
           <div id="poker-table" class="poker-table">
             <div class="felt-detail"></div>
-            <div class="table-center"><div class="pot-display"><span>POT</span><strong id="main-pot">0 €</strong></div><div id="community-cards" class="community-cards" aria-label="Cartes communes"></div><div id="street-label" class="street-label">PRÉFLOP</div></div>
+            <div class="table-center"><div class="pot-display"><span>POT</span><strong id="main-pot">0 jeton</strong></div><div id="community-cards" class="community-cards" aria-label="Cartes communes"></div><div id="street-label" class="street-label">PRÉFLOP</div></div>
             <div id="seats-container"></div>
           </div>
         </section>
@@ -73,11 +74,11 @@
         <div class="turn-message"><span id="turn-indicator"><i></i> Au tour de l'adversaire</span><small id="action-hint">Observez l'action à la table</small></div>
         <div class="bet-control">
           <div class="bet-presets"><button data-preset="half">½ pot</button><button data-preset="pot">Pot</button><button data-preset="max">Tapis</button></div>
-          <div class="slider-row"><input id="bet-slider" type="range" min="20" max="1000" value="20" aria-label="Montant de la relance"><label><span>Relance à</span><input id="bet-input" type="number" value="20"><b>€</b></label></div>
+          <div class="slider-row"><input id="bet-slider" type="range" min="20" max="1000" value="20" aria-label="Montant de la relance en jetons fictifs"><label><span>Relance à</span><input id="bet-input" type="number" value="20" aria-label="Montant en jetons fictifs"><b>jetons</b></label></div>
         </div>
         <div class="action-buttons"><button id="btn-fold" class="action-button fold"><span>Se coucher</span><kbd>F</kbd></button><button id="btn-check-call" class="action-button call"><span>Parole</span><kbd>C</kbd></button><button id="btn-bet-raise" class="action-button raise"><span>Relancer</span><kbd>R</kbd></button><button id="btn-all-in" class="action-button allin" aria-label="Faire tapis">Tapis</button></div>
       </footer>
-      <div id="result-overlay" class="result-overlay hidden" role="status"><div class="result-card"><span id="result-kicker">MAIN TERMINÉE</span><h2 id="result-title">Vous remportez le pot</h2><p id="result-detail"></p></div></div>
+      <div id="result-overlay" class="result-overlay hidden" role="status" aria-live="assertive"><div class="result-card"><span id="result-kicker">MAIN TERMINÉE</span><h2 id="result-title">Vous remportez le pot</h2><p id="result-detail"></p></div></div>
     </section>
   </div>
   <script src="poker.js"></script>

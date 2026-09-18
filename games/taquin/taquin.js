@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let timerInterval = null;
   let shuffleInterval = null;
   let isGameActive = false;
+  let isPaused = false;
   let showNumbers = true;
   let uiTheme = "dark";
 
@@ -47,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function playSound(type) {
-    if (!audioCtx) return;
+    if (!audioCtx || window.ArcadeGamePreferences?.allowsSound?.() === false) return;
     const now = audioCtx.currentTime;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
@@ -89,9 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function triggerHaptic() {
-    if (navigator.vibrate) {
-      navigator.vibrate(25);
-    }
+    if (window.ArcadeGamePreferences?.vibrate) window.ArcadeGamePreferences.vibrate(25);
+    else if (navigator.vibrate) navigator.vibrate(25);
   }
 
   // --- CHRONOMÈTRE ---
@@ -100,6 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
     secondsElapsed = 0;
     updateTimerDisplay();
     timerInterval = setInterval(() => {
+      if (isPaused) return;
       secondsElapsed++;
       updateTimerDisplay();
     }, 1000);
@@ -126,12 +127,15 @@ document.addEventListener("DOMContentLoaded", () => {
     emptyTileIndex = totalTiles - 1; // La dernière case est la case vide initialement
 
     for (let id = 0; id < totalTiles; id++) {
-      const tile = document.createElement("div");
+      const tile = document.createElement("button");
+      tile.type = "button";
       tile.classList.add("tile", `theme-${currentTheme}`);
       tile.dataset.id = id;
 
       if (id === totalTiles - 1) {
         tile.classList.add("empty");
+        tile.disabled = true;
+        tile.setAttribute("aria-label", "Case vide");
       } else {
         const numberSpan = document.createElement("span");
         numberSpan.classList.add("tile-number");
@@ -158,6 +162,11 @@ document.addEventListener("DOMContentLoaded", () => {
     tiles.forEach((tileObj, currentIndex) => {
       const row = Math.floor(currentIndex / gridSize);
       const col = currentIndex % gridSize;
+      tileObj.element.setAttribute("aria-rowindex", String(row + 1));
+      tileObj.element.setAttribute("aria-colindex", String(col + 1));
+      if (tileObj.id !== gridSize * gridSize - 1) {
+        tileObj.element.setAttribute("aria-label", `Tuile ${tileObj.id + 1}, ligne ${row + 1}, colonne ${col + 1}`);
+      }
 
       const x = gap + col * (tileSize + gap);
       const y = gap + row * (tileSize + gap);
@@ -188,6 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
     moveCountElement.textContent = moves;
     victoryOverlay.classList.add("hidden");
     isGameActive = false;
+    isPaused = false;
 
     // Réinitialiser la grille à la position résolue
     const totalTiles = gridSize * gridSize;
@@ -200,6 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let stepCount = 0;
     shuffleInterval = setInterval(() => {
+      if (isPaused) return;
       const validNeighbors = getValidNeighbors(emptyTileIndex).filter(
         (idx) => idx !== lastMovedIndex,
       );
@@ -249,7 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- MÉCANIQUE DE JEU (MOUVEMENT) ---
   function handleTileClick(tileId) {
-    if (!isGameActive) return;
+    if (!isGameActive || isPaused) return;
 
     const currentIndex = tiles.findIndex((t) => t.id === tileId);
     const neighbors = getValidNeighbors(emptyTileIndex);
@@ -282,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
   boardElement.addEventListener(
     "touchend",
     (e) => {
-      if (!isGameActive) return;
+      if (!isGameActive || isPaused) return;
       const touchEndX = e.changedTouches[0].clientX;
       const touchEndY = e.changedTouches[0].clientY;
 
@@ -321,7 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Raccourcis Clavier (Flèches directionnelles)
   document.addEventListener("keydown", (e) => {
-    if (!isGameActive) return;
+    if (!isGameActive || isPaused) return;
     const emptyRow = Math.floor(emptyTileIndex / gridSize);
     const emptyCol = emptyTileIndex % gridSize;
     let targetIndex = -1;
@@ -423,6 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showMenu() {
     isGameActive = false;
+    isPaused = false;
     stopTimer();
     if (shuffleInterval) {
       clearInterval(shuffleInterval);
@@ -439,8 +451,20 @@ document.addEventListener("DOMContentLoaded", () => {
     updateLeaderboardUI(gridSize);
   }
 
-  function startGame() {
-    window.ArcadeGameSession?.start({ mode: "selected_image" });
+  function requestMenu() {
+    if (window.ArcadeGameSession?.state === "started") {
+      if (!window.confirm("Quitter cette partie en cours ?")) return;
+      window.ArcadeGameSession.abandon("taquin_menu_return");
+    }
+    showMenu();
+  }
+
+  function startGame(mode = "selected_image") {
+    if (["won", "lost", "abandoned"].includes(window.ArcadeGameSession?.state)) {
+      window.ArcadeGameSession.replay();
+      return;
+    }
+    window.ArcadeGameSession?.start({ mode });
     menuScreen.classList.add("hidden");
     menuScreen.setAttribute("aria-hidden", "true");
     gameScreen.classList.remove("hidden");
@@ -482,14 +506,33 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function startRandomGame() {
-    window.ArcadeGameSession?.start({ mode: "random" });
     const sizes = [3, 4, 5];
     const themes = Array.from(themeButtons, (button) => button.dataset.theme);
     selectGridSize(sizes[Math.floor(Math.random() * sizes.length)]);
     setNumbers(Math.random() >= 0.5);
     selectTheme(themes[Math.floor(Math.random() * themes.length)]);
-    startGame();
+    startGame("random");
   }
+
+  function pauseForShell() {
+    if (window.ArcadeGameSession?.state === "started") isPaused = true;
+  }
+
+  function resumeFromShell() {
+    isPaused = false;
+  }
+
+  function replayGame() {
+    if (["won", "lost", "abandoned"].includes(window.ArcadeGameSession?.state)) window.ArcadeGameSession.replay();
+    else shufflePuzzle();
+  }
+
+  function configurePremiumShell() {
+    window.ArcadeGameShell?.configure?.({ pause: pauseForShell, resume: resumeFromShell });
+  }
+
+  window.addEventListener("arcade:shell-ready", configurePremiumShell);
+  configurePremiumShell();
 
   // --- ÉVÉNEMENTS UI & DÉLÉGATION ---
   // Sélecteur de taille de grille
@@ -538,7 +581,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", startRandomGame);
   document
     .getElementById("btn-back-to-menu")
-    .addEventListener("click", showMenu);
+    .addEventListener("click", requestMenu);
   document
     .getElementById("btn-victory-menu")
     .addEventListener("click", showMenu);
@@ -547,7 +590,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", shufflePuzzle);
   document
     .getElementById("btn-restart")
-    .addEventListener("click", shufflePuzzle);
+    .addEventListener("click", replayGame);
 
   // Ajustement de la taille au redimensionnement de la fenêtre
   window.addEventListener("resize", () => updateTilePositions(false));

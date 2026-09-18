@@ -4,9 +4,10 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <title>🐔 Crossy Turfu</title>
+    <link rel="icon" href="../../assets/icons/arcade-icon-v2-192.png" />
     <link
       href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap"
       rel="stylesheet"
@@ -402,7 +403,7 @@
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
   </head>
-  <body>
+  <body data-arcade-shell="true">
     <a
       class="legacy-home-link"
       href="../../index.html"
@@ -412,8 +413,8 @@
       ><span class="arcade-home-label">Accueil</span></a
     >
 
-    <div id="game-container">
-      <canvas id="gameCanvas"></canvas>
+    <main id="game-container">
+      <canvas id="gameCanvas" aria-label="Course Crossy Turfu : traversez les voies et évitez les obstacles"></canvas>
 
       <!-- HUD -->
       <div class="hud" id="hud" style="display: none">
@@ -428,7 +429,7 @@
         </div>
       </div>
 
-      <button id="pause-btn" onclick="game.togglePause()">⏸</button>
+      <button id="pause-btn" type="button" aria-label="Mettre la partie en pause" onclick="game.togglePause()">⏸</button>
 
       <!-- Vignette danger -->
       <div id="danger-vignette"></div>
@@ -521,7 +522,7 @@
           </div>
         </div>
 
-        <button class="menu-btn btn-primary" onclick="game.startGame()">
+        <button class="menu-btn btn-primary arcade-session-replay" onclick="game.startGame()">
           🔄 REJOUER
         </button>
         <button class="menu-btn btn-secondary" onclick="game.showMainMenu()">
@@ -540,7 +541,7 @@
           <button class="ctrl-btn" onclick="game.movePlayer('right')">➡</button>
         </div>
       </div>
-    </div>
+    </main>
 
     <script>
       // ============================================
@@ -1284,7 +1285,7 @@
         }
 
         play(sound) {
-          if (!this.enabled || !this.ctx) return;
+          if (!this.enabled || !this.ctx || window.ArcadeGamePreferences?.allowsSound?.() === false) return;
           try {
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
@@ -1557,12 +1558,20 @@
         }
 
         quitToMenu() {
+          if (this.gameStarted && !this.gameOver) {
+            if (!window.confirm("Abandonner cette course et revenir au menu ?")) return;
+            window.ArcadeGameSession?.abandon?.("crossy_menu_return");
+          }
           this.gameOver = true;
           this.showMainMenu();
         }
 
         // Démarrage
         startGame() {
+          if (["won", "lost", "abandoned"].includes(window.ArcadeGameSession?.state)) {
+            window.ArcadeGameSession.replay();
+            return;
+          }
           window.ArcadeGameSession?.start({ difficulty: this.difficulty });
           this.hideAllMenus();
           this.reset();
@@ -2085,6 +2094,18 @@
       // ============================================
       let game;
 
+      function configureCrossyShell() {
+        if (!window.ArcadeGameShell || !game) return;
+        window.ArcadeGameShell.configure({
+          pause() {
+            if (game.gameStarted && !game.gameOver) game.paused = true;
+          },
+          resume() {
+            if (game.gameStarted && !game.gameOver) game.paused = false;
+          },
+        });
+      }
+
       function enhanceCrossyMenu() {
         const menu = document.getElementById("main-menu");
         const title = menu?.querySelector(".game-title");
@@ -2105,7 +2126,12 @@
       document.addEventListener("DOMContentLoaded", () => {
         enhanceCrossyMenu();
         game = new Game();
+        configureCrossyShell();
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden && game.gameStarted && !game.gameOver) game.paused = true;
+        });
       });
+      window.addEventListener("arcade:shell-ready", configureCrossyShell);
     </script>
     <script src="../../js/core/arcade-config.js"></script>
     <script src="../../js/core/arcade-local-store.js"></script>

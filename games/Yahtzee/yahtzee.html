@@ -2,16 +2,17 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#24150d" />
     <title>Dés de Bohême — Farkle à 6 dés</title>
+    <link rel="icon" href="../../assets/icons/arcade-icon-v2-192.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="yahtzee.css" />
   </head>
-  <body>
-    <div id="app">
+  <body data-arcade-shell="true">
+    <main id="app">
       <canvas id="gameCanvas" aria-label="Table de jeu et six dés interactifs"></canvas>
       <div id="ui-layer">
         <section id="main-menu" class="panel tavern-panel" aria-labelledby="game-title">
@@ -67,11 +68,11 @@
         <section id="game-over" class="panel tavern-panel hidden" aria-labelledby="winner-title">
           <p class="eyebrow">La partie est terminée</p><h2 id="winner-title">VICTOIRE</h2><p id="winner-copy"></p>
           <div class="final-scores"><span id="final-player-0"></span><i>—</i><span id="final-player-1"></span></div>
-          <button id="btn-restart" class="action-btn primary play-btn" type="button">REVANCHE</button>
+          <button id="btn-restart" class="action-btn primary play-btn arcade-session-replay" type="button">REVANCHE</button>
           <button id="btn-menu" class="quiet-btn" type="button">Retour au menu</button>
         </section>
       </div>
-    </div>
+    </main>
     <script src="../../js/core/arcade-config.js"></script>
     <script src="../../js/core/arcade-local-store.js"></script>
     <script src="../../js/core/arcade-game-bridge.js"></script>

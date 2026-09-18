@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#090d1f" />
     <title>421 · Dice District</title>
+    <link rel="icon" href="../../assets/icons/arcade-icon-v2-192.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="421.css" />
   </head>
-  <body>
+  <body data-arcade-shell="true">
     <main class="table" aria-labelledby="game-title">
       <header class="table-header">
         <p>TABLE 02 · DICE DISTRICT</p>
@@ -43,7 +44,7 @@
           <button id="roll" class="primary" type="button">LANCER <span id="roll-count">1 / 3</span></button>
           <button id="bank" class="secondary" type="button" disabled>VALIDER LA MAIN</button>
         </div>
-        <button id="new-game" class="text-button" type="button">NOUVELLE PARTIE</button>
+        <button id="new-game" class="text-button arcade-session-replay" type="button">NOUVELLE PARTIE</button>
       </section>
 
       <aside class="rules">

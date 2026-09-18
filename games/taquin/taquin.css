@@ -852,6 +852,7 @@ body::after {
 
 /* Boutons génériques */
 .btn {
+  min-height: 44px;
   border: 1px solid rgba(174, 137, 255, 0.24);
   background: rgba(61, 49, 111, 0.9);
   color: #f0edff;
@@ -1053,6 +1054,9 @@ body::after {
 /* Tuile de Puzzle */
 .tile {
   position: absolute;
+  margin: 0;
+  padding: 0;
+  border: 0;
   width: calc(
     (100% - (var(--tile-gap) * (var(--grid-size) + 1))) / var(--grid-size)
   );
@@ -1079,6 +1083,21 @@ body::after {
 
 .tile:not(.empty):hover {
   filter: brightness(1.12) saturate(1.14);
+}
+
+.tile:focus-visible {
+  outline: 4px solid #ffffff;
+  outline-offset: -5px;
+  filter: brightness(1.18) saturate(1.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 .tile.empty {

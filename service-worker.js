@@ -1,4 +1,4 @@
-const CACHE = "arcade-station-v35";
+const CACHE = "arcade-station-v37";
 const APP_SHELL = [
   "./",
   "./index.html",

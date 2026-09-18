@@ -109,8 +109,39 @@
     updateRegistration.waiting.postMessage({ type: "SKIP_WAITING" });
   }
 
+  function isLocalDevelopment() {
+    return ["localhost", "127.0.0.1", "[::1]"].includes(global.location.hostname);
+  }
+
+  async function resetLocalServiceWorker() {
+    const resetKey = "arcade.local-service-worker-reset.v1";
+    const hadController = Boolean(global.navigator.serviceWorker?.controller);
+    try {
+      const registrations = await global.navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map((registration) => registration.unregister()));
+      if (global.caches) {
+        const cacheNames = await global.caches.keys();
+        await Promise.all(cacheNames
+          .filter((name) => name.startsWith("arcade-station-"))
+          .map((name) => global.caches.delete(name)));
+      }
+      if (hadController && !global.sessionStorage.getItem(resetKey)) {
+        global.sessionStorage.setItem(resetKey, "done");
+        global.location.reload();
+        return;
+      }
+      global.sessionStorage.removeItem(resetKey);
+    } catch {
+      // Le nettoyage du cache de développement ne doit jamais bloquer l'arcade.
+    }
+  }
+
   function registerServiceWorker() {
     if (!("serviceWorker" in global.navigator)) return;
+    if (isLocalDevelopment()) {
+      resetLocalServiceWorker();
+      return;
+    }
     global.navigator.serviceWorker.register(config.serviceWorker.path, { scope: config.serviceWorker.scope })
       .then((registration) => {
         const offerUpdate = () => showUpdatePrompt(registration);

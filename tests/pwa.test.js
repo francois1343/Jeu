@@ -28,6 +28,11 @@ assert.match(home, /rel="icon" type="image\/png" href="assets\/icons\/arcade-ico
 assert.match(home, /js\/pwa-config\.js/);
 assert.match(home, /js\/pwa-install\.js/);
 
+const pwaInstall = fs.readFileSync(path.join(root, "js", "pwa-install.js"), "utf8");
+assert.match(pwaInstall, /isLocalDevelopment/);
+assert.match(pwaInstall, /registration\.unregister\(\)/);
+assert.match(pwaInstall, /arcade-station-/);
+
 const simon = fs.readFileSync(path.join(root, "games", "simon", "index.html"), "utf8");
 assert.match(simon, /href="\.\.\/\.\.\/assets\/icons\/favicon\.svg"/);
 

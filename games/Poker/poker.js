@@ -39,10 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let dealerIndex = -1, currentTurn = -1, currentBet = 0, lastFullRaise = 20;
   let smallBlind = 10, bigBlind = 20, blindLevel = 0;
   let street = 'PREFLOP', handNumber = 0, awaitingHuman = false, handOver = true;
-  let sessionToken = 0, cashSettled = true, audioEnabled = true, audioContext = null;
+  let sessionToken = 0, cashSettled = true, audioEnabled = window.ArcadeGamePreferences?.get?.().sound ?? true, audioContext = null;
+  let premiumPaused = false, premiumPausedAt = 0;
   let levelTimer = null, levelEndsAt = 0, levelDuration = 180;
 
-  const money = value => `${Math.max(0, Math.round(value)).toLocaleString('fr-FR')} €`;
+  const money = value => `${Math.max(0, Math.round(value)).toLocaleString('fr-FR')} jetons`;
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const totalPot = () => players.reduce((sum, player) => sum + player.contribution, 0);
   dom.bankroll.textContent = money(bankroll);
@@ -61,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   dom.leave.addEventListener('click', leaveSession);
   dom.sound.addEventListener('click', () => {
     audioEnabled = !audioEnabled;
+    window.ArcadeGamePreferences?.update?.({ sound: audioEnabled });
     dom.sound.classList.toggle('muted', !audioEnabled);
     dom.sound.textContent = audioEnabled ? '♪' : '×';
     if (audioEnabled) initAudio();
@@ -75,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function sound(type) {
-    if (!audioEnabled || !audioContext) return;
+    if (!audioEnabled || !audioContext || window.ArcadeGamePreferences?.allowsSound?.() === false) return;
     const now = audioContext.currentTime;
     const tones = type === 'win' ? [523, 659, 784] : type === 'chips' ? [1050, 1320] : [210];
     tones.forEach((frequency, index) => {
@@ -98,7 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
     else arcadeSession.abandon(metadata.reason || 'left_table');
   }
   function startSession() {
+    if (['won', 'lost', 'abandoned'].includes(window.ArcadeGameSession?.state)) {
+      window.ArcadeGameSession.replay();
+      return;
+    }
     initAudio();
+    premiumPaused = false;
     sessionToken += 1;
     clearInterval(levelTimer);
     const count = Number(dom.playerCount.value);
@@ -113,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cashSettled = mode !== 'cash';
     dom.log.innerHTML = '';
     dom.lobby.classList.add('hidden'); dom.game.classList.remove('hidden');
-    dom.modeLabel.textContent = mode === 'cash' ? 'CASH · TABLE 01' : 'TOURNOI · SIT & GO';
+    dom.modeLabel.textContent = mode === 'cash' ? 'LIBRE · TABLE 01' : 'TOURNOI · SIT & GO';
     if (mode === 'tournament') startLevelClock(); else dom.timer.classList.add('hidden');
     updateBlindsLabel();
     startNewHand();
@@ -124,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function leaveSession() {
+    if (window.ArcadeGameSession?.state === 'started' && !window.confirm('Quitter cette partie en cours ?')) return;
     settleArcadeSession('abandoned', { reason: 'left_table' });
     if (mode === 'cash' && !cashSettled && players[0]) {
       bankroll = Math.max(0, bankroll + players[0].stack - players[0].startingStack);
@@ -142,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dom.timer.classList.remove('hidden');
     clearInterval(levelTimer);
     levelTimer = setInterval(() => {
+      if (premiumPaused) return;
       let remaining = Math.max(0, Math.ceil((levelEndsAt - Date.now()) / 1000));
       if (remaining <= 0) {
         blindLevel = Math.min(blindLevel + 1, BLIND_LEVELS.length - 1);
@@ -253,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       awaitingHuman = false; disableControls(player);
       const token = sessionToken; const playerId = player.id;
-      setTimeout(() => { if (token === sessionToken && !handOver && players[currentTurn]?.id === playerId) botTurn(player); }, 420 + Math.random() * 420);
+      scheduleWhenActive(() => { if (token === sessionToken && !handOver && players[currentTurn]?.id === playerId) botTurn(player); }, 420 + Math.random() * 420, token);
     }
   }
 
@@ -313,10 +322,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function runOutBoard() {
     disableControls();
     const token = sessionToken;
-    setTimeout(() => {
+    scheduleWhenActive(() => {
       if (token !== sessionToken || handOver) return;
       if (street === 'RIVER') showdown(); else advanceStreet();
-    }, 650);
+    }, 650, token);
   }
 
   function botTurn(bot) {
@@ -385,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
   dom.raise.addEventListener('click', () => { if (awaitingHuman) takeAction('raise', Number(dom.betInput.value)); });
   dom.allin.addEventListener('click', () => { if (awaitingHuman) takeAction('allin'); });
   document.addEventListener('keydown', event => {
-    if (!awaitingHuman || ['INPUT', 'SELECT'].includes(document.activeElement.tagName)) return;
+    if (premiumPaused || !awaitingHuman || ['INPUT', 'SELECT'].includes(document.activeElement.tagName)) return;
     if (event.key.toLowerCase() === 'f') takeAction('fold');
     if (event.key.toLowerCase() === 'c') takeAction(currentBet > players[currentTurn].streetBet ? 'call' : 'check');
     if (event.key.toLowerCase() === 'r') takeAction('raise', Number(dom.betInput.value));
@@ -441,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function scheduleNextHand() {
     disableControls(); const token = sessionToken;
-    setTimeout(() => { if (token === sessionToken) startNewHand(); }, 2600);
+    scheduleWhenActive(() => { if (token === sessionToken) startNewHand(); }, 2600, token);
   }
   function endSessionMessage(kicker, title, detail) {
     settleArcadeSession(kicker === 'VICTOIRE' ? 'won' : 'lost', { mode, hands: handNumber });
@@ -452,6 +461,42 @@ document.addEventListener('DOMContentLoaded', () => {
     dom.result.classList.remove('hidden');
     if (!persistent) setTimeout(() => dom.result.classList.add('hidden'), 2200);
   }
+
+  function scheduleWhenActive(callback, delay, token = sessionToken) {
+    window.setTimeout(() => {
+      if (token !== sessionToken) return;
+      if (premiumPaused) {
+        scheduleWhenActive(callback, 120, token);
+        return;
+      }
+      callback();
+    }, delay);
+  }
+
+  function pauseForShell() {
+    if (premiumPaused || window.ArcadeGameSession?.state !== 'started') return;
+    premiumPaused = true;
+    premiumPausedAt = Date.now();
+    disableControls();
+  }
+
+  function resumeFromShell() {
+    if (!premiumPaused) return;
+    if (levelEndsAt && premiumPausedAt) levelEndsAt += Date.now() - premiumPausedAt;
+    premiumPaused = false;
+    premiumPausedAt = 0;
+    if (awaitingHuman && players[currentTurn]?.isHuman) setupControls(players[currentTurn]);
+  }
+
+  function configurePremiumShell() {
+    window.ArcadeGameShell?.configure?.({
+      pause: pauseForShell,
+      resume: resumeFromShell,
+    });
+  }
+
+  window.addEventListener('arcade:shell-ready', configurePremiumShell);
+  configurePremiumShell();
 
   function getCombinations(cards, size) {
     if (size === 0) return [[]];

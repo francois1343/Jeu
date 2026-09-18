@@ -15,7 +15,7 @@
 
   <p><strong>Cap actuel : consolider une sélection de jeux Premium avant d'agrandir le catalogue.</strong></p>
 
-<a href="#-état-du-projet">État du projet</a> · <a href="#-sélection-premium">Sélection Premium</a> · <a href="#-feuille-de-route">Feuille de route</a> · <a href="#-démarrer">Démarrer</a>
+<a href="#-état-du-projet">État du projet</a> · <a href="#-les-6-pilotes-premium--sélection-figée">Sélection Premium</a> · <a href="docs/CONTRAT-UX-PREMIUM.md">Contrat UX</a> · <a href="docs/AUDIT-6-PILOTES.md">Audit pilotes</a> · <a href="#-feuille-de-route">Feuille de route</a> · <a href="#-démarrer">Démarrer</a>
 
 </div>
 
@@ -38,7 +38,7 @@ La priorité n'est plus d'ajouter des jeux. Le travail porte maintenant sur la c
 | Vitrine « À jouer maintenant »   |     ✅      | Six jeux mis en avant sur l'accueil                            |
 | Bridge de session commun         |     ✅      | Les 43 pages de jeu communiquent avec la plateforme            |
 | Console ADMIN et audit           |  ✅ Local   | Recherche, sauvegarde, import et export des données de test    |
-| Expérience Premium unifiée       | 🟠 En cours | Pause, tutoriel, fin de partie et contrôles encore hétérogènes |
+| Expérience Premium unifiée       | 🟠 En recette | Socle commun déployé sur les six pilotes ; recette humaine finale requise |
 | Comptes et synchronisation Cloud | 🟡 Préparé  | Backend Supabase présent mais non relié à la production        |
 | Production commerciale           | ⚪ À venir  | RGPD, analytics, support et validation sécurité requis         |
 
@@ -71,20 +71,32 @@ Un jeu n'est considéré **Premium** que lorsqu'il respecte l'ensemble du contra
 
 La quantité de jeux ne constitue plus un objectif de version. Une expérience reste en entraînement ou hors catalogue tant qu'elle ne satisfait pas ces critères.
 
-## 🌟 Sélection Premium
+La spécification complète et la checklist de certification sont définies dans
+[`docs/CONTRAT-UX-PREMIUM.md`](docs/CONTRAT-UX-PREMIUM.md).
+Les preuves automatisées et les contrôles restant à signer sont suivis dans
+[`docs/AUDIT-6-PILOTES.md`](docs/AUDIT-6-PILOTES.md).
 
-La vitrine « À jouer maintenant » présente désormais six candidats. Leur présence dans la sélection ne signifie pas encore qu'ils ont obtenu le label Premium :
+## 🌟 Les 6 pilotes Premium — sélection figée
 
-| Expérience             | Situation actuelle                           | Prochaine étape                                                |
-| :--------------------- | :------------------------------------------- | :------------------------------------------------------------- |
-| Crossy Turfu           | Dans la vitrine, bridge et pause disponibles | Audit mobile et fiabilisation du cycle complet                 |
-| 421 Duel               | Dans la vitrine, jouable en entraînement     | Valider règles, fin de partie et rejeu                         |
-| Farkle / Dés de Bohême | Dans la vitrine, bridge installé             | Uniformiser l'entrée de partie et la revanche                  |
-| River Room Poker       | Dans la vitrine, bridge installé             | Clarifier les crédits internes et tester les contrôles mobiles |
-| Cyber-Core Sorter      | Dans la vitrine, pause et rejeu disponibles  | Activer le shell commun et effectuer la recette mobile         |
-| Pixel Taquin           | Dans la vitrine, bridge et rejeu disponibles | Ajouter le tutoriel court et effectuer la recette mobile       |
+La sélection de la pré-bêta est arrêtée. Sa source de vérité technique est `ARCADE_CONFIG.editorial.premiumPilotKeys` et la vitrine « À jouer maintenant » doit reprendre exactement ces six jeux. Leur présence dans la sélection ne signifie pas encore qu'ils ont obtenu le label Premium :
 
-Cette liste constitue la première sélection éditoriale. Aucun de ces jeux ne sera présenté comme certifié Premium avant d'avoir franchi toute la recette qualité.
+| Expérience             | Situation actuelle                                         | Prochaine étape                                   |
+| :--------------------- | :--------------------------------------------------------- | :------------------------------------------------ |
+| Crossy Turfu           | Contrat commun intégré, recette navigateur réussie         | Partie humaine complète mobile et clavier         |
+| 421 Duel               | Contrat commun intégré, recette navigateur réussie         | Partie humaine complète mobile et clavier         |
+| Farkle / Dés de Bohême | Contrat commun intégré, recette navigateur réussie         | Partie humaine complète contre l'IA et en duel    |
+| River Room Poker       | Jetons fictifs clarifiés, recette navigateur réussie       | Partie humaine complète et audit du rythme        |
+| Cyber-Core Sorter      | Shell, pause et rejeu communs, recette navigateur réussie  | Partie humaine tactile et clavier                 |
+| Pixel Taquin           | Tuiles clavier, tutoriel et recette navigateur réussie     | Résolution humaine sur les trois grilles          |
+
+Cette sélection reste stable jusqu'à la fin du cycle de recette Premium. Un remplacement ne sera envisagé qu'en cas de blocage majeur documenté.
+
+### Arbitrages et doublons
+
+- **River Room Poker est le pilote Poker retenu.** Son moteur, ses deux modes, son journal d'actions et ses contrôles en font la meilleure base de consolidation. Cyber-Symbol Poker reste disponible dans le catalogue comme prototype secondaire, sans travail Premium prioritaire.
+- **421 Duel est le pilote 421 retenu.** Dice District reste un hub de découverte et un lanceur ; son ancienne entrée 421 ne constitue pas un second pilote.
+- **Dés de Bohême est le nom produit du pilote Farkle.** Le dossier historique `games/Yahtzee/` est un détail technique à renommer ultérieurement, pas un jeu pilote distinct.
+- **Pixel Taquin occupe le créneau Puzzle.** Les autres puzzles restent dans le catalogue général pendant ce cycle.
 
 ---
 
@@ -140,16 +152,17 @@ Cette liste constitue la première sélection éditoriale. Aucun de ces jeux ne 
 ### Phase 2 — Pré-bêta Premium — priorité actuelle
 
 - [x] Ajouter la vitrine « À jouer maintenant » avec six jeux
-- [x] Figer la première sélection éditoriale
+- [x] Figer les six pilotes dans la configuration et la documentation
+- [x] Définir le contrat UX commun et sa checklist de certification
 - [x] Relier les 43 pages de jeu au bridge de session commun
 - [x] Intégrer 421, Farkle et Cyber-Core Sorter à la vitrine et à la plateforme
 - [ ] Valider les critères d'acceptation Premium sur chacun des six jeux
-- [ ] Unifier chargement, tutoriel, pause, fin de partie et rejeu
-- [ ] Harmoniser les commandes clavier, souris et tactiles
-- [ ] Déployer progressivement le shell commun sur les jeux pilotes
+- [x] Unifier tutoriel, pause, fin de partie et rejeu sur les six pilotes
+- [x] Harmoniser le socle clavier, souris, tactile et accessibilité des six pilotes
+- [x] Déployer le shell commun sur les six pilotes
 - [ ] Refactoriser progressivement les 20 scripts inline
 - [ ] Effectuer la recette manuelle Mobile/PC des jeux pilotes
-- [ ] Ajouter des tests navigateur sur les parcours critiques
+- [x] Ajouter des tests navigateur sur les parcours critiques des six pilotes
 - [ ] Uniformiser le nom Francis Arcade dans toute l'interface
 
 ### Phase 3 — Bêta fermée
@@ -240,6 +253,7 @@ npm test
 | `francis_arcade_audit_global_export.csv` | Format tabulaire d'import et d'export de l'audit                |
 | `supabase/`                              | Schéma et fonctions préparant la future plateforme serveur      |
 | `docs/`                                  | Architecture, économie, migration, PWA et déploiement           |
+| `docs/CONTRAT-UX-PREMIUM.md`             | Exigences et recette de certification des jeux Premium          |
 | `tests/`                                 | Vérifications automatisées du socle                             |
 
 ---

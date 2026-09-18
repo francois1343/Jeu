@@ -2,6 +2,16 @@ window.ARCADE_CONFIG = Object.freeze({
   mode: "local-test",
   supabaseUrl: "",
   supabasePublishableKey: "",
+  editorial: Object.freeze({
+    premiumPilotKeys: Object.freeze([
+      "crossyturfu",
+      "421-duel",
+      "farkle-boheme",
+      "poker",
+      "cyber-core-sorter",
+      "taquin",
+    ]),
+  }),
   coins: Object.freeze({
     unitsPerCoin: 100,
     decimals: 2,

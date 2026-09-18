@@ -94,7 +94,7 @@ class SoundEngine {
     if (this.ctx.state === "suspended") this.ctx.resume();
   }
   tone(frequency, duration = .08, type = "sine", volume = .09, delay = 0) {
-    if (!this.ctx) return;
+    if (!this.ctx || window.ArcadeGamePreferences?.allowsSound?.() === false) return;
     const start = this.ctx.currentTime + delay;
     const oscillator = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
@@ -221,13 +221,16 @@ class FarkleGame {
     this.physics = new PhysicsDice(document.getElementById("gameCanvas"));
     this.players = [{ name: "Henry", score: 0 }, { name: "Aubergiste", score: 0 }];
     this.mode = "ai"; this.target = 2000; this.currentPlayer = 0; this.turnScore = 0;
-    this.gameActive = false; this.isRolling = false; this.awaitingSelection = false; this.turnLocked = false; this.epoch = 0; this.toastTimer = 0;
+    this.gameActive = false; this.isRolling = false; this.awaitingSelection = false; this.turnLocked = false; this.paused = false; this.epoch = 0; this.toastTimer = 0;
     this.bindEvents(); this.gameLoop(); this.renderDiceHUD();
   }
   $(id) { return document.getElementById(id); }
   bindEvents() {
     this.$("btn-start").addEventListener("click", () => { this.sound.init(); this.sound.playClick(620); this.startNewGame(); });
-    this.$("btn-restart").addEventListener("click", () => { this.sound.init(); this.sound.playClick(620); this.startNewGame(); });
+    this.$("btn-restart").addEventListener("click", () => {
+      if (["won", "lost", "abandoned"].includes(window.ArcadeGameSession?.state)) { window.ArcadeGameSession.replay(); return; }
+      this.sound.init(); this.sound.playClick(620); this.startNewGame();
+    });
     this.$("btn-menu").addEventListener("click", () => this.quitToMenu());
     this.$("btn-quit").addEventListener("click", () => this.quitToMenu());
     this.$("btn-roll").addEventListener("click", () => this.rollDice(false));
@@ -239,15 +242,22 @@ class FarkleGame {
     });
   }
   isAITurn() { return this.mode === "ai" && this.currentPlayer === 1; }
-  isHumanTurn() { return this.gameActive && !this.isAITurn(); }
+  isHumanTurn() { return this.gameActive && !this.paused && !this.isAITurn(); }
   showScreen(id) { ["main-menu", "game-ui", "game-over"].forEach((screen) => this.$(screen).classList.add("hidden")); this.$(id).classList.remove("hidden"); }
-  quitToMenu() { this.epoch++; this.gameActive = false; this.isRolling = false; this.turnLocked = true; this.$("bust-alert").classList.add("hidden"); this.showScreen("main-menu"); this.sound.playClick(260); }
+  quitToMenu() {
+    if (this.gameActive) {
+      if (!window.confirm("Abandonner cette partie et revenir au menu ?")) return;
+      window.ArcadeGameSession?.abandon?.("farkle_menu_return");
+    }
+    this.epoch++; this.gameActive = false; this.isRolling = false; this.turnLocked = true; this.paused = false;
+    this.$("bust-alert").classList.add("hidden"); this.showScreen("main-menu"); this.sound.playClick(260);
+  }
   startNewGame() {
     this.epoch++;
     this.mode = this.$("game-mode").value;
     this.target = Number(this.$("target-score").value) || 2000;
     this.players = [{ name: "Henry", score: 0 }, { name: this.mode === "ai" ? "Aubergiste" : "Joueur 2", score: 0 }];
-    this.currentPlayer = 0; this.gameActive = true; this.isRolling = false; this.turnLocked = false;
+    this.currentPlayer = 0; this.gameActive = true; this.isRolling = false; this.turnLocked = false; this.paused = false;
     this.physics.initDice(); this.$("bust-alert").classList.add("hidden"); this.showScreen("game-ui"); this.startTurn();
   }
   startTurn() {
@@ -375,7 +385,14 @@ class FarkleGame {
     const toast = this.$("turn-toast"); toast.textContent = message; toast.classList.add("show");
     clearTimeout(this.toastTimer); this.toastTimer = setTimeout(() => toast.classList.remove("show"), duration);
   }
-  schedule(callback, delay) { const token = this.epoch; setTimeout(() => { if (this.gameActive && token === this.epoch) callback(); }, delay); }
+  schedule(callback, delay) {
+    const token = this.epoch;
+    setTimeout(function runWhenActive() {
+      if (!window.game?.gameActive || token !== window.game.epoch) return;
+      if (window.game.paused) { setTimeout(runWhenActive, 100); return; }
+      callback();
+    }, delay);
+  }
   endGame(winner) {
     this.gameActive = false; this.turnLocked = true; this.epoch++; this.sound.playVictory();
     const sessionResult = { score: this.players[0].score, opponentScore: this.players[1].score, target: this.target, mode: this.mode };
@@ -389,9 +406,11 @@ class FarkleGame {
     this.scheduleUnsafe(() => { if (this.epoch === endToken) this.showScreen("game-over"); }, 650);
   }
   scheduleUnsafe(callback, delay) { setTimeout(callback, delay); }
+  pauseForShell() { if (this.gameActive) { this.paused = true; this.updateHUD(); } }
+  resumeFromShell() { if (this.gameActive) { this.paused = false; this.updateHUD(); } }
   format(value) { return Number(value || 0).toLocaleString("fr-FR"); }
   gameLoop() {
-    if (this.gameActive) {
+    if (this.gameActive && !this.paused) {
       const moving = this.physics.update(this.sound); this.physics.render(true);
       if (this.isRolling && !moving) this.onRollComplete();
     } else this.physics.render(false);
@@ -403,5 +422,13 @@ if (typeof module !== "undefined" && module.exports) module.exports = { evalComb
 if (typeof window !== "undefined") {
   window.evalCombination = evalCombination;
   window.FarkleRules = { evalCombination, hasScoringCombination, bestScoringSelection };
-  window.addEventListener("DOMContentLoaded", () => { window.game = new FarkleGame(); });
+  const configurePremiumShell = () => {
+    if (!window.ArcadeGameShell || !window.game) return;
+    window.ArcadeGameShell.configure({
+      pause: () => window.game.pauseForShell(),
+      resume: () => window.game.resumeFromShell(),
+    });
+  };
+  window.addEventListener("arcade:shell-ready", configurePremiumShell);
+  window.addEventListener("DOMContentLoaded", () => { window.game = new FarkleGame(); configurePremiumShell(); });
 }
