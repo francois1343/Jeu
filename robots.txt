@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# La directive Sitemap sera ajoutée par `npm run seo:sitemap`
+# dès que le domaine HTTPS de production sera connu.

@@ -133,7 +133,19 @@ Cette sélection reste stable jusqu'à la fin du cycle de recette Premium. Un re
 
 - installation sur ordinateur et mobile ;
 - manifest, icônes, mode autonome et notification de mise à jour ;
-- cache du socle applicatif et mise en cache progressive des jeux visités.
+- cache du socle applicatif, page hors-ligne dédiée et mise en cache progressive des jeux visités.
+
+### SEO et partage
+
+- descriptions et métadonnées Open Graph sur toutes les pages ;
+- `robots.txt` et page `404.html` prêts pour l’hébergement ;
+- dépendances visuelles et polices servies localement ;
+- génération du sitemap dès que le domaine HTTPS est connu :
+
+```powershell
+$env:ARCADE_SITE_URL="https://votre-domaine.example"
+npm run seo:sitemap
+```
 
 ---
 
@@ -269,17 +281,17 @@ npm test
 - mesurer l'intérêt utilisateur, le poids transféré et la maintenance avant d'ajouter une fonction ;
 - améliorer et tester un jeu pilote avant de déployer un composant sur tout le catalogue.
 
-Le favicon affiché utilise une icône optimisée de 192 px. La source haute définition reste réservée à la génération des icônes PWA et n'est pas précachée chez les joueurs.
+Le favicon affiché utilise une icône optimisée de 192 px. Les icônes PWA sont régénérées depuis la version 512 px, sans conserver une source lourde inutilisée.
 
 ---
 
 ## 🔐 Données, sécurité et confidentialité
 
-Dans la pré-bêta actuelle, les profils, Coins, inventaires, équipements et statistiques sont stockés dans le navigateur. Ils ne sont ni synchronisés entre appareils ni protégés contre la modification locale.
+Dans la pré-bêta actuelle, les comptes et le portefeuille de Coins sont gérés par Supabase. Les préférences, statistiques non certifiées, inventaires et équipements restent locaux tant que leur migration serveur n’est pas terminée.
 
 Le profil local `ADMIN` donne accès à une console de test pour rechercher, sauvegarder, importer et exporter les profils, retours et éléments d'audit. Les fichiers `francis_arcade_audit_global.json` et `francis_arcade_audit_global_export.csv` servent de sources initiales : les changements effectués dans le navigateur restent locaux jusqu'à leur export. Cette console ne remplace ni une authentification serveur ni des autorisations Supabase.
 
-Le dossier `supabase/` prépare les futurs comptes, règles RLS, portefeuilles, transactions et sessions vérifiées. Cette architecture n'est pas encore activée dans l'application publique et ne doit pas être présentée comme une sécurité de production.
+Le dossier `supabase/` contient les règles RLS, portefeuilles, transactions et sessions vérifiées actives. Les jeux non encore reliés à une validation serveur fonctionnent en entraînement et ne modifient pas le portefeuille.
 
 Aucune clé secrète ou clé `service_role` ne doit être exposée dans le frontend. Seules les clés publiques prévues pour le navigateur pourront y être configurées.
 

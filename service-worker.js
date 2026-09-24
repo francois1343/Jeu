@@ -1,9 +1,12 @@
-const CACHE = "arcade-station-v42";
+const CACHE = "arcade-station-v43";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
+  "./offline.html",
+  "./404.html",
   "./css/home.css",
+  "./css/status-page.css",
   "./css/shared/arcade-fonts.css",
   "./css/shared/arcade-home.css",
   "./assets/fonts/orbitron-latin.woff2",
@@ -45,6 +48,7 @@ const APP_SHELL = [
   "./assets/icons/arcade-icon-v2-180.png",
   "./assets/icons/arcade-icon-v2-192.png",
   "./assets/icons/arcade-icon-v2-512.png",
+  "./assets/icons/favicon.svg",
 ];
 
 self.addEventListener("install", (event) => {
@@ -87,9 +91,13 @@ async function networkFirst(request) {
   try {
     return await saveResponse(request, await fetch(request));
   } catch {
-    return (await caches.match(cacheKey(request)))
-      || (await caches.match("./index.html"))
-      || new Response("Hors connexion", { status: 503, statusText: "Offline" });
+    const cached = await caches.match(cacheKey(request));
+    if (cached) return cached;
+    if (request.mode === "navigate") {
+      return (await caches.match("./offline.html"))
+        || new Response("Hors connexion", { status: 503, statusText: "Offline" });
+    }
+    return new Response("Ressource indisponible", { status: 503, statusText: "Offline" });
   }
 }
 

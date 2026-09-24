@@ -6,7 +6,7 @@ const path = require("node:path");
 const zlib = require("node:zlib");
 
 const outputDirectory = path.resolve(__dirname, "..", "assets", "icons");
-const sourcePath = path.join(outputDirectory, "arcade-favicon.png");
+const sourcePath = path.join(outputDirectory, "arcade-icon-v2-512.png");
 const sizes = [180, 192, 512];
 const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
@@ -133,10 +133,38 @@ function resize(source, targetSize) {
 function writePng(filePath, size, pixels) {
   const stride = (size * 4) + 1;
   const raw = Buffer.alloc(stride * size);
+  let previousRow = Buffer.alloc(size * 4);
   for (let y = 0; y < size; y += 1) {
-    const row = y * stride;
-    raw[row] = 0;
-    pixels.copy(raw, row + 1, y * size * 4, (y + 1) * size * 4);
+    const rowStart = y * size * 4;
+    const row = pixels.subarray(rowStart, rowStart + (size * 4));
+    let bestFilter = 0;
+    let bestScore = Number.POSITIVE_INFINITY;
+    let bestBytes = row;
+    for (let filter = 0; filter <= 4; filter += 1) {
+      const filtered = Buffer.alloc(row.length);
+      let score = 0;
+      for (let index = 0; index < row.length; index += 1) {
+        const left = index >= 4 ? row[index - 4] : 0;
+        const up = previousRow[index];
+        const upLeft = index >= 4 ? previousRow[index - 4] : 0;
+        const predictor = filter === 1 ? left
+          : filter === 2 ? up
+            : filter === 3 ? Math.floor((left + up) / 2)
+              : filter === 4 ? paeth(left, up, upLeft)
+                : 0;
+        filtered[index] = (row[index] - predictor + 256) & 0xff;
+        score += Math.min(filtered[index], 256 - filtered[index]);
+      }
+      if (score < bestScore) {
+        bestFilter = filter;
+        bestScore = score;
+        bestBytes = filtered;
+      }
+    }
+    const outputStart = y * stride;
+    raw[outputStart] = bestFilter;
+    bestBytes.copy(raw, outputStart + 1);
+    previousRow = Buffer.from(row);
   }
   const header = Buffer.alloc(13);
   header.writeUInt32BE(size, 0);
@@ -156,4 +184,4 @@ for (const size of sizes) {
   writePng(path.join(outputDirectory, `arcade-icon-v2-${size}.png`), size, resize(source, size));
 }
 
-console.log(`Icônes PWA générées depuis arcade-favicon.png : ${sizes.join(", ")} px`);
+console.log(`Icônes PWA optimisées : ${sizes.join(", ")} px`);

@@ -26,6 +26,9 @@ Le service worker précharge le noyau de l’accueil et les icônes. Les pages d
 consultées sont ensuite conservées pour accélérer les visites suivantes et permettre une utilisation
 hors connexion lorsque les ressources ont déjà été ouvertes.
 
+Une navigation qui n’est pas encore en cache affiche `offline.html` au lieu de renvoyer silencieusement
+vers l’accueil. Le compte Supabase et le portefeuille serveur nécessitent toujours une connexion.
+
 Une nouvelle version reste en attente sans interrompre une partie. Lorsqu’elle est détectée sur
 l’accueil, un bouton **Mettre à jour** l’active puis recharge l’accueil. À chaque changement de
 cache, augmenter la version `CACHE` dans `service-worker.js`.
