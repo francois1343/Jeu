@@ -15,7 +15,7 @@ export function corsHeaders(request: Request): HeadersInit {
   const origin = request.headers.get("Origin") ?? "";
   const allowed = allowedOrigins();
   const selected = allowed.includes(origin) ? origin : allowed[0];
-  return { ...DEFAULT_HEADERS, "Access-Control-Allow-Origin": selected };
+  return { ...DEFAULT_HEADERS, "Access-Control-Allow-Origin": selected, "Vary": "Origin" };
 }
 
 export function assertAllowedOrigin(request: Request): void {

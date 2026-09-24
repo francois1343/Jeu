@@ -31,18 +31,18 @@ La priorité n'est plus d'ajouter des jeux. Le travail porte maintenant sur la c
 | :------------------------------- | :---------: | :------------------------------------------------------------- |
 | Identité et interface néon       |     ✅      | Accueil responsive et direction artistique installée           |
 | PWA                              |     ✅      | Installation, mises à jour et cache progressif                 |
-| Profils, Coins et historique     |  ✅ Local   | Données conservées dans le navigateur                          |
+| Comptes, Coins et historique     |  🟢 Serveur | Auth Supabase et portefeuille serveur en lecture seule côté client |
 | Boutique cosmétique              |  ✅ Local   | Achat, inventaire et équipement sans avantage compétitif       |
 | Statistiques et retours          |  ✅ Local   | Statistiques par jeu et formulaire EmailJS                     |
-| Défis quotidiens                 |  ✅ Local   | Trois défis gratuits, récompenses et bonus journalier          |
+| Défis quotidiens                 |  🟡 Hybride | Trois défis certifiés côté serveur ; catalogue restant en entraînement |
 | Vitrine « À jouer maintenant »   |     ✅      | Six jeux mis en avant sur l'accueil                            |
 | Bridge de session commun         |     ✅      | Les 43 pages de jeu communiquent avec la plateforme            |
 | Console ADMIN et audit           |  ✅ Local   | Recherche, sauvegarde, import et export des données de test    |
 | Expérience Premium unifiée       | 🟠 En recette | Socle commun déployé sur les six pilotes ; recette humaine finale requise |
-| Comptes et synchronisation Cloud | 🟡 Préparé  | Backend Supabase présent mais non relié à la production        |
+| Comptes et synchronisation Cloud |  🟢 Actif   | Inscription, connexion, récupération et session Supabase       |
 | Production commerciale           | ⚪ À venir  | RGPD, analytics, support et validation sécurité requis         |
 
-> Le mode actif reste `local-test`. Les Coins sont fictifs, non achetables, non transférables et non convertibles en argent réel.
+> Le mode actif est `supabase`. Les Coins restent fictifs, non achetables, non transférables et non convertibles en argent réel. Le mode `local-test` est réservé à la QA sur localhost.
 
 ### Le catalogue en chiffres
 
@@ -175,7 +175,8 @@ Cette sélection reste stable jusqu'à la fin du cycle de recette Premium. Un re
 
 ### Phase 4 — Production
 
-- [ ] Activer les comptes utilisateurs et la synchronisation Supabase
+- [x] Activer les comptes utilisateurs et le portefeuille Supabase
+- [ ] Relier progressivement les résultats des jeux éligibles à la validation serveur
 - [ ] Migrer les jeux éligibles vers une validation serveur anti-triche
 - [ ] Ajouter mentions légales, politique de confidentialité et gestion du consentement
 - [ ] Permettre l'export et la suppression des données
@@ -253,6 +254,7 @@ npm test
 | `francis_arcade_audit_global_export.csv` | Format tabulaire d'import et d'export de l'audit                |
 | `supabase/`                              | Schéma et fonctions préparant la future plateforme serveur      |
 | `docs/`                                  | Architecture, économie, migration, PWA et déploiement           |
+| `docs/SECURITE-SERVER-FIRST.md`          | Parcours guidé Auth, Coins et scores autoritaires               |
 | `docs/CONTRAT-UX-PREMIUM.md`             | Exigences et recette de certification des jeux Premium          |
 | `tests/`                                 | Vérifications automatisées du socle                             |
 

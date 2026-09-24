@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="index,follow" />
     <title>Politique de confidentialité · Francis Arcade</title>
-    <meta name="description" content="Données locales, formulaire EmailJS et droits RGPD sur Francis Arcade." />
+    <meta name="description" content="Comptes Supabase, données locales, formulaire EmailJS et droits RGPD sur Francis Arcade." />
     <link rel="stylesheet" href="../css/shared/arcade-fonts.css" />
     <link rel="stylesheet" href="legal.css" />
   </head>
@@ -26,14 +26,14 @@
       <p class="legal-eyebrow">Vie privée &amp; RGPD</p>
       <h1>Politique de confidentialité</h1>
       <p class="legal-lead">
-        Francis Arcade fonctionne principalement dans votre navigateur. Les données de jeu restent locales ; un transfert externe n’a lieu que lorsque vous choisissez d’envoyer un retour via EmailJS.
+        Francis Arcade utilise Supabase pour sécuriser les comptes, les portefeuilles de Coins et les résultats certifiés. Les préférences visuelles et les records non certifiés peuvent rester sur votre appareil.
       </p>
       <p class="legal-meta">Version 2026-09-24 · mise à jour le 24 septembre 2026</p>
 
       <div class="legal-summary" aria-label="Résumé de la politique">
-        <div><strong>Local par défaut</strong><span>Profil, scores et préférences restent sur l’appareil.</span></div>
+        <div><strong>Compte serveur</strong><span>E-mail, pseudo et portefeuille sont synchronisés avec Supabase.</span></div>
+        <div><strong>Local limité</strong><span>Préférences et records non certifiés peuvent rester sur l’appareil.</span></div>
         <div><strong>Pas de traçage</strong><span>Aucun outil publicitaire ou analytique n’est intégré.</span></div>
-        <div><strong>Envoi volontaire</strong><span>EmailJS n’est contacté qu’après consentement explicite.</span></div>
       </div>
 
       <section class="legal-section">
@@ -52,10 +52,22 @@
             </thead>
             <tbody>
               <tr>
-                <td>Profil et progression locale</td>
-                <td>Pseudo, avatar, monnaie virtuelle, inventaire, préférences, sessions, scores et statistiques.</td>
-                <td>Fournir les fonctions demandées. Données enregistrées localement à l’initiative de l’utilisateur.</td>
-                <td>Sur l’appareil jusqu’à suppression depuis les paramètres ou les données du navigateur.</td>
+                <td>Compte Arcade</td>
+                <td>Adresse e-mail, identifiant technique Supabase, pseudo, dates de création et de connexion.</td>
+                <td>Créer, authentifier et sécuriser le compte demandé par l’utilisateur.</td>
+                <td>Pendant la durée du compte, puis selon les délais légaux et techniques applicables après sa suppression.</td>
+              </tr>
+              <tr>
+                <td>Portefeuille et parties certifiées</td>
+                <td>Solde de Coins, transactions, jeu, résultat validé, durée, identifiants de session et données anti-abus.</td>
+                <td>Fournir l’économie du jeu, prévenir la fraude et garantir l’intégrité des classements.</td>
+                <td>Pendant la durée du compte. Certaines transactions peuvent être conservées plus longtemps si une obligation légale ou de sécurité l’impose.</td>
+              </tr>
+              <tr>
+                <td>Préférences locales</td>
+                <td>Son, animations, contraste, tutoriels vus et records non certifiés.</td>
+                <td>Adapter l’expérience sur l’appareil.</td>
+                <td>Sur l’appareil jusqu’à suppression des données du site dans le navigateur.</td>
               </tr>
               <tr>
                 <td>Retour ou signalement</td>
@@ -67,7 +79,7 @@
                 <td>Données réseau</td>
                 <td>Adresse IP et métadonnées techniques nécessaires à la connexion.</td>
                 <td>Sécurité et acheminement technique, selon les intérêts légitimes de l’hébergeur et du prestataire.</td>
-                <td>Selon les politiques de l’hébergeur et d’EmailJS.</td>
+                <td>Selon les politiques de l’hébergeur, de Supabase et d’EmailJS.</td>
               </tr>
             </tbody>
           </table>
@@ -78,7 +90,17 @@
       </section>
 
       <section class="legal-section">
-        <h2>3. EmailJS et transfert hors Espace économique européen</h2>
+        <h2>3. Supabase Auth et base de données</h2>
+        <p>
+          L’authentification, les profils, les portefeuilles, les transactions et les sessions certifiées sont traités par <strong>Supabase, Inc.</strong> Le navigateur reçoit une session d’authentification, mais les opérations économiques sensibles sont exécutées par PostgreSQL et des Edge Functions protégées par des règles RLS.
+        </p>
+        <p>
+          La clé publique présente dans le site ne donne aucun droit administrateur. Les clés secrètes restent exclusivement côté serveur. Consultez la <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">politique de confidentialité de Supabase</a>. Avant ouverture commerciale, l’exploitant devra accepter le DPA approprié et documenter la région ainsi que les sous-traitants applicables.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>4. EmailJS et transfert hors Espace économique européen</h2>
         <p>
           Après validation de la case de consentement, le signalement est envoyé à EmailJS Pte. Ltd., sous-traitant de transmission d’email. EmailJS indique que ses infrastructures principales sont situées aux États-Unis et que les transferts européens sont encadrés notamment par des clauses contractuelles types.
         </p>
@@ -88,22 +110,22 @@
       </section>
 
       <section class="legal-section">
-        <h2>4. Cookies, stockage local et ressources tierces</h2>
+        <h2>5. Cookies, stockage local et ressources tierces</h2>
         <p>
-          Le site ne dépose pas de cookie publicitaire ou analytique. Il utilise <code>localStorage</code> pour conserver les fonctionnalités locales décrites ci-dessus. Le cache du service worker permet le fonctionnement hors ligne.
+          Le site ne dépose pas de cookie publicitaire ou analytique. Il utilise <code>localStorage</code> pour conserver la session Supabase et les fonctionnalités locales décrites ci-dessus. Le cache du service worker permet le fonctionnement hors ligne des ressources statiques, mais un compte et une connexion réseau restent nécessaires pour le portefeuille serveur.
         </p>
         <p>
-          Les polices et bibliothèques visuelles sont servies localement avec le site. Une politique de sécurité du contenu limite les connexions sortantes au site lui-même ; seule la page d’accueil peut joindre l’API EmailJS lors de l’envoi volontaire du formulaire.
+          Les polices et bibliothèques JavaScript sont servies localement avec le site. Une politique de sécurité du contenu limite les connexions sortantes ; la page d’accueil peut joindre uniquement le projet Supabase déclaré et l’API EmailJS lors d’un envoi volontaire.
         </p>
       </section>
 
       <section class="legal-section">
-        <h2>5. Vos droits</h2>
+        <h2>6. Vos droits</h2>
         <p>
           Selon votre situation, vous pouvez demander l’accès, la rectification, l’effacement, la limitation, l’opposition et la portabilité de vos données. Vous pouvez retirer votre consentement à tout moment, sans remettre en cause la licéité du traitement antérieur.
         </p>
         <p>
-          Pour les données locales, utilisez la suppression disponible dans le site ou effacez les données du site dans votre navigateur. Pour un retour déjà transmis, communiquez la référence affichée après l’envoi via le formulaire de l’accueil. Une adresse de contact directe devra être publiée avant commercialisation.
+          Pour les données locales, effacez les données du site dans votre navigateur. Pour les données du compte ou un retour déjà transmis, utilisez le formulaire de l’accueil en indiquant l’adresse du compte ou la référence du signalement. Une fonction autonome de suppression du compte et une adresse de contact directe devront être ajoutées avant commercialisation.
         </p>
         <p>
           Vous pouvez également introduire une réclamation auprès de l’<a href="https://www.autoriteprotectiondonnees.be/" target="_blank" rel="noopener noreferrer">Autorité de protection des données belge</a> ou de l’autorité compétente de votre lieu de résidence.
@@ -111,14 +133,14 @@
       </section>
 
       <section class="legal-section">
-        <h2>6. Mineurs</h2>
+        <h2>7. Mineurs</h2>
         <p>
-          Le jeu peut être utilisé sans envoyer de retour. La transmission par EmailJS est réservée aux personnes d’au moins 16 ans ou disposant de l’autorisation de leur responsable légal. Le pseudo reste facultatif et ne doit pas permettre d’identifier directement un enfant.
+          La création d’un compte et la transmission par EmailJS sont réservées aux personnes d’au moins 16 ans ou disposant de l’autorisation de leur responsable légal. Le pseudo ne doit pas permettre d’identifier directement un enfant.
         </p>
       </section>
 
       <section class="legal-section">
-        <h2>7. Évolution de cette politique</h2>
+        <h2>8. Évolution de cette politique</h2>
         <p>
           Toute modification importante des finalités, destinataires ou transferts sera présentée avant sa prise d’effet. La version applicable est identifiée en haut de cette page.
         </p>

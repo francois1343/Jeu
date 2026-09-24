@@ -62,7 +62,8 @@ for (const page of collect(root, ".html")) {
   assert.doesNotMatch(source, /(?:cdnjs\.cloudflare|cdn\.jsdelivr)\.com/i, `CDN distant : ${path.relative(root, page)}`);
   assert.match(source, /arcade-fonts\.css/i, `Polices locales absentes : ${path.relative(root, page)}`);
   if (relative === "index.html") {
-    assert.match(source, /connect-src 'self' https:\/\/api\.emailjs\.com;/, "EmailJS doit être autorisé uniquement sur l’accueil");
+    assert.match(source, /connect-src[^;]*https:\/\/api\.emailjs\.com/, "EmailJS doit etre autorise uniquement sur l'accueil");
+    assert.match(source, /connect-src[^;]*https:\/\/nnqfomqgagfshujyfrtl\.supabase\.co/, "Supabase doit etre autorise uniquement sur l'accueil");
   } else {
     assert.doesNotMatch(source, /connect-src[^;]*api\.emailjs\.com/, `EmailJS autorisé inutilement : ${relative}`);
   }

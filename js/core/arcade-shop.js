@@ -2,6 +2,7 @@
   "use strict";
 
   const config = global.ARCADE_CONFIG || {};
+  if (config.mode !== "local-test") return;
   const store = global.ArcadeLocalStore;
   const catalog = (config.shop?.items || []).filter((item) => item.active !== false);
   const itemsById = new Map(catalog.map((item) => [item.id, item]));

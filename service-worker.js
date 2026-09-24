@@ -1,4 +1,4 @@
-const CACHE = "arcade-station-v41";
+const CACHE = "arcade-station-v42";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -15,6 +15,8 @@ const APP_SHELL = [
   "./js/pwa-config.js",
   "./js/pwa-install.js",
   "./js/core/arcade-config.js",
+  "./vendor/supabase/arcade-supabase-client.min.js",
+  "./js/core/arcade-platform-supabase.js",
   "./js/core/arcade-local-store.js",
   "./js/core/arcade-stats.js",
   "./js/core/arcade-feedback.js",

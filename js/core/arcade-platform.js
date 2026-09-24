@@ -2,6 +2,7 @@
   "use strict";
 
   const config = global.ARCADE_CONFIG || {};
+  if (config.mode !== "local-test") return;
   const economy = config.localEconomy || {};
   const store = global.ArcadeLocalStore;
   const state = { profile: null, currentChallenge: null, pendingGame: null };
@@ -94,7 +95,8 @@
     setText("accountDialogTitle", "Profil local");
     setText("coinBalance", formatCoins(profile.balanceUnits));
     setText("accountLabel", profile.pseudo);
-    setText("accountEmail", profile.pseudo);
+    setText("accountDisplayName", profile.pseudo);
+    setText("accountEmail", "Profil local de test");
     setText("modalCoinBalance", `${formatCoins(profile.balanceUnits)} Coins fictifs`);
     element("signedOutPanel")?.setAttribute("hidden", "");
     element("signedInPanel")?.removeAttribute("hidden");
@@ -190,6 +192,38 @@
       "error",
     );
     openDialog("accountDialog");
+  }
+
+  function prepareLocalTestUi() {
+    setText("accountDialogKicker", "PROFIL LOCAL · QA");
+    document.querySelector(".auth-mode-switch")?.setAttribute("hidden", "");
+    element("authPseudoField")?.removeAttribute("hidden");
+    const pseudo = element("authPseudo");
+    const email = element("authEmail");
+    const password = element("authPassword");
+    const consent = element("authConsent");
+    if (pseudo) pseudo.required = true;
+    if (email) {
+      email.required = false;
+      email.closest("label")?.setAttribute("hidden", "");
+    }
+    if (password) {
+      password.required = false;
+      password.closest("label")?.setAttribute("hidden", "");
+    }
+    if (consent) consent.required = false;
+    element("authConsentField")?.setAttribute("hidden", "");
+    element("forgotPasswordButton")?.setAttribute("hidden", "");
+    setText("authSubmitLabel", "Entrer dans l’arcade");
+    const note = document.querySelector(".auth-security-note");
+    if (note) note.textContent = "Mode local réservé aux tests automatisés sur cet appareil.";
+    const shopButton = element("openShopButton");
+    if (shopButton) {
+      shopButton.disabled = false;
+      shopButton.removeAttribute("aria-disabled");
+      shopButton.dataset.openDialog = "shopDialog";
+      shopButton.setAttribute("data-requires-account", "");
+    }
   }
 
   function handleProfileSubmit(event) {
@@ -475,6 +509,7 @@
   }
 
   function init() {
+    prepareLocalTestUi();
     bindUi();
     if (!isConfigured()) {
       const message = "Le stockage local du profil n’a pas pu être initialisé. Rechargez la page Go Live.";

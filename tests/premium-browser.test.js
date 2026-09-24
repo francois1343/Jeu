@@ -131,6 +131,9 @@ async function main() {
   const cdp = new DevTools(target.webSocketDebuggerUrl);
   await cdp.connect();
   await cdp.send("Page.enable");
+  await cdp.send("Page.addScriptToEvaluateOnNewDocument", {
+    source: "try { if (sessionStorage.getItem('arcade.qa.serverMode') !== '1') localStorage.setItem('arcade.qa.localMode', '1'); } catch (_) {}",
+  });
   await cdp.send("Runtime.enable");
   await cdp.send("Emulation.setDeviceMetricsOverride", {
     width: 390,
@@ -368,6 +371,40 @@ async function main() {
   }
 
   assert.deepEqual(runtimeErrors, [], `Erreurs JavaScript navigateur :\n${runtimeErrors.join("\n")}`);
+  await cdp.evaluate("sessionStorage.setItem('arcade.qa.serverMode', '1'); localStorage.removeItem('arcade.qa.localMode'); true");
+  await navigate(`${baseUrl}/index.html`);
+  await waitFor("window.ARCADE_CONFIG?.mode === 'supabase' && Boolean(window.ArcadeSupabase) && Boolean(window.ArcadePlatform?.isConfigured())", "Le mode Supabase ne s'initialise pas");
+  await cdp.evaluate("document.querySelector('#accountButton').click(); true");
+  await waitFor("document.querySelector('#accountDialog')?.open", "Le dialogue de connexion Supabase ne s'ouvre pas");
+  await cdp.evaluate("document.querySelector('[data-auth-mode=\"signup\"]').click(); true");
+  const serverAuth = await cdp.evaluate(`(() => ({
+    mode: window.ARCADE_CONFIG.mode,
+    signedOutVisible: !document.querySelector('#signedOutPanel').hidden,
+    pseudoVisible: !document.querySelector('#authPseudoField').hidden,
+    consentVisible: !document.querySelector('#authConsentField').hidden,
+    emailRequired: document.querySelector('#authEmail').required,
+    passwordRequired: document.querySelector('#authPassword').required,
+    shopDisabled: document.querySelector('#openShopButton').disabled,
+    walletLabel: document.querySelector('#platformState').textContent
+  }))()`);
+  assert.equal(serverAuth.mode, "supabase", "Le site ne bascule pas sur le backend");
+  assert(serverAuth.signedOutVisible, "Le formulaire Supabase n'est pas visible");
+  assert(serverAuth.pseudoVisible && serverAuth.consentVisible, "L'inscription n'affiche pas les champs requis");
+  assert(serverAuth.emailRequired && serverAuth.passwordRequired, "Email et mot de passe ne sont pas obligatoires");
+  assert(serverAuth.shopDisabled, "La boutique locale reste active avec les Coins serveur");
+  assert.match(serverAuth.walletLabel, /serveur|connexion/i, "L'etat serveur n'est pas annonce");
+  await cdp.evaluate(`(() => {
+    document.querySelector('[data-auth-mode="signin"]').click();
+    const form = document.querySelector('#authForm');
+    form.elements.email.value = 'qa-account-does-not-exist@example.invalid';
+    form.elements.password.value = 'MotDePasseInutilise-2026';
+    form.requestSubmit();
+    return true;
+  })()`);
+  await waitFor("/incorrect|impossible|confirmez/i.test(document.querySelector('#profileStatus')?.textContent || '')", "La connexion Supabase ne renvoie pas d'erreur utilisateur", 10000);
+  assert.equal(await cdp.evaluate("Boolean(window.ArcadePlatform.getSession())"), false, "Une connexion invalide cree une session");
+  assert.deepEqual(runtimeErrors, [], `Erreurs JavaScript serveur :\n${runtimeErrors.join("\n")}`);
+
   cdp.close();
   console.log(`Recette navigateur : six pilotes responsives et ${catalogPages.length} pages reliées au menu commun`);
 }

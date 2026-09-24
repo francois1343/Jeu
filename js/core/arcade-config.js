@@ -1,7 +1,11 @@
+const arcadeLocalQaMode = ["127.0.0.1", "localhost"].includes(window.location?.hostname || "")
+  && window.localStorage?.getItem("arcade.qa.localMode") === "1";
+
 window.ARCADE_CONFIG = Object.freeze({
-  mode: "local-test",
-  supabaseUrl: "",
-  supabasePublishableKey: "",
+  mode: arcadeLocalQaMode ? "local-test" : "supabase",
+  supabaseProjectRef: "nnqfomqgagfshujyfrtl",
+  supabaseUrl: "https://nnqfomqgagfshujyfrtl.supabase.co",
+  supabasePublishableKey: "sb_publishable_zx73xi5nc32mmLuqEdvgcQ_rx9e3HtN",
   editorial: Object.freeze({
     premiumPilotKeys: Object.freeze([
       "crossyturfu",

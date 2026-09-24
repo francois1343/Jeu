@@ -7,10 +7,35 @@ function requiredEnv(primary: string, fallback?: string): string {
   return value;
 }
 
+function firstKeyFromDictionary(name: string): string | undefined {
+  const raw = Deno.env.get(name);
+  if (!raw) return undefined;
+  try {
+    const dictionary = JSON.parse(raw) as Record<string, unknown>;
+    return Object.values(dictionary).find((value): value is string => (
+      typeof value === "string" && value.length > 0
+    ));
+  } catch {
+    throw new Error(`invalid_environment_variable:${name}`);
+  }
+}
+
+function secretKey(): string {
+  return Deno.env.get("SUPABASE_SECRET_KEY")
+    ?? firstKeyFromDictionary("SUPABASE_SECRET_KEYS")
+    ?? requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
+}
+
+function publishableKey(): string {
+  return Deno.env.get("SUPABASE_PUBLISHABLE_KEY")
+    ?? firstKeyFromDictionary("SUPABASE_PUBLISHABLE_KEYS")
+    ?? requiredEnv("SUPABASE_ANON_KEY");
+}
+
 export function adminClient(): SupabaseClient {
   return createClient(
     requiredEnv("SUPABASE_URL"),
-    requiredEnv("SUPABASE_SECRET_KEY", "SUPABASE_SERVICE_ROLE_KEY"),
+    secretKey(),
     { auth: { persistSession: false, autoRefreshToken: false } },
   );
 }
@@ -21,7 +46,7 @@ export async function authenticatedUser(request: Request): Promise<User> {
 
   const client = createClient(
     requiredEnv("SUPABASE_URL"),
-    requiredEnv("SUPABASE_PUBLISHABLE_KEY", "SUPABASE_ANON_KEY"),
+    publishableKey(),
     {
       global: { headers: { Authorization: authorization } },
       auth: { persistSession: false, autoRefreshToken: false },

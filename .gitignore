@@ -3,6 +3,9 @@
 .env.*
 !.env.example
 supabase/.env
+supabase/functions/.env
+supabase/functions/.env.*
+!supabase/functions/.env.example
 supabase/.temp/
 supabase/.branches/
 
