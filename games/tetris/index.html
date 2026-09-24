@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Neon Tetris</title>
@@ -1037,6 +1038,7 @@ input[type="checkbox"] {
 }
 </style>
   <link rel="stylesheet" href="../../css/shared/arcade-home.css">
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
 </head>
 
 <body>
@@ -1132,7 +1134,7 @@ input[type="checkbox"] {
         <input type="checkbox" id="colorblind-mode">
       </div>
     </div>
-    <button class="menu-btn" onclick="hideSettings()">✓ Appliquer</button>
+    <button type="button" class="menu-btn" onclick="hideSettings()">✓ Appliquer</button>
   </div>
 </div>
 
@@ -1141,7 +1143,7 @@ input[type="checkbox"] {
   <div class="menu">
     <h2>🏆 Records</h2>
     <div id="highscore-list" class="stats"></div>
-    <button class="menu-btn" onclick="hideHighScores()">Retour</button>
+    <button type="button" class="menu-btn" onclick="hideHighScores()">Retour</button>
   </div>
 </div>
 
@@ -1149,9 +1151,9 @@ input[type="checkbox"] {
 <div id="pause-menu" class="overlay hidden">
   <div class="menu">
     <h2>⏸️ Pause</h2>
-    <button class="menu-btn" onclick="resumeGame()">▶️ Reprendre</button>
-    <button class="menu-btn secondary" onclick="restartGame()">🔄 Recommencer</button>
-    <button class="menu-btn secondary" onclick="quitToMenu()">🏠 Menu</button>
+    <button type="button" class="menu-btn" onclick="resumeGame()">▶️ Reprendre</button>
+    <button type="button" class="menu-btn secondary" onclick="restartGame()">🔄 Recommencer</button>
+    <button type="button" class="menu-btn secondary" onclick="quitToMenu()">🏠 Menu</button>
   </div>
 </div>
 
@@ -1160,8 +1162,8 @@ input[type="checkbox"] {
   <div class="menu">
     <h2>💀 Game Over</h2>
     <div id="final-stats" class="stats"></div>
-    <button class="menu-btn" onclick="restartGame()">🔄 Rejouer</button>
-    <button class="menu-btn secondary" onclick="quitToMenu()">🏠 Menu</button>
+    <button type="button" class="menu-btn" onclick="restartGame()">🔄 Rejouer</button>
+    <button type="button" class="menu-btn secondary" onclick="quitToMenu()">🏠 Menu</button>
   </div>
 </div>
 
@@ -1170,8 +1172,8 @@ input[type="checkbox"] {
   <div class="menu">
     <h2>🎉 Victoire!</h2>
     <div id="victory-stats" class="stats"></div>
-    <button class="menu-btn" onclick="restartGame()">🔄 Rejouer</button>
-    <button class="menu-btn secondary" onclick="quitToMenu()">🏠 Menu</button>
+    <button type="button" class="menu-btn" onclick="restartGame()">🔄 Rejouer</button>
+    <button type="button" class="menu-btn secondary" onclick="quitToMenu()">🏠 Menu</button>
   </div>
 </div>
 
@@ -1181,7 +1183,7 @@ input[type="checkbox"] {
   <div class="side-panel">
     <div class="panel-box">
       <h3>Hold</h3>
-      <canvas id="hold-canvas" width="100" height="80"></canvas>
+      <canvas id="hold-canvas" width="100" height="80" role="img" aria-label="Pièce gardée en réserve"></canvas>
     </div>
     <div class="panel-box">
       <h3>Score</h3>
@@ -1204,19 +1206,19 @@ input[type="checkbox"] {
       <span id="mode-display">Marathon</span>
       <span class="board-id">Grid 10×20</span>
     </div>
-    <canvas id="game-canvas" width="300" height="600"></canvas>
+    <canvas id="game-canvas" width="300" height="600" aria-label="Grille de jeu Tetris"></canvas>
     
     <div class="controls">
-      <button onclick="game.hold()">📦 Hold</button>
-      <button onclick="game.rotate(-1)">↺</button>
-      <button onclick="game.rotate(1)">↻</button>
-      <button onclick="game.move(-1)">◀</button>
-      <button onclick="game.hardDrop()">⬇ Drop</button>
-      <button onclick="game.move(1)">▶</button>
-      <button class="wide" onclick="game.softDrop()">▼ Descendre</button>
-      <button class="medium" onclick="togglePause()">⏸</button>
-      <button class="medium" onclick="restartGame()">🔄</button>
-      <button class="medium" onclick="quitToMenu()">🏠</button>
+      <button type="button" onclick="game.hold()">📦 Hold</button>
+      <button type="button" onclick="game.rotate(-1)">↺</button>
+      <button type="button" onclick="game.rotate(1)">↻</button>
+      <button type="button" onclick="game.move(-1)">◀</button>
+      <button type="button" onclick="game.hardDrop()">⬇ Drop</button>
+      <button type="button" onclick="game.move(1)">▶</button>
+      <button type="button" class="wide" onclick="game.softDrop()">▼ Descendre</button>
+      <button type="button" class="medium" onclick="togglePause()">⏸</button>
+      <button type="button" class="medium" onclick="restartGame()">🔄</button>
+      <button type="button" class="medium" onclick="quitToMenu()">🏠</button>
     </div>
   </div>
 
@@ -1224,7 +1226,7 @@ input[type="checkbox"] {
   <div class="side-panel">
     <div class="panel-box">
       <h3>Suivant</h3>
-      <canvas id="next-canvas" width="100" height="320"></canvas>
+      <canvas id="next-canvas" width="100" height="320" role="img" aria-label="Prochaines pièces"></canvas>
     </div>
     <div class="panel-box" id="time-box" style="display: none;">
       <h3>Temps</h3>

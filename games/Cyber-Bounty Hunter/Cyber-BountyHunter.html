@@ -1,17 +1,15 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Cyber-Bounty Hunter</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="Cyber-BountyHunter.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <div id="flash-overlay"></div>
@@ -21,7 +19,7 @@
       <p class="neon-cyan mb-2">
         Traquez l'IA rebelle dans la foule avant la fin du temps imparti.
       </p>
-      <button id="btn-start" class="cyber-btn cyan-glow">
+      <button type="button" id="btn-start" class="cyber-btn cyan-glow">
         INITIALISER LE SCANNER
       </button>
     </div>
@@ -29,7 +27,7 @@
     <div id="game-over" class="glass-panel absolute-center hidden">
       <h2 class="neon-red">CIBLE PERDUE</h2>
       <p>SCORE FINAL : <span id="final-score" class="neon-cyan">0</span></p>
-      <button id="btn-restart" class="cyber-btn magenta-glow">
+      <button type="button" id="btn-restart" class="cyber-btn magenta-glow">
         NOUVELLE TRAQUE
       </button>
     </div>
@@ -40,7 +38,7 @@
         <p class="subtitle">ROGUE AI</p>
 
         <div id="target-container">
-          <canvas id="targetCanvas" width="120" height="120"></canvas>
+          <canvas id="targetCanvas" width="120" height="120" role="img" aria-label="Aperçu de la cible recherchée"></canvas>
         </div>
 
         <div class="stats">
@@ -59,7 +57,7 @@
         <div id="timer-container">
           <div id="timer-bar"></div>
         </div>
-        <canvas id="crowdCanvas"></canvas>
+        <canvas id="crowdCanvas" aria-label="Foule cybernétique dans laquelle trouver la cible"></canvas>
       </main>
     </div>
 

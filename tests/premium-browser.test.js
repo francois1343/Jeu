@@ -5,6 +5,8 @@ const { spawn } = require("node:child_process");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
+const vm = require("node:vm");
+const root = path.resolve(__dirname, "..");
 
 const chromeCandidates = [
   process.env.CHROME_PATH,
@@ -32,6 +34,23 @@ const browser = spawn(chromePath, [
 ], { stdio: "ignore" });
 
 const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+function htmlFiles(directory) {
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) return htmlFiles(fullPath);
+    return entry.isFile() && entry.name.toLowerCase().endsWith(".html") ? [fullPath] : [];
+  });
+}
+
+const configSandbox = { window: {} };
+vm.runInNewContext(fs.readFileSync(path.join(root, "js", "core", "arcade-game-config.js"), "utf8"), configSandbox);
+const shellConfig = configSandbox.window.ARCADE_GAME_CONFIG.shell;
+const catalogPages = htmlFiles(path.join(root, "games")).map((file) => {
+  const folder = path.basename(path.dirname(file)).toLocaleLowerCase("fr");
+  const route = path.relative(root, file).split(path.sep).map(encodeURIComponent).join("/");
+  return { file, key: shellConfig.routeAliases[folder], route };
+});
 
 async function retry(operation, timeout = 10000) {
   const deadline = Date.now() + timeout;
@@ -140,6 +159,43 @@ async function main() {
 
   await navigate(`${baseUrl}/index.html`);
   await waitFor("Boolean(window.ArcadeLocalStore)", "Le store Arcade n'est pas chargé");
+  await waitFor("document.fonts.status === 'loaded'", "Les polices locales ne sont pas chargees");
+  const homeTypography = await cdp.evaluate(`(() => {
+    const card = document.querySelector('.game-card');
+    const featured = document.querySelector('.featured-game');
+    const bodyFont = getComputedStyle(document.body).fontFamily;
+    return {
+      bodyFont,
+      cardAlign: getComputedStyle(card).textAlign,
+      featuredAlign: getComputedStyle(featured).textAlign,
+      orbitronLoaded: [...document.fonts].some((face) => /Orbitron/i.test(face.family) && face.status === 'loaded'),
+      rajdhaniLoaded: [...document.fonts].some((face) => /Rajdhani/i.test(face.family) && face.status === 'loaded')
+    };
+  })()`);
+  assert.match(homeTypography.bodyFont, /Rajdhani/i, "La police de lecture locale n'est pas appliquee");
+  assert.equal(homeTypography.cardAlign, "center", "Les cartes du catalogue ne sont pas centrees");
+  assert.equal(homeTypography.featuredAlign, "center", "Les cartes vedettes ne sont pas centrees");
+  assert(homeTypography.orbitronLoaded, "Orbitron locale n'est pas chargee");
+  assert(homeTypography.rajdhaniLoaded, "Rajdhani locale n'est pas chargee");
+
+  await cdp.evaluate("document.querySelector('button[onclick*=\"openCoinGame\"]').click(); true");
+  await waitFor("document.querySelector('#coinGameDialog')?.open", "Pile ou Face ne s'ouvre pas");
+  const coinLayout = await cdp.evaluate(`(() => {
+    const dialog = document.querySelector('#coinGameDialog');
+    const shell = dialog.querySelector('.dialog-shell');
+    const dialogRect = dialog.getBoundingClientRect();
+    const shellRect = shell.getBoundingClientRect();
+    return {
+      centerDelta: Math.abs((dialogRect.left + dialogRect.width / 2) - (shellRect.left + shellRect.width / 2)),
+      textAlign: getComputedStyle(shell).textAlign,
+      overflow: shellRect.right - dialogRect.right
+    };
+  })()`);
+  assert(coinLayout.centerDelta <= 2, `Le panneau Pile ou Face reste decale : ${coinLayout.centerDelta}px`);
+  assert.equal(coinLayout.textAlign, "center", "Le contenu Pile ou Face n'est pas centre");
+  assert(coinLayout.overflow <= 1, "Le contenu Pile ou Face deborde de son dialogue");
+  await cdp.evaluate("document.querySelector('#coinGameDialog').close(); true");
+
   await cdp.evaluate("document.querySelector('.featured-game[data-game=\"421-duel\"] button').click(); true");
   await waitFor("document.querySelector('#accountDialog')?.open", "Le choix d'un jeu sans profil n'ouvre pas la connexion locale");
   await cdp.evaluate(`(() => {
@@ -269,9 +325,51 @@ async function main() {
     await waitFor(`location.href.includes('arcadeSession=') && !location.href.includes(${JSON.stringify(session.id)}) && window.ArcadeGameSession?.state === 'created'`, `${pilot.title} ne recrée pas une session au rejeu`, 10000);
   }
 
+  await cdp.send("Emulation.setDeviceMetricsOverride", {
+    width: 1366, height: 768, deviceScaleFactor: 1, mobile: false,
+  });
+  for (const page of catalogPages) {
+    const previousErrorCount = runtimeErrors.length;
+    await navigate(`${baseUrl}/${page.route}`);
+    await waitFor("Boolean(window.ArcadeGameShell && document.querySelector('#arcadeGameShellButton'))", `Menu commun absent : ${page.route}`);
+    const commonMenu = await cdp.evaluate(`({
+      key: window.ArcadeGameShell.gameKey,
+      title: window.ArcadeGameShell.game?.title,
+      tutorial: window.ArcadeGameShell.game?.tutorial?.length,
+      buttonHeight: document.querySelector('#arcadeGameShellButton').getBoundingClientRect().height
+    })`);
+    assert.equal(commonMenu.key, page.key, `Mauvaise configuration détectée pour ${page.route}`);
+    assert(commonMenu.title, `Titre commun absent pour ${page.route}`);
+    assert.equal(commonMenu.tutorial, 3, `Tutoriel commun incomplet pour ${page.route}`);
+    assert(commonMenu.buttonHeight >= 38, `Bouton de menu trop petit pour ${page.route}`);
+    const externalResources = await cdp.evaluate(`performance.getEntriesByType('resource')
+      .map((entry) => new URL(entry.name, location.href))
+      .filter((url) => /^https?:$/.test(url.protocol) && url.origin !== location.origin)
+      .map((url) => url.origin)`);
+    assert.deepEqual(externalResources, [], `Ressource distante non maîtrisée sur ${page.route}`);
+    if (runtimeErrors.length > previousErrorCount) {
+      throw new Error(`${page.route} déclenche une erreur : ${runtimeErrors.slice(previousErrorCount).join(" | ")}`);
+    }
+  }
+
+  await navigate(`${baseUrl}/games/puissance4/index.html`);
+  await waitFor("Boolean(window.THREE && window.THREE.OrbitControls)", "Three.js local n'est pas chargé dans Puissance 4");
+
+  for (const legalPage of ["mentions-legales.html", "confidentialite.html", "cgu.html"]) {
+    await navigate(`${baseUrl}/legal/${legalPage}`);
+    const legalLayout = await cdp.evaluate(`({
+      headings: document.querySelectorAll('h1').length,
+      hasHomeLink: Boolean(document.querySelector('a[href="../index.html"]')),
+      fitsViewport: document.documentElement.scrollWidth <= innerWidth + 1
+    })`);
+    assert.equal(legalLayout.headings, 1, `Titre légal invalide : ${legalPage}`);
+    assert(legalLayout.hasHomeLink, `Retour à l'arcade absent : ${legalPage}`);
+    assert(legalLayout.fitsViewport, `Débordement horizontal : ${legalPage}`);
+  }
+
   assert.deepEqual(runtimeErrors, [], `Erreurs JavaScript navigateur :\n${runtimeErrors.join("\n")}`);
   cdp.close();
-  console.log("Recette navigateur des six pilotes (320, 390 et desktop) : OK");
+  console.log(`Recette navigateur : six pilotes responsives et ${catalogPages.length} pages reliées au menu commun`);
 }
 
 main()

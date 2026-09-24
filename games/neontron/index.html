@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -11,14 +12,9 @@
       content="Neontron, duel de lightcycles rétro-futuriste à vitesse constante."
     />
     <title>Neontron — Lightcycle Duel</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Orbitron:wght@600;700;800&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="neontron.css" />
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a class="arcade-home-link" href="../../index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil">
@@ -84,7 +80,7 @@
 
       <main id="game-stage">
         <div id="canvas-wrapper" aria-label="Arène Neontron">
-          <canvas id="game-canvas"></canvas>
+        <canvas id="game-canvas" aria-label="Arène de NeonTron"></canvas>
           <div class="arena-corner corner-tl" aria-hidden="true"></div>
           <div class="arena-corner corner-tr" aria-hidden="true"></div>
           <div class="arena-corner corner-bl" aria-hidden="true"></div>

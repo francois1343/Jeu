@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -776,6 +777,7 @@
       }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -806,19 +808,19 @@
         </h1>
 
         <div class="menu-buttons">
-          <button class="btn btn-primary btn-large" onclick="startGame(1)">
+          <button type="button" class="btn btn-primary btn-large" onclick="startGame(1)">
             🎮 NOUVELLE PARTIE
           </button>
 
-          <button class="btn btn-secondary" onclick="showLevelSelect()">
+          <button type="button" class="btn btn-secondary" onclick="showLevelSelect()">
             📋 SÉLECTION NIVEAU
           </button>
 
-          <button class="btn btn-secondary" onclick="showHowToPlay()">
+          <button type="button" class="btn btn-secondary" onclick="showHowToPlay()">
             ❓ COMMENT JOUER
           </button>
 
-          <button class="btn btn-secondary" onclick="showStats()">
+          <button type="button" class="btn btn-secondary" onclick="showStats()">
             📊 STATISTIQUES
           </button>
         </div>
@@ -847,7 +849,7 @@
           <!-- Généré par JS -->
         </div>
 
-        <button class="btn btn-danger" onclick="showScreen('menuScreen')">
+        <button type="button" class="btn btn-danger" onclick="showScreen('menuScreen')">
           ← RETOUR
         </button>
       </div>
@@ -881,40 +883,40 @@
           </div>
         </div>
 
-        <button class="btn-icon" onclick="togglePause()">⏸️</button>
+        <button type="button" class="btn-icon" onclick="togglePause()">⏸️</button>
       </div>
 
       <!-- Zone de jeu -->
       <div class="game-area">
-        <canvas id="gameCanvas"></canvas>
+        <canvas id="gameCanvas" aria-label="Parcours principal de Neon Runner"></canvas>
 
         <!-- Minimap -->
         <div class="minimap-container">
-          <canvas id="minimap" width="120" height="120"></canvas>
+          <canvas id="minimap" width="120" height="120" role="img" aria-label="Mini-carte du parcours"></canvas>
         </div>
       </div>
 
       <!-- Hacks -->
       <div class="hacks-bar">
-        <button class="hack-btn" onclick="activateHack(0)">
+        <button type="button" class="hack-btn" onclick="activateHack(0)">
           <span class="hack-icon">👻</span>
           <span class="hack-name">FANTÔME</span>
           <span class="hack-key">[1]</span>
         </button>
 
-        <button class="hack-btn" onclick="activateHack(1)">
+        <button type="button" class="hack-btn" onclick="activateHack(1)">
           <span class="hack-icon">❄️</span>
           <span class="hack-name">GEL</span>
           <span class="hack-key">[2]</span>
         </button>
 
-        <button class="hack-btn" onclick="activateHack(2)">
+        <button type="button" class="hack-btn" onclick="activateHack(2)">
           <span class="hack-icon">⚡</span>
           <span class="hack-name">TURBO</span>
           <span class="hack-key">[3]</span>
         </button>
 
-        <button class="hack-btn" onclick="activateHack(3)">
+        <button type="button" class="hack-btn" onclick="activateHack(3)">
           <span class="hack-icon">🌀</span>
           <span class="hack-name">CHAOS</span>
           <span class="hack-key">[4]</span>
@@ -923,10 +925,10 @@
 
       <!-- Contrôles tactiles -->
       <div class="touch-controls" id="touchControls">
-        <button class="touch-btn" data-dir="up">▲</button>
-        <button class="touch-btn" data-dir="left">◄</button>
-        <button class="touch-btn" data-dir="right">►</button>
-        <button class="touch-btn" data-dir="down">▼</button>
+        <button type="button" class="touch-btn" data-dir="up">▲</button>
+        <button type="button" class="touch-btn" data-dir="left">◄</button>
+        <button type="button" class="touch-btn" data-dir="right">►</button>
+        <button type="button" class="touch-btn" data-dir="down">▼</button>
       </div>
     </div>
 
@@ -943,13 +945,13 @@
         <h2 class="modal-title">⏸️ PAUSE</h2>
 
         <div class="modal-buttons">
-          <button class="btn btn-primary" onclick="resumeGame()">
+          <button type="button" class="btn btn-primary" onclick="resumeGame()">
             ▶️ REPRENDRE
           </button>
-          <button class="btn btn-secondary" onclick="retryLevel()">
+          <button type="button" class="btn btn-secondary" onclick="retryLevel()">
             🔄 RECOMMENCER
           </button>
-          <button class="btn btn-danger" onclick="quitToMenu()">
+          <button type="button" class="btn btn-danger" onclick="quitToMenu()">
             🏠 MENU PRINCIPAL
           </button>
         </div>
@@ -990,17 +992,17 @@
         </div>
 
         <div class="modal-buttons">
-          <button
+          <button type="button"
             class="btn btn-primary"
             id="nextLevelBtn"
             onclick="nextLevel()"
           >
             ➡️ NIVEAU SUIVANT
           </button>
-          <button class="btn btn-secondary" onclick="retryLevel()">
+          <button type="button" class="btn btn-secondary" onclick="retryLevel()">
             🔄 REJOUER
           </button>
-          <button class="btn btn-danger" onclick="quitToMenu()">🏠 MENU</button>
+          <button type="button" class="btn btn-danger" onclick="quitToMenu()">🏠 MENU</button>
         </div>
       </div>
     </div>
@@ -1030,10 +1032,10 @@
         </div>
 
         <div class="modal-buttons">
-          <button class="btn btn-primary" onclick="retryLevel()">
+          <button type="button" class="btn btn-primary" onclick="retryLevel()">
             🔄 RÉESSAYER
           </button>
-          <button class="btn btn-danger" onclick="quitToMenu()">🏠 MENU</button>
+          <button type="button" class="btn btn-danger" onclick="quitToMenu()">🏠 MENU</button>
         </div>
       </div>
     </div>
@@ -1078,7 +1080,7 @@
           </div>
         </div>
 
-        <button class="btn btn-primary" onclick="closeHowToPlay()">
+        <button type="button" class="btn btn-primary" onclick="closeHowToPlay()">
           ✅ COMPRIS !
         </button>
       </div>
@@ -1111,10 +1113,10 @@
         </div>
 
         <div class="modal-buttons">
-          <button class="btn btn-secondary" onclick="resetProgress()">
+          <button type="button" class="btn btn-secondary" onclick="resetProgress()">
             🗑️ RÉINITIALISER
           </button>
-          <button class="btn btn-primary" onclick="closeStats()">
+          <button type="button" class="btn btn-primary" onclick="closeStats()">
             ✅ FERMER
           </button>
         </div>

@@ -1,11 +1,13 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sudoku Master &amp; Solver</title>
     <link rel="stylesheet" href="sudoku.css" />
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
 
   <body>
@@ -225,7 +227,7 @@
 
       <div id="game-view" class="game-view hidden">
         <header class="header">
-          <h1>SUDOKU<span>.io</span></h1>
+          <h2>SUDOKU<span>.io</span></h2>
           <div class="stats-bar">
             <div class="stat-item">
               <span class="stat-label">MODE</span>
@@ -266,25 +268,25 @@
         </main>
 
         <div id="insane-controls" class="insane-controls hidden">
-          <button id="btn-validate-custom" class="btn btn-action">
+          <button type="button" id="btn-validate-custom" class="btn btn-action">
             Valider la grille
           </button>
-          <button id="btn-solve-ai" class="btn btn-accent">
+          <button type="button" id="btn-solve-ai" class="btn btn-accent">
             Résoudre par IA
           </button>
         </div>
 
         <section class="game-controls">
           <div class="action-tools">
-            <button id="btn-undo" class="btn-tool" aria-label="Annuler">
+            <button type="button" id="btn-undo" class="btn-tool" aria-label="Annuler">
               <span class="tool-icon">↩</span>
               <span class="tool-label">Annuler</span>
             </button>
-            <button id="btn-erase" class="btn-tool" aria-label="Effacer">
+            <button type="button" id="btn-erase" class="btn-tool" aria-label="Effacer">
               <span class="tool-icon">⌫</span>
               <span class="tool-label">Effacer</span>
             </button>
-            <button
+            <button type="button"
               id="btn-hint"
               class="btn-tool btn-hint"
               aria-label="Obtenir un indice intelligent"
@@ -292,7 +294,7 @@
               <span class="tool-icon">✦</span>
               <span class="tool-label">Indice</span>
             </button>
-            <button id="btn-pencil" class="btn-tool" aria-label="Mode Crayon">
+            <button type="button" id="btn-pencil" class="btn-tool" aria-label="Mode Crayon">
               <span class="tool-icon">✏️</span>
               <span class="tool-label">Crayon</span>
               <span id="pencil-status" class="status-badge">OFF</span>
@@ -302,15 +304,15 @@
           <p id="hint-message" class="hint-message" aria-live="polite"></p>
 
           <div class="numpad">
-            <button class="num-btn" data-value="1">1</button>
-            <button class="num-btn" data-value="2">2</button>
-            <button class="num-btn" data-value="3">3</button>
-            <button class="num-btn" data-value="4">4</button>
-            <button class="num-btn" data-value="5">5</button>
-            <button class="num-btn" data-value="6">6</button>
-            <button class="num-btn" data-value="7">7</button>
-            <button class="num-btn" data-value="8">8</button>
-            <button class="num-btn" data-value="9">9</button>
+            <button type="button" class="num-btn" data-value="1">1</button>
+            <button type="button" class="num-btn" data-value="2">2</button>
+            <button type="button" class="num-btn" data-value="3">3</button>
+            <button type="button" class="num-btn" data-value="4">4</button>
+            <button type="button" class="num-btn" data-value="5">5</button>
+            <button type="button" class="num-btn" data-value="6">6</button>
+            <button type="button" class="num-btn" data-value="7">7</button>
+            <button type="button" class="num-btn" data-value="8">8</button>
+            <button type="button" class="num-btn" data-value="9">9</button>
           </div>
         </section>
       </div>

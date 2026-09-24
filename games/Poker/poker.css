@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
 :root{--ink:#07110e;--panel:#0d1a16;--felt:#0d684c;--felt-dark:#084936;--cream:#f4efe4;--muted:#91a49d;--gold:#d7ad63;--gold-light:#f0cf8d;--red:#d65353;--line:rgba(255,255,255,.1);--shadow:0 24px 70px rgba(0,0,0,.42)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%}body{background:var(--ink);color:var(--cream);font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}button,input,select{font:inherit}button{color:inherit}.hidden{display:none!important}.screen{width:100vw;min-height:100vh}
 /* Lobby */

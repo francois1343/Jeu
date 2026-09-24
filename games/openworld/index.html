@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -12,11 +13,6 @@
     />
     <meta name="theme-color" content="#1a1a2e" />
     <title>🌍 Open World</title>
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fredoka+One&display=swap"
-      rel="stylesheet"
-    />
 
     <style>
       /* ===================================================
@@ -130,6 +126,11 @@
       }
 
       .logo {
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -287,6 +288,8 @@
       }
 
       .profile-card {
+        color: inherit;
+        font: inherit;
         padding: 20px 15px;
         background: var(--bg-glass);
         border: 2px solid transparent;
@@ -392,6 +395,9 @@
       }
 
       .territory-card {
+        width: 100%;
+        color: inherit;
+        font: inherit;
         position: relative;
         padding: 25px 15px;
         background: var(--bg-card);
@@ -974,6 +980,7 @@
       }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -986,15 +993,15 @@
     >
 
     <!-- FOND ANIMÉ -->
-    <canvas id="universeCanvas"></canvas>
+    <canvas id="universeCanvas" aria-hidden="true"></canvas>
 
     <div class="app-container">
       <!-- HEADER -->
       <header class="app-header">
-        <div class="logo" onclick="goHome()">
+        <button type="button" class="logo" onclick="goHome()" aria-label="Ouvrir la carte des savoirs">
           <span class="logo-icon">🌍</span>
           <span class="logo-text">Open World</span>
-        </div>
+        </button>
 
         <div class="header-stats" id="headerStats">
           <div class="stat-badge">
@@ -1008,17 +1015,17 @@
         </div>
 
         <div class="header-actions">
-          <button
+          <button type="button"
             class="icon-btn"
             onclick="toggleCollabPanel()"
             title="Communauté"
           >
             👥
           </button>
-          <button class="icon-btn" onclick="showStats()" title="Statistiques">
+          <button type="button" class="icon-btn" onclick="showStats()" title="Statistiques">
             📊
           </button>
-          <button class="icon-btn" onclick="showSettings()" title="Paramètres">
+          <button type="button" class="icon-btn" onclick="showSettings()" title="Paramètres">
             ⚙️
           </button>
         </div>
@@ -1038,42 +1045,50 @@
           <div class="profile-selection">
             <h3>Qui êtes-vous ?</h3>
             <div class="profile-grid">
-              <div
+              <button
+                type="button"
                 class="profile-card"
                 data-profile="child"
+                aria-pressed="false"
                 onclick="selectProfile(this, 'child')"
               >
                 <span class="emoji">👶</span>
                 <span class="label">Enfant</span>
-              </div>
-              <div
+              </button>
+              <button
+                type="button"
                 class="profile-card"
                 data-profile="teen"
+                aria-pressed="false"
                 onclick="selectProfile(this, 'teen')"
               >
                 <span class="emoji">🧑</span>
                 <span class="label">Ado</span>
-              </div>
-              <div
+              </button>
+              <button
+                type="button"
                 class="profile-card"
                 data-profile="adult"
+                aria-pressed="false"
                 onclick="selectProfile(this, 'adult')"
               >
                 <span class="emoji">👨</span>
                 <span class="label">Adulte</span>
-              </div>
-              <div
+              </button>
+              <button
+                type="button"
                 class="profile-card"
                 data-profile="senior"
+                aria-pressed="false"
                 onclick="selectProfile(this, 'senior')"
               >
                 <span class="emoji">👴</span>
                 <span class="label">Senior</span>
-              </div>
+              </button>
             </div>
           </div>
 
-          <button
+          <button type="button"
             class="btn btn-primary"
             id="startBtn"
             onclick="startGame()"
@@ -1086,7 +1101,7 @@
         <!-- CARTE DU MONDE -->
         <section class="world-map hidden" id="worldMap">
           <div class="map-header">
-            <h1 class="map-title">🗺️ Carte des Savoirs</h1>
+          <h2 class="map-title">🗺️ Carte des Savoirs</h2>
             <p class="map-subtitle">Choisissez un territoire à explorer</p>
           </div>
 
@@ -1099,7 +1114,7 @@
         <section class="exploration-zone hidden" id="explorationZone">
           <div class="zone-header">
             <div class="zone-title-group">
-              <button class="zone-back-btn" onclick="backToMap()">←</button>
+              <button type="button" class="zone-back-btn" onclick="backToMap()">←</button>
               <h2 class="zone-title" id="zoneTitle">Sciences</h2>
             </div>
             <div class="stat-badge">
@@ -1133,7 +1148,7 @@
     <aside class="collab-panel" id="collabPanel">
       <div class="collab-header">
         <h3 class="collab-title">👥 Communauté</h3>
-        <button class="icon-btn" onclick="toggleCollabPanel()">✕</button>
+        <button type="button" class="icon-btn" onclick="toggleCollabPanel()">✕</button>
       </div>
 
       <h4 style="margin-bottom: 10px; color: var(--text-secondary)">
@@ -1158,7 +1173,7 @@
         <h2 class="reward-title">Bravo !</h2>
         <p id="rewardMessage">Vous avez contribué au savoir mondial !</p>
         <div class="reward-points">+<span id="rewardPoints">10</span> ⭐</div>
-        <button class="btn btn-primary" onclick="closeRewardModal()">
+        <button type="button" class="btn btn-primary" onclick="closeRewardModal()">
           Continuer
         </button>
       </div>
@@ -1341,8 +1356,12 @@
       function selectProfile(element, profile) {
         document
           .querySelectorAll(".profile-card")
-          .forEach((c) => c.classList.remove("selected"));
+          .forEach((c) => {
+            c.classList.remove("selected");
+            c.setAttribute("aria-pressed", "false");
+          });
         element.classList.add("selected");
+        element.setAttribute("aria-pressed", "true");
         GameState.player.profile = profile;
         document.getElementById("startBtn").disabled = false;
       }
@@ -1374,8 +1393,8 @@
           const percentage = Math.min((progress / 10) * 100, 100);
 
           return `
-          <div class="territory-card" 
-               style="--territory-color: ${domain.color}" 
+          <button type="button" class="territory-card"
+               style="--territory-color: ${domain.color}"
                onclick="enterTerritory('${domain.id}')">
             <span class="territory-icon">${domain.icon}</span>
             <h3 class="territory-name">${domain.name}</h3>
@@ -1385,7 +1404,7 @@
               </div>
               <span>${progress}</span>
             </div>
-          </div>
+          </button>
         `;
         }).join("");
       }
@@ -1741,17 +1760,17 @@
           <h3 class="challenge-question">${statement}</h3>
           
           <div class="true-false-options">
-            <button class="tf-btn true-btn" onclick="submitTrueFalse(true)">
+            <button type="button" class="tf-btn true-btn" onclick="submitTrueFalse(true)">
               ✅ Vrai
             </button>
-            <button class="tf-btn false-btn" onclick="submitTrueFalse(false)">
+            <button type="button" class="tf-btn false-btn" onclick="submitTrueFalse(false)">
               ❌ Faux
             </button>
           </div>
 
           <div class="challenge-actions">
-            <button class="action-btn" onclick="useHint()">💡 Indice</button>
-            <button class="action-btn" onclick="skipChallenge()">⏭️ Passer</button>
+            <button type="button" class="action-btn" onclick="useHint()">💡 Indice</button>
+            <button type="button" class="action-btn" onclick="skipChallenge()">⏭️ Passer</button>
           </div>
         `;
         } else {
@@ -1766,7 +1785,7 @@
             ${challenge.options
               .map(
                 (opt, i) => `
-              <button class="quiz-option" onclick="submitQuizAnswer(${i}, this)">
+              <button type="button" class="quiz-option" onclick="submitQuizAnswer(${i}, this)">
                 <span class="option-key">${optionLetters[i]}</span>
                 <span>${opt}</span>
               </button>
@@ -1776,8 +1795,8 @@
           </div>
 
           <div class="challenge-actions">
-            <button class="action-btn" onclick="useHint()">💡 Indice</button>
-            <button class="action-btn" onclick="skipChallenge()">⏭️ Passer</button>
+            <button type="button" class="action-btn" onclick="useHint()">💡 Indice</button>
+            <button type="button" class="action-btn" onclick="skipChallenge()">⏭️ Passer</button>
           </div>
         `;
         }
@@ -2015,7 +2034,7 @@
             }).join("")}
           </div>
           
-          <button class="btn btn-primary" onclick="this.closest('.reward-modal').remove()">Fermer</button>
+          <button type="button" class="btn btn-primary" onclick="this.closest('.reward-modal').remove()">Fermer</button>
         </div>
       `;
         document.body.appendChild(modal);
@@ -2075,7 +2094,7 @@
                     };
                     const isActive = GameState.player.profile === p;
                     return `
-                    <button onclick="changeProfile('${p}')" 
+                    <button type="button" onclick="changeProfile('${p}')"
                             style="padding: 8px 12px; border: 2px solid ${isActive ? "var(--accent-primary)" : "transparent"}; 
                                    background: ${isActive ? "rgba(124,77,255,0.2)" : "rgba(255,255,255,0.05)"}; 
                                    border-radius: 8px; color: white; cursor: pointer; font-size: 0.85rem;">
@@ -2090,14 +2109,14 @@
           
           <!-- Actions dangereuses -->
           <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; margin-bottom: 20px;">
-            <button onclick="confirmReset()" 
+            <button type="button" onclick="confirmReset()"
                     style="width: 100%; padding: 12px; background: rgba(255,82,82,0.1); border: 1px solid var(--accent-error); 
                            border-radius: 10px; color: var(--accent-error); cursor: pointer; font-size: 0.9rem;">
               🗑️ Réinitialiser ma progression
             </button>
           </div>
           
-          <button class="btn btn-secondary" onclick="closeSettings()" style="width: 100%;">Fermer</button>
+          <button type="button" class="btn btn-secondary" onclick="closeSettings()" style="width: 100%;">Fermer</button>
         </div>
       `;
         document.body.appendChild(modal);
@@ -2221,7 +2240,7 @@
             </div>
           </div>
           
-          <button class="btn btn-primary" onclick="this.closest('.reward-modal').remove()" style="width: 100%;">
+          <button type="button" class="btn btn-primary" onclick="this.closest('.reward-modal').remove()" style="width: 100%;">
             👍 Compris !
           </button>
         </div>

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#070916" />
@@ -11,6 +12,7 @@
     <script src="../../js/core/arcade-config.js" defer></script>
     <script src="../../js/core/arcade-local-store.js" defer></script>
     <script src="../../js/core/arcade-game-bridge.js" defer></script>
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a class="arcade-home-link" href="../../index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil">
@@ -23,7 +25,7 @@
         <div class="game-container">
           <header class="game-header">
             <p class="eyebrow">Francis Arcade · 198X Edition</p>
-            <h1><span>Neon</span> Card Match</h1>
+            <h2><span>Neon</span> Card Match</h2>
             <p class="game-subtitle">Repérez le signal, glissez la bonne carte et faites monter le score.</p>
           </header>
 

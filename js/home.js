@@ -56,14 +56,19 @@
         const submit = form.querySelector('[type="submit"]');
         const label = submit?.textContent || "Envoyer le retour";
         let report;
+        const privacyConsent = data.get("privacyConsent") === "yes";
+        if (!privacyConsent) {
+          setFeedbackStatus("Votre accord est nécessaire pour transmettre le retour par email.", "error");
+          return;
+        }
         form.setAttribute("aria-busy", "true");
         if (submit) { submit.disabled = true; submit.textContent = "Envoi en cours…"; }
-        setFeedbackStatus("Envoi sécurisé vers EmailJS…");
+        setFeedbackStatus("Envoi du retour via EmailJS…");
         try {
-          report = window.ArcadeFeedbackStore?.create({ type: data.get("type"), gameKey: data.get("gameKey"), gameTitle: selected?.textContent, urgency: data.get("urgency"), description: data.get("description"), reporterPseudo: data.get("reporterPseudo") });
+          report = window.ArcadeFeedbackStore?.create({ type: data.get("type"), gameKey: data.get("gameKey"), gameTitle: selected?.textContent, urgency: data.get("urgency"), description: data.get("description"), reporterPseudo: data.get("reporterPseudo"), privacyConsent });
           if (!report) throw new Error("feedback_unavailable");
           await window.ArcadeFeedbackStore.sendByEmail(report.id);
-          form.reset(); prefillFeedbackPseudo(); setFeedbackStatus("Merci ! Votre retour a été envoyé par email.", "success");
+          form.reset(); prefillFeedbackPseudo(); setFeedbackStatus(`Merci ! Retour envoyé. Référence à conserver : ${report.id}`, "success");
         } catch (error) {
           if (report) { form.reset(); prefillFeedbackPseudo(); setFeedbackStatus("Le retour est sauvegardé sur cet appareil, mais l’email n’a pas pu être envoyé.", "warning"); }
           else setFeedbackStatus(error?.message === "feedback_description_too_short" ? "Ajoutez quelques précisions (10 caractères minimum)." : "Le retour n’a pas pu être enregistré pour le moment.", "error");

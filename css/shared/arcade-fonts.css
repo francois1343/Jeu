@@ -1,0 +1,45 @@
+/* Polices libres auto-hebergees : aucun appel a un service tiers. */
+@font-face {
+  font-family: "Orbitron";
+  src: url("../../assets/fonts/orbitron-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Rajdhani";
+  src: url("../../assets/fonts/rajdhani-latin-400.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Rajdhani";
+  src: url("../../assets/fonts/rajdhani-latin-500.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Rajdhani";
+  src: url("../../assets/fonts/rajdhani-latin-600.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Rajdhani";
+  src: url("../../assets/fonts/rajdhani-latin-700.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  --arcade-font-display: "Orbitron", "Segoe UI", sans-serif;
+  --arcade-font-body: "Rajdhani", "Segoe UI", sans-serif;
+}

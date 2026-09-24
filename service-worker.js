@@ -1,10 +1,16 @@
-const CACHE = "arcade-station-v37";
+const CACHE = "arcade-station-v41";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./css/home.css",
+  "./css/shared/arcade-fonts.css",
   "./css/shared/arcade-home.css",
+  "./assets/fonts/orbitron-latin.woff2",
+  "./assets/fonts/rajdhani-latin-400.woff2",
+  "./assets/fonts/rajdhani-latin-500.woff2",
+  "./assets/fonts/rajdhani-latin-600.woff2",
+  "./assets/fonts/rajdhani-latin-700.woff2",
   "./js/home.js",
   "./js/pwa-config.js",
   "./js/pwa-install.js",
@@ -19,6 +25,10 @@ const APP_SHELL = [
   "./js/core/arcade-game-preferences.js",
   "./js/core/arcade-game-shell.js",
   "./css/shared/arcade-game-shell.css",
+  "./legal/mentions-legales.html",
+  "./legal/confidentialite.html",
+  "./legal/cgu.html",
+  "./legal/legal.css",
   "./js/arcade-admin-loader.js",
   "./games/dice-hub/dice-hub.html",
   "./games/dice-hub/dice-hub.css",

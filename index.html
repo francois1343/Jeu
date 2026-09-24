@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://api.emailjs.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0a0e1a" />
@@ -15,12 +16,9 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" type="image/png" href="assets/icons/arcade-icon-v2-192.png" />
     <link rel="apple-touch-icon" href="assets/icons/arcade-icon-v2-180.png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
 
-    <link rel="stylesheet" href="css/home.css?v=35" />
+    <link rel="stylesheet" href="css/shared/arcade-fonts.css" />
+    <link rel="stylesheet" href="css/home.css?v=36" />
   </head>
   <body>
     <!-- Particules décoratives -->
@@ -416,7 +414,7 @@
           <div class="game-interactive">
             <div class="coin-display" id="coinDisplay">?</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="openCoinGame(event)"
           >
@@ -444,7 +442,7 @@
           <div class="game-interactive">
             <div class="result-display">1–12</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/dice-hub/dice-hub.html', event)"
           >
@@ -471,7 +469,7 @@
           <div class="game-interactive">
             <div class="result-display">?</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/calculation/index.html', event)"
           >
@@ -497,7 +495,7 @@
           <div class="game-interactive">
             <div class="result-display">🪨 📄 ✂️</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/hifumi/index.html', event)"
           >
@@ -524,7 +522,7 @@
           <div class="game-interactive">
             <div class="result-display">3... 2... 1...</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/reflex/index.html', event)"
           >
@@ -550,7 +548,7 @@
           <div class="game-interactive">
             <div class="result-display">4 choices</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/reflex-lab/index.html', event)"
           >
@@ -578,7 +576,7 @@
           <div class="game-interactive">
             <div class="result-display">🂠 🂠 🂠 🂠</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/memory/index.html', event)"
           >
@@ -605,7 +603,7 @@
           <div class="game-interactive">
             <div class="result-display">❓ 🔍 🌌</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/enigme/index.html', event)"
           >
@@ -632,7 +630,7 @@
           <div class="game-interactive">
             <div class="result-display">▣ ▤ ▥ ▦</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/tetris/index.html', event)"
           >
@@ -660,7 +658,7 @@
           <div class="game-interactive">
             <div class="result-display">🍎 → 🐍</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/snake/index.html', event)"
           >
@@ -687,7 +685,7 @@
           <div class="game-interactive">
             <div class="result-display">| ● |</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/pong/index.html', event)"
           >
@@ -714,7 +712,7 @@
           <div class="game-interactive">
             <div class="result-display">🚩 💣 🔢</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/demineur/index.html', event)"
           >
@@ -742,7 +740,7 @@
           <div class="game-interactive">
             <div class="result-display">⚓ 🎯 💥</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/bataille-navale/index.html', event)"
           >
@@ -770,7 +768,7 @@
           <div class="game-interactive">
             <div class="result-display">2 4 8 16 ...</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/2048/index.html', event)"
           >
@@ -797,7 +795,7 @@
           <div class="game-interactive">
             <div class="result-display">🧱 → 💥</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/casse-bloc/index.html', event)"
           >
@@ -824,7 +822,7 @@
           <div class="game-interactive">
             <div class="result-display">🧭 → 🚪</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/labyrinthe/index.html', event)"
           >
@@ -851,7 +849,7 @@
           <div class="game-interactive">
             <div class="result-display">🔮 🔍 🧩</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/neon-runner/index.html', event)"
           >
@@ -878,7 +876,7 @@
           <div class="game-interactive">
             <div class="result-display">🌐🐣</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/cyberflux/index.html', event)"
           >
@@ -906,7 +904,7 @@
           <div class="game-interactive">
             <div class="result-display">🐔 → 🚧</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/crossy-turfu/index.html', event)"
           >
@@ -933,7 +931,7 @@
           <div class="game-interactive">
             <div class="result-display">🌍 → 🧭</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/openworld/index.html', event)"
           >
@@ -961,7 +959,7 @@
           <div class="game-interactive">
             <div class="result-display">💾⚡🌐</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/pixel-forge/index.html', event)"
           >
@@ -989,7 +987,7 @@
           <div class="game-interactive">
             <div class="result-display">🌆 🔍 ⚠️</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/cyberfind/index.html', event)"
           >
@@ -1017,7 +1015,7 @@
           <div class="game-interactive">
             <div class="result-display">🚀 ✦ 💥</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/neon-overdrive/index.html', event)"
           >
@@ -1045,7 +1043,7 @@
           <div class="game-interactive">
             <div class="result-display">🔴🟢🔵🟡</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/simon/index.html', event)"
           >
@@ -1073,7 +1071,7 @@
           <div class="game-interactive">
             <div class="result-display">🂡 🂮 🕸️</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/spider-solitaire/index.html', event)"
           >
@@ -1101,7 +1099,7 @@
           <div class="game-interactive">
             <div class="result-display">♥ ♠ ✦</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="
               launchGame('games/jeuxdescartes/jeuxdescartes.html', event)
@@ -1131,7 +1129,7 @@
           <div class="game-interactive">
             <div class="result-display">🦄 ✦ 🐉</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="
               launchGame('games/jeuxdesphrases/jeuxdesphrases.html', event)
@@ -1161,7 +1159,7 @@
           <div class="game-interactive">
             <div class="result-display">1 ➡️​ 9</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/sudoku/index.html', event)"
           >
@@ -1189,7 +1187,7 @@
           <div class="game-interactive">
             <div class="result-display">🏃 🌴 🌇</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/synthwave-runner/index.html', event)"
           >
@@ -1217,7 +1215,7 @@
           <div class="game-interactive">
             <div class="result-display">1 2 3 · 4 5</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/taquin/index.html', event)"
           >
@@ -1245,7 +1243,7 @@
           <div class="game-interactive">
             <div class="result-display">△ ○ □</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/geominds/index.html', event)"
           >
@@ -1273,7 +1271,7 @@
           <div class="game-interactive">
             <div class="result-display">X · O</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/cybermorpion/index.html', event)"
           >
@@ -1301,7 +1299,7 @@
           <div class="game-interactive">
             <div class="result-display">🔨 ⚡ 🐹</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/marmotte/index.html', event)"
           >
@@ -1329,7 +1327,7 @@
           <div class="game-interactive">
             <div class="result-display">╾━ ╾━</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/neontron/index.html', event)"
           >
@@ -1357,7 +1355,7 @@
           <div class="game-interactive">
             <div class="result-display">● ● ● ●</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/puissance4/index.html', event)"
           >
@@ -1384,7 +1382,7 @@
           <div class="game-interactive">
             <div class="result-display">&spades; &hearts; &diams; &clubs;</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/Poker/poker.html', event)"
           >
@@ -1412,7 +1410,7 @@
           <div class="game-interactive">
             <div class="result-display">&#9679; &#9679; &#9679; &#10022;</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="
               launchGame('games/BubbleShooter/BubbleShooter.html', event)
@@ -1440,7 +1438,7 @@
           <div class="game-interactive">
             <div class="result-display">6 · 4 · 5</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="launchGame('games/Yahtzee/yahtzee.html', event)"
           >
@@ -1465,7 +1463,7 @@
           <div class="game-interactive">
             <div class="result-display">CIBLE : IA</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="
               launchGame(
@@ -1495,7 +1493,7 @@
           <div class="game-interactive">
             <div class="result-display">NOYAUX</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="
               launchGame('games/Cyber-CoreSorter/Cyber-CoreSorter.html', event)
@@ -1523,7 +1521,7 @@
           <div class="game-interactive">
             <div class="result-display">♠ ♥ ♦ ♣</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="
               launchGame(
@@ -1553,7 +1551,7 @@
           <div class="game-interactive">
             <div class="result-display">1 — 1</div>
           </div>
-          <button
+          <button type="button"
             class="btn btn-primary btn-launch"
             onclick="
               launchGame('games/Synthwave Edition/SynthwaveEdition.html', event)
@@ -1588,6 +1586,9 @@
             aria-haspopup="dialog"
             >Crédits</a
           >
+          <a href="legal/mentions-legales.html" class="footer-link">Mentions légales</a>
+          <a href="legal/confidentialite.html" class="footer-link">Confidentialité</a>
+          <a href="legal/cgu.html" class="footer-link">CGU</a>
           <a href="README.md" class="footer-link" target="_blank" rel="noopener"
             >Guide 1.1</a
           >
@@ -1989,6 +1990,18 @@
               placeholder="Ex. NeoPlayer"
             />
           </label>
+          <label class="privacy-consent">
+            <input type="checkbox" name="privacyConsent" value="yes" required />
+            <span>
+              J’accepte la transmission de ce retour à EmailJS selon la
+              <a href="legal/confidentialite.html" target="_blank" rel="noopener noreferrer">politique de confidentialité</a>.
+              J’ai au moins 16 ans ou l’autorisation de mon responsable légal.
+            </span>
+          </label>
+          <p class="feedback-privacy-note">
+            Données envoyées : contenu du retour, jeu concerné, date, référence et pseudo si renseigné.
+            L’URL complète et les informations du navigateur ne sont pas transmises.
+          </p>
           <div class="feedback-form-actions">
             <p
               class="feedback-status"
@@ -1997,7 +2010,7 @@
               aria-live="polite"
             ></p>
             <button class="btn btn-primary dialog-primary-action" type="submit">
-              Enregistrer le retour
+              Envoyer le retour
             </button>
           </div>
         </form>

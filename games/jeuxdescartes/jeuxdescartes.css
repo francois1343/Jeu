@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap");
+700;900&family=Rajdhani:wght@500;600;700&display=swap");
 
 :root {
   --bg-primary: #070916;
@@ -798,8 +798,24 @@ button:focus-visible {
   margin-bottom: 18px;
 }
 
-.compact-header h1 {
+.compact-header h2 {
+  margin: 0;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  text-transform: uppercase;
+  background: linear-gradient(105deg, var(--neon-cyan), #fff 44%, var(--neon-pink) 76%, var(--neon-purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 14px rgba(0, 255, 255, 0.35));
   font-size: clamp(1.5rem, 6vw, 2.25rem);
+}
+
+.compact-header h2 span {
+  color: var(--neon-pink);
+  -webkit-text-fill-color: var(--neon-pink);
 }
 
 .result-panel {

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <!-- 1. Meta tags essentiels -->
     <meta charset="UTF-8" />
     <meta
@@ -23,6 +24,7 @@
     <!-- 2. Feuille de style -->
     <link rel="stylesheet" href="simon.css" />
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
 
   <body>
@@ -56,11 +58,11 @@
         <!-- 6. Sélecteur de mode -->
         <div class="mode-selector">
           <h3 class="selector-title">MODE DE JEU</h3>
-          <button class="mode-option" data-mode="normal">
+          <button type="button" class="mode-option" data-mode="normal">
             <span class="mode-label">Normal</span>
             <span class="mode-desc">Rejoue la séquence en cas d'erreur</span>
           </button>
-          <button class="mode-option" data-mode="strict">
+          <button type="button" class="mode-option" data-mode="strict">
             <span class="mode-label">⚔️ Strict</span>
             <span class="mode-desc">1 erreur = Game Over !</span>
           </button>
@@ -70,21 +72,21 @@
         <div class="speed-selector">
           <h3 class="selector-title">VITESSE INITIALE</h3>
           <div class="speed-options">
-            <button class="speed-btn" data-speed="slow">🐢 Lent</button>
-            <button class="speed-btn speed-active" data-speed="normal">
+            <button type="button" class="speed-btn" data-speed="slow">🐢 Lent</button>
+            <button type="button" class="speed-btn speed-active" data-speed="normal">
               ⚙️ Normal
             </button>
-            <button class="speed-btn" data-speed="fast">⚡ Rapide</button>
+            <button type="button" class="speed-btn" data-speed="fast">⚡ Rapide</button>
           </div>
         </div>
 
         <!-- 8. Bouton de démarrage -->
-        <button id="startGameBtn" class="btn btn-primary btn-large">
+        <button type="button" id="startGameBtn" class="btn btn-primary btn-large">
           [ DÉMARRER LE JEU ]
         </button>
 
         <!-- 9. Bouton leaderboard -->
-        <button id="leaderboardMenuBtn" class="btn btn-secondary">
+        <button type="button" id="leaderboardMenuBtn" class="btn btn-secondary">
           [ LEADERBOARD ]
         </button>
       </div>
@@ -121,7 +123,7 @@
             </div>
 
             <!-- 15. Bouton vert (haut-gauche) -->
-            <button
+            <button type="button"
               class="simon-btn simon-green"
               data-color="green"
               aria-label="Bouton vert"
@@ -130,7 +132,7 @@
             </button>
 
             <!-- 16. Bouton rouge (haut-droite) -->
-            <button
+            <button type="button"
               class="simon-btn simon-red"
               data-color="red"
               aria-label="Bouton rouge"
@@ -139,7 +141,7 @@
             </button>
 
             <!-- 17. Bouton jaune (bas-gauche) -->
-            <button
+            <button type="button"
               class="simon-btn simon-yellow"
               data-color="yellow"
               aria-label="Bouton jaune"
@@ -148,7 +150,7 @@
             </button>
 
             <!-- 18. Bouton bleu (bas-droite) -->
-            <button
+            <button type="button"
               class="simon-btn simon-blue"
               data-color="blue"
               aria-label="Bouton bleu"
@@ -174,10 +176,10 @@
 
           <!-- 23. Contrôles bas de page -->
           <div class="game-controls">
-            <button id="restartGameBtn" class="control-btn">
+            <button type="button" id="restartGameBtn" class="control-btn">
               ↻ Recommencer
             </button>
-            <button id="quitGameBtn" class="control-btn">✕ Quitter</button>
+            <button type="button" id="quitGameBtn" class="control-btn">✕ Quitter</button>
           </div>
         </div>
       </div>
@@ -212,10 +214,10 @@
 
         <!-- 28. Boutons -->
         <div class="game-over-buttons">
-          <button id="retryGameOverBtn" class="btn btn-primary">
+          <button type="button" id="retryGameOverBtn" class="btn btn-primary">
             [ REJOUER ]
           </button>
-          <button id="menuGameOverBtn" class="btn btn-secondary">
+          <button type="button" id="menuGameOverBtn" class="btn btn-secondary">
             [ MENU ]
           </button>
         </div>
@@ -232,8 +234,8 @@
 
         <!-- 31. Onglets de mode -->
         <div class="leaderboard-tabs">
-          <button class="tab-btn tab-active" data-tab="normal">Normal</button>
-          <button class="tab-btn" data-tab="strict">Strict</button>
+          <button type="button" class="tab-btn tab-active" data-tab="normal">Normal</button>
+          <button type="button" class="tab-btn" data-tab="strict">Strict</button>
         </div>
 
         <!-- 32. Liste des scores -->
@@ -242,7 +244,7 @@
         </div>
 
         <!-- 33. Bouton retour -->
-        <button id="leaderboardBackBtn" class="btn btn-secondary">
+        <button type="button" id="leaderboardBackBtn" class="btn btn-secondary">
           [ RETOUR ]
         </button>
       </div>
@@ -257,7 +259,7 @@
         <p id="victoryMessage" class="modal-message">
           Vous avez atteint 20 séquences !
         </p>
-        <button id="victoryConfirmBtn" class="btn btn-primary">
+        <button type="button" id="victoryConfirmBtn" class="btn btn-primary">
           [ CONTINUER ]
         </button>
       </div>

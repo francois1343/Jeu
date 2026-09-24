@@ -2,11 +2,13 @@
 <html lang="fr">
 
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Cyber-Bubble Shooter 80s</title>
   <link rel="stylesheet" href="BubbleShooter.css">
   <link rel="stylesheet" href="../../css/shared/arcade-home.css">
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
 </head>
 
 <body>
@@ -85,7 +87,7 @@
           <h2 id="end-title" class="synth-title-danger">GAME OVER</h2>
           <p class="summary-text">SCORE FINAL : <span id="final-score" class="neon-text-cyan">0</span></p>
           <p id="new-record-tag" class="hidden record-pulse">🏆 NOUVEAU RECORD !</p>
-          <button id="btn-restart" class="btn-neon">RÉESSAYER</button>
+          <button type="button" id="btn-restart" class="btn-neon">RÉESSAYER</button>
         </div>
       </div>
 
@@ -96,9 +98,9 @@
           <h2 id="quit-title" class="quit-title">PARTIE EN PAUSE</h2>
           <p class="quit-message">Es-tu sûr de vouloir quitter ?<br><span>Ta progression ne sera pas sauvegardée.</span></p>
           <div class="quit-actions">
-            <button id="btn-resume" class="btn-neon btn-small">REPRENDRE</button>
+            <button type="button" id="btn-resume" class="btn-neon btn-small">REPRENDRE</button>
             <button id="btn-save-pause" class="btn-neon btn-small btn-save-pause" type="button">SAUVEGARDER</button>
-            <button id="btn-confirm-quit" class="btn-neon btn-small btn-danger">QUITTER</button>
+            <button type="button" id="btn-confirm-quit" class="btn-neon btn-small btn-danger">QUITTER</button>
           </div>
         </div>
       </div>
@@ -142,7 +144,7 @@
           <div id="current-bubble-preview" class="bubble-slot"></div>
         </div>
 
-        <button id="btn-swap" class="btn-swap" aria-label="Échanger les bulles">
+        <button type="button" id="btn-swap" class="btn-swap" aria-label="Échanger les bulles">
           <span class="swap-icon">⇄</span>
         </button>
 
@@ -153,8 +155,8 @@
       </div>
 
       <div class="controls-panel">
-        <button id="btn-home" class="btn-icon btn-home hidden" aria-label="Mettre en pause ou quitter la partie" title="Pause / Quitter">⌂</button>
-        <button id="btn-audio" class="btn-icon" aria-label="Activer/Désactiver le son">🔊</button>
+        <button type="button" id="btn-home" class="btn-icon btn-home hidden" aria-label="Mettre en pause ou quitter la partie" title="Pause / Quitter">⌂</button>
+        <button type="button" id="btn-audio" class="btn-icon" aria-label="Activer/Désactiver le son">🔊</button>
       </div>
     </footer>
   </div>

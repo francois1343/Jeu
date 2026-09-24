@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>🪨 Pierre Feuille Ciseaux - VS IA</title>
@@ -565,6 +566,7 @@
       @media (prefers-reduced-motion:reduce) { *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important} }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -618,15 +620,15 @@
 
       <!-- Boutons de choix -->
       <div class="choices">
-        <button class="choice-btn rock" onclick="play('rock')" id="btn-rock">
+        <button type="button" class="choice-btn rock" onclick="play('rock')" id="btn-rock">
           🪨
           <span class="choice-name">Pierre</span>
         </button>
-        <button class="choice-btn paper" onclick="play('paper')" id="btn-paper">
+        <button type="button" class="choice-btn paper" onclick="play('paper')" id="btn-paper">
           📄
           <span class="choice-name">Feuille</span>
         </button>
-        <button
+        <button type="button"
           class="choice-btn scissors"
           onclick="play('scissors')"
           id="btn-scissors"
@@ -638,27 +640,27 @@
 
       <!-- Sélecteur de difficulté -->
       <div class="difficulty-selector">
-        <button
+        <button type="button"
           class="diff-btn active"
           onclick="setDifficulty('easy')"
           id="diff-easy"
         >
           Facile
         </button>
-        <button
+        <button type="button"
           class="diff-btn"
           onclick="setDifficulty('medium')"
           id="diff-medium"
         >
           Normal
         </button>
-        <button class="diff-btn" onclick="setDifficulty('hard')" id="diff-hard">
+        <button type="button" class="diff-btn" onclick="setDifficulty('hard')" id="diff-hard">
           Difficile
         </button>
       </div>
 
       <!-- Bouton Reset -->
-      <button class="reset-btn" onclick="resetGame()">🔄 Recommencer</button>
+      <button type="button" class="reset-btn" onclick="resetGame()">🔄 Recommencer</button>
 
       <!-- Historique -->
       <div class="history">

@@ -1,16 +1,13 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
     <title>🐤 Cyber Flux — Flappy Bird 3.0</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;700&display=swap"
-      rel="stylesheet"
-    />
 
     <style>
       *,
@@ -446,6 +443,7 @@
       }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -458,7 +456,7 @@
     >
 
     <div id="game-container">
-      <canvas id="game-canvas"></canvas>
+      <canvas id="game-canvas" aria-label="Zone de jeu Cyber Flux"></canvas>
     </div>
 
     <!-- HUD -->
@@ -500,10 +498,10 @@
         </div>
 
         <div class="menu-buttons">
-          <button class="menu-btn primary" onclick="startGame()">
+          <button type="button" class="menu-btn primary" onclick="startGame()">
             ▶ JOUER
           </button>
-          <button class="menu-btn secondary" onclick="showSettings()">
+          <button type="button" class="menu-btn secondary" onclick="showSettings()">
             ⚙️ OPTIONS
           </button>
         </div>
@@ -537,10 +535,10 @@
         </div>
 
         <div class="menu-buttons">
-          <button class="menu-btn primary" onclick="restartGame()">
+          <button type="button" class="menu-btn primary" onclick="restartGame()">
             🔄 REJOUER
           </button>
-          <button class="menu-btn secondary" onclick="showMenu()">
+          <button type="button" class="menu-btn secondary" onclick="showMenu()">
             🏠 MENU
           </button>
         </div>
@@ -600,7 +598,7 @@
 
         <div class="setting-group">
           <label class="setting-label">Vibrations</label>
-          <button
+          <button type="button"
             class="toggle-btn active"
             id="setting-vibration"
             onclick="toggleVibration()"
@@ -610,7 +608,7 @@
         </div>
 
         <div class="menu-buttons" style="margin-top: 30px">
-          <button class="menu-btn secondary" onclick="hideSettings()">
+          <button type="button" class="menu-btn secondary" onclick="hideSettings()">
             ← RETOUR
           </button>
         </div>

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bataille Navale</title>
@@ -1121,6 +1122,7 @@
       }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -1147,7 +1149,7 @@
           <span>01</span> Choisissez votre adversaire
         </div>
         <div class="difficulty-options">
-          <button
+          <button type="button"
             class="difficulty-card"
             data-level="easy"
             onclick="game.start('easy')"
@@ -1157,7 +1159,7 @@
               ><strong>Facile</strong><small>Tirs aléatoires</small></span
             >
           </button>
-          <button
+          <button type="button"
             class="difficulty-card"
             data-level="medium"
             onclick="game.start('medium')"
@@ -1167,7 +1169,7 @@
               ><strong>Normal</strong><small>Poursuite basique</small></span
             >
           </button>
-          <button
+          <button type="button"
             class="difficulty-card"
             data-level="hard"
             onclick="game.start('hard')"
@@ -1178,7 +1180,7 @@
               ><small>Stratégie en damier</small></span
             >
           </button>
-          <button
+          <button type="button"
             class="difficulty-card"
             data-level="impossible"
             onclick="game.start('impossible')"
@@ -1190,7 +1192,7 @@
           </button>
         </div>
 
-        <button class="menu-btn secondary" onclick="showRules()">
+        <button type="button" class="menu-btn secondary" onclick="showRules()">
           📖 Consulter les règles
         </button>
         <p class="menu-footnote">
@@ -1242,7 +1244,7 @@
           <span>Sous-marin · 3</span>
           <span>Torpilleur · 2</span>
         </div>
-        <button class="menu-btn secondary" onclick="hideRules()">
+        <button type="button" class="menu-btn secondary" onclick="hideRules()">
           ← Retour
         </button>
       </div>
@@ -1254,10 +1256,10 @@
         <div class="menu-kicker">Rapport de mission</div>
         <h2 id="gameover-title">🎉 Victoire !</h2>
         <div id="gameover-stats" class="stats-grid"></div>
-        <button class="menu-btn primary" onclick="game.restart()">
+        <button type="button" class="menu-btn primary" onclick="game.restart()">
           🔄 Rejouer
         </button>
-        <button class="menu-btn secondary" onclick="game.backToMenu()">
+        <button type="button" class="menu-btn secondary" onclick="game.backToMenu()">
           🏠 Menu principal
         </button>
       </div>
@@ -1270,7 +1272,7 @@
           <span class="mini-brand-icon" aria-hidden="true">⚓</span>
           <span><strong>NEON FLEET</strong><small>Bataille navale</small></span>
         </div>
-        <button class="ghost-btn" onclick="game.requestBackToMenu()">
+        <button type="button" class="ghost-btn" onclick="game.requestBackToMenu()">
           ← Menu
         </button>
       </div>
@@ -1309,16 +1311,16 @@
 
       <!-- Placement controls -->
       <div id="placement-controls" class="controls">
-        <button class="control-btn secondary" onclick="game.rotateShip()">
+        <button type="button" class="control-btn secondary" onclick="game.rotateShip()">
           🔄 Pivoter (R)
         </button>
-        <button class="control-btn secondary" onclick="game.randomPlacement()">
+        <button type="button" class="control-btn secondary" onclick="game.randomPlacement()">
           🎲 Aléatoire
         </button>
-        <button class="control-btn secondary" onclick="game.resetPlacement()">
+        <button type="button" class="control-btn secondary" onclick="game.resetPlacement()">
           🗑️ Réinitialiser
         </button>
-        <button
+        <button type="button"
           class="control-btn primary"
           id="start-battle-btn"
           onclick="game.startBattle()"
@@ -1354,7 +1356,7 @@
 
       <!-- Battle controls -->
       <div id="battle-controls" class="controls hidden">
-        <button class="control-btn danger" onclick="game.surrender()">
+        <button type="button" class="control-btn danger" onclick="game.surrender()">
           🏳️ Abandonner
         </button>
       </div>

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -1125,6 +1126,7 @@
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
     <link rel="stylesheet" href="missions.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -1233,7 +1235,7 @@
         <h1 class="title">Énigme Cosmique</h1>
         <p class="subtitle">Explore, déduis, décode. Une découverte à chaque mission.</p>
 
-        <button class="btn btn-primary" onclick="showCategories()">
+        <button type="button" class="btn btn-primary" onclick="showCategories()">
           Choisir une mission
         </button>
 
@@ -1263,7 +1265,7 @@
           </div>
         </div>
 
-        <button class="btn btn-secondary" onclick="showHelp()">
+        <button type="button" class="btn btn-secondary" onclick="showHelp()">
           ❓ Comment jouer
         </button>
       </div>
@@ -1279,7 +1281,7 @@
           Sélectionne une catégorie d'énigmes
         </p>
 
-        <button
+        <button type="button"
           class="btn btn-category selected"
           onclick="selectCategory('solar', this)"
         >
@@ -1291,7 +1293,7 @@
           <span class="cat-count">20 Q</span>
         </button>
 
-        <button
+        <button type="button"
           class="btn btn-category"
           onclick="selectCategory('universe', this)"
         >
@@ -1303,7 +1305,7 @@
           <span class="cat-count">20 Q</span>
         </button>
 
-        <button
+        <button type="button"
           class="btn btn-category"
           onclick="selectCategory('exploration', this)"
         >
@@ -1315,7 +1317,7 @@
           <span class="cat-count">20 Q</span>
         </button>
 
-        <button
+        <button type="button"
           class="btn btn-category"
           onclick="selectCategory('earth', this)"
         >
@@ -1327,7 +1329,7 @@
           <span class="cat-count">20 Q</span>
         </button>
 
-        <button
+        <button type="button"
           class="btn btn-category"
           onclick="selectCategory('mixed', this)"
         >
@@ -1339,7 +1341,7 @@
           <span class="cat-count">∞</span>
         </button>
 
-        <button
+        <button type="button"
           class="btn btn-primary"
           style="margin-top: 20px"
           onclick="startGame()"
@@ -1347,7 +1349,7 @@
           🎯 Lancer la Mission
         </button>
 
-        <button class="btn btn-secondary" onclick="backToMenu()">
+        <button type="button" class="btn btn-secondary" onclick="backToMenu()">
           ← Retour
         </button>
       </div>
@@ -1358,7 +1360,7 @@
       <div class="game-container">
         <!-- Header -->
         <div class="game-header">
-          <button class="btn-quit" onclick="confirmQuit()">✕</button>
+          <button type="button" class="btn-quit" onclick="confirmQuit()">✕</button>
           <div class="game-info">
             <div class="info-item">
               <div class="info-value" id="game-score">0</div>
@@ -1420,19 +1422,19 @@
 
         <!-- Réponses -->
         <div class="answers-grid" id="answers-grid">
-          <button class="answer-btn" onclick="selectAnswer(0)">
+          <button type="button" class="answer-btn" onclick="selectAnswer(0)">
             <span class="letter">A</span>
             <span class="text">Saturne</span>
           </button>
-          <button class="answer-btn" onclick="selectAnswer(1)">
+          <button type="button" class="answer-btn" onclick="selectAnswer(1)">
             <span class="letter">B</span>
             <span class="text">Jupiter</span>
           </button>
-          <button class="answer-btn" onclick="selectAnswer(2)">
+          <button type="button" class="answer-btn" onclick="selectAnswer(2)">
             <span class="letter">C</span>
             <span class="text">Neptune</span>
           </button>
-          <button class="answer-btn" onclick="selectAnswer(3)">
+          <button type="button" class="answer-btn" onclick="selectAnswer(3)">
             <span class="letter">D</span>
             <span class="text">Uranus</span>
           </button>
@@ -1451,7 +1453,7 @@
         </div>
 
         <!-- Bouton suivant -->
-        <button
+        <button type="button"
           class="btn btn-primary next-btn"
           id="next-btn"
           onclick="nextQuestion()"
@@ -1461,7 +1463,7 @@
 
         <!-- Power-ups -->
         <div class="powerups">
-          <button
+          <button type="button"
             class="powerup-btn"
             id="powerup-50"
             onclick="usePowerup('fifty')"
@@ -1470,7 +1472,7 @@
             ✂️
             <span class="count" id="count-50">1</span>
           </button>
-          <button
+          <button type="button"
             class="powerup-btn"
             id="powerup-time"
             onclick="usePowerup('time')"
@@ -1479,7 +1481,7 @@
             ⏱️
             <span class="count" id="count-time">1</span>
           </button>
-          <button
+          <button type="button"
             class="powerup-btn"
             id="powerup-skip"
             onclick="usePowerup('skip')"
@@ -1536,10 +1538,10 @@
           </div>
         </div>
 
-        <button class="btn btn-primary" onclick="playAgain()">
+        <button type="button" class="btn btn-primary" onclick="playAgain()">
           🔄 Rejouer
         </button>
-        <button class="btn btn-secondary" onclick="backToMenu()">
+        <button type="button" class="btn btn-secondary" onclick="backToMenu()">
           🏠 Menu Principal
         </button>
       </div>
@@ -1583,7 +1585,7 @@
             points !
           </p>
         </div>
-        <button class="btn btn-primary" onclick="hideHelp()">
+        <button type="button" class="btn btn-primary" onclick="hideHelp()">
           👍 Compris !
         </button>
       </div>
@@ -1596,10 +1598,10 @@
         <p style="color: var(--text-secondary); margin-bottom: 25px">
           Ton score actuel sera perdu...
         </p>
-        <button class="btn btn-primary" onclick="hideQuitModal()">
+        <button type="button" class="btn btn-primary" onclick="hideQuitModal()">
           ▶️ Continuer
         </button>
-        <button class="btn btn-secondary" onclick="quitGame()">
+        <button type="button" class="btn btn-secondary" onclick="quitGame()">
           🏠 Quitter
         </button>
       </div>
@@ -2966,7 +2968,7 @@
 
         q.answers.forEach((answer, i) => {
           answersHTML += `
-      <button class="answer-btn" onclick="selectAnswer(${i})" data-index="${i}">
+      <button type="button" class="answer-btn" onclick="selectAnswer(${i})" data-index="${i}">
         <span class="letter">${letters[i]}</span>
         <span class="text">${answer}</span>
       </button>

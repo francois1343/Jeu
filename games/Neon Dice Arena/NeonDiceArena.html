@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <!-- Viewport strict pour empêcher le zoom et le scroll sur mobile (crucial pour le drag/shake du gobelet) -->
     <meta
@@ -10,19 +11,14 @@
     <title>Arène de dés néon — Casino synthwave</title>
 
     <!-- Police rétro-futuriste Synthwave -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap"
-      rel="stylesheet"
-    />
 
     <link rel="stylesheet" href="NeonDiceArena.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <div id="app">
       <!-- Moteur de Rendu des Dés (Canvas en fond) -->
-      <canvas id="gameCanvas"></canvas>
+        <canvas id="gameCanvas" aria-label="Arène de dés néon"></canvas>
 
       <!-- Calque UI (Menus, Contrôles, HUD) en Glassmorphism -->
       <div id="ui-layer">
@@ -33,10 +29,10 @@
           <div class="menu-section">
             <h2>Choisissez votre jeu</h2>
             <div class="button-group vertical">
-              <button id="btn-mode-perudo" class="neon-btn magenta-glow">
+              <button type="button" id="btn-mode-perudo" class="neon-btn magenta-glow">
                 Dés menteurs (Perudo)
               </button>
-              <button id="btn-mode-craps" class="neon-btn cyan-glow">
+              <button type="button" id="btn-mode-craps" class="neon-btn cyan-glow">
                 Craps express
               </button>
             </div>
@@ -77,21 +73,21 @@
             <!-- Contrôles spécifiques : DÉS MENTEURS (Perudo) -->
             <div id="controls-perudo" class="controls-panel hidden">
               <div class="bid-selectors">
-                <button id="btn-bid-qty-minus" class="neon-btn small">-</button>
+                <button type="button" id="btn-bid-qty-minus" class="neon-btn small">-</button>
                 <span id="bid-qty" class="bid-value">1</span>
-                <button id="btn-bid-qty-plus" class="neon-btn small">+</button>
+                <button type="button" id="btn-bid-qty-plus" class="neon-btn small">+</button>
                 <span class="bid-separator">x</span>
-                <button id="btn-bid-face-minus" class="neon-btn small">
+                <button type="button" id="btn-bid-face-minus" class="neon-btn small">
                   -
                 </button>
                 <span id="bid-face" class="bid-value">⚀</span>
-                <button id="btn-bid-face-plus" class="neon-btn small">+</button>
+                <button type="button" id="btn-bid-face-plus" class="neon-btn small">+</button>
               </div>
               <div class="button-group">
-                <button id="btn-perudo-bid" class="neon-btn cyan-glow">
+                <button type="button" id="btn-perudo-bid" class="neon-btn cyan-glow">
                   Surenchérir
                 </button>
-                <button id="btn-perudo-liar" class="neon-btn magenta-glow">
+                <button type="button" id="btn-perudo-liar" class="neon-btn magenta-glow">
                   MENTEUR !
                 </button>
               </div>
@@ -101,21 +97,21 @@
             <div id="controls-craps" class="controls-panel hidden">
               <div class="bet-selectors">
                 <span class="label">Mise :</span>
-                <button class="neon-btn small bet-btn" data-amount="10">
+                <button type="button" class="neon-btn small bet-btn" data-amount="10">
                   10
                 </button>
-                <button class="neon-btn small bet-btn" data-amount="50">
+                <button type="button" class="neon-btn small bet-btn" data-amount="50">
                   50
                 </button>
-                <button class="neon-btn small bet-btn" data-amount="100">
+                <button type="button" class="neon-btn small bet-btn" data-amount="100">
                   100
                 </button>
               </div>
               <div class="button-group">
-                <button id="btn-craps-pass" class="neon-btn cyan-glow">
+                <button type="button" id="btn-craps-pass" class="neon-btn cyan-glow">
                   Mise passe
                 </button>
-                <button id="btn-craps-dontpass" class="neon-btn magenta-glow">
+                <button type="button" id="btn-craps-dontpass" class="neon-btn magenta-glow">
                   Mise contre
                 </button>
               </div>
@@ -123,7 +119,7 @@
           </footer>
 
           <!-- Bouton Quitter -->
-          <button
+          <button type="button"
             id="btn-quit"
             class="neon-btn small danger-glow absolute-top-right"
           >

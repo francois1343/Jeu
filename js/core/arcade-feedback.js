@@ -4,11 +4,18 @@
   const STORAGE_KEY = "arcade.feedback.v1";
   const EMAIL_ENDPOINT = "https://api.emailjs.com/api/v1.0/email/send";
   const MAX_REPORTS = 250;
+  const legalConfig = global.ARCADE_CONFIG?.legal || {};
+  const PRIVACY_VERSION = cleanPrivacyVersion(legalConfig.privacyVersion) || "2026-09-24";
+  const RETENTION_DAYS = Math.max(1, Number(legalConfig.feedbackRetentionDays) || 365);
   const TYPES = Object.freeze(["bug", "suggestion", "problème visuel", "jeu", "compte", "autre"]);
   const URGENCIES = Object.freeze(["faible", "normale", "élevée", "critique"]);
   const STATUSES = Object.freeze(["nouveau", "à vérifier", "en cours", "résolu"]);
   const emailConfig = global.ARCADE_CONFIG?.feedbackEmail || {};
   let memoryFallback = { version: 1, reports: [] };
+
+  function cleanPrivacyVersion(value) {
+    return String(value || "").trim().slice(0, 40);
+  }
 
   function clone(value) {
     return typeof structuredClone === "function"
@@ -28,7 +35,16 @@
   function readState() {
     try {
       const parsed = JSON.parse(global.localStorage.getItem(STORAGE_KEY) || "null");
-      if (parsed?.version === 1 && Array.isArray(parsed.reports)) return parsed;
+      if (parsed?.version === 1 && Array.isArray(parsed.reports)) {
+        const reports = parsed.reports.filter(withinRetention).slice(0, MAX_REPORTS);
+        if (reports.length !== parsed.reports.length) {
+          const pruned = { ...parsed, reports };
+          memoryFallback = clone(pruned);
+          global.localStorage.setItem(STORAGE_KEY, JSON.stringify(pruned));
+          return pruned;
+        }
+        return parsed;
+      }
     } catch (_) {
       return clone(memoryFallback);
     }
@@ -43,6 +59,12 @@
       // Le retour reste disponible pendant la session si le stockage est indisponible.
     }
     global.dispatchEvent?.(new CustomEvent("arcade-feedback-change"));
+  }
+
+  function withinRetention(report) {
+    const createdAt = Date.parse(report?.createdAt || "");
+    if (!Number.isFinite(createdAt)) return true;
+    return createdAt >= Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000;
   }
 
   function findReport(state, reportId) {
@@ -76,6 +98,9 @@
       urgency,
       description,
       reporterPseudo: clean(input.reporterPseudo, 20) || null,
+      privacy: input.privacyConsent === true
+        ? { version: PRIVACY_VERSION, consentAt: now }
+        : null,
       status: "nouveau",
       createdAt: now,
       updatedAt: now,
@@ -89,7 +114,7 @@
       },
     };
     const state = readState();
-    state.reports = [report, ...state.reports].slice(0, MAX_REPORTS);
+    state.reports = [report, ...state.reports].filter(withinRetention).slice(0, MAX_REPORTS);
     writeState(state);
     return clone(report);
   }
@@ -167,6 +192,12 @@
       gameKey: clean(candidate.gameKey, 80) || "home",
       gameTitle: clean(candidate.gameTitle, 120) || "Accueil / interface générale",
       reporterPseudo: clean(candidate.reporterPseudo, 20) || null,
+      privacy: candidate.privacy && typeof candidate.privacy === "object"
+        ? {
+            version: cleanPrivacyVersion(candidate.privacy.version),
+            consentAt: candidate.privacy.consentAt || null,
+          }
+        : null,
       createdAt: candidate.createdAt || new Date().toISOString(),
       updatedAt: candidate.updatedAt || candidate.createdAt || new Date().toISOString(),
       delivery: candidate.delivery && typeof candidate.delivery === "object"
@@ -190,7 +221,7 @@
       : [...imported, ...readState().reports].filter((report, index, all) => (
         all.findIndex((candidate) => candidate.id === report.id) === index
       ));
-    const next = { version: 1, reports: reports.slice(0, MAX_REPORTS) };
+    const next = { version: 1, reports: reports.filter(withinRetention).slice(0, MAX_REPORTS) };
     writeState(next);
     return clone(next);
   }
@@ -227,8 +258,8 @@
       pseudo,
       status: report.status,
       created_at: report.createdAt,
-      page_url: global.location?.href || "",
-      user_agent: global.navigator?.userAgent || "",
+      privacy_version: report.privacy?.version || "",
+      consent_at: report.privacy?.consentAt || "",
     };
   }
 
@@ -236,6 +267,7 @@
     const state = readState();
     const report = findReport(state, reportId);
     if (!report) throw new Error("feedback_not_found");
+    if (!report.privacy?.consentAt) throw new Error("privacy_consent_required");
     if (!emailConfig.enabled || !emailConfig.serviceId || !emailConfig.templateId || !emailConfig.publicKey) {
       throw new Error("email_not_configured");
     }
@@ -253,6 +285,8 @@
     try {
       const response = await global.fetch(EMAIL_ENDPOINT, {
         method: "POST",
+        credentials: "omit",
+        referrerPolicy: "no-referrer",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           service_id: emailConfig.serviceId,

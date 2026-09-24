@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -614,6 +615,7 @@
       .game-area { padding:12px 20px 20px; }.circle { width:min(72vw,330px); height:min(72vw,330px); border-width:1px!important; backdrop-filter:blur(8px); }.state-wait .circle{background:radial-gradient(circle at 35% 25%,rgba(0,212,255,.14),rgba(255,255,255,.025) 60%);}.circle-text{font-size:18px}.circle-subtext{color:#d5def1}.tip{bottom:11px;color:#a9bad4;opacity:.8}.stats-bar{margin:0 12px 12px;padding:13px 18px;border:1px solid rgba(255,255,255,.09);border-radius:17px;background:rgba(4,10,24,.55);}.stat-value{font-family:ui-monospace,SFMono-Regular,monospace;font-size:20px}.history{min-height:30px;padding:10px 20px}.menu-btn{top:max(64px,calc(env(safe-area-inset-top) + 54px));right:14px;width:45px;height:45px;border:1px solid rgba(0,212,255,.35);border-radius:14px;background:rgba(5,12,27,.72);}.menu{max-width:420px;max-height:calc(100dvh - 40px);overflow-y:auto;padding:28px 24px;border:1px solid rgba(0,212,255,.24);border-radius:24px;background:linear-gradient(145deg,rgba(17,31,59,.96),rgba(7,12,28,.96));box-shadow:0 24px 70px rgba(0,0,0,.45);}.menu h2{margin-bottom:18px}.mode-menu-label{margin:20px 0 9px;color:#9fb1d1;font-size:11px;font-weight:800;letter-spacing:.12em;text-align:left}.mode-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.mode-btn{min-height:58px;padding:8px 5px;border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#aebed8;background:rgba(255,255,255,.04);font:700 11px inherit;cursor:pointer}.mode-btn strong{display:block;margin-bottom:3px;color:#fff;font-size:12px}.mode-btn.active{border-color:#00d4ff;background:rgba(0,212,255,.14);box-shadow:0 0 18px rgba(0,212,255,.13)}.menu-btn-action{min-height:48px;border-radius:13px}.menu-btn:focus-visible,.mode-btn:focus-visible,.menu-btn-action:focus-visible{outline:2px solid #fff;outline-offset:3px}@media(max-width:400px){.header{padding-top:62px}.circle{width:min(74vw,280px);height:min(74vw,280px)}.stats-bar{gap:13px;margin:0 8px 8px}.stat-label{font-size:9px}.menu{padding:23px 17px}.tip{font-size:11px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body class="state-wait">
     <a
@@ -626,12 +628,12 @@
     >
 
     <!-- Bouton Menu -->
-    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <button type="button" class="menu-btn" onclick="toggleMenu()">☰</button>
 
     <!-- Header -->
     <div class="header">
       <div class="logo">⏱️ Chrono</div>
-      <div class="title">Réflexe</div>
+      <h1 class="title">Réflexe</h1>
     </div>
 
     <!-- Zone de jeu -->
@@ -710,10 +712,10 @@
           <span class="menu-item-value" id="menuEarly">0</span>
         </div>
 
-        <button class="menu-btn-action secondary" onclick="resetStats()">
+        <button type="button" class="menu-btn-action secondary" onclick="resetStats()">
           🗑️ Réinitialiser
         </button>
-        <button class="menu-btn-action primary" onclick="toggleMenu()">
+        <button type="button" class="menu-btn-action primary" onclick="toggleMenu()">
           ✓ Fermer
         </button>
       </div>
@@ -795,7 +797,7 @@
         const resetButton = document.querySelector(".menu-btn-action.secondary");
         if (resetButton) {
           const section = document.createElement("section");
-          section.innerHTML = '<div class="mode-menu-label">FORMAT DE PARTIE</div><div class="mode-selector"><button class="mode-btn" data-mode="calm"><strong>Calme</strong>2,4 - 5,2 s</button><button class="mode-btn active" data-mode="classic"><strong>Classique</strong>1,5 - 5 s</button><button class="mode-btn" data-mode="flash"><strong>Flash</strong>0,7 - 2,6 s</button></div>';
+          section.innerHTML = '<div class="mode-menu-label">FORMAT DE PARTIE</div><div class="mode-selector"><button type="button" class="mode-btn" data-mode="calm"><strong>Calme</strong>2,4 - 5,2 s</button><button type="button" class="mode-btn active" data-mode="classic"><strong>Classique</strong>1,5 - 5 s</button><button type="button" class="mode-btn" data-mode="flash"><strong>Flash</strong>0,7 - 2,6 s</button></div>';
           resetButton.before(section);
           section.querySelectorAll(".mode-btn").forEach((button) => {
             button.addEventListener("click", () => setMode(button.dataset.mode));

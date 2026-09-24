@@ -1,12 +1,14 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pixel Taquin - Sliding Tile Puzzle</title>
     <link rel="icon" href="../../assets/icons/arcade-icon-v2-192.png" />
     <link rel="stylesheet" href="taquin.css" />
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
 
   <body data-arcade-shell="true">
@@ -23,7 +25,7 @@
       <main id="menu-screen" class="screen menu-screen">
         <section class="menu-card">
           <p class="eyebrow">SLIDING TILE PUZZLE</p>
-          <h1 class="logo">PIXEL<span>TAQUIN</span></h1>
+          <h2 class="logo">PIXEL<span>TAQUIN</span></h2>
           <p class="menu-intro">
             Préparez votre partie avant de lancer le puzzle.
           </p>
@@ -32,11 +34,11 @@
             <div class="control-group">
               <span class="group-label">DIFFICULTÉ</span>
               <div class="size-selector" aria-label="Choisir la difficulté">
-                <button class="btn btn-size active" data-size="3">
+                <button type="button" class="btn btn-size active" data-size="3">
                   Facile · 3x3
                 </button>
-                <button class="btn btn-size" data-size="4">Moyen · 4x4</button>
-                <button class="btn btn-size" data-size="5">
+                <button type="button" class="btn btn-size" data-size="4">Moyen · 4x4</button>
+                <button type="button" class="btn btn-size" data-size="5">
                   Difficile · 5x5
                 </button>
               </div>
@@ -44,7 +46,7 @@
 
             <div class="control-group">
               <span class="group-label">NUMÉROS</span>
-              <button
+              <button type="button"
                 id="btn-toggle-numbers"
                 class="btn btn-toggle active"
                 aria-pressed="true"
@@ -59,14 +61,14 @@
                 class="appearance-selector"
                 aria-label="Choisir l'apparence de l'application"
               >
-                <button
+                <button type="button"
                   class="btn btn-ui-theme active"
                   data-ui-theme="dark"
                   aria-pressed="true"
                 >
                   🌙 Foncé
                 </button>
-                <button
+                <button type="button"
                   class="btn btn-ui-theme"
                   data-ui-theme="light"
                   aria-pressed="false"
@@ -80,52 +82,52 @@
               <span class="group-label">THÈME</span>
               <div class="theme-picker">
                 <div class="theme-selector">
-                  <button class="btn btn-theme active" data-theme="sunset">
+                  <button type="button" class="btn btn-theme active" data-theme="sunset">
                     <span>🌇 Sunset</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="space">
+                  <button type="button" class="btn btn-theme" data-theme="space">
                     <span>🌌 Space</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="cyber">
+                  <button type="button" class="btn btn-theme" data-theme="cyber">
                     <span>🌆 Cyber</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="nature">
+                  <button type="button" class="btn btn-theme" data-theme="nature">
                     <span>🌲 Forest</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="ocean">
+                  <button type="button" class="btn btn-theme" data-theme="ocean">
                     <span>🌊 Ocean</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="lava">
+                  <button type="button" class="btn btn-theme" data-theme="lava">
                     <span>🌋 Lava</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="aurora">
+                  <button type="button" class="btn btn-theme" data-theme="aurora">
                     <span>✨ Aurora</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="mosaic">
+                  <button type="button" class="btn btn-theme" data-theme="mosaic">
                     <span>🔷 Mosaic</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="candy">
+                  <button type="button" class="btn btn-theme" data-theme="candy">
                     <span>🍬 Candy</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="desert">
+                  <button type="button" class="btn btn-theme" data-theme="desert">
                     <span>🏜️ Desert</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="sakura">
+                  <button type="button" class="btn btn-theme" data-theme="sakura">
                     <span>🌸 Sakura</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="glacier">
+                  <button type="button" class="btn btn-theme" data-theme="glacier">
                     <span>❄️ Glacier</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="tropical">
+                  <button type="button" class="btn btn-theme" data-theme="tropical">
                     <span>🌴 Tropical</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="autumn">
+                  <button type="button" class="btn btn-theme" data-theme="autumn">
                     <span>🍂 Autumn</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="moonlight">
+                  <button type="button" class="btn btn-theme" data-theme="moonlight">
                     <span>🌕 Moonlight</span>
                   </button>
-                  <button class="btn btn-theme" data-theme="prism">
+                  <button type="button" class="btn btn-theme" data-theme="prism">
                     <span>🔺 Prism</span>
                   </button>
                 </div>
@@ -143,10 +145,10 @@
           </div>
 
           <div class="menu-actions">
-            <button id="btn-start-game" class="btn btn-primary btn-start">
+            <button type="button" id="btn-start-game" class="btn btn-primary btn-start">
               Jouer
             </button>
-            <button id="btn-random-game" class="btn btn-random">
+            <button type="button" id="btn-random-game" class="btn btn-random">
               🎲 Partie aléatoire
             </button>
           </div>
@@ -157,9 +159,9 @@
           <div class="leaderboard-header">
             <h2>🏆 Meilleurs Scores</h2>
             <div class="leaderboard-tabs">
-              <button class="tab-btn active" data-tab="3">3x3</button>
-              <button class="tab-btn" data-tab="4">4x4</button>
-              <button class="tab-btn" data-tab="5">5x5</button>
+              <button type="button" class="tab-btn active" data-tab="3">3x3</button>
+              <button type="button" class="tab-btn" data-tab="4">4x4</button>
+              <button type="button" class="tab-btn" data-tab="5">5x5</button>
             </div>
           </div>
           <ol id="leaderboard-list" class="leaderboard-list">
@@ -185,7 +187,7 @@
               <span class="stat-label">TEMPS</span>
               <span id="timer" class="stat-value">00:00</span>
             </div>
-            <button id="btn-back-to-menu" class="btn btn-menu">Menu</button>
+            <button type="button" id="btn-back-to-menu" class="btn btn-menu">Menu</button>
           </div>
         </header>
 
@@ -200,8 +202,8 @@
               <div class="victory-content">
                 <h2>🎉 VICTOIRE !</h2>
                 <p id="victory-stats">Résolu en 0 coups et 00:00 !</p>
-                <button id="btn-restart" class="btn btn-action arcade-session-replay">Rejouer</button>
-                <button id="btn-victory-menu" class="btn">
+                <button type="button" id="btn-restart" class="btn btn-action arcade-session-replay">Rejouer</button>
+                <button type="button" id="btn-victory-menu" class="btn">
                   Retour au menu
                 </button>
               </div>
@@ -216,7 +218,7 @@
             </div>
 
             <div class="action-buttons">
-              <button id="btn-shuffle" class="btn btn-primary">
+              <button type="button" id="btn-shuffle" class="btn btn-primary">
                 <span class="icon">🔀</span> Mélanger
               </button>
             </div>

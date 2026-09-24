@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -167,6 +168,8 @@
       }
 
       .diff-btn {
+        color: inherit;
+        font: inherit;
         flex: 1;
         background: rgba(255, 255, 255, 0.05);
         border: 2px solid rgba(255, 255, 255, 0.1);
@@ -227,6 +230,8 @@
       }
 
       .mode-pill {
+        color: inherit;
+        font: inherit;
         padding: 10px 18px;
         background: rgba(255, 255, 255, 0.05);
         border: 2px solid rgba(255, 255, 255, 0.1);
@@ -988,6 +993,7 @@
       @media (max-width:400px) { .menu-screen { padding:64px 12px 20px; } .menu-container.menu-2026 { padding:21px 16px; border-radius:22px; } .menu-2026 .diff-btn { min-height:112px; } }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -1011,64 +1017,76 @@
 
         <div class="section-label">Difficulté</div>
         <div class="difficulty-grid">
-          <div
+          <button
+            type="button"
             class="diff-btn selected"
             data-diff="easy"
+            aria-pressed="true"
             onclick="selectDifficulty('easy', this)"
           >
             <div class="diff-icon">🌱</div>
             <div class="diff-name">Facile</div>
             <div class="diff-desc">+ − simple<br />60 sec</div>
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             class="diff-btn"
             data-diff="medium"
+            aria-pressed="false"
             onclick="selectDifficulty('medium', this)"
           >
             <div class="diff-icon">🔥</div>
             <div class="diff-name">Normal</div>
             <div class="diff-desc">+ − × ÷<br />45 sec</div>
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             class="diff-btn"
             data-diff="hard"
+            aria-pressed="false"
             onclick="selectDifficulty('hard', this)"
           >
             <div class="diff-icon">💀</div>
             <div class="diff-name">Expert</div>
             <div class="diff-desc">Tout mixé<br />30 sec</div>
-          </div>
+          </button>
         </div>
 
         <div class="mode-section">
           <div class="section-label">Mode de jeu</div>
           <div class="mode-pills">
-            <div
+            <button
+              type="button"
               class="mode-pill selected"
               data-mode="classic"
+              aria-pressed="true"
               onclick="selectMode('classic', this)"
             >
               ⏱️ Classique
-            </div>
-            <div
+            </button>
+            <button
+              type="button"
               class="mode-pill"
               data-mode="survival"
+              aria-pressed="false"
               onclick="selectMode('survival', this)"
             >
               ❤️ Survie
-            </div>
-            <div
+            </button>
+            <button
+              type="button"
               class="mode-pill"
               data-mode="blitz"
+              aria-pressed="false"
               onclick="selectMode('blitz', this)"
             >
               ⚡ Blitz
-            </div>
+            </button>
           </div>
         </div>
 
-        <button class="btn-primary" onclick="startGame()">▶ Commencer</button>
-        <button class="btn-secondary" onclick="showLeaderboard()">
+        <button type="button" class="btn-primary" onclick="startGame()">▶ Commencer</button>
+        <button type="button" class="btn-secondary" onclick="showLeaderboard()">
           🏆 Classement
         </button>
       </div>
@@ -1078,7 +1096,7 @@
     <div class="screen game-screen hidden" id="gameScreen">
       <div class="game-container">
         <div class="game-header">
-          <button class="back-btn" onclick="confirmQuit()">←</button>
+          <button type="button" class="back-btn" onclick="confirmQuit()">←</button>
           <div class="game-info">
             <div class="info-item">
               <div class="info-value score" id="scoreDisplay">0</div>
@@ -1121,19 +1139,19 @@
         </div>
 
         <div class="numpad">
-          <button class="num-btn" onclick="inputNumber('7')">7</button>
-          <button class="num-btn" onclick="inputNumber('8')">8</button>
-          <button class="num-btn" onclick="inputNumber('9')">9</button>
-          <button class="num-btn" onclick="inputNumber('4')">4</button>
-          <button class="num-btn" onclick="inputNumber('5')">5</button>
-          <button class="num-btn" onclick="inputNumber('6')">6</button>
-          <button class="num-btn" onclick="inputNumber('1')">1</button>
-          <button class="num-btn" onclick="inputNumber('2')">2</button>
-          <button class="num-btn" onclick="inputNumber('3')">3</button>
-          <button class="num-btn negative" onclick="inputNumber('-')">±</button>
-          <button class="num-btn" onclick="inputNumber('0')">0</button>
-          <button class="num-btn action" onclick="clearInput()">⌫</button>
-          <button
+          <button type="button" class="num-btn" onclick="inputNumber('7')">7</button>
+          <button type="button" class="num-btn" onclick="inputNumber('8')">8</button>
+          <button type="button" class="num-btn" onclick="inputNumber('9')">9</button>
+          <button type="button" class="num-btn" onclick="inputNumber('4')">4</button>
+          <button type="button" class="num-btn" onclick="inputNumber('5')">5</button>
+          <button type="button" class="num-btn" onclick="inputNumber('6')">6</button>
+          <button type="button" class="num-btn" onclick="inputNumber('1')">1</button>
+          <button type="button" class="num-btn" onclick="inputNumber('2')">2</button>
+          <button type="button" class="num-btn" onclick="inputNumber('3')">3</button>
+          <button type="button" class="num-btn negative" onclick="inputNumber('-')">±</button>
+          <button type="button" class="num-btn" onclick="inputNumber('0')">0</button>
+          <button type="button" class="num-btn action" onclick="clearInput()">⌫</button>
+          <button type="button"
             class="num-btn submit"
             style="grid-column: span 3"
             onclick="submitAnswer()"
@@ -1187,10 +1205,10 @@
         </div>
 
         <div class="result-buttons">
-          <button class="result-btn primary" onclick="restartGame()">
+          <button type="button" class="result-btn primary" onclick="restartGame()">
             🔄 Rejouer
           </button>
-          <button class="result-btn secondary" onclick="backToMenu()">
+          <button type="button" class="result-btn secondary" onclick="backToMenu()">
             🏠 Menu
           </button>
         </div>
@@ -1206,20 +1224,20 @@
         </div>
 
         <div class="lb-tabs">
-          <button class="lb-tab active" onclick="showLbTab('easy', this)">
+          <button type="button" class="lb-tab active" onclick="showLbTab('easy', this)">
             🌱 Facile
           </button>
-          <button class="lb-tab" onclick="showLbTab('medium', this)">
+          <button type="button" class="lb-tab" onclick="showLbTab('medium', this)">
             🔥 Normal
           </button>
-          <button class="lb-tab" onclick="showLbTab('hard', this)">
+          <button type="button" class="lb-tab" onclick="showLbTab('hard', this)">
             💀 Expert
           </button>
         </div>
 
         <div class="lb-list" id="lbList"></div>
 
-        <button class="back-btn-large" onclick="backToMenu()">
+        <button type="button" class="back-btn-large" onclick="backToMenu()">
           ← Retour au menu
         </button>
       </div>
@@ -1352,7 +1370,7 @@
         const tabs = document.querySelector(".lb-tabs");
         if (tabs && !document.getElementById("lbSummary")) {
           const controls = document.createElement("div");
-          controls.innerHTML = '<p class="lb-local-note">Sauvegard\u00e9s uniquement sur cet appareil.</p><div class="lb-mode-filters" role="group" aria-label="Filtrer les records par mode"><button class="lb-mode-filter active" data-lb-mode="all">Tous</button><button class="lb-mode-filter" data-lb-mode="classic">Classique</button><button class="lb-mode-filter" data-lb-mode="survival">Survie</button><button class="lb-mode-filter" data-lb-mode="blitz">Blitz</button></div><p class="lb-summary" id="lbSummary"></p>';
+          controls.innerHTML = '<p class="lb-local-note">Sauvegard\u00e9s uniquement sur cet appareil.</p><div class="lb-mode-filters" role="group" aria-label="Filtrer les records par mode"><button type="button" class="lb-mode-filter active" data-lb-mode="all">Tous</button><button type="button" class="lb-mode-filter" data-lb-mode="classic">Classique</button><button type="button" class="lb-mode-filter" data-lb-mode="survival">Survie</button><button type="button" class="lb-mode-filter" data-lb-mode="blitz">Blitz</button></div><p class="lb-summary" id="lbSummary"></p>';
           tabs.after(controls);
           controls.querySelectorAll(".lb-mode-filter").forEach((button) => {
             button.addEventListener("click", () => setLeaderboardMode(button.dataset.lbMode, button));
@@ -1443,8 +1461,10 @@
       function selectDifficulty(diff, el) {
         document.querySelectorAll(".diff-btn").forEach((b) => {
           b.classList.remove("selected", "medium", "hard");
+          b.setAttribute("aria-pressed", "false");
         });
         el.classList.add("selected");
+        el.setAttribute("aria-pressed", "true");
         if (diff === "medium") el.classList.add("medium");
         if (diff === "hard") el.classList.add("hard");
         game.difficulty = diff;
@@ -1455,8 +1475,12 @@
       function selectMode(mode, el) {
         document
           .querySelectorAll(".mode-pill")
-          .forEach((p) => p.classList.remove("selected"));
+          .forEach((p) => {
+            p.classList.remove("selected");
+            p.setAttribute("aria-pressed", "false");
+          });
         el.classList.add("selected");
+        el.setAttribute("aria-pressed", "true");
         game.mode = mode;
         updateSessionPreview();
         playSound("click");

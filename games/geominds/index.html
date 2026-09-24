@@ -1,16 +1,13 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
     <title>🎮 GéoMinds - Géométrie & Logique Spatiale</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Comfortaa:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
     <style>
       /* ===== RESET & VARIABLES ===== */
@@ -958,6 +955,10 @@
       }
 
       .difficulty-option {
+        width: 100%;
+        color: inherit;
+        font: inherit;
+        text-align: left;
         display: flex;
         align-items: center;
         gap: 16px;
@@ -1179,6 +1180,7 @@
         outline-offset: 3px;
       }
     </style>
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a class="arcade-home-link" href="../../index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil">
@@ -1211,23 +1213,23 @@
         </div>
 
         <div class="menu-buttons">
-          <button class="btn btn-primary" onclick="game.startMode('challenge')">
+          <button type="button" class="btn btn-primary" onclick="game.startMode('challenge')">
             <span class="btn-icon">🎯</span>
             Mode Défi
           </button>
-          <button class="btn btn-secondary" onclick="game.startMode('free')">
+          <button type="button" class="btn btn-secondary" onclick="game.startMode('free')">
             <span class="btn-icon">🔮</span>
             Mode Libre
           </button>
-          <button class="btn btn-tertiary" onclick="game.startMode('creative')">
+          <button type="button" class="btn btn-tertiary" onclick="game.startMode('creative')">
             <span class="btn-icon">✨</span>
             Mode Créatif
           </button>
-          <button class="btn btn-outline btn-small" onclick="game.showStats()">
+          <button type="button" class="btn btn-outline btn-small" onclick="game.showStats()">
             <span class="btn-icon">📊</span>
             Statistiques
           </button>
-          <button
+          <button type="button"
             class="btn btn-outline btn-small"
             onclick="game.showSettings()"
           >
@@ -1242,7 +1244,7 @@
     <div class="screen" id="gameScreen">
       <header class="game-header">
         <div class="header-left">
-          <button class="header-btn" onclick="game.pauseGame()" title="Menu">
+          <button type="button" class="header-btn" onclick="game.pauseGame()" title="Menu">
             ☰
           </button>
         </div>
@@ -1260,10 +1262,10 @@
           </div>
         </div>
         <div class="header-right">
-          <button class="header-btn" onclick="game.showHint()" title="Indice">
+          <button type="button" class="header-btn" onclick="game.showHint()" title="Indice">
             💡
           </button>
-          <button class="header-btn" onclick="game.skipPuzzle()" title="Passer">
+          <button type="button" class="header-btn" onclick="game.skipPuzzle()" title="Passer">
             ⏭️
           </button>
         </div>
@@ -1284,6 +1286,7 @@
             id="renderCanvas"
             width="400"
             height="400"
+            aria-label="Zone de construction géométrique guidée"
           ></canvas>
           <div class="answer-options" id="answerOptions"></div>
         </div>
@@ -1294,7 +1297,7 @@
     <div class="screen" id="freeScreen">
       <header class="game-header">
         <div class="header-left">
-          <button class="header-btn" onclick="game.backToMenu()">←</button>
+          <button type="button" class="header-btn" onclick="game.backToMenu()">←</button>
         </div>
         <div class="header-center">
           <div class="level-badge">
@@ -1302,7 +1305,7 @@
           </div>
         </div>
         <div class="header-right">
-          <button
+          <button type="button"
             class="header-btn"
             onclick="game.clearCanvas()"
             title="Effacer"
@@ -1317,21 +1320,22 @@
         id="freeCanvas"
         width="600"
         height="500"
+        aria-label="Zone de construction géométrique libre"
         style="margin: 90px auto 20px"
       ></canvas>
 
       <div class="shape-palette" id="shapePalette"></div>
 
       <div class="free-mode-toolbar">
-        <button class="tool-btn active" data-tool="select" title="Sélectionner">
+        <button type="button" class="tool-btn active" data-tool="select" title="Sélectionner">
           👆
         </button>
-        <button class="tool-btn" data-tool="move" title="Déplacer">✋</button>
-        <button class="tool-btn" data-tool="rotate" title="Tourner">🔄</button>
-        <button class="tool-btn" data-tool="scale" title="Redimensionner">
+        <button type="button" class="tool-btn" data-tool="move" title="Déplacer">✋</button>
+        <button type="button" class="tool-btn" data-tool="rotate" title="Tourner">🔄</button>
+        <button type="button" class="tool-btn" data-tool="scale" title="Redimensionner">
           📐
         </button>
-        <button class="tool-btn" data-tool="delete" title="Supprimer">
+        <button type="button" class="tool-btn" data-tool="delete" title="Supprimer">
           ❌
         </button>
       </div>
@@ -1341,7 +1345,7 @@
     <div class="screen" id="creativeScreen">
       <header class="game-header">
         <div class="header-left">
-          <button class="header-btn" onclick="game.backToMenu()">←</button>
+          <button type="button" class="header-btn" onclick="game.backToMenu()">←</button>
         </div>
         <div class="header-center">
           <div class="level-badge">
@@ -1349,14 +1353,14 @@
           </div>
         </div>
         <div class="header-right">
-          <button
+          <button type="button"
             class="header-btn"
             onclick="game.saveCreation()"
             title="Sauvegarder"
           >
             💾
           </button>
-          <button
+          <button type="button"
             class="header-btn"
             onclick="game.shareCreation()"
             title="Partager"
@@ -1371,6 +1375,7 @@
         id="creativeCanvas"
         width="500"
         height="450"
+        aria-label="Zone de création géométrique"
         style="margin: 90px auto 20px"
       ></canvas>
 
@@ -1411,7 +1416,7 @@
           />
         </div>
 
-        <button
+        <button type="button"
           class="btn btn-primary btn-small"
           style="width: 100%; margin-top: 16px"
           onclick="game.testCreation()"
@@ -1439,10 +1444,10 @@
         <h2 class="modal-title">Pause</h2>
         <p class="modal-text">Prends ton temps, les formes t'attendent !</p>
         <div class="modal-buttons">
-          <button class="btn btn-primary" onclick="game.resumeGame()">
+          <button type="button" class="btn btn-primary" onclick="game.resumeGame()">
             ▶️ Continuer
           </button>
-          <button class="btn btn-outline" onclick="game.backToMenu()">
+          <button type="button" class="btn btn-outline" onclick="game.backToMenu()">
             🏠 Menu
           </button>
         </div>
@@ -1471,7 +1476,7 @@
         </div>
 
         <div class="modal-buttons">
-          <button class="btn btn-primary" onclick="game.hideStats()">
+          <button type="button" class="btn btn-primary" onclick="game.hideStats()">
             Fermer
           </button>
         </div>
@@ -1485,9 +1490,11 @@
         <h2 class="modal-title">Paramètres</h2>
 
         <div class="difficulty-selector">
-          <div
+          <button
+            type="button"
             class="difficulty-option selected"
             data-difficulty="adaptive"
+            aria-pressed="true"
             onclick="game.setDifficulty('adaptive')"
           >
             <div class="difficulty-icon">🎯</div>
@@ -1495,10 +1502,12 @@
               <div class="difficulty-name">Adaptatif</div>
               <div class="difficulty-desc">La difficulté s'adapte à toi</div>
             </div>
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             class="difficulty-option"
             data-difficulty="easy"
+            aria-pressed="false"
             onclick="game.setDifficulty('easy')"
           >
             <div class="difficulty-icon">🌱</div>
@@ -1506,10 +1515,12 @@
               <div class="difficulty-name">Découverte</div>
               <div class="difficulty-desc">Pour débuter tranquillement</div>
             </div>
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             class="difficulty-option"
             data-difficulty="medium"
+            aria-pressed="false"
             onclick="game.setDifficulty('medium')"
           >
             <div class="difficulty-icon">🌿</div>
@@ -1517,10 +1528,12 @@
               <div class="difficulty-name">Équilibré</div>
               <div class="difficulty-desc">Un bon challenge</div>
             </div>
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             class="difficulty-option"
             data-difficulty="hard"
+            aria-pressed="false"
             onclick="game.setDifficulty('hard')"
           >
             <div class="difficulty-icon">🌳</div>
@@ -1528,11 +1541,11 @@
               <div class="difficulty-name">Expert</div>
               <div class="difficulty-desc">Pour les as de la géométrie</div>
             </div>
-          </div>
+          </button>
         </div>
 
         <div class="modal-buttons">
-          <button class="btn btn-primary" onclick="game.hideSettings()">
+          <button type="button" class="btn btn-primary" onclick="game.hideSettings()">
             Enregistrer
           </button>
         </div>
@@ -1550,7 +1563,7 @@
         <div class="tutorial-dot"></div>
         <div class="tutorial-dot"></div>
       </div>
-      <button
+      <button type="button"
         class="btn btn-primary btn-small"
         onclick="game.nextTutorialStep()"
       >
@@ -3452,10 +3465,9 @@
         setDifficulty(difficulty) {
           // Mettre à jour l'UI
           document.querySelectorAll(".difficulty-option").forEach((opt) => {
-            opt.classList.toggle(
-              "selected",
-              opt.dataset.difficulty === difficulty,
-            );
+            const isSelected = opt.dataset.difficulty === difficulty;
+            opt.classList.toggle("selected", isSelected);
+            opt.setAttribute("aria-pressed", String(isSelected));
           });
 
           // Appliquer (sauf adaptatif qui s'ajuste seul)

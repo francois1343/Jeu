@@ -394,7 +394,11 @@
   async function loadSharedExperience() {
     await loadSharedScript("arcade-game-config.js");
     await loadSharedScript("arcade-game-preferences.js");
-    if (document.body?.dataset.arcadeShell === "true") await loadSharedScript("arcade-game-shell.js");
+    // Toute partie lancée depuis l'index reçoit désormais le même menu commun.
+    // Une page peut uniquement s'en exclure explicitement avec data-arcade-shell="false".
+    if (document.body?.dataset.arcadeShell !== "false") {
+      await loadSharedScript("arcade-game-shell.js");
+    }
   }
 
   loadSharedExperience();

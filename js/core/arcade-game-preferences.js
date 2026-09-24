@@ -11,7 +11,12 @@
     visualIntensity: "balanced",
   };
   const listeners = new Set();
+  const reducedMotionQuery = global.matchMedia?.("(prefers-reduced-motion: reduce)");
   let current = { ...defaults };
+
+  function prefersReducedMotion() {
+    return Boolean(reducedMotionQuery?.matches);
+  }
 
   function clone(value) {
     return { ...value };
@@ -30,6 +35,7 @@
       root.dataset.arcadeMusic = current.music ? "on" : "off";
       root.dataset.arcadeVibration = current.vibration ? "on" : "off";
       root.dataset.arcadeAnimations = current.animations ? "on" : "off";
+      root.dataset.arcadeReducedMotion = prefersReducedMotion() ? "reduce" : "no-preference";
       root.dataset.arcadeVisualIntensity = current.visualIntensity;
     }
     const detail = { preferences: clone(current), source };
@@ -68,10 +74,15 @@
     allowsSound: () => current.sound,
     allowsMusic: () => current.music,
     allowsVibration: () => current.vibration,
-    allowsAnimations: () => current.animations,
+    allowsAnimations: () => current.animations && !prefersReducedMotion(),
   });
 
   sync();
   global.addEventListener?.("arcade-local-store-change", sync);
+  if (typeof reducedMotionQuery?.addEventListener === "function") {
+    reducedMotionQuery.addEventListener("change", () => apply(current, "system"));
+  } else if (typeof reducedMotionQuery?.addListener === "function") {
+    reducedMotionQuery.addListener(() => apply(current, "system"));
+  }
   global.dispatchEvent?.(new CustomEvent("arcade:preferences-ready", { detail: { preferences: clone(current) } }));
 })(window);

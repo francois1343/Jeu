@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -10,6 +11,7 @@
     <title>CYBERFIND — Chasse aux anomalies</title>
     <link rel="stylesheet" href="cyberfind.css" />
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -29,10 +31,10 @@
         <div class="mission-status">
           <small>TEMPS</small><strong id="timer">00:00</strong>
         </div>
-        <button id="btn-hint" class="btn-action" disabled>
+        <button type="button" id="btn-hint" class="btn-action" disabled>
           ✦ <span id="hint-cooldown">INDICE</span>
         </button>
-        <button id="btn-pause" class="btn-icon" aria-label="Mettre en pause">
+        <button type="button" id="btn-pause" class="btn-icon" aria-label="Mettre en pause">
           Ⅱ
         </button>
       </header>
@@ -51,7 +53,7 @@
             <div id="ambient-layer"></div>
           </div>
           <div id="hitbox-layer"></div>
-          <canvas id="effects-canvas"></canvas>
+    <canvas id="effects-canvas" aria-hidden="true"></canvas>
         </div>
         <div class="viewport-help">
           GLISSER POUR EXPLORER &nbsp; • &nbsp; SCROLLER POUR ZOOMER
@@ -79,24 +81,24 @@
             les détails et retrouvez-les avant de perdre le fil.
           </p>
           <div class="difficulty-grid" id="difficulty-grid">
-            <button class="difficulty-card active" data-difficulty="rookie">
+            <button type="button" class="difficulty-card active" data-difficulty="rookie">
               <span>01</span><strong>RECRUE</strong
               ><small>10 anomalies · détente</small>
             </button>
-            <button class="difficulty-card" data-difficulty="agent">
+            <button type="button" class="difficulty-card" data-difficulty="agent">
               <span>02</span><strong>AGENT</strong
               ><small>16 anomalies · dense</small>
             </button>
-            <button class="difficulty-card" data-difficulty="ghost">
+            <button type="button" class="difficulty-card" data-difficulty="ghost">
               <span>03</span><strong>FANTÔME</strong
               ><small>24 anomalies · exigeant</small>
             </button>
-            <button class="difficulty-card" data-difficulty="overload">
+            <button type="button" class="difficulty-card" data-difficulty="overload">
               <span>04</span><strong>SURCHARGE</strong
               ><small>32 anomalies · chaos total</small>
             </button>
           </div>
-          <button id="btn-start" class="btn-primary">
+          <button type="button" id="btn-start" class="btn-primary">
             LANCER LA MISSION <b>→</b>
           </button>
           <p class="menu-tip">
@@ -109,8 +111,8 @@
           <div class="eyebrow">// TRANSMISSION SUSPENDUE</div>
           <h2>MISSION EN PAUSE</h2>
           <p>Le district reste en mémoire. Reprenez quand vous êtes prêt.</p>
-          <button id="btn-resume" class="btn-primary">REPRENDRE <b>→</b></button
-          ><button id="btn-menu" class="btn-secondary">RETOUR AU MENU</button>
+          <button type="button" id="btn-resume" class="btn-primary">REPRENDRE <b>→</b></button
+          ><button type="button" id="btn-menu" class="btn-secondary">RETOUR AU MENU</button>
         </section>
       </div>
       <div id="victory-overlay" class="overlay hidden">
@@ -121,9 +123,9 @@
           <div class="best-score-box">
             MEILLEUR TEMPS <strong id="best-time">--:--</strong>
           </div>
-          <button id="btn-restart" class="btn-primary">
+          <button type="button" id="btn-restart" class="btn-primary">
             NOUVELLE MISSION <b>→</b></button
-          ><button id="btn-victory-menu" class="btn-secondary">
+          ><button type="button" id="btn-victory-menu" class="btn-secondary">
             CHOISIR UNE DIFFICULTÉ
           </button>
         </section>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <title>Démineur Pro</title>
@@ -293,6 +294,8 @@ body {
 }
 
 .difficulty-btn {
+  width: 100%;
+  font: inherit;
   padding: 20px;
   background: linear-gradient(135deg, #2d3561, #1f2847);
   border: 2px solid #3d4872;
@@ -825,11 +828,12 @@ body {
 }
 </style>
   <link rel="stylesheet" href="../../css/shared/arcade-home.css">
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
 </head>
 <body>
   <a class="arcade-home-link" href="../../index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil"><span class="arcade-home-icon" aria-hidden="true">⌂</span><span class="arcade-home-label">Accueil</span></a>
 
-<canvas id="particles-canvas"></canvas>
+<canvas id="particles-canvas" aria-hidden="true"></canvas>
 
 <!-- HUD -->
 <div id="game-container">
@@ -840,7 +844,7 @@ body {
     </div>
     
     <div class="hud-section">
-      <button class="face-btn" id="face-btn" onclick="resetGame()">😊</button>
+      <button type="button" class="face-btn" id="face-btn" onclick="resetGame()">😊</button>
     </div>
     
     <div class="hud-section">
@@ -864,29 +868,29 @@ body {
     <p class="subtitle">Version Pro v2.0</p>
     
     <div class="difficulty-grid">
-      <div class="difficulty-btn" onclick="startGame('beginner')">
+      <button type="button" class="difficulty-btn" onclick="startGame('beginner')">
         <div class="diff-name">🟢 Débutant</div>
         <div class="diff-info">8×8 • 10 mines</div>
-      </div>
+      </button>
       
-      <div class="difficulty-btn" onclick="startGame('intermediate')">
+      <button type="button" class="difficulty-btn" onclick="startGame('intermediate')">
         <div class="diff-name">🟡 Intermédiaire</div>
         <div class="diff-info">16×16 • 40 mines</div>
-      </div>
+      </button>
       
-      <div class="difficulty-btn" onclick="startGame('expert')">
+      <button type="button" class="difficulty-btn" onclick="startGame('expert')">
         <div class="diff-name">🔴 Expert</div>
         <div class="diff-info">30×16 • 99 mines</div>
-      </div>
+      </button>
       
-      <div class="difficulty-btn" onclick="showCustom()">
+      <button type="button" class="difficulty-btn" onclick="showCustom()">
         <div class="diff-name">⚙️ Personnalisé</div>
         <div class="diff-info">À votre choix</div>
-      </div>
+      </button>
     </div>
     
-    <button class="menu-btn secondary" onclick="showRecords()">🏆 Records</button>
-    <button class="menu-btn secondary" onclick="showSettings()">⚙️ Paramètres</button>
+    <button type="button" class="menu-btn secondary" onclick="showRecords()">🏆 Records</button>
+    <button type="button" class="menu-btn secondary" onclick="showSettings()">⚙️ Paramètres</button>
     
     <div class="controls-help">
       <strong>🎮 Contrôles :</strong><br>
@@ -924,8 +928,8 @@ body {
       Maximum : 30 × 20 (600 cases) · 89 mines pour cette grille
     </p>
     
-    <button class="menu-btn" onclick="startCustomGame()">✅ Lancer la partie</button>
-    <button class="menu-btn settings-back" onclick="hideCustom()">← Retour</button>
+    <button type="button" class="menu-btn" onclick="startCustomGame()">✅ Lancer la partie</button>
+    <button type="button" class="menu-btn settings-back" onclick="hideCustom()">← Retour</button>
   </div>
 </div>
 
@@ -940,11 +944,11 @@ body {
       🏆 NOUVEAU RECORD ! 🏆
     </div>
 
-    <button id="view-custom-record" class="menu-btn secondary" style="display:none;" onclick="showRecords('custom')">
+    <button type="button" id="view-custom-record" class="menu-btn secondary" style="display:none;" onclick="showRecords('custom')">
       🏆 Voir mon classement personnalisé
     </button>
-    <button class="menu-btn" onclick="resetGame()">🔄 Rejouer</button>
-    <button class="menu-btn tertiary" onclick="quitToMenu()">🏠 Menu Principal</button>
+    <button type="button" class="menu-btn" onclick="resetGame()">🔄 Rejouer</button>
+    <button type="button" class="menu-btn tertiary" onclick="quitToMenu()">🏠 Menu Principal</button>
   </div>
 </div>
 
@@ -954,10 +958,10 @@ body {
     <h2>🏆 RECORDS</h2>
     
     <div class="records-tabs">
-      <button class="tab-btn active" data-record-tab="beginner" onclick="showRecordTab('beginner', this)">Débutant</button>
-      <button class="tab-btn" data-record-tab="intermediate" onclick="showRecordTab('intermediate', this)">Inter.</button>
-      <button class="tab-btn" data-record-tab="expert" onclick="showRecordTab('expert', this)">Expert</button>
-      <button class="tab-btn" data-record-tab="custom" onclick="showRecordTab('custom', this)">Perso.</button>
+      <button type="button" class="tab-btn active" data-record-tab="beginner" onclick="showRecordTab('beginner', this)">Débutant</button>
+      <button type="button" class="tab-btn" data-record-tab="intermediate" onclick="showRecordTab('intermediate', this)">Inter.</button>
+      <button type="button" class="tab-btn" data-record-tab="expert" onclick="showRecordTab('expert', this)">Expert</button>
+      <button type="button" class="tab-btn" data-record-tab="custom" onclick="showRecordTab('custom', this)">Perso.</button>
     </div>
 
     <div class="records-note" id="records-note">Classement au meilleur temps.</div>
@@ -965,8 +969,8 @@ body {
     <div class="records-list" id="records-list"></div>
 
     <div class="records-actions">
-      <button class="menu-btn records-clear" onclick="clearAllRecords()">🗑️ Effacer tout</button>
-      <button class="menu-btn records-back" onclick="hideRecords()">← Retour</button>
+      <button type="button" class="menu-btn records-clear" onclick="clearAllRecords()">🗑️ Effacer tout</button>
+      <button type="button" class="menu-btn records-back" onclick="hideRecords()">← Retour</button>
     </div>
   </div>
 </div>
@@ -1011,8 +1015,8 @@ body {
       <label for="chord-mode">Mode corde (clic milieu)</label>
     </div>
     
-    <button class="menu-btn" onclick="saveSettings()">✅ Sauvegarder</button>
-    <button class="menu-btn settings-back" onclick="hideSettings()">← Retour</button>
+    <button type="button" class="menu-btn" onclick="saveSettings()">✅ Sauvegarder</button>
+    <button type="button" class="menu-btn settings-back" onclick="hideSettings()">← Retour</button>
   </div>
 </div>
 

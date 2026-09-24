@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <!-- 1. Meta tags essentiels -->
     <meta charset="UTF-8" />
     <meta
@@ -21,6 +22,7 @@
     <!-- 2. Feuille de style -->
     <link rel="stylesheet" href="synthwave-runner.css" />
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
 
   <body>
@@ -42,7 +44,7 @@
         <p class="game-subtitle">Synthwave Infini</p>
 
         <!-- 5. Bouton de démarrage -->
-        <button id="startButton" class="btn btn-start">[ START ]</button>
+        <button type="button" id="startButton" class="btn btn-start">[ START ]</button>
 
         <!-- 6. Affichage du High Score -->
         <div class="high-score-display">
@@ -158,8 +160,8 @@
 
         <!-- 15. Boutons d'action -->
         <div class="game-over-buttons">
-          <button id="restartButton" class="btn btn-restart">[ RETRY ]</button>
-          <button id="menuButton" class="btn btn-menu">[ MAIN MENU ]</button>
+          <button type="button" id="restartButton" class="btn btn-restart">[ RETRY ]</button>
+          <button type="button" id="menuButton" class="btn btn-menu">[ MAIN MENU ]</button>
         </div>
       </div>
     </section>

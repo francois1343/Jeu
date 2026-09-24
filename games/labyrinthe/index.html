@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -663,6 +664,7 @@
       }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -686,13 +688,13 @@
         <h1 class="title">Safari Maze</h1>
         <p class="subtitle">Trouve la sortie... si tu peux ! 🧭</p>
 
-        <button class="btn btn-primary" onclick="startGame()">
+        <button type="button" class="btn btn-primary" onclick="startGame()">
           🚀 Nouvelle Aventure
         </button>
 
         <div class="section-title">🎯 Difficulté</div>
 
-        <button
+        <button type="button"
           class="btn btn-difficulty selected"
           onclick="selectDifficulty('easy', this)"
         >
@@ -703,7 +705,7 @@
           </div>
         </button>
 
-        <button
+        <button type="button"
           class="btn btn-difficulty"
           onclick="selectDifficulty('medium', this)"
         >
@@ -714,7 +716,7 @@
           </div>
         </button>
 
-        <button
+        <button type="button"
           class="btn btn-difficulty"
           onclick="selectDifficulty('hard', this)"
         >
@@ -742,7 +744,7 @@
           </div>
         </div>
 
-        <button class="btn btn-secondary" onclick="showHelp()">
+        <button type="button" class="btn btn-secondary" onclick="showHelp()">
           ❓ Comment jouer
         </button>
       </div>
@@ -751,7 +753,7 @@
     <!-- ===== ÉCRAN JEU ===== -->
     <div id="game-screen" class="screen hidden">
       <div class="game-header">
-        <button class="btn-icon" onclick="pauseGame()">⏸️</button>
+        <button type="button" class="btn-icon" onclick="pauseGame()">⏸️</button>
 
         <div class="game-stat">
           <div class="game-stat-value" id="game-level">1</div>
@@ -775,18 +777,18 @@
       </div>
 
       <div class="maze-container">
-        <canvas id="maze-canvas"></canvas>
+        <canvas id="maze-canvas" aria-label="Labyrinthe principal"></canvas>
       </div>
 
       <div class="minimap-container">
-        <canvas id="minimap" width="80" height="80"></canvas>
+        <canvas id="minimap" width="80" height="80" role="img" aria-label="Mini-carte du labyrinthe"></canvas>
       </div>
 
       <div class="mobile-controls">
-        <button class="ctrl-btn up" onclick="move('up')">▲</button>
-        <button class="ctrl-btn left" onclick="move('left')">◀</button>
-        <button class="ctrl-btn down" onclick="move('down')">▼</button>
-        <button class="ctrl-btn right" onclick="move('right')">▶</button>
+        <button type="button" class="ctrl-btn up" onclick="move('up')">▲</button>
+        <button type="button" class="ctrl-btn left" onclick="move('left')">◀</button>
+        <button type="button" class="ctrl-btn down" onclick="move('down')">▼</button>
+        <button type="button" class="ctrl-btn right" onclick="move('right')">▶</button>
       </div>
 
       <div class="controls-hint">
@@ -808,13 +810,13 @@
           Niveau <span id="pause-level">1</span> •
           <span id="pause-time">0:00</span>
         </p>
-        <button class="btn btn-primary" onclick="resumeGame()">
+        <button type="button" class="btn btn-primary" onclick="resumeGame()">
           ▶️ Reprendre
         </button>
-        <button class="btn btn-secondary" onclick="restartGame()">
+        <button type="button" class="btn btn-secondary" onclick="restartGame()">
           🔄 Recommencer
         </button>
-        <button class="btn btn-secondary" onclick="quitToMenu()">
+        <button type="button" class="btn btn-secondary" onclick="quitToMenu()">
           🏠 Menu
         </button>
       </div>
@@ -836,7 +838,7 @@
           </p>
           <p>⏱️ <strong>Score :</strong> Temps + Pas + Gemmes</p>
         </div>
-        <button class="btn btn-primary" onclick="hideHelp()">
+        <button type="button" class="btn btn-primary" onclick="hideHelp()">
           👍 Compris !
         </button>
       </div>
@@ -874,10 +876,10 @@
           </div>
         </div>
 
-        <button class="btn btn-primary" onclick="startGame()">
+        <button type="button" class="btn btn-primary" onclick="startGame()">
           🔄 Rejouer
         </button>
-        <button class="btn btn-secondary" onclick="quitToMenu()">
+        <button type="button" class="btn btn-secondary" onclick="quitToMenu()">
           🏠 Menu
         </button>
       </div>

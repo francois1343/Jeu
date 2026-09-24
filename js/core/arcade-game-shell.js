@@ -16,13 +16,22 @@
   let activated = false;
   let bindAttempts = 0;
   let dialog = null;
+  let resumeRequest = null;
 
   function element(id) {
     return global.document.getElementById(id);
   }
 
+  function resolvedGameKey() {
+    if (sessionApi?.gameKey) return sessionApi.gameKey;
+    const path = decodeURIComponent(global.location.pathname).replace(/\\/g, "/").toLocaleLowerCase("fr");
+    const segments = path.split("/").filter(Boolean);
+    const folder = segments.length > 1 ? segments[segments.length - 2] : "";
+    return global.document.body?.dataset.arcadeGame || shellConfig.routeAliases?.[folder] || null;
+  }
+
   function gameConfig() {
-    return shellConfig.games?.[sessionApi?.gameKey] || {};
+    return shellConfig.games?.[resolvedGameKey()] || {};
   }
 
   function injectStyleSheet() {
@@ -48,7 +57,7 @@
         <nav aria-label="Menu commun du jeu">
           <button type="button" data-shell-view="overview" aria-current="page">Partie</button>
           <button type="button" data-shell-view="tutorial">Tutoriel</button>
-          <button type="button" data-shell-view="leaderboard">Leaderboard</button>
+          <button type="button" data-shell-view="leaderboard">Classement</button>
           <button type="button" data-shell-view="settings">Paramètres</button>
           <button type="button" data-shell-view="rules">Règles</button>
         </nav>
@@ -58,6 +67,7 @@
             <strong id="arcadeShellGame">Jeu</strong>
             <small id="arcadeShellEconomy"></small>
             <p id="arcadeShellResult" class="arcade-shell-result" role="status" aria-live="polite"></p>
+            <p id="arcadeShellPauseInfo" class="arcade-shell-pause-info"></p>
           </div>
           <div class="arcade-shell-actions">
             <button type="button" class="is-primary" id="arcadeShellContinue">Jouer</button>
@@ -74,7 +84,7 @@
           </div>
         </section>
         <section data-shell-panel="leaderboard" hidden>
-          <p class="arcade-shell-explanation">Scores enregistrés par le système central sur ce navigateur.</p>
+          <p class="arcade-shell-explanation">Meilleurs scores enregistrés pour les profils de ce navigateur.</p>
           <ol class="arcade-shell-leaderboard" id="arcadeShellLeaderboard"></ol>
         </section>
         <section data-shell-panel="settings" hidden>
@@ -97,7 +107,18 @@
 
   function renderSession(detail = {}) {
     const session = detail.session || sessionApi.snapshot;
-    if (!session || !dialog) return;
+    if (!dialog) return;
+    if (!session) {
+      element("arcadeShellState").textContent = "Entraînement";
+      element("arcadeShellState").dataset.state = "standalone";
+      element("arcadeShellGame").textContent = gameConfig().title || global.document.title || "Jeu";
+      element("arcadeShellEconomy").textContent = "Ouverture directe · aucun Coin engagé";
+      element("arcadeShellContinue").hidden = false;
+      element("arcadeShellContinue").textContent = "Continuer";
+      element("arcadeShellReplay").hidden = true;
+      element("arcadeShellResult").hidden = true;
+      return;
+    }
     element("arcadeShellState").textContent = stateLabel(session.state);
     element("arcadeShellState").dataset.state = session.state;
     element("arcadeShellGame").textContent = session.title || session.gameKey;
@@ -119,7 +140,7 @@
   function tutorialSeenKey() {
     const profile = store?.getActiveProfile?.();
     const owner = profile?.id || profile?.pseudo || "local";
-    return `arcade.tutorial.v${config.version || 1}.${owner}.${sessionApi?.gameKey || "game"}`;
+    return `arcade.tutorial.v${config.version || 1}.${owner}.${resolvedGameKey() || "game"}`;
   }
 
   function markTutorialSeen() {
@@ -133,7 +154,13 @@
   function renderTutorial() {
     const list = element("arcadeShellTutorial");
     list.replaceChildren();
-    const steps = adapter.tutorial || gameConfig().tutorial || [];
+    const fallbackTitle = sessionApi?.snapshot?.title || gameConfig().title || "ce jeu";
+    const fallback = [
+      { title: "Objectif", text: `Terminez une partie de ${fallbackTitle} avec le meilleur résultat possible.` },
+      { title: "Commandes", text: "Utilisez les commandes affichées dans le jeu ; le menu commun reste accessible à tout moment." },
+      { title: "Conseil", text: "Consultez l’onglet Règles avant votre première partie." },
+    ];
+    const steps = adapter.tutorial || gameConfig().tutorial || fallback;
     steps.slice(0, 3).forEach((step, index) => {
       const item = global.document.createElement("li");
       const number = global.document.createElement("span");
@@ -162,8 +189,9 @@
   function renderLeaderboard() {
     const list = element("arcadeShellLeaderboard");
     list.replaceChildren();
+    const key = resolvedGameKey();
     const rows = (store?.listProfiles?.() || []).flatMap((profile) => (profile.sessions || [])
-      .filter((session) => session.gameKey === sessionApi.gameKey && Number.isFinite(Number(session.metadata?.score)))
+      .filter((session) => session.gameKey === key && Number.isFinite(Number(session.metadata?.score)))
       .map((session) => ({ pseudo: profile.pseudo, score: Number(session.metadata.score), at: session.resolvedAt || session.createdAt })))
       .sort((left, right) => right.score - left.score)
       .slice(0, Number(shellConfig.leaderboardLimit || 10));
@@ -221,16 +249,37 @@
   function renderRules() {
     const game = gameConfig();
     element("arcadeShellRulesTitle").textContent = adapter.rulesTitle || game.rulesTitle || "Règles du jeu";
-    element("arcadeShellRulesCopy").textContent = adapter.rules || game.rules || "Les règles détaillées seront reliées à ce menu lors de l’adaptation de ce jeu.";
+    element("arcadeShellRulesCopy").textContent = adapter.rules || game.rules || "Consultez les indications affichées dans le jeu pour découvrir son objectif et ses commandes.";
+  }
+
+  function pauseForShell() {
+    resumeRequest = null;
+    if (sessionApi.id && sessionApi.state !== "started") return false;
+    if (typeof adapter.pause === "function") {
+      adapter.pause();
+      pausedByShell = true;
+      return true;
+    }
+    const detail = { gameKey: resolvedGameKey(), handled: false, resume: null };
+    global.dispatchEvent?.(new CustomEvent("arcade:pause-request", { detail }));
+    if (detail.handled) {
+      pausedByShell = true;
+      resumeRequest = typeof detail.resume === "function" ? detail.resume : null;
+      return true;
+    }
+    return false;
   }
 
   function open(view = "overview") {
     lastFocused = global.document.activeElement;
-    if (sessionApi.state === "started" && typeof adapter.pause === "function") {
-      adapter.pause();
-      pausedByShell = true;
-    }
+    const gamePaused = pauseForShell();
+    global.document.documentElement.dataset.arcadeShellOpen = "true";
     renderSession();
+    const pauseInfo = element("arcadeShellPauseInfo");
+    pauseInfo.textContent = sessionApi.state === "started" || !sessionApi.id
+      ? (gamePaused ? "Partie suspendue pendant l’ouverture du menu." : "Menu de pause ouvert · les commandes du jeu sont bloquées.")
+      : "Configurez la partie, consultez les règles, puis lancez-vous.";
+    pauseInfo.dataset.mode = gamePaused ? "native" : "menu";
     renderSettings();
     renderRules();
     renderTutorial();
@@ -243,7 +292,13 @@
   function close() {
     if (dialog?.open) dialog.close();
     if (pausedByShell && typeof adapter.resume === "function") adapter.resume();
+    else if (pausedByShell && resumeRequest) resumeRequest();
+    if (pausedByShell) {
+      global.dispatchEvent?.(new CustomEvent("arcade:resume-request", { detail: { gameKey: resolvedGameKey() } }));
+    }
     pausedByShell = false;
+    resumeRequest = null;
+    delete global.document.documentElement.dataset.arcadeShellOpen;
     global.dispatchEvent?.(new CustomEvent("arcade:shell-close"));
     if (lastFocused?.isConnected) lastFocused.focus();
   }
@@ -257,7 +312,6 @@
 
   function bind() {
     const hud = element("arcadeSessionHud");
-    if (!hud) return false;
     if (element("arcadeGameShellButton")) return true;
     const button = global.document.createElement("button");
     button.id = "arcadeGameShellButton";
@@ -265,15 +319,24 @@
     button.textContent = "Menu";
     button.setAttribute("aria-haspopup", "dialog");
     button.addEventListener("click", () => open("overview"));
-    hud.appendChild(button);
-    hud.classList.add("has-common-menu");
+    if (hud) {
+      hud.appendChild(button);
+      hud.classList.add("has-common-menu");
+    } else {
+      button.classList.add("arcade-game-shell-launcher");
+      button.setAttribute("aria-label", "Ouvrir le menu commun du jeu");
+      global.document.body.appendChild(button);
+    }
 
     dialog.querySelector("[data-shell-close]").addEventListener("click", close);
-    dialog.addEventListener("click", (event) => { if (event.target === dialog) close(); });
+    dialog.addEventListener("click", (event) => { if (event.target === dialog) close(); event.stopPropagation(); });
+    dialog.addEventListener("pointerdown", (event) => event.stopPropagation());
+    dialog.addEventListener("pointerup", (event) => event.stopPropagation());
+    dialog.addEventListener("keydown", (event) => event.stopPropagation());
     dialog.addEventListener("cancel", (event) => { event.preventDefault(); close(); });
     dialog.querySelectorAll("[data-shell-view]").forEach((tab) => tab.addEventListener("click", () => showView(tab.dataset.shellView)));
     element("arcadeShellContinue").addEventListener("click", close);
-    element("arcadeShellReplay").addEventListener("click", () => sessionApi.replay());
+    element("arcadeShellReplay").addEventListener("click", () => sessionApi.id && sessionApi.replay());
     element("arcadeShellHome").addEventListener("click", goHome);
     element("arcadeShellTutorialStart").addEventListener("click", () => { markTutorialSeen(); close(); });
     element("arcadeShellTutorialSkip").addEventListener("click", () => { markTutorialSeen(); close(); });
@@ -288,7 +351,7 @@
       }
     });
     global.document.addEventListener("visibilitychange", () => {
-      if (global.document.hidden && sessionApi.state === "started" && typeof adapter.pause === "function") {
+      if (global.document.hidden && (sessionApi.state === "started" || !sessionApi.id) && typeof adapter.pause === "function") {
         adapter.pause();
         pausedByVisibility = true;
       } else if (!global.document.hidden && pausedByVisibility) {
@@ -306,7 +369,7 @@
   }
 
   function init() {
-    if (!sessionApi?.id || !preferencesApi) return;
+    if (!sessionApi || !preferencesApi || !resolvedGameKey()) return;
     injectStyleSheet();
     createDialog();
     activate();
@@ -321,13 +384,20 @@
     }
     activated = true;
     global.dispatchEvent?.(new CustomEvent("arcade:shell-ready"));
-    const hasTutorial = (gameConfig().tutorial || []).length > 0;
-    if (sessionApi.state === "created" && hasTutorial && !tutorialWasSeen()) {
+    const hasTutorial = (adapter.tutorial || gameConfig().tutorial || []).length > 0;
+    if ((sessionApi.state === "created" || !sessionApi.id) && hasTutorial && !tutorialWasSeen()) {
       global.setTimeout(() => open("tutorial"), 0);
     }
   }
 
-  global.ArcadeGameShell = Object.freeze({ configure, open, close });
+  global.ArcadeGameShell = Object.freeze({
+    configure,
+    open,
+    close,
+    get isOpen() { return Boolean(dialog?.open); },
+    get game() { return gameConfig(); },
+    get gameKey() { return resolvedGameKey(); },
+  });
   if (global.document.readyState === "loading") global.document.addEventListener("DOMContentLoaded", init, { once: true });
   else init();
 })(window);

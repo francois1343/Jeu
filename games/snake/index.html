@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -108,6 +109,8 @@
       }
 
       .mode-btn {
+        width: 100%;
+        font: inherit;
         padding: 20px 15px;
         background: rgba(255, 255, 255, 0.05);
         border: 2px solid #333;
@@ -471,6 +474,7 @@
       }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -490,33 +494,33 @@
         <p>Mange, grandis, survit !</p>
 
         <div class="mode-grid">
-          <div class="mode-btn selected" onclick="selectMode('classic', this)">
+          <button type="button" class="mode-btn selected" aria-pressed="true" onclick="selectMode('classic', this)">
             <span class="icon">🎮</span>
             <span class="name">Classique</span>
             <span class="desc">Snake original</span>
-          </div>
-          <div class="mode-btn" onclick="selectMode('speed', this)">
+          </button>
+          <button type="button" class="mode-btn" aria-pressed="false" onclick="selectMode('speed', this)">
             <span class="icon">⚡</span>
             <span class="name">Speed</span>
             <span class="desc">Ça accélère !</span>
-          </div>
-          <div class="mode-btn" onclick="selectMode('walls', this)">
+          </button>
+          <button type="button" class="mode-btn" aria-pressed="false" onclick="selectMode('walls', this)">
             <span class="icon">🧱</span>
             <span class="name">Labyrinthe</span>
             <span class="desc">Obstacles sur la grille</span>
-          </div>
-          <div class="mode-btn" onclick="selectMode('powerups', this)">
+          </button>
+          <button type="button" class="mode-btn" aria-pressed="false" onclick="selectMode('powerups', this)">
             <span class="icon">✨</span>
             <span class="name">Power-Ups</span>
             <span class="desc">Bonus spéciaux</span>
-          </div>
+          </button>
         </div>
 
-        <button class="menu-btn primary" onclick="startGame()">▶️ Jouer</button>
-        <button class="menu-btn secondary" onclick="showSettings()">
+        <button type="button" class="menu-btn primary" onclick="startGame()">▶️ Jouer</button>
+        <button type="button" class="menu-btn secondary" onclick="showSettings()">
           ⚙️ Options
         </button>
-        <button class="menu-btn secondary" onclick="showRecords()">
+        <button type="button" class="menu-btn secondary" onclick="showRecords()">
           🏆 Records
         </button>
       </div>
@@ -553,28 +557,34 @@
 
         <div class="setting-row">
           <span class="setting-label">Sons</span>
-          <div
+          <button
+            type="button"
             id="opt-sound"
             class="toggle active"
+            aria-label="Activer les sons"
+            aria-pressed="true"
             onclick="toggleOption(this)"
-          ></div>
+          ></button>
         </div>
 
         <div class="setting-row">
           <span class="setting-label">Particules</span>
-          <div
+          <button
+            type="button"
             id="opt-particles"
             class="toggle active"
+            aria-label="Activer les particules"
+            aria-pressed="true"
             onclick="toggleOption(this)"
-          ></div>
+          ></button>
         </div>
 
         <div class="setting-row">
           <span class="setting-label">Contrôles tactiles</span>
-          <div id="opt-touch" class="toggle" onclick="toggleOption(this)"></div>
+          <button type="button" id="opt-touch" class="toggle" aria-label="Activer les contrôles tactiles" aria-pressed="false" onclick="toggleOption(this)"></button>
         </div>
 
-        <button class="menu-btn primary" onclick="hideSettings()">
+        <button type="button" class="menu-btn primary" onclick="hideSettings()">
           ✓ Fermer
         </button>
       </div>
@@ -592,10 +602,10 @@
           <!-- Records dynamiques -->
         </div>
 
-        <button class="menu-btn secondary" onclick="clearRecords()">
+        <button type="button" class="menu-btn secondary" onclick="clearRecords()">
           🗑️ Effacer
         </button>
-        <button class="menu-btn primary" onclick="hideRecords()">
+        <button type="button" class="menu-btn primary" onclick="hideRecords()">
           ← Retour
         </button>
       </div>
@@ -631,21 +641,21 @@
       <div class="powerup-bar" id="powerup-bar"></div>
 
       <!-- Canvas -->
-      <canvas id="game-canvas"></canvas>
+      <canvas id="game-canvas" aria-label="Grille de jeu Snake Néon"></canvas>
 
       <!-- Touch Controls -->
       <div class="touch-controls" id="touch-controls">
-        <button class="touch-btn up" onclick="game.setDirection(0, -1)">
+        <button type="button" class="touch-btn up" onclick="game.setDirection(0, -1)">
           ▲
         </button>
-        <button class="touch-btn left" onclick="game.setDirection(-1, 0)">
+        <button type="button" class="touch-btn left" onclick="game.setDirection(-1, 0)">
           ◀
         </button>
-        <button class="touch-btn pause" onclick="game.togglePause()">⏸</button>
-        <button class="touch-btn right" onclick="game.setDirection(1, 0)">
+        <button type="button" class="touch-btn pause" onclick="game.togglePause()">⏸</button>
+        <button type="button" class="touch-btn right" onclick="game.setDirection(1, 0)">
           ▶
         </button>
-        <button class="touch-btn down" onclick="game.setDirection(0, 1)">
+        <button type="button" class="touch-btn down" onclick="game.setDirection(0, 1)">
           ▼
         </button>
       </div>
@@ -687,10 +697,10 @@
           </div>
         </div>
 
-        <button class="menu-btn primary" onclick="restartGame()">
+        <button type="button" class="menu-btn primary" onclick="restartGame()">
           🔄 Rejouer
         </button>
-        <button class="menu-btn secondary" onclick="backToMenu()">
+        <button type="button" class="menu-btn secondary" onclick="backToMenu()">
           🏠 Menu
         </button>
       </div>
@@ -1822,8 +1832,12 @@
 
         document
           .querySelectorAll(".mode-btn")
-          .forEach((btn) => btn.classList.remove("selected"));
+          .forEach((btn) => {
+            btn.classList.remove("selected");
+            btn.setAttribute("aria-pressed", "false");
+          });
         element.classList.add("selected");
+        element.setAttribute("aria-pressed", "true");
       }
 
       function startGame() {

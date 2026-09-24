@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -476,6 +477,7 @@
       }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -507,7 +509,7 @@
         </div>
       </div>
 
-      <canvas id="canvas"></canvas>
+      <canvas id="canvas" aria-label="Table de Pong néon"></canvas>
     </div>
 
     <!-- Contrôles tactiles -->
@@ -522,22 +524,22 @@
         <h1>PONG</h1>
         <p class="subtitle">Version Néon Pro v2.0</p>
 
-        <button class="menu-btn" onclick="startGame('classic')">
+        <button type="button" class="menu-btn" onclick="startGame('classic')">
           🎮 Mode Classique
         </button>
-        <button class="menu-btn" onclick="startGame('timed')">
+        <button type="button" class="menu-btn" onclick="startGame('timed')">
           ⏱️ Contre-la-montre
         </button>
-        <button class="menu-btn" onclick="startGame('survival')">
+        <button type="button" class="menu-btn" onclick="startGame('survival')">
           💀 Mode Survie
         </button>
-        <button class="menu-btn" onclick="startGame('powerup')">
+        <button type="button" class="menu-btn" onclick="startGame('powerup')">
           ⚡ Power-Ups
         </button>
-        <button class="menu-btn secondary" onclick="showSettings()">
+        <button type="button" class="menu-btn secondary" onclick="showSettings()">
           ⚙️ Paramètres
         </button>
-        <button class="menu-btn secondary" onclick="showRecords()">
+        <button type="button" class="menu-btn secondary" onclick="showRecords()">
           🏆 Records
         </button>
 
@@ -556,11 +558,11 @@
       <div class="menu">
         <h2>⏸️ PAUSE</h2>
 
-        <button class="menu-btn" onclick="resumeGame()">▶️ Reprendre</button>
-        <button class="menu-btn secondary" onclick="restartGame()">
+        <button type="button" class="menu-btn" onclick="resumeGame()">▶️ Reprendre</button>
+        <button type="button" class="menu-btn secondary" onclick="restartGame()">
           🔄 Recommencer
         </button>
-        <button class="menu-btn tertiary" onclick="quitToMenu()">
+        <button type="button" class="menu-btn tertiary" onclick="quitToMenu()">
           🏠 Menu Principal
         </button>
       </div>
@@ -580,8 +582,8 @@
           🏆 NOUVEAU RECORD ! 🏆
         </div>
 
-        <button class="menu-btn" onclick="restartGame()">🔄 Rejouer</button>
-        <button class="menu-btn secondary" onclick="quitToMenu()">
+        <button type="button" class="menu-btn" onclick="restartGame()">🔄 Rejouer</button>
+        <button type="button" class="menu-btn secondary" onclick="quitToMenu()">
           🏠 Menu Principal
         </button>
       </div>
@@ -649,10 +651,10 @@
           <label for="touch-enabled">Contrôles tactiles (mobile)</label>
         </div>
 
-        <button class="menu-btn" onclick="saveSettings()">
+        <button type="button" class="menu-btn" onclick="saveSettings()">
           ✅ Sauvegarder
         </button>
-        <button class="menu-btn settings-back" onclick="hideSettings()">
+        <button type="button" class="menu-btn settings-back" onclick="hideSettings()">
           ← Retour
         </button>
       </div>
@@ -665,10 +667,10 @@
 
         <div class="records-list" id="records-list"></div>
 
-        <button class="menu-btn tertiary" onclick="clearRecords()">
+        <button type="button" class="menu-btn tertiary" onclick="clearRecords()">
           🗑️ Effacer tout
         </button>
-        <button class="menu-btn tertiary" onclick="hideRecords()">
+        <button type="button" class="menu-btn tertiary" onclick="hideRecords()">
           ← Retour
         </button>
       </div>

@@ -57,7 +57,7 @@
 
       /* ===== BODY & BACKGROUND ===== */
       body {
-        font-family: "Rajdhani", sans-serif;
+        font-family: var(--arcade-font-body, "Rajdhani", "Segoe UI", sans-serif);
         background: var(--bg-primary);
         min-height: 100vh;
         color: var(--text-primary);
@@ -210,6 +210,8 @@
 
         display: flex;
         flex-direction: column;
+        align-items: center;
+        text-align: center;
         background: var(--bg-card);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: var(--radius-lg);
@@ -511,7 +513,8 @@
 
       /* ===== TITRE DU JEU ===== */
       .game-title {
-        font-family: "Orbitron", sans-serif;
+        width: 100%;
+        font-family: var(--arcade-font-display, "Orbitron", sans-serif);
         font-size: 1.4rem;
         font-weight: 700;
         color: var(--text-primary);
@@ -522,6 +525,10 @@
 
       /* ===== DESCRIPTION ===== */
       .game-description {
+        width: 100%;
+        max-width: 38ch;
+        margin-right: auto;
+        margin-left: auto;
         color: var(--text-secondary);
         font-size: 0.95rem;
         line-height: 1.5;
@@ -532,6 +539,7 @@
 
       /* ===== ZONE INTERACTIVE ===== */
       .game-interactive {
+        width: 100%;
         background: rgba(0, 0, 0, 0.3);
         border-radius: var(--radius-md);
         padding: 20px;
@@ -673,6 +681,8 @@
       /* ===== TAGS ===== */
       .game-tags {
         display: flex;
+        width: 100%;
+        justify-content: center;
         gap: 8px;
         flex-wrap: wrap;
         margin-bottom: 15px;
@@ -2311,6 +2321,39 @@
         gap: 7px;
       }
 
+      .feedback-form .privacy-consent {
+        display: grid;
+        grid-template-columns: 22px 1fr;
+        align-items: start;
+        gap: 10px;
+        padding: 13px 14px;
+        border: 1px solid rgba(0, 255, 255, 0.2);
+        border-radius: var(--radius-sm);
+        background: rgba(0, 255, 255, 0.045);
+        color: var(--text-secondary);
+        font-size: 0.88rem;
+        font-weight: 600;
+        line-height: 1.45;
+      }
+
+      .feedback-form .privacy-consent input {
+        width: 20px;
+        min-height: 20px;
+        margin-top: 2px;
+        accent-color: var(--neon-cyan);
+      }
+
+      .privacy-consent a {
+        color: var(--neon-cyan);
+      }
+
+      .feedback-privacy-note {
+        margin: -5px 0 0;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        line-height: 1.45;
+      }
+
       .feedback-form-actions {
         display: flex;
         align-items: center;
@@ -2581,13 +2624,15 @@
         --featured-rgb: 0, 255, 255;
         position: relative;
         display: grid;
-        grid-template-columns: 46px minmax(0, 1fr);
-        grid-template-rows: auto auto;
-        gap: 8px 13px;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto auto;
+        justify-items: center;
+        gap: 9px;
         align-content: center;
         align-items: center;
+        text-align: center;
         min-width: 0;
-        min-height: 132px;
+        min-height: 178px;
         padding: 17px;
         overflow: hidden;
         border: 1px solid rgba(var(--featured-rgb), 0.34);
@@ -2633,7 +2678,7 @@
       .featured-game--taquin { --featured-accent: #55ffff; --featured-rgb: 85, 255, 255; }
 
       .featured-icon {
-        grid-row: 1 / 3;
+        grid-row: auto;
         display: grid;
         width: 46px;
         height: 46px;
@@ -2647,6 +2692,7 @@
       }
 
       .featured-game > div {
+        width: 100%;
         min-width: 0;
       }
 
@@ -2654,19 +2700,20 @@
         margin: 0;
         overflow-wrap: anywhere;
         color: #fff;
-        font: 700 0.94rem/1.25 "Orbitron", sans-serif;
+        font: 700 0.94rem/1.25 var(--arcade-font-display, "Orbitron", sans-serif);
       }
 
       .featured-game p {
-        margin: 4px 0 0;
+        max-width: 27ch;
+        margin: 4px auto 0;
         color: var(--text-secondary);
         font-size: 0.86rem;
         line-height: 1.25;
       }
 
       .featured-game button {
-        grid-column: 2;
-        justify-self: start;
+        grid-column: 1;
+        justify-self: center;
         min-height: 30px;
         margin: 0;
         padding: 5px 10px;
@@ -2674,7 +2721,7 @@
         border-radius: 999px;
         color: var(--featured-accent);
         background: rgba(var(--featured-rgb), 0.06);
-        font: 700 0.7rem "Orbitron", sans-serif;
+        font: 700 0.7rem var(--arcade-font-display, "Orbitron", sans-serif);
         letter-spacing: 0.07em;
         cursor: pointer;
         transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
@@ -2699,16 +2746,20 @@
         font-size: 0.9rem;
       }
 
-      .coin-dialog .dialog-shell { max-width:560px; }
+      .coin-dialog .dialog-shell { width:100%; max-width:560px; margin:0 auto; text-align:center; }
+      .coin-dialog .dialog-heading { padding-right:42px; padding-left:42px; }
+      .coin-dialog .dialog-copy { margin-right:auto; margin-left:auto; }
       .coin-mode-picker { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:22px 0 16px; }
       .coin-mode-picker button,.coin-side-picker button { min-height:58px; border:1px solid rgba(0,255,255,.25); border-radius:var(--radius-sm); background:rgba(0,255,255,.05); color:var(--text-primary); font:700 .9rem "Orbitron",sans-serif; cursor:pointer; }
       .coin-mode-picker small { display:block; margin-top:6px; color:var(--text-secondary); font:600 .78rem "Rajdhani",sans-serif; }
       .coin-mode-picker button.is-selected,.coin-side-picker button.is-selected { border-color:var(--neon-cyan); background:rgba(0,255,255,.14); color:var(--neon-cyan); box-shadow:0 0 18px rgba(0,255,255,.12); }
-      .coin-setup { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.35fr); gap:14px; align-items:end; padding:15px; border-radius:var(--radius-sm); background:rgba(255,255,255,.035); }
-      .coin-setup label,.coin-setup > div > span { display:grid; gap:7px; color:var(--text-secondary); font-size:.86rem; font-weight:700; }
-      .coin-setup select { min-height:42px; border:1px solid rgba(136,146,176,.35); border-radius:8px; padding:0 10px; color:var(--text-primary); background:#0b1225; font:700 1rem "Rajdhani",sans-serif; }
+      .coin-setup { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.35fr); gap:14px; align-items:end; padding:15px; border-radius:var(--radius-sm); background:rgba(255,255,255,.035); text-align:center; }
+      .coin-setup label,.coin-setup > div > span { display:grid; justify-items:center; gap:7px; color:var(--text-secondary); font-size:.86rem; font-weight:700; }
+      .coin-setup select { width:100%; min-height:42px; border:1px solid rgba(136,146,176,.35); border-radius:8px; padding:0 10px; color:var(--text-primary); background:#0b1225; font:700 1rem var(--arcade-font-body,"Rajdhani",sans-serif); text-align:center; }
       .coin-side-picker { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:7px; }.coin-side-picker button{min-height:42px;font-size:.78rem}
       .coin-match { padding:20px 0 10px; text-align:center; }.coin-match .coin-display { margin:0 auto 12px; }.coin-match p{margin:0}.coin-assignment{min-height:20px;color:var(--text-secondary);font-size:.92rem}.coin-scoreboard{display:flex;justify-content:center;gap:25px;margin:5px 0 16px;color:var(--text-secondary);font-weight:700}.coin-scoreboard b{margin-left:6px;color:var(--neon-yellow);font:800 1.15rem "Orbitron",sans-serif}
+      .coin-dialog .dialog-actions { justify-content:center; }
+      .coin-dialog .dialog-primary-action { min-width:min(100%,260px); }
 
       .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
@@ -2730,6 +2781,7 @@
         .featured-games { padding: 20px; }
         .featured-heading { align-items: start; flex-direction: column; gap: 7px; }
         .featured-grid { grid-template-columns: 1fr; }
+        .coin-dialog .dialog-heading { padding-right:30px; padding-left:30px; }
       }
 
       @media (max-width: 430px) {
@@ -2737,7 +2789,7 @@
         .catalog-selects { grid-template-columns: 1fr; }
         .catalog-filter { padding: 6px 10px; }
         .featured-games { padding: 17px; }
-        .featured-game { min-height: 124px; padding: 15px; }
+        .featured-game { min-height: 168px; padding: 15px; }
         .coin-mode-picker { grid-template-columns:1fr; }
       }
 

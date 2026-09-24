@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -8,14 +9,8 @@
     />
     <title>Neon Air Hockey - Synthwave Edition</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap"
-      rel="stylesheet"
-    />
-
     <link rel="stylesheet" href="SynthwaveEdition.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <div id="app">
@@ -26,23 +21,23 @@
           <div class="menu-section">
             <h2>Mode de jeu</h2>
             <div class="button-group">
-              <button id="mode-1p" class="neon-btn active">
+              <button type="button" id="mode-1p" class="neon-btn active">
                 1 Joueur (IA)
               </button>
-              <button id="mode-2p" class="neon-btn">2 Joueurs</button>
+              <button type="button" id="mode-2p" class="neon-btn">2 Joueurs</button>
             </div>
           </div>
 
           <div id="difficulty-section" class="menu-section">
             <h2>Niveau de l'IA</h2>
             <div class="button-group">
-              <button class="neon-btn diff-btn" data-level="easy">
+              <button type="button" class="neon-btn diff-btn" data-level="easy">
                 Facile
               </button>
-              <button class="neon-btn diff-btn active" data-level="medium">
+              <button type="button" class="neon-btn diff-btn active" data-level="medium">
                 Moyen
               </button>
-              <button class="neon-btn diff-btn" data-level="hard">
+              <button type="button" class="neon-btn diff-btn" data-level="hard">
                 Expert
               </button>
             </div>
@@ -51,18 +46,18 @@
           <div class="menu-section">
             <h2>Objectif</h2>
             <div class="button-group">
-              <button class="neon-btn score-btn active" data-score="3">
+              <button type="button" class="neon-btn score-btn active" data-score="3">
                 3 Buts
               </button>
-              <button class="neon-btn score-btn" data-score="5">5 Buts</button>
-              <button class="neon-btn score-btn" data-score="7">7 Buts</button>
+              <button type="button" class="neon-btn score-btn" data-score="5">5 Buts</button>
+              <button type="button" class="neon-btn score-btn" data-score="7">7 Buts</button>
             </div>
           </div>
 
-          <button id="btn-start" class="neon-btn play-btn">
+          <button type="button" id="btn-start" class="neon-btn play-btn">
             LANCER LA PARTIE
           </button>
-          <button id="btn-settings-menu" class="neon-btn secondary-btn">
+          <button type="button" id="btn-settings-menu" class="neon-btn secondary-btn">
             PARAMÈTRES
           </button>
         </div>
@@ -83,9 +78,9 @@
           <p class="eyebrow">PARTIE EN COURS</p>
           <h2 id="pause-title" class="title compact-title">PAUSE</h2>
           <div class="button-group vertical">
-            <button id="btn-resume" class="neon-btn play-btn">REPRENDRE</button>
-            <button id="btn-settings-pause" class="neon-btn">PARAMÈTRES</button>
-            <button id="btn-quit-game" class="neon-btn danger-btn">QUITTER LA PARTIE</button>
+            <button type="button" id="btn-resume" class="neon-btn play-btn">REPRENDRE</button>
+            <button type="button" id="btn-settings-pause" class="neon-btn">PARAMÈTRES</button>
+            <button type="button" id="btn-quit-game" class="neon-btn danger-btn">QUITTER LA PARTIE</button>
           </div>
           <p class="shortcut-hint">Échap ou P pour reprendre</p>
         </div>
@@ -96,29 +91,29 @@
           <div class="menu-section">
             <h2>Thème</h2>
             <div class="button-group theme-grid">
-              <button class="neon-btn theme-btn active" data-theme="neon">Synthwave</button>
-              <button class="neon-btn theme-btn" data-theme="sunset">Sunset</button>
-              <button class="neon-btn theme-btn" data-theme="matrix">Matrix</button>
-              <button class="neon-btn theme-btn" data-theme="ice">Ice</button>
+              <button type="button" class="neon-btn theme-btn active" data-theme="neon">Synthwave</button>
+              <button type="button" class="neon-btn theme-btn" data-theme="sunset">Sunset</button>
+              <button type="button" class="neon-btn theme-btn" data-theme="matrix">Matrix</button>
+              <button type="button" class="neon-btn theme-btn" data-theme="ice">Ice</button>
             </div>
           </div>
           <div class="menu-section settings-toggles">
             <label class="toggle-row"><span>Sons</span><input id="setting-sound" type="checkbox" checked /><span class="toggle"></span></label>
             <label class="toggle-row"><span>Effet de secousse</span><input id="setting-shake" type="checkbox" checked /><span class="toggle"></span></label>
           </div>
-          <button id="btn-settings-close" class="neon-btn play-btn">FERMER</button>
+          <button type="button" id="btn-settings-close" class="neon-btn play-btn">FERMER</button>
         </div>
 
         <div id="game-over" class="panel glass-panel hidden">
           <h2 id="winner-text" class="neon-cyan">VICTOIRE !</h2>
           <div class="button-group vertical">
-            <button id="btn-restart" class="neon-btn play-btn">REJOUER</button>
-            <button id="btn-menu" class="neon-btn">MENU PRINCIPAL</button>
+            <button type="button" id="btn-restart" class="neon-btn play-btn">REJOUER</button>
+            <button type="button" id="btn-menu" class="neon-btn">MENU PRINCIPAL</button>
           </div>
         </div>
       </div>
 
-      <canvas id="gameCanvas"></canvas>
+      <canvas id="gameCanvas" aria-label="Circuit Synthwave Edition"></canvas>
     </div>
 
     <script src="../../js/core/arcade-config.js"></script>

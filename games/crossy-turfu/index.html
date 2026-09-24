@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -8,10 +9,6 @@
     />
     <title>🐔 Crossy Turfu</title>
     <link rel="icon" href="../../assets/icons/arcade-icon-v2-192.png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap"
-      rel="stylesheet"
-    />
     <style>
       *,
       *::before,
@@ -402,6 +399,7 @@
       @media (max-width:390px) { #main-menu{justify-content:flex-start;padding-top:82px}.crossy-controls-hint{font-size:12px;margin-bottom:12px}.menu-btn{min-height:52px;margin:5px}.game-title{font-size:31px} }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body data-arcade-shell="true">
     <a
@@ -442,8 +440,7 @@
 
       <!-- Menu Principal -->
       <div class="menu-overlay" id="main-menu">
-        <div class="game-title">CROSSY</div>
-        <div class="game-title" style="color: var(--neon-pink)">TURFU</div>
+      <h1 class="game-title">CROSSY <span style="color: var(--neon-pink)">TURFU</span></h1>
         <div class="game-subtitle">Traversez le chaos du futur</div>
 
         <div class="menu-stats">
@@ -457,10 +454,10 @@
           </div>
         </div>
 
-        <button class="menu-btn btn-primary" onclick="game.startGame()">
+        <button type="button" class="menu-btn btn-primary" onclick="game.startGame()">
           ▶ JOUER
         </button>
-        <button
+        <button type="button"
           class="menu-btn btn-secondary"
           onclick="game.showCharacterMenu()"
         >
@@ -477,7 +474,7 @@
 
         <div class="char-grid" id="character-grid"></div>
 
-        <button class="menu-btn btn-secondary" onclick="game.showMainMenu()">
+        <button type="button" class="menu-btn btn-secondary" onclick="game.showMainMenu()">
           ← RETOUR
         </button>
       </div>
@@ -485,10 +482,10 @@
       <!-- Menu Pause -->
       <div class="menu-overlay hidden" id="pause-menu">
         <div class="game-title" style="font-size: 28px">PAUSE</div>
-        <button class="menu-btn btn-primary" onclick="game.resumeGame()">
+        <button type="button" class="menu-btn btn-primary" onclick="game.resumeGame()">
           ▶ REPRENDRE
         </button>
-        <button class="menu-btn btn-secondary" onclick="game.quitToMenu()">
+        <button type="button" class="menu-btn btn-secondary" onclick="game.quitToMenu()">
           🏠 MENU
         </button>
       </div>
@@ -522,10 +519,10 @@
           </div>
         </div>
 
-        <button class="menu-btn btn-primary arcade-session-replay" onclick="game.startGame()">
+        <button type="button" class="menu-btn btn-primary arcade-session-replay" onclick="game.startGame()">
           🔄 REJOUER
         </button>
-        <button class="menu-btn btn-secondary" onclick="game.showMainMenu()">
+        <button type="button" class="menu-btn btn-secondary" onclick="game.showMainMenu()">
           🏠 MENU
         </button>
       </div>
@@ -533,12 +530,12 @@
       <!-- Contrôles mobiles -->
       <div id="mobile-controls">
         <div class="ctrl-row">
-          <button class="ctrl-btn" onclick="game.movePlayer('up')">⬆</button>
+          <button type="button" class="ctrl-btn" onclick="game.movePlayer('up')">⬆</button>
         </div>
         <div class="ctrl-row">
-          <button class="ctrl-btn" onclick="game.movePlayer('left')">⬅</button>
-          <button class="ctrl-btn" onclick="game.movePlayer('down')">⬇</button>
-          <button class="ctrl-btn" onclick="game.movePlayer('right')">➡</button>
+          <button type="button" class="ctrl-btn" onclick="game.movePlayer('left')">⬅</button>
+          <button type="button" class="ctrl-btn" onclick="game.movePlayer('down')">⬇</button>
+          <button type="button" class="ctrl-btn" onclick="game.movePlayer('right')">➡</button>
         </div>
       </div>
     </main>

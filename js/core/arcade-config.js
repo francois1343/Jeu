@@ -78,6 +78,10 @@ window.ARCADE_CONFIG = Object.freeze({
     templateId: "template_259m9sn",
     publicKey: "9eazkhyZansevbriB",
   }),
+  legal: Object.freeze({
+    privacyVersion: "2026-09-24",
+    feedbackRetentionDays: 365,
+  }),
   paypal: Object.freeze({
     environment: "production",
     hostedButtonId: "",

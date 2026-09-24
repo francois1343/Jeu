@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -145,6 +146,8 @@
       }
 
       .diff-card {
+        color: inherit;
+        font: inherit;
         background: rgba(255, 255, 255, 0.05);
         border: 2px solid rgba(255, 255, 255, 0.1);
         border-radius: 16px;
@@ -188,6 +191,8 @@
       }
 
       .theme-pill {
+        color: inherit;
+        font: inherit;
         padding: 10px 16px;
         background: rgba(255, 255, 255, 0.05);
         border: 2px solid rgba(255, 255, 255, 0.1);
@@ -800,6 +805,7 @@
       .memory-lb-summary { min-height:18px; margin:0 0 13px; color:#92a4c6; text-align:center; font-size:12px; }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -824,72 +830,86 @@
         <div class="difficulty-section">
           <div class="section-title">Difficulté</div>
           <div class="difficulty-cards">
-            <div
+            <button
+              type="button"
               class="diff-card selected"
               data-size="8"
+              aria-pressed="true"
               onclick="selectDifficulty(8, this)"
             >
               <div class="diff-icon">🌱</div>
               <div class="diff-name">Facile</div>
               <div class="diff-info">4 paires</div>
-            </div>
-            <div
+            </button>
+            <button
+              type="button"
               class="diff-card"
               data-size="12"
+              aria-pressed="false"
               onclick="selectDifficulty(12, this)"
             >
               <div class="diff-icon">🌿</div>
               <div class="diff-name">Normal</div>
               <div class="diff-info">6 paires</div>
-            </div>
-            <div
+            </button>
+            <button
+              type="button"
               class="diff-card"
               data-size="24"
+              aria-pressed="false"
               onclick="selectDifficulty(24, this)"
             >
               <div class="diff-icon">🌳</div>
               <div class="diff-name">Difficile</div>
               <div class="diff-info">12 paires</div>
-            </div>
+            </button>
           </div>
         </div>
 
         <div class="theme-section">
           <div class="section-title">Thème</div>
           <div class="theme-pills">
-            <div
+            <button
+              type="button"
               class="theme-pill selected"
               data-theme="animals"
+              aria-pressed="true"
               onclick="selectTheme('animals', this)"
             >
               🐾 Animaux
-            </div>
-            <div
+            </button>
+            <button
+              type="button"
               class="theme-pill"
               data-theme="food"
+              aria-pressed="false"
               onclick="selectTheme('food', this)"
             >
               🍕 Nourriture
-            </div>
-            <div
+            </button>
+            <button
+              type="button"
               class="theme-pill"
               data-theme="sports"
+              aria-pressed="false"
               onclick="selectTheme('sports', this)"
             >
               ⚽ Sports
-            </div>
-            <div
+            </button>
+            <button
+              type="button"
               class="theme-pill"
               data-theme="nature"
+              aria-pressed="false"
               onclick="selectTheme('nature', this)"
             >
               🌸 Nature
-            </div>
+            </button>
           </div>
         </div>
 
-        <button class="play-btn" onclick="startGame()">▶ Jouer</button>
-        <button class="secondary-btn" onclick="showLeaderboard()">
+        <button type="button" class="play-btn" onclick="startGame()">▶ Jouer</button>
+        <button type="button" class="secondary-btn" onclick="showLeaderboard()">
           🏆 Classement
         </button>
       </div>
@@ -898,7 +918,7 @@
     <!-- ===== ÉCRAN DE JEU ===== -->
     <div class="screen game-screen hidden" id="gameScreen">
       <div class="game-header">
-        <button class="back-btn" onclick="confirmQuit()">←</button>
+        <button type="button" class="back-btn" onclick="confirmQuit()">←</button>
         <div class="game-stats">
           <div class="stat-item">
             <div class="stat-value" id="timeDisplay">0:00</div>
@@ -953,10 +973,10 @@
         </div>
 
         <div class="result-buttons">
-          <button class="result-btn primary" onclick="restartGame()">
+          <button type="button" class="result-btn primary" onclick="restartGame()">
             🔄 Rejouer
           </button>
-          <button class="result-btn secondary" onclick="backToMenu()">
+          <button type="button" class="result-btn secondary" onclick="backToMenu()">
             🏠 Menu
           </button>
         </div>
@@ -971,18 +991,18 @@
       </div>
 
       <div class="leaderboard-tabs">
-        <button class="tab-btn active" onclick="showTab(8, this)">
+        <button type="button" class="tab-btn active" onclick="showTab(8, this)">
           🌱 Facile
         </button>
-        <button class="tab-btn" onclick="showTab(12, this)">🌿 Normal</button>
-        <button class="tab-btn" onclick="showTab(24, this)">
+        <button type="button" class="tab-btn" onclick="showTab(12, this)">🌿 Normal</button>
+        <button type="button" class="tab-btn" onclick="showTab(24, this)">
           🌳 Difficile
         </button>
       </div>
 
       <div class="leaderboard-list" id="leaderboardList"></div>
 
-      <button class="back-btn-large" onclick="backToMenu()">
+      <button type="button" class="back-btn-large" onclick="backToMenu()">
         ← Retour au menu
       </button>
     </div>
@@ -1142,14 +1162,14 @@
         const leaderboardTabs = document.querySelector(".leaderboard-tabs");
         if (leaderboardTabs && !document.getElementById("memoryLbSummary")) {
           const controls = document.createElement("div");
-          controls.innerHTML = '<div class="memory-lb-filters"><button class="memory-lb-filter active" data-mode="all">Tous</button><button class="memory-lb-filter" data-mode="classic">Classique</button><button class="memory-lb-filter" data-mode="preview">Observation</button><button class="memory-lb-filter" data-mode="rush">Rush</button></div><p class="memory-lb-summary" id="memoryLbSummary"></p>';
+          controls.innerHTML = '<div class="memory-lb-filters"><button type="button" class="memory-lb-filter active" data-mode="all">Tous</button><button type="button" class="memory-lb-filter" data-mode="classic">Classique</button><button type="button" class="memory-lb-filter" data-mode="preview">Observation</button><button type="button" class="memory-lb-filter" data-mode="rush">Rush</button></div><p class="memory-lb-summary" id="memoryLbSummary"></p>';
           leaderboardTabs.after(controls);
           controls.querySelectorAll(".memory-lb-filter").forEach((button) => button.addEventListener("click", () => setLeaderboardMode(button.dataset.mode, button)));
         }
         const playButton = menu.querySelector(".play-btn");
         if (playButton) {
           const modes = document.createElement("section");
-          modes.innerHTML = '<div class="section-title">Format de partie</div><div class="memory-mode-grid"><button class="memory-mode-btn active" data-mode="classic"><strong>Classique</strong>Sans pression</button><button class="memory-mode-btn" data-mode="preview"><strong>Observation</strong>Apercu de la grille</button><button class="memory-mode-btn" data-mode="rush"><strong>Rush</strong>Bonus x1,25</button><button class="memory-mode-btn" data-mode="random"><strong>Aleatoire</strong>Tout est tire au sort</button></div><p class="memory-mode-note" id="memoryModeNote"></p>';
+          modes.innerHTML = '<div class="section-title">Format de partie</div><div class="memory-mode-grid"><button type="button" class="memory-mode-btn active" data-mode="classic"><strong>Classique</strong>Sans pression</button><button type="button" class="memory-mode-btn" data-mode="preview"><strong>Observation</strong>Apercu de la grille</button><button type="button" class="memory-mode-btn" data-mode="rush"><strong>Rush</strong>Bonus x1,25</button><button type="button" class="memory-mode-btn" data-mode="random"><strong>Aleatoire</strong>Tout est tire au sort</button></div><p class="memory-mode-note" id="memoryModeNote"></p>';
           playButton.before(modes);
           modes.querySelectorAll(".memory-mode-btn").forEach((button) => button.addEventListener("click", () => selectMode(button.dataset.mode, button)));
           updateModeNote();
@@ -1196,8 +1216,12 @@
       function selectDifficulty(size, el) {
         document
           .querySelectorAll(".diff-card")
-          .forEach((c) => c.classList.remove("selected"));
+          .forEach((c) => {
+            c.classList.remove("selected");
+            c.setAttribute("aria-pressed", "false");
+          });
         el.classList.add("selected");
+        el.setAttribute("aria-pressed", "true");
         game.gridSize = size;
         playSound("click");
       }
@@ -1205,8 +1229,12 @@
       function selectTheme(theme, el) {
         document
           .querySelectorAll(".theme-pill")
-          .forEach((p) => p.classList.remove("selected"));
+          .forEach((p) => {
+            p.classList.remove("selected");
+            p.setAttribute("aria-pressed", "false");
+          });
         el.classList.add("selected");
+        el.setAttribute("aria-pressed", "true");
         game.theme = theme;
         playSound("click");
       }

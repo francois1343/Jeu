@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -111,6 +112,7 @@
       }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body>
     <a
@@ -131,24 +133,24 @@
     </div>
 
     <div style="position: relative">
-      <canvas id="game" width="600" height="500"></canvas>
+      <canvas id="game" width="600" height="500" aria-label="Zone de jeu Casse-Briques"></canvas>
 
       <div class="message" id="start-screen">
         <h2>🧱 Casse-Briques</h2>
         <p>Détruisez toutes les briques !</p>
-        <button onclick="game.start()">▶️ Jouer</button>
+        <button type="button" onclick="game.start()">▶️ Jouer</button>
       </div>
 
       <div class="message hidden" id="game-over">
         <h2>💀 Game Over</h2>
         <p>Score final: <strong id="final-score">0</strong></p>
-        <button onclick="game.restart()">🔄 Rejouer</button>
+        <button type="button" onclick="game.restart()">🔄 Rejouer</button>
       </div>
 
       <div class="message hidden" id="win-screen">
         <h2>🎉 Victoire !</h2>
         <p>Niveau <span id="completed-level">1</span> terminé !</p>
-        <button onclick="game.nextLevel()">➡️ Niveau suivant</button>
+        <button type="button" onclick="game.nextLevel()">➡️ Niveau suivant</button>
       </div>
     </div>
 

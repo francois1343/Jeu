@@ -23,7 +23,7 @@ const pilots = [
 ];
 
 const gameConfig = sandbox.window.ARCADE_GAME_CONFIG;
-assert.equal(gameConfig.version, 2, "Le contrat de configuration Premium doit être en version 2");
+assert.equal(gameConfig.version, 3, "Le contrat de configuration global doit être en version 3");
 
 pilots.forEach((pilot) => {
   const html = read(...pilot.html);

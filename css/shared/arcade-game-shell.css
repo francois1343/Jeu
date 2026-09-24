@@ -100,6 +100,17 @@
   color: #85dcec;
 }
 
+#arcadeGameShellButton.arcade-game-shell-launcher {
+  position: fixed;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 2147483000;
+  min-width: 74px;
+  background: rgba(10, 20, 38, .94);
+  box-shadow: 0 0 22px rgba(117, 215, 232, .18);
+  backdrop-filter: blur(10px);
+}
+
 .arcade-game-shell-panel button:focus-visible,
 .arcade-game-shell-panel select:focus-visible {
   outline: 3px solid #f4d35e;
@@ -151,6 +162,19 @@
   color: #f3d27a;
   font-size: 16px;
   font-weight: 800;
+}
+
+.arcade-shell-pause-info {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid #314058;
+  color: #a9b5c7;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.arcade-shell-pause-info[data-mode="native"] {
+  color: #78d7a4;
 }
 
 .arcade-shell-tutorial {
@@ -307,6 +331,25 @@ html[data-arcade-animations="off"] *::after {
   animation: none !important;
 }
 
+.arcade-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+button:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid #ffffff !important;
+  outline-offset: 3px !important;
+}
+
 html[data-arcade-visual-intensity="calm"] .arcade-game-shell-dialog {
   box-shadow: 0 20px 55px rgba(0,0,0,.58);
 }
@@ -325,6 +368,17 @@ html[data-arcade-visual-intensity="vivid"] .arcade-game-shell-dialog {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .arcade-game-shell-dialog *,
-  #arcadeGameShellButton { transition: none !important; animation: none !important; }
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  html body *,
+  html body *::before,
+  html body *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
 }

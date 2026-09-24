@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -535,6 +536,7 @@
       }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
+    <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body data-arcade-shell="true">
     <a
@@ -564,10 +566,10 @@
 
       <!-- Controls -->
       <div class="controls">
-        <button class="ctrl-btn new-game" onclick="game.newGame()">
+        <button type="button" class="ctrl-btn new-game" onclick="game.newGame()">
           🔄 Nouveau
         </button>
-        <button
+        <button type="button"
           class="ctrl-btn undo"
           id="undo-btn"
           onclick="game.undo()"
@@ -593,10 +595,10 @@
             Vous avez atteint 2048 !
           </div>
           <div>
-            <button class="message-btn primary" id="message-btn-primary">
+            <button type="button" class="message-btn primary" id="message-btn-primary">
               Continuer
             </button>
-            <button class="message-btn secondary" onclick="game.newGame()">
+            <button type="button" class="message-btn secondary" onclick="game.newGame()">
               Recommencer
             </button>
           </div>
@@ -615,13 +617,13 @@
       <!-- Touch Controls (mobile) -->
       <div class="touch-controls" id="touch-controls">
         <div class="touch-btn empty"></div>
-        <button class="touch-btn" onclick="game.move('up')">⬆️</button>
+        <button type="button" class="touch-btn" onclick="game.move('up')">⬆️</button>
         <div class="touch-btn empty"></div>
-        <button class="touch-btn" onclick="game.move('left')">⬅️</button>
+        <button type="button" class="touch-btn" onclick="game.move('left')">⬅️</button>
         <div class="touch-btn empty"></div>
-        <button class="touch-btn" onclick="game.move('right')">➡️</button>
+        <button type="button" class="touch-btn" onclick="game.move('right')">➡️</button>
         <div class="touch-btn empty"></div>
-        <button class="touch-btn" onclick="game.move('down')">⬇️</button>
+        <button type="button" class="touch-btn" onclick="game.move('down')">⬇️</button>
         <div class="touch-btn empty"></div>
       </div>
     </div>
