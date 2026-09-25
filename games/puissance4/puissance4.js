@@ -67,6 +67,13 @@ document.addEventListener("DOMContentLoaded", () => {
     winnerSubtext: document.getElementById("winner-subtext"),
     confettiLayer: document.getElementById("confetti-layer"),
     aiGroup: document.getElementById("ai-difficulty-group"),
+    redPlayerName: document.getElementById("red-player-name"),
+    yellowPlayerName: document.getElementById("yellow-player-name"),
+    redPlayerRating: document.getElementById("red-player-rating"),
+    yellowPlayerRating: document.getElementById("yellow-player-rating"),
+    undoButton: document.getElementById("btn-undo"),
+    restartButton: document.getElementById("btn-restart"),
+    modalRestartButton: document.getElementById("btn-modal-restart"),
   };
 
   const WINNING_LINES_3D = (() => {
@@ -114,6 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let aiTimer = null;
   let modalTimer = null;
+  let lastLiveResultVersion = null;
 
   const AudioEngine = {
     context: null,
@@ -717,6 +725,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function playMove2D(column, initiatedByPlayer = false) {
+    if (initiatedByPlayer && STATE.opponent === "live") {
+      window.Puissance4Live?.playColumn(column);
+      return;
+    }
     if (initiatedByPlayer) window.ArcadeGameSession?.start({ mode: "2d" });
     if (STATE.isGameOver || STATE.isAnimating) return;
     if (
@@ -927,6 +939,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function undoLastMove() {
     clearTimeout(aiTimer);
+    if (STATE.opponent === "live") return;
     if (!STATE.history.length || STATE.isGameOver || STATE.isAnimating) return;
     const lastMove = STATE.history.pop();
 
@@ -1058,6 +1071,124 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function findLiveWinningLine(player) {
+    if (!player) return null;
+    for (let row = 0; row < 6; row += 1) {
+      for (let column = 0; column < 7; column += 1) {
+        if (STATE.board2D[row][column] !== player) continue;
+        const line = checkWin2D(row, column, player);
+        if (line) return line;
+      }
+    }
+    return null;
+  }
+
+  function renderLiveRoom(room) {
+    const flatBoard = Array.isArray(room?.board) ? room.board.map(Number) : [];
+    if (flatBoard.length !== 42) return;
+
+    STATE.mode = "2d";
+    STATE.opponent = "live";
+    STATE.board2D = Array.from({ length: 6 }, (_, row) =>
+      flatBoard.slice(row * 7, (row + 1) * 7),
+    );
+    STATE.currentPlayer = Number(room.current_player) === 2 ? 2 : 1;
+    STATE.isGameOver = room.status !== "active";
+    STATE.isAnimating = false;
+    STATE.history = [];
+
+    init2DGridUI();
+    STATE.board2D.forEach((line, row) => {
+      line.forEach((player, column) => {
+        if (!player) return;
+        const disk = document.createElement("div");
+        disk.className = `disk ${player === 1 ? "red" : "yellow"} live-disk`;
+        DOM.board2DGrid.children[row * 7 + column].appendChild(disk);
+      });
+    });
+
+    const canPlay = room.status === "active"
+      && Number(room.me_player) === STATE.currentPlayer;
+    DOM.colTriggers.querySelectorAll("button").forEach((button) => {
+      const column = Number(button.dataset.col);
+      button.disabled = !canPlay || STATE.board2D[0][column] !== 0;
+    });
+
+    updateCurrentPlayerUI();
+    DOM.modeKicker.textContent = `DUEL LIVE • SALON ${room.code}`;
+    const current = STATE.currentPlayer === 1 ? room.red_player : room.yellow_player;
+    DOM.modeInstruction.textContent = room.status === "waiting"
+      ? "En attente de l’adversaire."
+      : room.status === "active"
+        ? (canPlay ? "À vous de jouer." : `Tour de ${current?.display_name || "l’adversaire"}.`)
+        : "Partie terminée.";
+
+    DOM.redPlayerName.textContent = room.red_player?.display_name || "ROUGE";
+    DOM.yellowPlayerName.textContent = room.yellow_player?.display_name || "JAUNE";
+    DOM.redPlayerRating.textContent = room.red_player ? `ELO ${room.red_player.rating}` : "EN ATTENTE";
+    DOM.yellowPlayerRating.textContent = room.yellow_player ? `ELO ${room.yellow_player.rating}` : "EN ATTENTE";
+    DOM.undoButton.hidden = true;
+    DOM.restartButton.hidden = true;
+    DOM.modalRestartButton.querySelector("span").textContent = "QUITTER LE SALON";
+
+    if (room.status === "completed") {
+      const winnerPlayer = room.winner_user_id === room.red_user_id ? 1
+        : room.winner_user_id === room.yellow_user_id ? 2 : null;
+      const winningLine = findLiveWinningLine(winnerPlayer);
+      if (winningLine) highlightWinningLine(winningLine);
+      showLiveResult(room);
+    }
+  }
+
+  function showLiveResult(room) {
+    if (lastLiveResultVersion === room.version) return;
+    lastLiveResultVersion = room.version;
+    const isDraw = !room.winner_user_id;
+    const didWin = room.winner_user_id === room.me_user_id;
+    const reason = room.result_reason === "timeout" ? "Temps écoulé."
+      : room.result_reason === "resignation" ? "La partie se termine sur un abandon."
+        : room.result_reason === "draw" ? "La grille est pleine."
+          : "Quatre jetons sont alignés.";
+    DOM.winnerTitle.textContent = isDraw ? "MATCH NUL" : didWin ? "VICTOIRE !" : "DÉFAITE";
+    DOM.winnerSubtext.textContent = `${reason} Le classement Elo a été actualisé.`;
+    revealGameOver(didWin);
+  }
+
+  function openLiveGame(room) {
+    clearTimeout(aiTimer);
+    clearTimeout(modalTimer);
+    DOM.menuScreen.classList.add("hidden");
+    DOM.gameScreen.classList.remove("hidden");
+    DOM.view2D.classList.remove("hidden");
+    DOM.view3D.classList.add("hidden");
+    DOM.remainingDisksBar.classList.add("hidden");
+    DOM.gameOverModal.classList.add("hidden");
+    document.body.classList.add("live-game");
+    renderLiveRoom(room);
+  }
+
+  function returnFromLiveGame() {
+    clearTimeout(modalTimer);
+    lastLiveResultVersion = null;
+    DOM.gameOverModal.classList.add("hidden");
+    DOM.gameScreen.classList.add("hidden");
+    DOM.menuScreen.classList.remove("hidden");
+    DOM.undoButton.hidden = false;
+    DOM.restartButton.hidden = false;
+    DOM.modalRestartButton.querySelector("span").textContent = "REVANCHE";
+    DOM.redPlayerName.textContent = "ROUGE";
+    DOM.yellowPlayerName.textContent = "JAUNE";
+    DOM.redPlayerRating.textContent = "FEU";
+    DOM.yellowPlayerRating.textContent = "ÉCLAIR";
+    document.body.classList.remove("live-game");
+  }
+
+  window.Puissance4Game = Object.freeze({
+    openLiveGame,
+    renderLiveRoom,
+    returnFromLiveGame,
+  });
+
   // ---------------------------------------------------------------------------
   // Menu and application events
   // ---------------------------------------------------------------------------
@@ -1091,6 +1222,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("btn-start").addEventListener("click", () => {
+    if (STATE.opponent === "live") return;
     AudioEngine.init();
     AudioEngine.playSelect();
     DOM.menuScreen.classList.add("hidden");
@@ -1103,6 +1235,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("btn-menu").addEventListener("click", () => {
+    if (STATE.opponent === "live") {
+      window.Puissance4Live?.requestExit();
+      return;
+    }
     clearTimeout(aiTimer);
     clearTimeout(modalTimer);
     threeActive = false;
@@ -1111,10 +1247,19 @@ document.addEventListener("DOMContentLoaded", () => {
     DOM.menuScreen.classList.remove("hidden");
   });
 
-  document.getElementById("btn-restart").addEventListener("click", resetGame);
-  document.getElementById("btn-modal-restart").addEventListener("click", resetGame);
+  document.getElementById("btn-restart").addEventListener("click", () => {
+    if (STATE.opponent !== "live") resetGame();
+  });
+  document.getElementById("btn-modal-restart").addEventListener("click", () => {
+    if (STATE.opponent === "live") window.Puissance4Live?.leaveToMenu();
+    else resetGame();
+  });
   document.getElementById("btn-undo").addEventListener("click", undoLastMove);
   document.getElementById("btn-modal-menu").addEventListener("click", () => {
+    if (STATE.opponent === "live") {
+      window.Puissance4Live?.leaveToMenu();
+      return;
+    }
     clearTimeout(aiTimer);
     clearTimeout(modalTimer);
     threeActive = false;

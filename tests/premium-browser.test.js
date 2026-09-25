@@ -357,6 +357,33 @@ async function main() {
 
   await navigate(`${baseUrl}/games/puissance4/index.html`);
   await waitFor("Boolean(window.THREE && window.THREE.OrbitControls)", "Three.js local n'est pas chargé dans Puissance 4");
+  await waitFor("Boolean(window.Puissance4Live && window.Puissance4Game && window.ArcadeSupabase?.connect4)", "Le module Puissance 4 Live ne démarre pas");
+  await cdp.evaluate("document.querySelector('[data-opp=live]').click(); true");
+  const connect4LiveDesktop = await cdp.evaluate(`(() => ({
+    panelVisible: !document.querySelector('#live-multiplayer-group').classList.contains('hidden'),
+    authVisible: !document.querySelector('#live-auth-panel').classList.contains('hidden'),
+    threeDisabled: document.querySelector('[data-mode="3d"]').disabled,
+    localStartHidden: document.querySelector('#btn-start').classList.contains('hidden'),
+    overflow: document.documentElement.scrollWidth - innerWidth
+  }))()`);
+  assert(connect4LiveDesktop.panelVisible && connect4LiveDesktop.authVisible, "Le salon Live déconnecté n'est pas visible");
+  assert(connect4LiveDesktop.threeDisabled && connect4LiveDesktop.localStartHidden, "Le Live laisse actifs des contrôles locaux");
+  assert(connect4LiveDesktop.overflow <= 2, "Le menu Live déborde sur desktop");
+
+  await cdp.send("Emulation.setDeviceMetricsOverride", {
+    width: 390, height: 844, deviceScaleFactor: 1, mobile: true,
+  });
+  const connect4LiveMobile = await cdp.evaluate(`({
+    overflow: document.documentElement.scrollWidth - innerWidth,
+    authWidth: document.querySelector('#live-auth-panel').getBoundingClientRect().width,
+    viewport: innerWidth
+  })`);
+  assert(connect4LiveMobile.overflow <= 2, "Le menu Live déborde sur mobile");
+  assert(connect4LiveMobile.authWidth <= connect4LiveMobile.viewport, "Le formulaire Live est trop large sur mobile");
+
+  await cdp.send("Emulation.setDeviceMetricsOverride", {
+    width: 1366, height: 768, deviceScaleFactor: 1, mobile: false,
+  });
 
   for (const legalPage of ["mentions-legales.html", "confidentialite.html", "cgu.html"]) {
     await navigate(`${baseUrl}/legal/${legalPage}`);

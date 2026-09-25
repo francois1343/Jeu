@@ -72,6 +72,12 @@
                 <td>Pendant la durée du compte. Certaines transactions peuvent être conservées plus longtemps si une obligation légale ou de sécurité l’impose.</td>
               </tr>
               <tr>
+                <td>Parties multijoueurs</td>
+                <td>Pseudo, adversaire, salon, coups joués, résultat, motif de fin, classement Elo et horaires techniques.</td>
+                <td>Fournir les salons Live, permettre la reconnexion, arbitrer les parties et établir le classement demandé par les joueurs.</td>
+                <td>Pendant la durée du compte ou jusqu’à la suppression/anonymisation prévue par la politique de conservation définitive.</td>
+              </tr>
+              <tr>
                 <td>Préférences locales</td>
                 <td>Son, animations, contraste, tutoriels vus et records non certifiés.</td>
                 <td>Adapter l’expérience sur l’appareil.</td>
@@ -100,7 +106,7 @@
       <section class="legal-section">
         <h2>3. Supabase Auth et base de données</h2>
         <p>
-          L’authentification, les profils, les portefeuilles, les transactions et les sessions certifiées sont traités par <strong>Supabase, Inc.</strong> Le navigateur reçoit une session d’authentification, mais les opérations économiques sensibles sont exécutées par PostgreSQL et des Edge Functions protégées par des règles RLS.
+          L’authentification, les profils, les portefeuilles, les transactions, les sessions certifiées et les parties multijoueurs sont traités par <strong>Supabase, Inc.</strong> Le navigateur reçoit une session d’authentification, mais les opérations économiques et multijoueurs sensibles sont exécutées par PostgreSQL et des Edge Functions protégées par des règles RLS.
         </p>
         <p>
           La clé publique présente dans le site ne donne aucun droit administrateur. Les clés secrètes restent exclusivement côté serveur. Consultez la <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">politique de confidentialité de Supabase</a>. Avant ouverture commerciale, l’exploitant devra accepter le DPA approprié et documenter la région ainsi que les sous-traitants applicables.

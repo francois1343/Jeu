@@ -23,7 +23,7 @@
 
 ## 🚀 État du projet
 
-Francis Arcade est aujourd'hui une **pré-bêta locale fonctionnelle**. Le socle technique est en place : identité néon, PWA, profils locaux, économie fictive, boutique cosmétique, statistiques, catalogue filtrable, console d'administration locale et tests automatisés.
+Francis Arcade est aujourd'hui une **pré-bêta connectée fonctionnelle**. Le socle technique est en place : identité néon, PWA, comptes Supabase, économie fictive, premier duel Live, boutique cosmétique, statistiques, catalogue filtrable, console d'administration locale et tests automatisés.
 
 La priorité n'est plus d'ajouter des jeux. Le travail porte maintenant sur la cohérence, la fiabilité et la qualité éditoriale des meilleures expériences.
 
@@ -40,6 +40,7 @@ La priorité n'est plus d'ajouter des jeux. Le travail porte maintenant sur la c
 | Console ADMIN et audit           |  ✅ Local   | Recherche, sauvegarde, import et export des données de test    |
 | Expérience Premium unifiée       | 🟠 En recette | Socle commun déployé sur les six pilotes ; recette humaine finale requise |
 | Comptes et synchronisation Cloud |  🟢 Actif   | Inscription, connexion, récupération et session Supabase       |
+| Puissance 4 Live                 |  🟡 Prototype | Salons privés, chrono serveur, reconnexion et classement Elo  |
 | Production commerciale           | ⚪ À venir  | RGPD, analytics, support et validation sécurité requis         |
 
 > Le mode actif est `supabase`. Les Coins restent fictifs, non achetables, non transférables et non convertibles en argent réel. Le mode `local-test` est réservé à la QA sur localhost.
@@ -50,7 +51,7 @@ La priorité n'est plus d'ajouter des jeux. Le travail porte maintenant sur la c
 - **42 pages de jeu reliées** à l'accueil ;
 - **1 prototype supplémentaire**, Neon Dice Arena, conservé hors catalogue pendant son évaluation ;
 - **43 pages de jeu équipées** du bridge de session ;
-- **44 pages HTML au total**, accueil compris.
+- **49 pages HTML au total**, pages légales et pages d’état comprises.
 
 Les tests comptent les pages HTML, tandis que l'accueil compte les expériences uniques. Ces mesures ne doivent pas être confondues avec un nombre de jeux certifiés Premium.
 

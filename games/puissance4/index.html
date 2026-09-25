@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://nnqfomqgagfshujyfrtl.supabase.co wss://nnqfomqgagfshujyfrtl.supabase.co; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -73,7 +73,7 @@
             </div>
 
             <div class="feature-row" aria-label="Caractéristiques">
-              <span><b>02</b> MODES</span>
+              <span><b>03</b> DUELS</span>
               <span><b>03</b> NIVEAUX IA</span>
               <span><b>∞</b> REVANCHES</span>
             </div>
@@ -125,6 +125,10 @@
                   <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="16" height="13" rx="3"/><path d="M9 11h.01M15 11h.01M9 15h6M12 6V3M9 3h6"/></svg>
                   VS ORDINATEUR
                 </button>
+                <button class="btn-opp live-choice" data-opp="live" type="button">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16a10 10 0 0 1 14 0M8 13a6 6 0 0 1 8 0M11 10a2 2 0 0 1 2 0M12 18h.01"/></svg>
+                  DUEL LIVE
+                </button>
               </div>
             </div>
 
@@ -138,6 +142,67 @@
                 <button class="btn-diff" data-diff="medium" type="button">CHAUD</button>
                 <button class="btn-diff" data-diff="hard" type="button">BRUTAL</button>
               </div>
+            </div>
+
+            <div class="config-group live-panel hidden" id="live-multiplayer-group">
+              <div class="config-label-row">
+                <label class="config-label">SALON EN LIGNE</label>
+                <span id="live-connection-state">HORS LIGNE</span>
+              </div>
+
+              <div id="live-auth-panel" class="live-auth-panel hidden">
+                <p>Connectez-vous pour créer ou rejoindre une partie classée.</p>
+                <form id="live-auth-form" class="live-auth-form">
+                  <label>
+                    <span>E-mail</span>
+                    <input id="live-auth-email" type="email" autocomplete="email" required />
+                  </label>
+                  <label>
+                    <span>Mot de passe</span>
+                    <input id="live-auth-password" type="password" autocomplete="current-password" required />
+                  </label>
+                  <button class="live-small-button" type="submit">CONNEXION</button>
+                </form>
+                <a href="../../index.html">Créer un compte depuis l’accueil</a>
+              </div>
+
+              <div id="live-room-actions" class="live-room-actions hidden">
+                <div class="live-create-row">
+                  <label for="live-turn-seconds">CHRONO</label>
+                  <select id="live-turn-seconds">
+                    <option value="20">20 s</option>
+                    <option value="30" selected>30 s</option>
+                    <option value="45">45 s</option>
+                    <option value="60">60 s</option>
+                  </select>
+                  <button id="live-create-room" class="live-primary-button" type="button">CRÉER</button>
+                </div>
+                <form id="live-join-form" class="live-join-row">
+                  <label class="arcade-visually-hidden" for="live-room-code">Code du salon</label>
+                  <input id="live-room-code" type="text" inputmode="text" maxlength="6" autocomplete="off" placeholder="CODE À 6 CARACTÈRES" aria-describedby="live-status" />
+                  <button class="live-small-button" type="submit">REJOINDRE</button>
+                </form>
+              </div>
+
+              <div id="live-waiting-room" class="live-waiting-room hidden">
+                <span>CODE DU SALON</span>
+                <strong id="live-room-code-display">------</strong>
+                <p>En attente de votre adversaire…</p>
+                <div>
+                  <button id="live-copy-invite" class="live-small-button" type="button">COPIER LE LIEN</button>
+                  <button id="live-cancel-room" class="live-ghost-button" type="button">ANNULER</button>
+                </div>
+              </div>
+
+              <div class="live-status-row">
+                <p id="live-status" class="live-status" role="status" aria-live="polite"></p>
+                <button id="live-reconnect" class="live-ghost-button hidden" type="button">RECONNECTER</button>
+              </div>
+
+              <details id="live-ranking" class="live-ranking hidden">
+                <summary>CLASSEMENT ELO</summary>
+                <ol id="live-leaderboard"></ol>
+              </details>
             </div>
 
             <button id="btn-start" class="btn-launch" type="button">
@@ -176,6 +241,7 @@
             <div id="current-player-badge" class="player-badge red">
               <i></i><span id="player-color-text">ROUGE</span>
             </div>
+            <strong id="live-turn-clock" class="live-turn-clock hidden" aria-label="Temps restant">30</strong>
           </div>
 
           <div class="hud-actions">
@@ -192,8 +258,8 @@
           <aside id="player-card-red" class="side-player red-side active" aria-label="Joueur rouge">
             <span class="side-number">P1</span>
             <div class="player-orb red-orb"><i></i></div>
-            <strong>ROUGE</strong>
-            <small>FEU</small>
+            <strong id="red-player-name">ROUGE</strong>
+            <small id="red-player-rating">FEU</small>
             <div class="win-counter"><span>VIC.</span><b id="game-score-red">0</b></div>
           </aside>
 
@@ -234,8 +300,8 @@
           <aside id="player-card-yellow" class="side-player yellow-side" aria-label="Joueur jaune">
             <span class="side-number">P2</span>
             <div class="player-orb yellow-orb"><i></i></div>
-            <strong>JAUNE</strong>
-            <small>ÉCLAIR</small>
+            <strong id="yellow-player-name">JAUNE</strong>
+            <small id="yellow-player-rating">ÉCLAIR</small>
             <div class="win-counter"><span>VIC.</span><b id="game-score-yellow">0</b></div>
           </aside>
         </div>
@@ -259,8 +325,10 @@
       </div>
     </div>
 
-    <script src="puissance4.js"></script>
     <script src="../../js/core/arcade-config.js"></script>
+    <script src="../../vendor/supabase/arcade-supabase-client.min.js"></script>
+    <script src="puissance4.js"></script>
+    <script src="puissance4-live.js"></script>
     <script src="../../js/core/arcade-local-store.js"></script>
     <script src="../../js/core/arcade-game-bridge.js"></script>
   </body>

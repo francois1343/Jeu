@@ -94,6 +94,28 @@ import { createClient } from "@supabase/supabase-js";
     return unwrap(await client.functions.invoke(functionName, { body }));
   }
 
+  async function connect4Rpc(functionName, parameters = {}) {
+    return unwrap(await client.rpc(functionName, parameters));
+  }
+
+  function subscribeConnect4Room(roomId, onChange, onStatus) {
+    const channel = client
+      .channel(`connect4-room:${roomId}`)
+      .on("postgres_changes", {
+        event: "UPDATE",
+        schema: "public",
+        table: "connect4_rooms",
+        filter: `id=eq.${roomId}`,
+      }, onChange)
+      .subscribe((status, error) => onStatus?.(status, error));
+
+    return Object.freeze({
+      unsubscribe() {
+        return client.removeChannel(channel);
+      },
+    });
+  }
+
   global.ArcadeSupabase = Object.freeze({
     getSession,
     getAccount,
@@ -117,5 +139,26 @@ import { createClient } from "@supabase/supabase-js";
         answer: String(answer),
       });
     },
+    connect4: Object.freeze({
+      createRoom(turnSeconds = 30) {
+        return connect4Rpc("connect4_create_room", { p_turn_seconds: turnSeconds });
+      },
+      joinRoom(code) {
+        return connect4Rpc("connect4_join_room", { p_code: String(code || "") });
+      },
+      getRoom(code) {
+        return connect4Rpc("connect4_get_room", { p_code: String(code || "") });
+      },
+      play(code, column) {
+        return connect4Rpc("connect4_play", { p_code: String(code || ""), p_column: column });
+      },
+      resign(code) {
+        return connect4Rpc("connect4_resign", { p_code: String(code || "") });
+      },
+      getLeaderboard() {
+        return connect4Rpc("connect4_get_leaderboard");
+      },
+      subscribeRoom: subscribeConnect4Room,
+    }),
   });
 })(window);
