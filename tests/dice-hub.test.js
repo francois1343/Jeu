@@ -40,6 +40,6 @@ assert.match(script, /function currentCount\(\)/);
 assert.match(script, /Math\.min\(12, Math\.max\(1/);
 for (const theme of ["solar", "electric", "ultraviolet", "emerald", "crimson"]) assert.match(html, new RegExp(`value="${theme}"`));
 assert.match(config, /de: Object\.freeze\(\["chance", "dice"\]\)/);
-assert.match(config, /de: Object\.freeze\(\{ economyMode: "practice" \}\)/, "Le hub de dés doit rester gratuit comme l’ancien lancer intégré");
+assert.doesNotMatch(config, /de: Object\.freeze\(\{ economyMode: "practice" \}\)/, "Le hub de dés doit utiliser la mise commune");
 
 console.log("Mini-hub Jeux de dés : structure et compatibilité vérifiées");

@@ -98,7 +98,7 @@
       createParticles();
 
       // ===== PILE OU FACE =====
-      const coinGame = { mode: "solo", chooser: "Joueur 1", side: "Pile", scores: { "Joueur 1": 0, "Joueur 2": 0 } };
+      const coinGame = { mode: "solo", chooser: "Joueur 1", side: "Pile", scores: { "Joueur 1": 0, "Joueur 2": 0 }, busy: false };
       function openCoinGame(event) { event.stopPropagation(); const dialog = document.getElementById("coinGameDialog"); if (dialog && !dialog.open) dialog.showModal(); renderCoinGame(); }
       function renderCoinGame() {
         const duel = coinGame.mode === "duel";
@@ -112,12 +112,69 @@
         document.getElementById("coinScoreP1").textContent = coinGame.scores["Joueur 1"];
         document.getElementById("coinScoreP2").textContent = coinGame.scores["Joueur 2"];
       }
-      function tossCoin() {
+      async function beginCoinStake() {
+        if (window.ARCADE_CONFIG?.mode === "local-test") {
+          const session = window.ArcadeLocalStore?.createSession({
+            gameKey: "pile-face", title: "Pile ou Face", url: "index.html",
+          });
+          if (!session) throw new Error("profile_required");
+          window.ArcadeLocalStore.startSession(session.id, { mode: coinGame.mode });
+          return { id: session.id, local: true };
+        }
+        const random = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        const session = await window.ArcadeSupabase?.startGame("pile-face", `game:pile-face:${random}`);
+        if (!session?.session_id) throw new Error("authentication_required");
+        return { id: session.session_id, local: false };
+      }
+
+      async function settleCoinStake(stake, won, metadata) {
+        if (stake.local) {
+          window.ArcadeLocalStore.finishSession(stake.id, won ? "won" : "lost", metadata);
+        } else {
+          await window.ArcadeSupabase.settleGame(stake.id, won ? "won" : "lost", metadata);
+        }
+        await window.ArcadePlatform?.refreshAccount?.();
+      }
+
+      async function tossCoin() {
         const display = document.getElementById("coinMatchDisplay"), button = document.getElementById("coinTossButton"), status = document.getElementById("coinMatchStatus");
-        button.disabled = true; display.textContent = "?"; display.classList.add("flipping"); status.textContent = "La pièce est en l’air…"; playSound(800, .1);
-        setTimeout(() => { const result = Math.random() < .5 ? "Pile" : "Face"; const duel = coinGame.mode === "duel"; display.textContent = result === "Pile" ? "P" : "F"; display.classList.remove("flipping");
-          if (duel) { const winner = result === coinGame.side ? coinGame.chooser : (coinGame.chooser === "Joueur 1" ? "Joueur 2" : "Joueur 1"); coinGame.scores[winner]++; status.textContent = `${result} ! ${winner} remporte la manche.`; } else status.textContent = result === coinGame.side ? `${result} ! Vous avez gagné.` : `${result} ! La pièce gagne cette fois.`;
-          playSound(result === "Pile" ? 600 : 400, .15); button.disabled = false; renderCoinGame(); }, 620);
+        if (coinGame.busy) return;
+        coinGame.busy = true;
+        button.disabled = true;
+        status.textContent = "Engagement de la mise de 1 Coin…";
+        let stake;
+        try {
+          stake = await beginCoinStake();
+          display.textContent = "?";
+          display.classList.add("flipping");
+          status.textContent = "La pièce est en l’air…";
+          playSound(800, .1);
+          await new Promise((resolve) => setTimeout(resolve, 620));
+          const result = Math.random() < .5 ? "Pile" : "Face";
+          const duel = coinGame.mode === "duel";
+          const winner = result === coinGame.side ? coinGame.chooser : (coinGame.chooser === "Joueur 1" ? "Joueur 2" : "Joueur 1");
+          const won = duel ? winner === "Joueur 1" : result === coinGame.side;
+          display.textContent = result === "Pile" ? "P" : "F";
+          display.classList.remove("flipping");
+          if (duel) {
+            coinGame.scores[winner]++;
+            status.textContent = `${result} ! ${winner} remporte la manche. ${won ? "+2 Coins" : "Mise perdue"}.`;
+          } else {
+            status.textContent = won ? `${result} ! Vous gagnez 2 Coins.` : `${result} ! La pièce gagne votre mise.`;
+          }
+          await settleCoinStake(stake, won, { mode: coinGame.mode, side: coinGame.side, result, winner });
+          playSound(result === "Pile" ? 600 : 400, .15);
+          renderCoinGame();
+        } catch (error) {
+          display.classList.remove("flipping");
+          const message = String(error?.message || "");
+          status.textContent = message.includes("insufficient_balance")
+            ? "Solde insuffisant : il faut 1 Coin pour lancer la pièce."
+            : "Connectez-vous à votre compte pour engager la mise.";
+        } finally {
+          coinGame.busy = false;
+          button.disabled = false;
+        }
       }
       function initCoinGame() {
         document.querySelectorAll("[data-coin-mode]").forEach((button) => button.addEventListener("click", () => { coinGame.mode = button.dataset.coinMode; renderCoinGame(); }));

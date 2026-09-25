@@ -23,7 +23,7 @@ Toutes les valeurs temporaires sont regroupées dans `js/core/arcade-config.js` 
 localEconomy: {
   starterCoins: 5,
   playCostCoins: 1,
-  winPayoutCoins: 1.25,
+  winPayoutCoins: 2,
   maxHistoryEntries: 60,
   maxSessionEntries: 40,
   adminPseudos: ["ADMIN"],
@@ -32,19 +32,17 @@ localEconomy: {
 ```
 
 `winPayoutCoins` est le montant total versé après une victoire. Avec un coût de 1 et un paiement
-de 1,25, le gain net d’une victoire est donc de 0,25 Coin.
+de 2, le gain net d’une victoire est donc de 1 Coin.
 
 ## Parties existantes
 
-Les 30 jeux accessibles depuis la grille reçoivent maintenant un identifiant de session. La
+Les jeux accessibles depuis la grille reçoivent maintenant un identifiant de session. La
 création de la session ne débite rien. Le moteur signale ensuite son démarrage réel, puis sa
 victoire ou sa défaite. Un départ avant le démarrage ne coûte rien ; un départ ou rechargement
 après le démarrage devient un abandon et perd la mise.
 
-Open World et Pixel Forge restent provisoirement en entraînement gratuit car leur progression
-est ouverte et ne possède pas encore de fin fiable. Les modes libre/créatif de GeoMinds, Insane
-de Sudoku et Zen de Tetris sont également gratuits. Ils communiquent tout de même leurs états
-de session.
+Les modes explicitement sans enjeu, comme Zen de Tetris, peuvent rester gratuits. Tous les
+autres modes engagent la mise commune lorsqu’ils signalent leur démarrage réel.
 
 Le détail du protocole commun se trouve dans `docs/COMMUNICATION-JEUX.md`.
 

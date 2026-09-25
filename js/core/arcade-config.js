@@ -23,8 +23,8 @@ window.ARCADE_CONFIG = Object.freeze({
   localEconomy: Object.freeze({
     starterCoins: 5,
     playCostCoins: 1,
-    winPayoutCoins: 1.25,
-    dailyChallengePayoutCoins: 1.25,
+    winPayoutCoins: 2,
+    dailyChallengePayoutCoins: 2,
     dailyCompletionBonusCoins: 5,
     dailyChallengeKeys: Object.freeze(["daily-challenge-math", "daily-challenge-sequence", "daily-challenge-intruder"]),
     maxHistoryEntries: 60,
@@ -34,10 +34,6 @@ window.ARCADE_CONFIG = Object.freeze({
       "421-duel": Object.freeze(["dice", "strategy"]),
       "pile-face": Object.freeze(["chance"]), de: Object.freeze(["chance", "dice"]), calculation: Object.freeze(["logic"]), hifumi: Object.freeze(["strategy"]), reflex: Object.freeze(["reflex"]), memory: Object.freeze(["memory", "puzzle"]), enigme: Object.freeze(["enigma", "logic"]), tetris: Object.freeze(["arcade", "reflex", "puzzle"]), snake: Object.freeze(["arcade", "reflex"]), pong: Object.freeze(["arcade", "reflex"]), demineur: Object.freeze(["logic", "puzzle"]), bataille: Object.freeze(["strategy"]), "2048": Object.freeze(["logic", "puzzle"]), "casse-blocs": Object.freeze(["arcade", "reflex"]), labyrinthe: Object.freeze(["enigma", "logic"]), neon: Object.freeze(["enigma", "puzzle"]), cyberflux: Object.freeze(["arcade", "reflex"]), crossyturfu: Object.freeze(["arcade", "reflex"]), openworld: Object.freeze(["adventure"]), "pixel-forge": Object.freeze(["progression", "arcade"]), cyberfind: Object.freeze(["enigma", "logic"]), "neon-overdrive": Object.freeze(["arcade", "reflex"]), simon: Object.freeze(["memory", "reflex"]), "spider-solitaire": Object.freeze(["strategy", "puzzle", "cards"]), sudoku: Object.freeze(["logic", "puzzle"]), "synthwave-runner": Object.freeze(["arcade", "reflex"]), taquin: Object.freeze(["logic", "puzzle"]), geominds: Object.freeze(["logic", "enigma"]), cybermorpion: Object.freeze(["strategy", "logic"]), marmotte: Object.freeze(["arcade", "reflex"]), neontron: Object.freeze(["arcade", "reflex"]), puissance4: Object.freeze(["strategy", "logic"]), "neon-card-match": Object.freeze(["memory", "reflex", "cards"]), "phrase-forge": Object.freeze(["enigma", "puzzle"]), poker: Object.freeze(["strategy", "cards"]), "bubble-shooter": Object.freeze(["arcade", "reflex"]), "farkle-boheme": Object.freeze(["dice", "strategy"]), "cyber-bounty-hunter": Object.freeze(["arcade", "reflex"]), "cyber-core-sorter": Object.freeze(["arcade", "reflex"]), "cyber-symbol-poker": Object.freeze(["cards", "strategy"]), "neon-dice-arena": Object.freeze(["dice", "chance"]), "synthwave-edition": Object.freeze(["arcade", "reflex"]),
     }),    gamePolicies: Object.freeze({
-      "421-duel": Object.freeze({ economyMode: "practice" }),
-      de: Object.freeze({ economyMode: "practice" }),
-      "pixel-forge": Object.freeze({ economyMode: "practice" }),
-      openworld: Object.freeze({ economyMode: "practice" }),
       geominds: Object.freeze({
         requiredSolved: 5,
         practiceModes: Object.freeze(["free", "creative"]),
@@ -52,7 +48,7 @@ window.ARCADE_CONFIG = Object.freeze({
       "neon-overdrive": Object.freeze({ minimumScore: 1500 }),
       "synthwave-runner": Object.freeze({ minimumScore: 1000 }),
       snake: Object.freeze({ minimumScore: 10 }),
-      simon: Object.freeze({ victoryLevel: 5 }), "neon-card-match": Object.freeze({ minimumScore: 3 }), "phrase-forge": Object.freeze({ economyMode: "practice" }), poker: Object.freeze({ economyMode: "practice" }), "bubble-shooter": Object.freeze({ economyMode: "practice" }), "farkle-boheme": Object.freeze({ economyMode: "practice" }), "cyber-bounty-hunter": Object.freeze({ economyMode: "practice" }), "cyber-core-sorter": Object.freeze({ economyMode: "practice" }), "cyber-symbol-poker": Object.freeze({ economyMode: "practice" }), "neon-dice-arena": Object.freeze({ economyMode: "practice" }), "synthwave-edition": Object.freeze({ economyMode: "practice" }),
+      simon: Object.freeze({ victoryLevel: 5 }), "neon-card-match": Object.freeze({ minimumScore: 3 }),
       "daily-challenge-math": Object.freeze({ economyMode: "free", dailyLimit: true }),
       "daily-challenge-sequence": Object.freeze({ economyMode: "free", dailyLimit: true }),
       "daily-challenge-intruder": Object.freeze({ economyMode: "free", dailyLimit: true }),

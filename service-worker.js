@@ -1,4 +1,4 @@
-const CACHE = "arcade-station-v43";
+const CACHE = "arcade-station-v44";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -26,6 +26,7 @@ const APP_SHELL = [
   "./js/core/arcade-platform.js",
   "./js/core/arcade-shop.js",
   "./js/core/arcade-game-sdk.js",
+  "./js/core/arcade-game-bridge.js",
   "./js/core/arcade-game-config.js",
   "./js/core/arcade-game-preferences.js",
   "./js/core/arcade-game-shell.js",

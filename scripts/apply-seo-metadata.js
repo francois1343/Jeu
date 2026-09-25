@@ -74,10 +74,26 @@ function descriptionFor(relativePath, title, existing) {
   return `Jouez gratuitement à ${title} sur Francis Arcade, une expérience néon accessible sur ordinateur et mobile.`;
 }
 
+function allowArcadeBackend(source, relativePath) {
+  if (!relativePath.startsWith(`games${path.sep}`)) return source;
+  const required = [
+    "https://nnqfomqgagfshujyfrtl.supabase.co",
+    "wss://nnqfomqgagfshujyfrtl.supabase.co",
+  ];
+  return source.replace(/connect-src\s+([^;]+);/i, (directive, values) => {
+    const tokens = values.trim().split(/\s+/);
+    required.forEach((value) => {
+      if (!tokens.includes(value)) tokens.push(value);
+    });
+    return `connect-src ${tokens.join(" ")};`;
+  });
+}
+
 const pages = walk(root).filter((file) => file.endsWith(".html"));
 for (const page of pages) {
   let source = fs.readFileSync(page, "utf8");
   const relativePath = path.relative(root, page);
+  source = allowArcadeBackend(source, relativePath);
   const titleMatch = source.match(/<title>([\s\S]*?)<\/title>/i);
   if (!titleMatch) throw new Error(`Titre absent : ${relativePath}`);
 

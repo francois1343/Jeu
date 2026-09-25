@@ -71,7 +71,7 @@
           state: "started",
           economyMode: "paid",
           wagerUnits: Number(oldGame.costUnits || coinsToUnits(economy.playCostCoins ?? 1)),
-          payoutUnits: coinsToUnits(economy.winPayoutCoins ?? 1.25),
+          payoutUnits: coinsToUnits(economy.winPayoutCoins ?? 2),
           createdAt: oldGame.startedAt || new Date().toISOString(),
           startedAt: oldGame.startedAt || new Date().toISOString(),
           resolvedAt: null,
@@ -269,7 +269,7 @@
       wagerUnits,
       payoutUnits: economyMode === "practice"
         ? 0
-        : coinsToUnits(policy.winPayoutCoins ?? (policy.dailyLimit ? economy.dailyChallengePayoutCoins : economy.winPayoutCoins) ?? 1.25),
+        : coinsToUnits(policy.winPayoutCoins ?? (policy.dailyLimit ? economy.dailyChallengePayoutCoins : economy.winPayoutCoins) ?? 2),
       createdAt: new Date().toISOString(),
       startedAt: null,
       resolvedAt: null,

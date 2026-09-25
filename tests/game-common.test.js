@@ -27,7 +27,7 @@ global.ARCADE_CONFIG = {
   localEconomy: {
     starterCoins: 5,
     playCostCoins: 1,
-    winPayoutCoins: 1.25,
+    winPayoutCoins: 2,
     maxHistoryEntries: 60,
     maxSessionEntries: 40,
     adminPseudos: ["ADMIN"],

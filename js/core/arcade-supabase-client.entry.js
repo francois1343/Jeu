@@ -98,6 +98,10 @@ import { createClient } from "@supabase/supabase-js";
     return unwrap(await client.rpc(functionName, parameters));
   }
 
+  async function arcadeRpc(functionName, parameters = {}) {
+    return unwrap(await client.rpc(functionName, parameters));
+  }
+
   function subscribeConnect4Room(roomId, onChange, onStatus) {
     const channel = client
       .channel(`connect4-room:${roomId}`)
@@ -137,6 +141,22 @@ import { createClient } from "@supabase/supabase-js";
       return invoke("settle-challenge", {
         session_id: sessionId,
         answer: String(answer),
+      });
+    },
+    startGame(gameKey, idempotencyKey) {
+      return arcadeRpc("arcade_start_client_game", {
+        p_game_key: String(gameKey || ""),
+        p_idempotency_key: String(idempotencyKey || ""),
+      });
+    },
+    getGameSession(sessionId) {
+      return arcadeRpc("arcade_get_client_game", { p_session_id: sessionId });
+    },
+    settleGame(sessionId, outcome, metadata = {}) {
+      return arcadeRpc("arcade_settle_client_game", {
+        p_session_id: sessionId,
+        p_outcome: String(outcome || ""),
+        p_client_result: metadata && typeof metadata === "object" ? metadata : {},
       });
     },
     connect4: Object.freeze({

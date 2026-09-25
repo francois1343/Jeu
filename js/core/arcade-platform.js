@@ -110,7 +110,7 @@
 
   function updateEconomyCopy() {
     setText("gamePlayCost", `${formatCoins(coinsToUnits(economy.playCostCoins ?? 1))} Coin`);
-    setText("dailyChallengeReward", `${formatCoins(coinsToUnits(economy.dailyChallengePayoutCoins ?? 1.25))} Coins`);
+    setText("dailyChallengeReward", `${formatCoins(coinsToUnits(economy.dailyChallengePayoutCoins ?? 2))} Coins`);
     setText("dailyCompletionBonus", `${formatCoins(coinsToUnits(economy.dailyCompletionBonusCoins ?? 5))} Coins`);
     setText("starterCoins", `${formatCoins(coinsToUnits(economy.starterCoins ?? 5))} Coins`);
     setText("starterCoinsDialog", `${formatCoins(coinsToUnits(economy.starterCoins ?? 5))} Coins de départ`);

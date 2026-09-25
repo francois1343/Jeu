@@ -23,8 +23,8 @@
 
   const transactionLabels = Object.freeze({
     starter_grant: "Coins de départ",
-    game_entry: "Partie vérifiée",
-    game_win: "Victoire certifiée",
+    game_entry: "Mise de partie",
+    game_win: "Victoire · pot remporté",
     rewarded_ad: "Récompense publicitaire",
     daily_bonus: "Bonus quotidien",
     achievement: "Succès",
@@ -367,9 +367,10 @@
       return false;
     }
     const destination = new URL(game.url, global.location.href);
-    destination.searchParams.set("arcadePractice", "1");
-    setMessage(`${game.title} démarre en entraînement : aucun Coin serveur ne sera débité ou crédité.`, "success");
-    return { url: destination.href, practice: true };
+    destination.searchParams.set("arcadeServer", "1");
+    destination.searchParams.set("arcadeGame", game.gameKey);
+    setMessage(`${game.title} est prêt. La mise de 1 Coin sera débitée au démarrage réel.`, "success");
+    return { url: destination.href, practice: false };
   }
 
   function resumePendingGame() {
@@ -565,8 +566,12 @@
     refreshAccount,
     beginGame,
     getGameSession: () => null,
-    startGameSession: () => null,
-    reportGameResult: () => null,
+    startGameSession(gameKey, idempotencyKey) {
+      return api.startGame(gameKey, idempotencyKey);
+    },
+    reportGameResult(sessionId, outcome, metadata) {
+      return api.settleGame(sessionId, outcome, metadata);
+    },
     startChallenge,
     settleChallenge,
   });

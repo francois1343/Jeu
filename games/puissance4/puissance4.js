@@ -1145,6 +1145,9 @@ document.addEventListener("DOMContentLoaded", () => {
     lastLiveResultVersion = room.version;
     const isDraw = !room.winner_user_id;
     const didWin = room.winner_user_id === room.me_user_id;
+    if (isDraw) window.ArcadeGameSession?.lose({ mode: "live", draw: true, room: room.code });
+    else if (didWin) window.ArcadeGameSession?.win({ mode: "live", room: room.code });
+    else window.ArcadeGameSession?.lose({ mode: "live", room: room.code });
     const reason = room.result_reason === "timeout" ? "Temps écoulé."
       : room.result_reason === "resignation" ? "La partie se termine sur un abandon."
         : room.result_reason === "draw" ? "La grille est pleine."
@@ -1164,6 +1167,7 @@ document.addEventListener("DOMContentLoaded", () => {
     DOM.remainingDisksBar.classList.add("hidden");
     DOM.gameOverModal.classList.add("hidden");
     document.body.classList.add("live-game");
+    window.ArcadeGameSession?.start({ mode: "live", room: room.code });
     renderLiveRoom(room);
   }
 

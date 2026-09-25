@@ -7,13 +7,13 @@ erreurs d’arrondi et permet des récompenses comme 0,25 Coin.
 | --- | ---: | --- |
 | Bonus de bienvenue | 3 Coins | Permet de découvrir les défis sans pub |
 | Coût d’un défi | 1 Coin | Mise commune par défaut |
-| Paiement d’une victoire | 1,25 Coin | Mise rendue + bonus de 0,25 |
+| Paiement d’une victoire | 2 Coins | Mise rendue + mise adverse ou du robot |
 | Pub récompensée | 1 Coin | Maximum 3 par jour |
-| Bonus net de victoire | 5 Coins/jour | Au-delà, les victoires rendent encore la mise |
+| Plafond des anciens défis certifiés | 5 Coins/jour | Ne concerne pas les sessions catalogue à pot fixe |
 | Départs payants | 10/minute, 100/jour | Freine automatisation et boucles accidentelles |
 
-À 80 % de réussite, le joueur est à l’équilibre avant plafond. À 90 %, il gagne en moyenne
-0,125 Coin par partie, puis le plafond journalier limite le farming sans bloquer les bons joueurs.
+Une victoire produit un gain net de 1 Coin et une défaite perd la mise de 1 Coin. Les sessions
+et leurs règlements sont idempotents afin qu’un même résultat ne puisse pas payer deux fois.
 
 Les valeurs globales vivent uniquement dans `economy_config`. Un jeu peut avoir un coût ou un
 paiement différent dans `game_catalog`. La version de configuration utilisée est enregistrée

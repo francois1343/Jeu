@@ -1,8 +1,9 @@
 # Migration progressive des jeux vers les Coins
 
-Les jeux existants restent en mode entraînement gratuit tant que leur résultat n’est pas
-vérifiable. Le registre `game_catalog` est la source de vérité : activer `economy_enabled`
-uniquement après ajout et test d’un validateur serveur.
+Les jeux existants utilisent désormais une session payante serveur : le serveur impose la mise
+et le paiement, mais le résultat des anciens jeux reste déclaré par le navigateur. Le registre
+`game_catalog` est la source de vérité. Cette étape rend le portefeuille fonctionnel, sans
+transformer pour autant ces résultats en scores commercialement certifiés.
 
 ## Ordre recommandé
 
@@ -40,7 +41,7 @@ Chaque partie reçoit une graine serveur. Le client renvoie un journal compact d
 le backend rejoue la simulation avec la même graine et contrôle le score, la durée et les
 limites physiques du jeu.
 
-### Entraînement uniquement tant qu’il reste local
+### Résultats clients à remplacer avant commercialisation
 
 - HiFuMi
 - Cyber-Morpion
@@ -53,8 +54,9 @@ limites physiques du jeu.
 - Pixel Forge
 
 Les jeux de hasard local, les duels locaux, les clickers et les jeux dont le navigateur décide
-seul du résultat sont trop faciles à automatiser. Ils ne doivent ni coûter ni rapporter de Coins
-avant une refonte de leur autorité de jeu.
+seul du résultat sont faciles à automatiser. Le prototype peut imposer leur mise et leur paiement
+côté serveur, mais ils restent marqués `candidate` et ne doivent pas donner accès à une valeur
+réelle avant une refonte de leur autorité de jeu.
 
 ## Contrat d’intégration
 
@@ -73,7 +75,7 @@ Coins globaux.
 ## Passage d’une vague en production
 
 - Ajouter un validateur et des tests de réussite, défaite, expiration et double règlement.
-- Laisser le jeu en `candidate` avec `economy_enabled = false` pendant les tests.
+- Laisser le jeu en `candidate` tant que le résultat est déclaré par le client.
 - Comparer les taux de victoire et la durée de session sur un échantillon réel.
 - Ajuster le coût ou la récompense dans `game_catalog`, pas dans le JavaScript du jeu.
 - Passer à `verified` et activer l’économie seulement après revue des abus possibles.

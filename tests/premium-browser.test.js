@@ -255,8 +255,9 @@ async function main() {
     { key: "taquin", title: "Pixel Taquin", path: "/games/taquin/index.html", start: "#btn-start-game" },
   ];
 
-  for (const pilot of pilots) {
+  for (const [pilotIndex, pilot] of pilots.entries()) {
     await navigate(`${baseUrl}/index.html`);
+    await cdp.evaluate(`window.ArcadeLocalStore.login(${JSON.stringify(`Recette ${pilotIndex + 1}`)})`);
     const session = await cdp.evaluate(`window.ArcadeLocalStore.createSession(${JSON.stringify({
       gameKey: pilot.key,
       title: pilot.title,
@@ -325,7 +326,12 @@ async function main() {
     const terminal = await cdp.evaluate("document.querySelector('#arcadeShellResult').textContent");
     assert.match(terminal, /terminée|perdue/i, `${pilot.title} n'annonce pas clairement sa fin`);
     await cdp.evaluate("document.querySelector('#arcadeShellReplay').click(); true");
-    await waitFor(`location.href.includes('arcadeSession=') && !location.href.includes(${JSON.stringify(session.id)}) && window.ArcadeGameSession?.state === 'created'`, `${pilot.title} ne recrée pas une session au rejeu`, 10000);
+    try {
+      await waitFor(`location.href.includes('arcadeSession=') && !location.href.includes(${JSON.stringify(session.id)}) && window.ArcadeGameSession?.state === 'created'`, `${pilot.title} ne recrée pas une session au rejeu`, 10000);
+    } catch (error) {
+      const debug = await cdp.evaluate("({ href: location.href, state: window.ArcadeGameSession?.state, active: window.ArcadeLocalStore?.getActiveSession?.(), errors: window.__arcadeErrors || [] })");
+      throw new Error(`${error.message} · ${JSON.stringify(debug)} · ${runtimeErrors.join(' | ')}`);
+    }
   }
 
   await cdp.send("Emulation.setDeviceMetricsOverride", {
@@ -430,6 +436,10 @@ async function main() {
   })()`);
   await waitFor("/incorrect|impossible|confirmez/i.test(document.querySelector('#profileStatus')?.textContent || '')", "La connexion Supabase ne renvoie pas d'erreur utilisateur", 10000);
   assert.equal(await cdp.evaluate("Boolean(window.ArcadePlatform.getSession())"), false, "Une connexion invalide cree une session");
+  await navigate(`${baseUrl}/games/snake/index.html?arcadeServer=1&arcadeGame=snake`);
+  await waitFor("window.ArcadeGameSession?.state === 'created' && Boolean(window.ArcadeSupabase?.startGame)", "Le pont de mise serveur ne démarre pas");
+  await cdp.evaluate("window.ArcadeGameSession.start({ source: 'signed_out_recipe' }); true");
+  await waitFor("window.ArcadeGameSession?.state === 'abandoned' && Boolean(document.querySelector('#arcadeSessionBlocker'))", "Une partie déconnectée engage encore une mise", 10000);
   assert.deepEqual(runtimeErrors, [], `Erreurs JavaScript serveur :\n${runtimeErrors.join("\n")}`);
 
   cdp.close();

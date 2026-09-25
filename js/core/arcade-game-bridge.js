@@ -5,16 +5,51 @@
   const config = global.ARCADE_CONFIG || {};
   const bridgeScriptUrl = document.currentScript?.src || "";
   const params = new URLSearchParams(global.location.search);
-  const sessionId = params.get("arcadeSession");
-  let session = sessionId && store ? store.getSession(sessionId) : null;
+  let sessionId = params.get("arcadeSession");
+  let serverMode = false;
+  let serverApi = null;
+  let serverBalanceUnits = null;
+  let serverStartPromise = null;
+  let serverSettlePromise = null;
+  let serverIdempotencyKey = null;
+  let session = null;
   let blocked = false;
   let outcomeObserver = null;
   const stateListeners = new Set();
   const originalAlert = global.alert?.bind(global);
 
-  const terminalStates = new Set(["won", "lost", "abandoned"]);
+  const terminalStates = new Set(["won", "lost", "abandoned", "expired", "cancelled", "invalid"]);
   const winPattern = /\b(victoire|vous avez gagné|you win|bravo|félicitations|grille complétée|puzzle résolu|niveau terminé|mission accomplie|remporte la partie)\b/i;
   const lossPattern = /\b(game over|vous avez perdu|défaite|you lose|crash detected|santé épuisée|boom)\b/i;
+
+  function inferredGameKey() {
+    const explicit = params.get("arcadeGame");
+    if (explicit) return explicit;
+    const parts = global.location.pathname.split("/").filter(Boolean);
+    const folder = decodeURIComponent(parts.at(-2) || "").toLocaleLowerCase("fr");
+    return global.ARCADE_GAME_CONFIG?.shell?.routeAliases?.[folder] || folder;
+  }
+
+  function newIdempotencyKey(gameKey) {
+    const random = global.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    return `game:${gameKey}:${random}`;
+  }
+
+  function serverSessionFrom(data, fallbackState = "started") {
+    return {
+      id: data?.session_id || sessionId || null,
+      gameKey: data?.game_key || inferredGameKey(),
+      title: document.title,
+      url: global.location.pathname,
+      state: data?.status || fallbackState,
+      economyMode: "paid",
+      wagerUnits: Number(data?.wager_units ?? 100),
+      payoutUnits: Number(data?.potential_payout_units ?? 200),
+      startedAt: data?.started_at || null,
+      resolvedAt: data?.settled_at || null,
+      metadata: { validation: "client_result" },
+    };
+  }
 
   function policy() {
     return config.localEconomy?.gamePolicies?.[session?.gameKey] || {};
@@ -32,6 +67,9 @@
       won: "Gagnée",
       lost: "Perdue",
       abandoned: "Abandonnée",
+      expired: "Expirée",
+      cancelled: "Annulée",
+      invalid: "Refusée",
     }[state] || state;
   }
 
@@ -58,11 +96,14 @@
       hud.innerHTML = "<strong></strong><span></span>";
       document.body.appendChild(hud);
     }
-    const profile = store.getActiveProfile();
+    const profile = serverMode ? null : store?.getActiveProfile();
     hud.dataset.state = session.state;
     hud.title = `Session ${session.id}`;
     hud.querySelector("strong").textContent = `${session.economyMode === "practice" ? "Entraînement" : "Coins"} · ${statusLabel(session.state)}`;
-    hud.querySelector("span").textContent = `${coins(profile?.balanceUnits)} 🪙`;
+    const balance = serverMode ? serverBalanceUnits : profile?.balanceUnits;
+    hud.querySelector("span").textContent = Number.isFinite(Number(balance))
+      ? `${coins(balance)} 🪙`
+      : "Solde serveur";
   }
 
   function injectHomeButton() {
@@ -115,6 +156,14 @@
 
   function replay() {
     if (!session || !terminalStates.has(session.state)) return null;
+    if (serverMode) {
+      const destination = new URL(global.location.href);
+      destination.searchParams.delete("arcadeSession");
+      destination.searchParams.set("arcadeServer", "1");
+      destination.searchParams.set("arcadeGame", session.gameKey);
+      global.location.assign(destination.href);
+      return null;
+    }
     const nextSession = store.createSession({
       gameKey: session.gameKey,
       title: session.title,
@@ -164,6 +213,10 @@
   }
 
   function updateSession() {
+    if (serverMode) {
+      renderHud();
+      return session;
+    }
     session = sessionId ? store.getSession(sessionId) : null;
     renderHud();
     return session;
@@ -174,6 +227,41 @@
     if (session.state === "started") return session;
     if (terminalStates.has(session.state)) return session;
     const previousState = session.state;
+    if (serverMode) {
+      session.state = "started";
+      session.startedAt = new Date().toISOString();
+      session.metadata = { ...session.metadata, ...metadata };
+      renderHud();
+      announceState(previousState, metadata.source || "server_game_start");
+      serverIdempotencyKey ||= newIdempotencyKey(session.gameKey);
+      serverStartPromise = serverApi.startGame(session.gameKey, serverIdempotencyKey)
+        .then((data) => {
+          sessionId = data.session_id;
+          serverBalanceUnits = Number(data.balance_units);
+          session = { ...serverSessionFrom(data), metadata: { ...session.metadata } };
+          const destination = new URL(global.location.href);
+          destination.searchParams.set("arcadeServer", "1");
+          destination.searchParams.set("arcadeGame", session.gameKey);
+          destination.searchParams.set("arcadeSession", session.id);
+          global.history.replaceState({}, "", destination);
+          renderHud();
+          return session;
+        })
+        .catch((error) => {
+          const failedState = session.state;
+          session.state = "abandoned";
+          renderHud();
+          announceState(failedState, "server_start_failed");
+          showBlocker(
+            "Partie non démarrée",
+            String(error?.message || "").includes("insufficient_balance")
+              ? "Votre solde est insuffisant. Aucun Coin n’a été débité."
+              : "Le serveur n’a pas pu engager la mise. Aucun résultat ne sera crédité.",
+          );
+          return null;
+        });
+      return session;
+    }
     try {
       session = store.startSession(session.id, metadata);
       renderHud();
@@ -192,6 +280,49 @@
 
   function finish(outcome, metadata = {}) {
     if (!session || terminalStates.has(session.state)) return session;
+    if (serverMode) {
+      if (session.state === "created" && outcome === "abandoned") {
+        const previousState = session.state;
+        session.state = "abandoned";
+        session.resolvedAt = new Date().toISOString();
+        session.metadata = { ...session.metadata, ...metadata, wasStarted: false };
+        renderHud();
+        announceState(previousState, metadata.source || "server_game_cancelled");
+        return session;
+      }
+      if (session.state === "created") start({ outcomeReportedAtStart: true });
+      const previousState = session.state;
+      session.state = outcome;
+      session.resolvedAt = new Date().toISOString();
+      session.metadata = { ...session.metadata, ...metadata };
+      renderHud();
+      outcomeObserver?.disconnect();
+      announceState(previousState, metadata.source || `server_game_${outcome}`);
+      if (!serverSettlePromise) {
+        serverSettlePromise = Promise.resolve(serverStartPromise)
+          .then((startedSession) => {
+            if (!startedSession || !session.id) return null;
+            return serverApi.settleGame(session.id, outcome, metadata);
+          })
+          .then((result) => {
+            if (!result) return null;
+            serverBalanceUnits = Number(result.balance_units);
+            session.state = result.status === "invalid" ? "lost" : result.status;
+            session.resolvedAt = new Date().toISOString();
+            renderHud();
+            return result;
+          })
+          .catch((error) => {
+            console.error("Règlement serveur impossible.", error);
+            showBlocker(
+              "Résultat à synchroniser",
+              "La mise est enregistrée, mais le résultat n’a pas pu être synchronisé. Revenez à l’accueil puis réessayez avec une nouvelle partie.",
+            );
+            return null;
+          });
+      }
+      return session;
+    }
     if (outcome === "won" || outcome === "lost") {
       if (!start({ outcomeReportedAtStart: true })) return session;
     }
@@ -324,15 +455,56 @@
     });
   }
 
-  function init() {
+  async function init() {
     injectStyles();
     injectHomeButton();
-    if (!sessionId || !store) return;
+    serverMode = config.mode === "supabase";
+    if (serverMode) {
+      serverApi = global.ArcadeSupabase;
+      const gameKey = inferredGameKey();
+      if (!serverApi || !gameKey) {
+        showBlocker("Serveur indisponible", "La session Coins ne peut pas être créée depuis cette page.");
+        return;
+      }
+      if (sessionId) {
+        try {
+          const data = await serverApi.getGameSession(sessionId);
+          serverBalanceUnits = Number(data.balance_units);
+          session = serverSessionFrom(data);
+        } catch (_) {
+          showBlocker("Session introuvable", "Relancez ce jeu depuis la grille principale.");
+          return;
+        }
+        if (session.state === "started") {
+          try {
+            const result = await serverApi.settleGame(session.id, "abandoned", { reason: "page_reloaded_after_start" });
+            serverBalanceUnits = Number(result.balance_units);
+            session.state = "abandoned";
+          } catch (_) {
+            session.state = "abandoned";
+          }
+          renderHud();
+          showBlocker("Partie abandonnée", "La page a été rechargée après le démarrage. La mise reste dépensée.");
+          return;
+        }
+      } else {
+        session = serverSessionFrom({ game_key: gameKey, status: "created" }, "created");
+        try {
+          const account = await serverApi.getAccount();
+          serverBalanceUnits = Number(account?.wallet?.balance_units);
+        } catch (_) {
+          serverBalanceUnits = null;
+        }
+      }
+    } else {
+      session = sessionId && store ? store.getSession(sessionId) : null;
+      if (!sessionId || !store) return;
+    }
     if (!session) {
       showBlocker("Session introuvable", "Relancez ce jeu depuis la grille principale.");
       return;
     }
-    if (session.state === "started") {
+    if (!serverMode && session.state === "started") {
       session = store.finishSession(session.id, "abandoned", { reason: "page_reloaded_after_start" });
       renderHud();
       showBlocker("Partie abandonnée", "La page a été rechargée après le démarrage. La mise reste dépensée.");
@@ -401,8 +573,17 @@
     }
   }
 
-  loadSharedExperience();
+  async function bootstrap() {
+    await loadSharedExperience();
+    if (config.mode === "supabase" && !global.ArcadeSupabase) {
+      await loadSharedScript("../../vendor/supabase/arcade-supabase-client.min.js");
+    }
+    await init();
+  }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
-  else init();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootstrap, { once: true });
+  } else {
+    bootstrap();
+  }
 })(window);

@@ -34,7 +34,7 @@ La priorité n'est plus d'ajouter des jeux. Le travail porte maintenant sur la c
 | Comptes, Coins et historique     |  🟢 Serveur | Auth Supabase et portefeuille serveur en lecture seule côté client |
 | Boutique cosmétique              |  ✅ Local   | Achat, inventaire et équipement sans avantage compétitif       |
 | Statistiques et retours          |  ✅ Local   | Statistiques par jeu et formulaire EmailJS                     |
-| Défis quotidiens                 |  🟡 Hybride | Trois défis certifiés côté serveur ; catalogue restant en entraînement |
+| Sessions de jeu et mises         |  🟡 Hybride | Débit et paiement serveur ; résultats historiques encore déclarés par le client |
 | Vitrine « À jouer maintenant »   |     ✅      | Six jeux mis en avant sur l'accueil                            |
 | Bridge de session commun         |     ✅      | Les 43 pages de jeu communiquent avec la plateforme            |
 | Console ADMIN et audit           |  ✅ Local   | Recherche, sauvegarde, import et export des données de test    |
@@ -108,7 +108,7 @@ Cette sélection reste stable jusqu'à la fin du cycle de recette Premium. Un re
 - pseudo, portefeuille fictif et historique des mouvements ;
 - coût et récompense centralisés par la plateforme ;
 - sessions créées, démarrées puis réglées de manière idempotente ;
-- modes d'entraînement gratuits pour les jeux sans résultat suffisamment vérifiable.
+- sessions serveur payantes sur le catalogue, avec résultats clients marqués comme provisoires tant que chaque jeu n’a pas son validateur autoritaire.
 
 ### Boutique Arcade
 
@@ -292,7 +292,7 @@ Dans la pré-bêta actuelle, les comptes et le portefeuille de Coins sont géré
 
 Le profil local `ADMIN` donne accès à une console de test pour rechercher, sauvegarder, importer et exporter les profils, retours et éléments d'audit. Les fichiers `francis_arcade_audit_global.json` et `francis_arcade_audit_global_export.csv` servent de sources initiales : les changements effectués dans le navigateur restent locaux jusqu'à leur export. Cette console ne remplace ni une authentification serveur ni des autorisations Supabase.
 
-Le dossier `supabase/` contient les règles RLS, portefeuilles, transactions et sessions vérifiées actives. Les jeux non encore reliés à une validation serveur fonctionnent en entraînement et ne modifient pas le portefeuille.
+Le dossier `supabase/` contient les règles RLS, portefeuilles, transactions et sessions actives. Les montants sont imposés et réglés par PostgreSQL. Pour les anciens jeux, le résultat reste provisoirement déclaré par le navigateur ; seuls les modes autoritaires peuvent être considérés comme certifiés.
 
 Aucune clé secrète ou clé `service_role` ne doit être exposée dans le frontend. Seules les clés publiques prévues pour le navigateur pourront y être configurées.
 
