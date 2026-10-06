@@ -87,7 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function afficherPhrase() {
     if (!ingredients.sujets.length) return;
-    window.ArcadeGameSession?.start({ mode: "creative" });
 
     currentSentence = `${choisir(ingredients.sujets)} ${choisir(ingredients.verbes)} ${choisir(ingredients.complements)}.`;
     sauvegarderPhrase(currentSentence);

@@ -15,6 +15,9 @@ erreurs d’arrondi et permet des récompenses comme 0,25 Coin.
 Une victoire produit un gain net de 1 Coin et une défaite perd la mise de 1 Coin. Les sessions
 et leurs règlements sont idempotents afin qu’un même résultat ne puisse pas payer deux fois.
 
+`Pile ou Face` et `Forge à histoires` sont des expériences gratuites : elles ne créent aucune
+mise, ne demandent pas de connexion et ne versent pas de Coins.
+
 Les valeurs globales vivent uniquement dans `economy_config`. Un jeu peut avoir un coût ou un
 paiement différent dans `game_catalog`. La version de configuration utilisée est enregistrée
 avec chaque session et chaque gain afin de conserver un historique explicable.

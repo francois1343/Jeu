@@ -263,6 +263,25 @@
         opacity: 0.05;
       }
 
+      .free-badge {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        z-index: 2;
+        display: inline-flex;
+        min-height: 25px;
+        align-items: center;
+        padding: 0 9px;
+        border: 1px solid rgba(0, 255, 136, 0.72);
+        border-radius: 999px;
+        background: rgba(0, 255, 136, 0.12);
+        box-shadow: 0 0 16px rgba(0, 255, 136, 0.22);
+        color: #72ffbd;
+        font: 800 0.68rem "Orbitron", sans-serif;
+        letter-spacing: 0.1em;
+        line-height: 1;
+      }
+
       /* ========================================== */
       /* ===== COULEURS PAR JEU (CLASSES) ===== */
       /* ========================================== */

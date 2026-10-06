@@ -458,7 +458,7 @@
   async function init() {
     injectStyles();
     injectHomeButton();
-    serverMode = config.mode === "supabase";
+    serverMode = config.mode === "supabase" && params.get("arcadeFree") !== "1";
     if (serverMode) {
       serverApi = global.ArcadeSupabase;
       const gameKey = inferredGameKey();

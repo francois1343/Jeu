@@ -112,39 +112,12 @@
         document.getElementById("coinScoreP1").textContent = coinGame.scores["Joueur 1"];
         document.getElementById("coinScoreP2").textContent = coinGame.scores["Joueur 2"];
       }
-      async function beginCoinStake() {
-        if (window.ARCADE_CONFIG?.mode === "local-test") {
-          const session = window.ArcadeLocalStore?.createSession({
-            gameKey: "pile-face", title: "Pile ou Face", url: "index.html",
-          });
-          if (!session) throw new Error("profile_required");
-          window.ArcadeLocalStore.startSession(session.id, { mode: coinGame.mode });
-          return { id: session.id, local: true };
-        }
-        const random = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-        const session = await window.ArcadeSupabase?.startGame("pile-face", `game:pile-face:${random}`);
-        if (!session?.session_id) throw new Error("authentication_required");
-        return { id: session.session_id, local: false };
-      }
-
-      async function settleCoinStake(stake, won, metadata) {
-        if (stake.local) {
-          window.ArcadeLocalStore.finishSession(stake.id, won ? "won" : "lost", metadata);
-        } else {
-          await window.ArcadeSupabase.settleGame(stake.id, won ? "won" : "lost", metadata);
-        }
-        await window.ArcadePlatform?.refreshAccount?.();
-      }
-
       async function tossCoin() {
         const display = document.getElementById("coinMatchDisplay"), button = document.getElementById("coinTossButton"), status = document.getElementById("coinMatchStatus");
         if (coinGame.busy) return;
         coinGame.busy = true;
         button.disabled = true;
-        status.textContent = "Engagement de la mise de 1 Coin…";
-        let stake;
         try {
-          stake = await beginCoinStake();
           display.textContent = "?";
           display.classList.add("flipping");
           status.textContent = "La pièce est en l’air…";
@@ -158,19 +131,15 @@
           display.classList.remove("flipping");
           if (duel) {
             coinGame.scores[winner]++;
-            status.textContent = `${result} ! ${winner} remporte la manche. ${won ? "+2 Coins" : "Mise perdue"}.`;
+            status.textContent = `${result} ! ${winner} remporte la manche.`;
           } else {
-            status.textContent = won ? `${result} ! Vous gagnez 2 Coins.` : `${result} ! La pièce gagne votre mise.`;
+            status.textContent = won ? `${result} ! Vous avez gagné.` : `${result} ! La pièce gagne cette manche.`;
           }
-          await settleCoinStake(stake, won, { mode: coinGame.mode, side: coinGame.side, result, winner });
           playSound(result === "Pile" ? 600 : 400, .15);
           renderCoinGame();
-        } catch (error) {
+        } catch (_) {
           display.classList.remove("flipping");
-          const message = String(error?.message || "");
-          status.textContent = message.includes("insufficient_balance")
-            ? "Solde insuffisant : il faut 1 Coin pour lancer la pièce."
-            : "Connectez-vous à votre compte pour engager la mise.";
+          status.textContent = "Le lancer n'a pas pu aboutir. Réessayez.";
         } finally {
           coinGame.busy = false;
           button.disabled = false;
@@ -189,9 +158,12 @@
         const card = event.currentTarget.closest("[data-game]");
         const gameKey = card?.dataset.game || url.replace(/\.html$/i, "");
         const title = card?.querySelector(".game-title")?.textContent?.trim() || gameKey;
-        const launch = window.ArcadePlatform?.beginGame({ gameKey, title, url });
+        const isFree = card?.dataset.free === "true";
+        const launch = isFree ? { url: new URL(url, window.location.href).href, practice: true } : window.ArcadePlatform?.beginGame({ gameKey, title, url });
         if (launch === false) return;
-        const destination = launch?.url || url;
+        const destinationUrl = new URL(launch?.url || url, window.location.href);
+        if (isFree) destinationUrl.searchParams.set("arcadeFree", "1");
+        const destination = destinationUrl.href;
 
         playSound(900, 0.1);
 
