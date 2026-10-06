@@ -181,6 +181,24 @@ async function main() {
   assert(homeTypography.orbitronLoaded, "Orbitron locale n'est pas chargee");
   assert(homeTypography.rajdhaniLoaded, "Rajdhani locale n'est pas chargee");
 
+  const freeBadgeLayout = await cdp.evaluate(`(() => {
+    const card = document.querySelector('[data-game="pile-face"]');
+    const badge = card.querySelector('.free-badge');
+    const icon = card.querySelector('.game-icon');
+    const cardRect = card.getBoundingClientRect();
+    const badgeRect = badge.getBoundingClientRect();
+    const iconRect = icon.getBoundingClientRect();
+    return {
+      rightGap: Math.round(cardRect.right - badgeRect.right),
+      centerDelta: Math.round(Math.abs((badgeRect.top + badgeRect.height / 2) - (iconRect.top + iconRect.height / 2))),
+      background: getComputedStyle(badge).backgroundColor,
+      color: getComputedStyle(badge).color,
+    };
+  })()`);
+  assert(freeBadgeLayout.rightGap <= 8, `Le badge FREE est trop loin du bord droit : ${freeBadgeLayout.rightGap}px`);
+  assert(freeBadgeLayout.centerDelta <= 2, `Le badge FREE n'est pas aligne avec le logo : ${freeBadgeLayout.centerDelta}px`);
+  assert.equal(freeBadgeLayout.background, "rgb(0, 214, 111)", "Le badge FREE n'est pas vert");
+
   await cdp.evaluate("document.querySelector('button[onclick*=\"openCoinGame\"]').click(); true");
   await waitFor("document.querySelector('#coinGameDialog')?.open", "Pile ou Face ne s'ouvre pas");
   const coinLayout = await cdp.evaluate(`(() => {
