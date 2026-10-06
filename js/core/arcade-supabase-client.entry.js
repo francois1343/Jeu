@@ -24,6 +24,43 @@ import { createClient } from "@supabase/supabase-js";
       headers: { "x-application-name": "francis-arcade" },
     },
   });
+  const pendingSettlementsKey = `arcade.pending-settlements.${config.supabaseProjectRef || "default"}`;
+
+  function readPendingSettlements() {
+    try {
+      const value = JSON.parse(global.localStorage?.getItem(pendingSettlementsKey) || "[]");
+      return Array.isArray(value) ? value.filter((item) => item?.sessionId && ["won", "lost", "abandoned"].includes(item?.outcome)).slice(-20) : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function writePendingSettlements(items) {
+    try {
+      if (items.length) global.localStorage?.setItem(pendingSettlementsKey, JSON.stringify(items));
+      else global.localStorage?.removeItem(pendingSettlementsKey);
+    } catch (_) {
+      // Le règlement courant continue même si le stockage privé est indisponible.
+    }
+  }
+
+  function rememberSettlement(sessionId, outcome, metadata) {
+    const items = readPendingSettlements();
+    const existing = items.find((item) => item.sessionId === sessionId);
+    if (existing) return existing;
+    const item = {
+      sessionId: String(sessionId),
+      outcome: String(outcome),
+      metadata: metadata && typeof metadata === "object" ? metadata : {},
+      queuedAt: new Date().toISOString(),
+    };
+    writePendingSettlements([...items, item].slice(-20));
+    return item;
+  }
+
+  function forgetSettlement(sessionId) {
+    writePendingSettlements(readPendingSettlements().filter((item) => item.sessionId !== sessionId));
+  }
 
   function redirectUrl() {
     const target = new URL("index.html", global.location.href);
@@ -45,6 +82,7 @@ import { createClient } from "@supabase/supabase-js";
   async function getAccount() {
     const session = await getSession();
     if (!session?.user) return null;
+    await flushPendingSettlements();
 
     const [profileResult, walletResult, transactionResult, economyResult] = await Promise.all([
       client.from("profiles").select("user_id,display_name,created_at,updated_at").eq("user_id", session.user.id).single(),
@@ -102,6 +140,26 @@ import { createClient } from "@supabase/supabase-js";
     return unwrap(await client.rpc(functionName, parameters));
   }
 
+  function settleGameRequest(item) {
+    return arcadeRpc("arcade_settle_client_game", {
+      p_session_id: item.sessionId,
+      p_outcome: item.outcome,
+      p_client_result: item.metadata,
+    });
+  }
+
+  async function flushPendingSettlements() {
+    const items = readPendingSettlements();
+    for (const item of items) {
+      try {
+        await settleGameRequest(item);
+        forgetSettlement(item.sessionId);
+      } catch (_) {
+        // Conservé localement pour la prochaine reconnexion ou le prochain retour à l'accueil.
+      }
+    }
+  }
+
   function subscribeConnect4Room(roomId, onChange, onStatus) {
     const channel = client
       .channel(`connect4-room:${roomId}`)
@@ -149,16 +207,17 @@ import { createClient } from "@supabase/supabase-js";
         p_idempotency_key: String(idempotencyKey || ""),
       });
     },
-    getGameSession(sessionId) {
+    async getGameSession(sessionId) {
+      await flushPendingSettlements();
       return arcadeRpc("arcade_get_client_game", { p_session_id: sessionId });
     },
-    settleGame(sessionId, outcome, metadata = {}) {
-      return arcadeRpc("arcade_settle_client_game", {
-        p_session_id: sessionId,
-        p_outcome: String(outcome || ""),
-        p_client_result: metadata && typeof metadata === "object" ? metadata : {},
-      });
+    async settleGame(sessionId, outcome, metadata = {}) {
+      const item = rememberSettlement(sessionId, String(outcome || ""), metadata);
+      const result = await settleGameRequest(item);
+      forgetSettlement(item.sessionId);
+      return result;
     },
+    flushPendingSettlements,
     connect4: Object.freeze({
       createRoom(turnSeconds = 30) {
         return connect4Rpc("connect4_create_room", { p_turn_seconds: turnSeconds });

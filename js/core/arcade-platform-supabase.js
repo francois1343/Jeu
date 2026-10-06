@@ -550,6 +550,9 @@
     });
     await refreshAccount();
     state.ready = true;
+    global.addEventListener("pageshow", (event) => {
+      if (event.persisted) refreshAccount();
+    });
   }
 
   global.ArcadePlatform = Object.freeze({

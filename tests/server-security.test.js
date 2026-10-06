@@ -80,6 +80,10 @@ assert.doesNotMatch(browserClient, /from\("wallet_transactions"\)\.(?:insert|upd
 assert.match(serverPlatform, /arcadeServer/);
 assert.match(browserClient, /arcade_start_client_game/);
 assert.match(browserClient, /arcade_settle_client_game/);
+assert.match(browserClient, /pendingSettlementsKey/);
+assert.match(browserClient, /flushPendingSettlements/);
+assert.match(browserClient, /rememberSettlement[\s\S]*settleGameRequest/);
+assert.match(serverPlatform, /pageshow[\s\S]*refreshAccount/);
 assert.match(gameBridge, /serverApi\.startGame/);
 assert.match(gameBridge, /serverApi\.settleGame/);
 assert.match(homeScript, /ArcadeSupabase\?\.startGame\("pile-face"/);
