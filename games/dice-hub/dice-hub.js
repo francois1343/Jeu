@@ -15,6 +15,7 @@
       players: "1+",
       duration: "LIBRE",
       level: "FACILE",
+      free: true,
       ready: true,
       table: "TABLE 01",
       rules: `
@@ -106,9 +107,9 @@
 
   function cacheElements() {
     [
-      "player-name", "menu-screen", "game-screen", "mode-status", "selected-mode-kicker", "selected-mode-title",
+      "player-name", "menu-screen", "game-screen", "selected-mode-kicker", "selected-mode-title",
       "selected-mode-description", "mode-players", "mode-duration", "mode-level", "play-button", "availability-note",
-      "open-rules", "open-leaderboard", "open-settings", "open-settings-header", "back-to-menu", "game-rules",
+      "open-rules", "open-leaderboard", "open-settings-header", "back-to-menu", "game-rules",
       "game-leaderboard", "game-settings", "play-die", "result-caption", "roll-button", "generator-state", "roll-summary", "roll-total",
       "dice-faces", "faces-label", "dice-count", "count-label", "stat-rolls", "stat-best", "stat-average", "roll-history", "clear-history",
       "leaderboard-dialog", "leaderboard-list", "rules-dialog", "rules-kicker", "rules-title", "rules-copy",
@@ -160,11 +161,12 @@
     elements["mode-players"].textContent = mode.players;
     elements["mode-duration"].textContent = mode.duration;
     elements["mode-level"].textContent = mode.level;
-    elements["mode-status"].textContent = mode.ready ? "PRÊT" : "EN PRÉPARATION";
     elements["play-button"].disabled = !mode.ready;
+    if (mode.free) elements["play-button"].dataset.arcadeStartMode = modeKey;
+    else delete elements["play-button"].dataset.arcadeStartMode;
     elements["play-button"].querySelector("span").textContent = mode.ready ? "JOUER" : "BIENTÔT DISPONIBLE";
     elements["availability-note"].textContent = mode.ready
-      ? "Mode d’entraînement gratuit · aucun Coin débité"
+      ? (mode.free ? "Mode gratuit · aucun Coin débité" : "1 Coin débité au démarrage de la partie")
       : "Consultez déjà les règles et le futur classement de cette table";
   }
 
@@ -313,13 +315,32 @@
       const die = document.createElement("span");
       die.className = "result-die";
       if (index === 0) die.id = "dice-result";
-      die.textContent = String(value);
+      const valueLabel = document.createElement("strong");
+      const indexLabel = document.createElement("small");
+      valueLabel.className = "result-die-value";
+      valueLabel.textContent = String(value);
+      indexLabel.textContent = `DÉ ${index + 1}`;
+      die.append(valueLabel, indexLabel);
       die.style.setProperty("--die-tilt", `${((index % 5) - 2) * 1.5}deg`);
+      die.style.setProperty("--die-delay", `${-(index % 6) * 70}ms`);
       elements["play-die"].appendChild(die);
     });
     elements["play-die"].setAttribute("aria-label", values.every((value) => value === "?")
       ? `${values.length} ${values.length > 1 ? "dés prêts" : "dé prêt"}`
       : `Résultats : ${values.join(", ")}`);
+  }
+
+  function updateRollingValues(values) {
+    const dice = [...elements["play-die"].querySelectorAll(".result-die")];
+    if (dice.length !== values.length) {
+      renderDiceValues(values);
+      elements["play-die"].classList.add("is-rolling");
+      return;
+    }
+    dice.forEach((die, index) => {
+      die.querySelector(".result-die-value").textContent = String(values[index]);
+    });
+    elements["play-die"].setAttribute("aria-label", `Lancer en cours : ${values.join(", ")}`);
   }
 
   function sound(frequency, duration = .06, type = "sine") {
@@ -431,15 +452,14 @@
 
     let count = 0;
     const timer = window.setInterval(() => {
-      renderDiceValues(Array.from({ length: diceCount }, () => Math.floor(Math.random() * faces) + 1));
-      elements["play-die"].classList.add("is-rolling");
+      updateRollingValues(Array.from({ length: diceCount }, () => Math.floor(Math.random() * faces) + 1));
       sound(340 + count * 24, .025, "square");
       count += 1;
-      if (count >= 10) {
+      if (count >= 12) {
         window.clearInterval(timer);
         finishRoll(Array.from({ length: diceCount }, () => Math.floor(Math.random() * faces) + 1), faces);
       }
-    }, 50);
+    }, 75);
   }
 
   function clearRecentHistory() {
@@ -508,7 +528,7 @@
     elements["game-rules"].addEventListener("click", () => openRules("magic"));
     elements["open-leaderboard"].addEventListener("click", () => openLeaderboard());
     elements["game-leaderboard"].addEventListener("click", () => openLeaderboard("magic"));
-    [elements["open-settings"], elements["open-settings-header"], elements["game-settings"]].forEach((button) => button.addEventListener("click", () => openDialog(elements["settings-dialog"])));
+    [elements["open-settings-header"], elements["game-settings"]].forEach((button) => button.addEventListener("click", () => openDialog(elements["settings-dialog"])));
     document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => closeDialog(button)));
     document.querySelectorAll(".arcade-dialog").forEach((dialog) => dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); }));
     document.querySelectorAll("[data-board-mode]").forEach((tab) => tab.addEventListener("click", () => { boardMode = tab.dataset.boardMode; openLeaderboard(boardMode); }));

@@ -76,12 +76,23 @@
   function injectStyles() {
     const style = document.createElement("style");
     style.textContent = `
-      .arcade-session-hud{position:fixed;right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom));z-index:2147483000;display:flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid rgba(0,255,255,.42);border-radius:999px;background:rgba(5,10,22,.9);box-shadow:0 0 24px rgba(0,255,255,.16);backdrop-filter:blur(10px);color:#fff;font:600 12px Rajdhani,system-ui,sans-serif;pointer-events:none}
-      .arcade-session-hud strong{color:#00ffff;font-family:Orbitron,system-ui,sans-serif;font-size:10px;letter-spacing:.5px;text-transform:uppercase}.arcade-session-hud span:last-child{color:#ffe66d}
+      .arcade-session-hud{
+        --arcade-ui-accent:var(--accent,var(--accent-primary,var(--primary,var(--neon-cyan,#00eaff))));
+        --arcade-ui-accent-alt:var(--accent-2,var(--accent-secondary,var(--secondary,var(--neon-yellow,#ffe66d))));
+        --arcade-ui-surface:var(--surface-strong,var(--bg-card,var(--bg-secondary,rgba(5,10,22,.94))));
+        --arcade-ui-text:var(--text,var(--text-primary,#f5f8ff));
+        position:fixed;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));bottom:auto;z-index:2147483400;
+        display:flex;min-height:44px;align-items:center;gap:0;padding:4px;border:1px solid rgba(0,234,255,.42);border-color:color-mix(in srgb,var(--arcade-ui-accent) 52%,transparent);border-radius:14px;
+        background:rgba(5,10,22,.94);background:color-mix(in srgb,var(--arcade-ui-surface) 92%,transparent);box-shadow:0 12px 34px rgba(0,0,0,.3),0 0 22px color-mix(in srgb,var(--arcade-ui-accent) 16%,transparent);backdrop-filter:blur(12px);color:var(--arcade-ui-text);font:600 12px Rajdhani,system-ui,sans-serif;pointer-events:none
+      }
+      .arcade-session-hud.arcade-session-hud--docked{position:static;top:auto;right:auto;bottom:auto;z-index:auto;flex:0 0 auto;padding:5px 7px;background:rgba(5,10,22,.72);box-shadow:none;backdrop-filter:none}
+      .arcade-district-session-slot{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:2147483400}
+      .arcade-session-hud strong{display:inline-flex;min-height:34px;align-items:center;padding:0 10px;color:var(--arcade-ui-accent);font-family:Orbitron,system-ui,sans-serif;font-size:10px;letter-spacing:.5px;text-transform:uppercase}.arcade-session-hud strong::before{content:"";width:7px;height:7px;margin-right:7px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor}.arcade-session-hud span:last-child{padding:0 10px 0 2px;color:var(--arcade-ui-accent-alt);font-weight:800;white-space:nowrap}
       .arcade-session-hud[data-state="won"]{border-color:#00ff88}.arcade-session-hud[data-state="won"] strong{color:#00ff88}.arcade-session-hud[data-state="lost"],.arcade-session-hud[data-state="abandoned"]{border-color:#ff4757}.arcade-session-hud[data-state="lost"] strong,.arcade-session-hud[data-state="abandoned"] strong{color:#ff8d98}
-      .arcade-home-link{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));z-index:2147483400;display:inline-flex;min-height:42px;align-items:center;gap:8px;padding:0 14px;border:1px solid rgba(0,255,255,.72);border-radius:999px;background:rgba(5,10,22,.9);box-shadow:0 0 22px rgba(0,255,255,.22);backdrop-filter:blur(10px);color:#dffcff;font:700 13px Orbitron,Rajdhani,system-ui,sans-serif;letter-spacing:.04em;text-decoration:none;transition:transform .18s ease,background .18s ease,box-shadow .18s ease}.arcade-home-link:hover,.arcade-home-link:focus-visible{transform:translateY(-2px);background:rgba(0,243,255,.16);box-shadow:0 0 30px rgba(0,255,255,.45);outline:none}.arcade-home-link:focus-visible{outline:2px solid #fff;outline-offset:3px}
+      .arcade-home-link{--arcade-ui-accent:var(--accent,var(--accent-primary,var(--primary,var(--neon-cyan,#00eaff))));--arcade-ui-surface:var(--surface-strong,var(--bg-card,var(--bg-secondary,rgba(5,10,22,.94))));position:fixed;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));z-index:2147483400;display:inline-flex;min-height:44px;align-items:center;gap:8px;padding:0 14px;border:1px solid rgba(0,234,255,.62);border-color:color-mix(in srgb,var(--arcade-ui-accent) 68%,transparent);border-radius:14px;background:rgba(5,10,22,.94);background:color-mix(in srgb,var(--arcade-ui-surface) 92%,transparent);box-shadow:0 12px 32px rgba(0,0,0,.28),0 0 20px color-mix(in srgb,var(--arcade-ui-accent) 18%,transparent);backdrop-filter:blur(12px);color:var(--arcade-ui-accent);font:700 12px Orbitron,Rajdhani,system-ui,sans-serif;letter-spacing:.04em;text-decoration:none;transition:transform .18s ease,background .18s ease,box-shadow .18s ease}.arcade-home-link:hover,.arcade-home-link:focus-visible{transform:translateY(-2px);background:color-mix(in srgb,var(--arcade-ui-accent) 15%,var(--arcade-ui-surface));box-shadow:0 0 28px color-mix(in srgb,var(--arcade-ui-accent) 36%,transparent);outline:none}.arcade-home-link:focus-visible{outline:2px solid #fff;outline-offset:3px}
       .arcade-session-blocker{position:fixed;inset:0;z-index:2147483500;display:grid;place-items:center;padding:20px;background:rgba(2,6,16,.88);backdrop-filter:blur(9px)}.arcade-session-blocker>div{width:min(92vw,460px);padding:28px;border:1px solid rgba(255,71,87,.45);border-radius:18px;background:#0d1422;color:#fff;text-align:center;box-shadow:0 0 55px rgba(255,71,87,.16);font-family:Rajdhani,system-ui,sans-serif}.arcade-session-blocker h2{margin:0 0 10px;color:#ff8d98;font-family:Orbitron,system-ui,sans-serif;font-size:20px}.arcade-session-blocker p{margin:0 0 20px;color:#a5afc7;line-height:1.5}.arcade-session-blocker-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}.arcade-session-blocker a,.arcade-session-replay{display:inline-flex;min-height:44px;align-items:center;justify-content:center;padding:0 18px;border:1px solid #00ffff;border-radius:9px;background:transparent;color:#00ffff;text-decoration:none;font:700 16px Rajdhani,system-ui,sans-serif;cursor:pointer}.arcade-session-replay{border-color:#00ff88;color:#00ff88}.arcade-session-replay:disabled{opacity:.5;cursor:not-allowed}
-      @media(max-width:520px){.arcade-session-hud{right:8px;bottom:8px;padding:7px 10px}.arcade-session-hud span:last-child{display:none}.arcade-home-link{top:8px;left:8px;min-height:44px;padding:0 11px;font-size:11px}}
+      @media(max-width:700px){.arcade-session-hud--docked>strong,.arcade-session-hud--docked>span{display:none}}
+      @media(max-width:520px){.arcade-session-hud{top:8px;right:8px;padding:3px;border-radius:12px}.arcade-session-hud strong{min-height:36px;padding:0 8px;font-size:9px}.arcade-session-hud span:last-child{display:none}.arcade-home-link{top:8px;left:8px;min-height:42px;padding:0 10px;border-radius:12px;font-size:10px}.arcade-district-session-slot{top:8px;right:8px}}
     `;
     document.head.appendChild(style);
   }
@@ -92,9 +103,23 @@
     if (!hud) {
       hud = document.createElement("div");
       hud.id = "arcadeSessionHud";
-      hud.className = "arcade-session-hud";
+      hud.className = "arcade-session-hud arcade-session-hud--floating";
       hud.innerHTML = "<strong></strong><span></span>";
-      document.body.appendChild(hud);
+      const dock = document.querySelector("[data-arcade-session-slot]");
+      if (dock) {
+        hud.classList.remove("arcade-session-hud--floating");
+        hud.classList.add("arcade-session-hud--docked");
+        dock.prepend(hud);
+      } else {
+        document.body.appendChild(hud);
+      }
+    }
+    const shellButton = document.getElementById("arcadeGameShellButton");
+    if (shellButton && shellButton.parentElement !== hud) {
+      shellButton.classList.remove("arcade-game-shell-launcher");
+      shellButton.setAttribute("aria-label", "Ouvrir le menu commun du jeu");
+      hud.appendChild(shellButton);
+      hud.classList.add("has-common-menu");
     }
     const profile = serverMode ? null : store?.getActiveProfile();
     hud.dataset.state = session.state;
@@ -108,9 +133,20 @@
 
   function injectHomeButton() {
     if (document.getElementById("arcadeHomeButton")) return;
-    const existingHome = document.querySelector(".arcade-home-link");
+    const explicitHome = document.querySelector("[data-arcade-home],.arcade-return,.arcade-home-link");
+    const routeHome = [...document.querySelectorAll("a[href]")].find((link) => {
+      try {
+        const target = new URL(link.href, global.location.href);
+        return target.origin === global.location.origin && /\/index\.html$/.test(target.pathname);
+      } catch (_) { return false; }
+    });
+    const existingHome = explicitHome || routeHome;
     if (existingHome) {
       existingHome.id = "arcadeHomeButton";
+      if (existingHome.classList.contains("legacy-home-link")) {
+        existingHome.classList.remove("legacy-home-link");
+        existingHome.classList.add("arcade-home-link");
+      }
       existingHome.addEventListener("click", () => {
         if (session?.state === "created" || session?.state === "started") abandon("home_navigation");
       });
@@ -228,11 +264,18 @@
     if (terminalStates.has(session.state)) return session;
     const previousState = session.state;
     if (serverMode) {
+      const isPracticeMode = Array.isArray(policy().practiceModes) && policy().practiceModes.includes(metadata.mode);
       session.state = "started";
       session.startedAt = new Date().toISOString();
       session.metadata = { ...session.metadata, ...metadata };
+      if (isPracticeMode) {
+        session.economyMode = "practice";
+        session.wagerUnits = 0;
+        session.payoutUnits = 0;
+      }
       renderHud();
       announceState(previousState, metadata.source || "server_game_start");
+      if (isPracticeMode) return session;
       serverIdempotencyKey ||= newIdempotencyKey(session.gameKey);
       serverStartPromise = serverApi.startGame(session.gameKey, serverIdempotencyKey)
         .then((data) => {
@@ -281,6 +324,15 @@
   function finish(outcome, metadata = {}) {
     if (!session || terminalStates.has(session.state)) return session;
     if (serverMode) {
+      if (session.economyMode === "practice") {
+        const previousState = session.state;
+        session.state = outcome;
+        session.resolvedAt = new Date().toISOString();
+        session.metadata = { ...session.metadata, ...metadata };
+        renderHud();
+        announceState(previousState, metadata.source || `practice_game_${outcome}`);
+        return session;
+      }
       if (session.state === "created" && outcome === "abandoned") {
         const previousState = session.state;
         session.state = "abandoned";
@@ -433,7 +485,13 @@
   function bindLifecycle() {
     document.addEventListener("click", (event) => {
       if (guardTerminalInput(event)) return;
-      if (session?.state === "created" && isStartIntent(event.target)) start({ source: "start_control" });
+      if (session?.state === "created" && isStartIntent(event.target)) {
+        const modeControl = event.target.closest?.("[data-arcade-start-mode]");
+        start({
+          ...(modeControl?.dataset.arcadeStartMode ? { mode: modeControl.dataset.arcadeStartMode } : {}),
+          source: "start_control",
+        });
+      }
     }, true);
     document.addEventListener("pointerdown", (event) => {
       if (guardTerminalInput(event)) return;

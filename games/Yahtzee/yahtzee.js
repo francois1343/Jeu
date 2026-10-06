@@ -232,7 +232,6 @@ class FarkleGame {
       this.sound.init(); this.sound.playClick(620); this.startNewGame();
     });
     this.$("btn-menu").addEventListener("click", () => this.quitToMenu());
-    this.$("btn-quit").addEventListener("click", () => this.quitToMenu());
     this.$("btn-roll").addEventListener("click", () => this.rollDice(false));
     this.$("btn-bank").addEventListener("click", () => this.bankTurn(false));
     this.physics.canvas.addEventListener("pointerup", (event) => {

@@ -20,6 +20,8 @@
     <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
   </head>
   <body data-arcade-shell="true">
+    <a class="arcade-home-link" data-arcade-home href="../dice-hub/dice-hub.html" aria-label="Retourner au Dice District">← Dice District</a>
+    <div class="arcade-district-session-slot" data-arcade-session-slot></div>
     <main id="app">
       <canvas id="gameCanvas" aria-label="Table de jeu et six dés interactifs"></canvas>
       <div id="ui-layer">
@@ -49,6 +51,7 @@
           <div id="turn-toast" class="turn-toast" role="status" aria-live="assertive"></div>
 
           <aside class="score-help tavern-panel" aria-label="Aide des combinaisons">
+            <h2 class="score-help-title">BARÈME</h2>
             <div><b>1</b><span>100</span></div><div><b>5</b><span>50</span></div>
             <div><b>BRELAN</b><span>1 = 1 000 · autres = face × 100</span></div>
             <div><b>4 / 5 / 6 IDENTIQUES</b><span>valeur doublée à chaque dé</span></div>
@@ -68,7 +71,6 @@
               <button id="btn-bank" class="action-btn secondary" type="button" disabled>ENCAISSER &amp; FINIR LE TOUR</button>
             </div>
           </footer>
-          <button id="btn-quit" class="quiet-btn absolute-top-right" type="button">Quitter</button>
         </section>
 
         <div id="bust-alert" class="bust-alert hidden" role="alert"><span>BREDOUILLE !</span><small>Tous les points du tour sont perdus.</small></div>

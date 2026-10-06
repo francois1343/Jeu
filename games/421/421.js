@@ -18,17 +18,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }, delay);
   }
 
+  const pipPositions = Object.freeze({
+    1: ["mc"], 2: ["tl", "br"], 3: ["tl", "mc", "br"],
+    4: ["tl", "tr", "bl", "br"], 5: ["tl", "tr", "mc", "bl", "br"],
+    6: ["tl", "ml", "bl", "tr", "mr", "br"],
+  });
+
   const cube = (value, index, interactive) => `
     <button class="die${state.kept[index] ? " kept" : ""}" type="button" ${interactive ? "" : "disabled"}
       data-index="${index}" aria-pressed="${state.kept[index] ? "true" : "false"}"
       aria-label="Dé ${index + 1} : ${value}${state.kept[index] ? ", conservé" : ""}">
-      <span class="die-tile"><strong class="die-number">${value}</strong></span>
+      <span class="die-tile" aria-hidden="true">
+        ${pipPositions[value].map((position) => `<i class="pip pip-${position}"></i>`).join("")}
+        <strong class="die-number">${value}</strong>
+      </span>
     </button>`;
 
   function render() {
     const canChoose = state.rolls > 0 && !state.locked && !state.paused && !state.finished;
     playerDice.innerHTML = state.player.map((value, index) => cube(value, index, canChoose)).join("");
-    aiDice.innerHTML = state.ai.map((value) => cube(value, -1, false)).join("");
+    aiDice.innerHTML = state.ai.map((value, index) => cube(value, index, false)).join("");
     $("player-score").textContent = state.playerScore;
     $("ai-score").textContent = state.aiScore;
     $("roll-count").textContent = `${Math.min(state.rolls + 1, 3)} / 3`;

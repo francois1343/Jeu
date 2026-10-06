@@ -161,6 +161,48 @@ async function main() {
   }
 
   await navigate(`${baseUrl}/index.html`);
+  await cdp.evaluate("window.ArcadeLocalStore.login('QA Calcul Toolbar'); true");
+  const calculationSession = await cdp.evaluate(`window.ArcadeLocalStore.createSession(${JSON.stringify({
+    gameKey: "calculation",
+    title: "Calcul Mental",
+    url: "/games/calculation/index.html",
+  })})`);
+  await navigate(`${baseUrl}/games/calculation/index.html?arcadeSession=${encodeURIComponent(calculationSession.id)}`);
+  await waitFor("Boolean(window.ArcadeGameSession && document.querySelector('#arcadeSessionHud #arcadeGameShellButton'))", "Calcul Mental ne regroupe pas ses commandes communes");
+  if (await cdp.evaluate("Boolean(document.querySelector('#arcadeGameShellDialog')?.open)")) {
+    await cdp.evaluate("document.querySelector('#arcadeShellTutorialSkip').click(); true");
+  }
+  for (const viewport of [[320, 568], [1366, 768]]) {
+    await cdp.send("Emulation.setDeviceMetricsOverride", {
+      width: viewport[0], height: viewport[1], deviceScaleFactor: 1, mobile: viewport[0] < 800,
+    });
+    await cdp.evaluate("window.dispatchEvent(new Event('resize')); true");
+    await delay(80);
+    const calculationChrome = await cdp.evaluate(`(() => {
+      const home = document.querySelector('#arcadeHomeButton');
+      const hud = document.querySelector('#arcadeSessionHud');
+      const menu = document.querySelector('#arcadeGameShellButton');
+      const homeRect = home.getBoundingClientRect(), hudRect = hud.getBoundingClientRect();
+      return {
+        hudTop: Math.round(hudRect.top),
+        menuTop: Math.round(menu.getBoundingClientRect().top),
+        menuParent: menu.parentElement?.id,
+        statusColor: getComputedStyle(hud.querySelector('strong')).color,
+        overlap: Math.min(homeRect.right,hudRect.right) > Math.max(homeRect.left,hudRect.left)
+          && Math.min(homeRect.bottom,hudRect.bottom) > Math.max(homeRect.top,hudRect.top),
+        reusedHome: home.classList.contains('arcade-home-link') && !home.classList.contains('legacy-home-link'),
+        counts: [document.querySelectorAll('#arcadeHomeButton').length, document.querySelectorAll('#arcadeSessionHud').length, document.querySelectorAll('#arcadeGameShellButton').length],
+      };
+    })()`);
+    assert(calculationChrome.hudTop < 80 && calculationChrome.menuTop < 80, `Calcul Mental conserve une commande en bas à ${viewport[0]}×${viewport[1]}`);
+    assert.equal(calculationChrome.menuParent, "arcadeSessionHud", "Calcul Mental doit réunir Menu et Coins dans le même bloc");
+    assert.equal(calculationChrome.overlap, false, `La barre de Calcul Mental se superpose à ${viewport[0]}×${viewport[1]}`);
+    assert.equal(calculationChrome.reusedHome, true, "Calcul Mental doit réutiliser son retour Accueil historique");
+    assert.deepEqual(calculationChrome.counts, [1, 1, 1], "Calcul Mental duplique une commande commune");
+    assert.match(calculationChrome.statusColor, /0,\s*212,\s*255/, "Le statut Calcul Mental doit reprendre son cyan");
+  }
+
+  await navigate(`${baseUrl}/index.html`);
   await waitFor("Boolean(window.ArcadeLocalStore)", "Le store Arcade n'est pas chargé");
   await waitFor("document.fonts.status === 'loaded'", "Les polices locales ne sont pas chargees");
   const homeTypography = await cdp.evaluate(`(() => {
@@ -301,14 +343,40 @@ async function main() {
     assert.equal(tutorial.cards, 3, `${pilot.title} doit afficher trois cartes de tutoriel`);
     assert.equal(tutorial.state, "created", `${pilot.title} ne doit pas démarrer derrière le tutoriel`);
 
-    await cdp.evaluate("document.querySelector('#arcadeShellTutorialStart').click(); true");
+    const tutorialDismissButton = pilotIndex % 2 === 0 ? "#arcadeShellTutorialStart" : "#arcadeShellTutorialSkip";
+    await cdp.evaluate(`document.querySelector(${JSON.stringify(tutorialDismissButton)}).click(); true`);
     await waitFor("!document.querySelector('#arcadeGameShellDialog')?.open", `${pilot.title} ne ferme pas son tutoriel`);
+    assert.equal(
+      await cdp.evaluate(`Object.keys(localStorage).some((key) => key.startsWith('arcade.tutorial.seen.') && key.endsWith(${JSON.stringify(`.${pilot.key}`)}))`),
+      true,
+      `${pilot.title} ne mémorise pas durablement le refus du tutoriel`,
+    );
     await cdp.evaluate(`document.querySelector(${JSON.stringify(pilot.start)}).click(); true`);
     try {
       await waitFor("window.ArcadeGameSession.state === 'started'", `${pilot.title} ne démarre pas sa session`);
     } catch (error) {
       const debug = await cdp.evaluate("({ state:window.ArcadeGameSession?.state, gameHidden:document.querySelector('#game-screen')?.className, menuHidden:document.querySelector('#menu-screen')?.className })");
       throw new Error(`${error.message} · ${JSON.stringify(debug)} · ${runtimeErrors.join(' | ')}`);
+    }
+    if (pilot.key === "421-duel") {
+      const dice421 = await cdp.evaluate(`(() => {
+        const dice = [...document.querySelectorAll('.die-tile')];
+        const menu = document.querySelector('#arcadeGameShellButton');
+        return {
+          dice: dice.length,
+          visibleDice: dice.filter((die) => { const rect = die.getBoundingClientRect(); const style = getComputedStyle(die); return rect.width >= 60 && rect.height >= 60 && style.backgroundImage !== 'none'; }).length,
+          pips: document.querySelectorAll('.die-tile .pip').length,
+          menuText: menu.textContent.trim(),
+          menuTop: Math.round(menu.getBoundingClientRect().top),
+          docked: menu.closest('.arcade-district-session-slot') !== null,
+        };
+      })()`);
+      assert.equal(dice421.dice, 6, "Le 421 doit afficher six faces de dés");
+      assert.equal(dice421.visibleDice, 6, "Les faces du 421 doivent avoir un fond et une taille visibles");
+      assert(dice421.pips >= 6, "Les dés du 421 doivent afficher leurs points");
+      assert.equal(dice421.menuText, "Menu du jeu", "Le menu commun doit avoir un libellé explicite");
+      assert.equal(dice421.docked, true, "Le menu du 421 doit être ancré en haut de la table");
+      assert(dice421.menuTop < 80, "Le menu du 421 ne doit plus flotter en bas de l'écran");
     }
 
     for (const viewport of [[320, 568], [390, 844], [1366, 768]]) {
@@ -321,15 +389,81 @@ async function main() {
       const layout = await cdp.evaluate(`({
         width: innerWidth,
         horizontalOverflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - innerWidth,
+        verticalOverflow: Math.max(document.documentElement.scrollHeight, document.body.scrollHeight) - innerHeight,
         offenders: [...document.querySelectorAll('body *')].filter((element) => {
           const style = getComputedStyle(element); const rect = element.getBoundingClientRect();
           return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && (rect.left < -2 || rect.right > innerWidth + 2);
         }).slice(0, 8).map((element) => ({ tag: element.tagName, id: element.id, className: String(element.className).slice(0, 80), rect: (() => { const r = element.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.right), Math.round(r.width)]; })() })),
-        shellButton: (() => { const r = document.querySelector('#arcadeGameShellButton').getBoundingClientRect(); return { width:r.width, height:r.height, visible:r.bottom > 0 && r.right > 0 && r.left < innerWidth && r.top < innerHeight }; })()
+        shellButton: (() => { const r = document.querySelector('#arcadeGameShellButton').getBoundingClientRect(); return { width:r.width, height:r.height, visible:r.bottom > 0 && r.right > 0 && r.left < innerWidth && r.top < innerHeight }; })(),
+        commonChrome: (() => {
+          const hud = document.querySelector('#arcadeSessionHud');
+          const home = document.querySelector('#arcadeHomeButton');
+          const shell = document.querySelector('#arcadeGameShellButton');
+          const rect = (element) => { const r = element.getBoundingClientRect(); return { left:r.left, top:r.top, right:r.right, bottom:r.bottom }; };
+          const hudRect = rect(hud), homeRect = rect(home);
+          return {
+            hudTop: Math.round(hudRect.top),
+            shellInsideHud: shell.parentElement === hud,
+            overlap: Math.min(hudRect.right,homeRect.right) > Math.max(hudRect.left,homeRect.left)
+              && Math.min(hudRect.bottom,homeRect.bottom) > Math.max(hudRect.top,homeRect.top),
+            homeCount: document.querySelectorAll('#arcadeHomeButton').length,
+            hudCount: document.querySelectorAll('#arcadeSessionHud').length,
+            menuCount: document.querySelectorAll('#arcadeGameShellButton').length,
+          };
+        })()
       })`);
       assert(layout.horizontalOverflow <= 2, `${pilot.title} déborde horizontalement à ${viewport[0]}×${viewport[1]} : ${JSON.stringify(layout.offenders)}`);
-      assert(layout.shellButton.visible, `${pilot.title} masque le menu commun à ${viewport[0]}×${viewport[1]}`);
-      assert(layout.shellButton.height >= 38, `${pilot.title} expose une cible menu trop petite à ${viewport[0]}×${viewport[1]}`);
+      assert(layout.commonChrome.hudTop < 80, `${pilot.title} affiche encore le statut de session en bas à ${viewport[0]}×${viewport[1]}`);
+      assert(layout.commonChrome.shellInsideHud, `${pilot.title} détache le menu du statut de session`);
+      assert.equal(layout.commonChrome.overlap, false, `${pilot.title} superpose le retour et le statut commun à ${viewport[0]}×${viewport[1]}`);
+      assert.deepEqual(
+        [layout.commonChrome.homeCount, layout.commonChrome.hudCount, layout.commonChrome.menuCount],
+        [1, 1, 1],
+        `${pilot.title} duplique une commande commune`,
+      );
+      if (pilot.key === "421-duel" && viewport[0] >= 900 && viewport[1] >= 680) {
+        const tableBounds = await cdp.evaluate(`(() => { const r = document.querySelector('.table').getBoundingClientRect(); return { top:r.top, bottom:r.bottom }; })()`);
+        assert(layout.verticalOverflow <= 2, `Le 421 impose encore un scroll desktop : ${layout.verticalOverflow}px`);
+        assert(tableBounds.top >= 0 && tableBounds.bottom <= viewport[1] + 1, `La table 421 doit rester entièrement visible : ${JSON.stringify(tableBounds)}`);
+      }
+      if (pilot.key === "farkle-boheme") {
+        assert.equal(layout.shellButton.visible, false, `Dés de Bohème doit masquer le bouton Menu du jeu à ${viewport[0]}×${viewport[1]}`);
+        const topControls = await cdp.evaluate(`(() => {
+          const selectors = ['[data-arcade-home]', '#arcadeSessionHud'];
+          const rects = selectors.map((selector) => { const r = document.querySelector(selector).getBoundingClientRect(); return { selector, left:r.left, top:r.top, right:r.right, bottom:r.bottom }; });
+          const overlaps = [];
+          for (let a = 0; a < rects.length; a += 1) for (let b = a + 1; b < rects.length; b += 1) {
+            if (Math.min(rects[a].right,rects[b].right) > Math.max(rects[a].left,rects[b].left) && Math.min(rects[a].bottom,rects[b].bottom) > Math.max(rects[a].top,rects[b].top)) overlaps.push([rects[a].selector,rects[b].selector]);
+          }
+          return { rects, overlaps };
+        })()`);
+        assert.deepEqual(topControls.overlaps, [], `Navigation de Dés de Bohème superposée à ${viewport[0]}×${viewport[1]} : ${JSON.stringify(topControls.rects)}`);
+      } else {
+        assert(layout.shellButton.visible, `${pilot.title} masque le menu commun à ${viewport[0]}×${viewport[1]}`);
+        assert(layout.shellButton.height >= 38, `${pilot.title} expose une cible menu trop petite à ${viewport[0]}×${viewport[1]}`);
+      }
+    }
+
+    if (pilot.key === "farkle-boheme") {
+      const bohemeUi = await cdp.evaluate(`(() => {
+        const rect = (selector) => { const r = document.querySelector(selector).getBoundingClientRect(); return { left:r.left, top:r.top, right:r.right, bottom:r.bottom }; };
+        const overlaps = (a, b) => Math.min(a.right,b.right) > Math.max(a.left,b.left) && Math.min(a.bottom,b.bottom) > Math.max(a.top,b.top);
+        const hud = rect('#arcadeSessionHud');
+        return {
+          quitExists: Boolean(document.querySelector('#btn-quit')), hud,
+          hudTop: Math.round(hud.top),
+          homeRadius: parseFloat(getComputedStyle(document.querySelector('[data-arcade-home]')).borderRadius),
+          goalRadius: parseFloat(getComputedStyle(document.querySelector('.round-info')).borderRadius),
+          scoreRadius: parseFloat(getComputedStyle(document.querySelector('.score-help')).borderRadius),
+          dockRadius: parseFloat(getComputedStyle(document.querySelector('.control-dock')).borderRadius),
+          actionRadius: parseFloat(getComputedStyle(document.querySelector('#btn-roll')).borderRadius),
+        };
+      })()`);
+      assert.equal(bohemeUi.quitExists, false, "Le bouton Quitter redondant doit être retiré de Dés de Bohème");
+      assert(bohemeUi.hudTop < 80, "L'état des Coins doit rester accessible en haut");
+      assert(bohemeUi.homeRadius >= 10 && bohemeUi.goalRadius >= 10, "La navigation et l'objectif doivent être arrondis");
+      assert(bohemeUi.scoreRadius >= 14 && bohemeUi.dockRadius >= 18, "Les panneaux de la taverne doivent être modernisés");
+      assert(bohemeUi.actionRadius >= 10, "Les boutons en jeu doivent être légèrement arrondis");
     }
 
     await cdp.evaluate("document.querySelector('#arcadeGameShellButton').click(); true");
@@ -352,6 +486,126 @@ async function main() {
     }
   }
 
+  await navigate(`${baseUrl}/index.html`);
+  await cdp.evaluate("window.ArcadeLocalStore.login('QA Dice Responsive'); true");
+  const diceSession = await cdp.evaluate(`window.ArcadeLocalStore.createSession(${JSON.stringify({
+    gameKey: "de",
+    title: "Dice District",
+    url: "/games/dice-hub/dice-hub.html",
+  })})`);
+  await navigate(`${baseUrl}/games/dice-hub/dice-hub.html?arcadeSession=${encodeURIComponent(diceSession.id)}`);
+  await waitFor("Boolean(window.ArcadeGameSession && document.querySelector('#arcadeGameShellButton'))", "Dice District n'initialise pas son interface commune");
+  if (await cdp.evaluate("Boolean(document.querySelector('#arcadeGameShellDialog')?.open)")) {
+    await cdp.evaluate("document.querySelector('#arcadeShellTutorialSkip').click(); true");
+  }
+  const diceHeader = await cdp.evaluate(`(() => {
+    const hud = document.querySelector('#arcadeSessionHud');
+    const strong = hud.querySelector('strong');
+    const hudStyle = getComputedStyle(hud);
+    const strongStyle = getComputedStyle(strong);
+    return {
+      menuHeight: document.querySelector('#arcadeGameShellButton').getBoundingClientRect().height,
+      arcadeVisible: document.querySelector('#arcadeHomeButton').getBoundingClientRect().height >= 38,
+      hudRadius: parseFloat(hudStyle.borderRadius),
+      hudBackground: hudStyle.backgroundImage,
+      statusColor: strongStyle.color,
+      statusText: strong.textContent.trim(),
+    };
+  })()`);
+  assert.equal(diceHeader.menuHeight, 0, "Dice District doit masquer le bouton Menu du jeu redondant");
+  assert.equal(diceHeader.arcadeVisible, true, "Dice District doit conserver son retour Arcade");
+  assert(diceHeader.hudRadius >= 10 && diceHeader.hudBackground !== "none", "Le statut des Coins doit reprendre le panneau du District");
+  assert.match(diceHeader.statusText, /Coins|Entraînement/, "Le statut de session doit rester explicite");
+  for (const viewport of [[320, 568], [390, 844], [768, 900], [1366, 768]]) {
+    await cdp.send("Emulation.setDeviceMetricsOverride", {
+      width: viewport[0], height: viewport[1], deviceScaleFactor: 1, mobile: viewport[0] < 800,
+    });
+    await cdp.evaluate("window.dispatchEvent(new Event('resize')); true");
+    await delay(80);
+    const diceLayout = await cdp.evaluate(`(() => {
+      const visible = [...document.querySelectorAll('a,button,input,select')].filter((element) => {
+        const style = getComputedStyle(element); const rect = element.getBoundingClientRect();
+        return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 2 && rect.height > 2
+          && rect.bottom > 0 && rect.top < innerHeight;
+      });
+      const overlaps = [];
+      for (let leftIndex = 0; leftIndex < visible.length; leftIndex += 1) {
+        for (let rightIndex = leftIndex + 1; rightIndex < visible.length; rightIndex += 1) {
+          const left = visible[leftIndex], right = visible[rightIndex];
+          if (left.contains(right) || right.contains(left)) continue;
+          const a = left.getBoundingClientRect(), b = right.getBoundingClientRect();
+          const width = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
+          const height = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
+          const ratio = width * height / Math.min(a.width * a.height, b.width * b.height);
+          if (ratio > .18) overlaps.push([
+            left.id || left.className || left.tagName,
+            right.id || right.className || right.tagName,
+            Number(ratio.toFixed(2)),
+            [Math.round(a.left), Math.round(a.top), Math.round(a.right), Math.round(a.bottom)],
+            [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)],
+          ]);
+        }
+      }
+      return {
+        horizontalOverflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - innerWidth,
+        verticalOverflow: Math.max(document.documentElement.scrollHeight, document.body.scrollHeight) - innerHeight,
+        duplicateHome: Boolean(document.querySelectorAll('#arcadeHomeButton').length > 1),
+        shellParent: document.querySelector('#arcadeGameShellButton')?.parentElement?.className || '',
+        shellPosition: getComputedStyle(document.querySelector('#arcadeGameShellButton')?.parentElement).position,
+        overlaps: overlaps.slice(0, 12),
+      };
+    })()`);
+    assert(diceLayout.horizontalOverflow <= 2, `Dice District déborde à ${viewport[0]}×${viewport[1]}`);
+    if (viewport[0] >= 1051 && viewport[1] >= 680) {
+      assert(diceLayout.verticalOverflow <= 2, `Dice District impose encore un scroll PC à ${viewport[0]}×${viewport[1]} : ${diceLayout.verticalOverflow}px`);
+    }
+    assert.equal(diceLayout.duplicateHome, false, "Dice District affiche plusieurs retours Arcade");
+    assert.deepEqual(diceLayout.overlaps, [], `Dice District superpose des commandes à ${viewport[0]}×${viewport[1]} : ${JSON.stringify(diceLayout)}`);
+  }
+
+  const freeMode = await cdp.evaluate(`(() => {
+    const before = window.ArcadeLocalStore.getActiveProfile().balanceUnits;
+    document.querySelector('#play-button').click();
+    const session = window.ArcadeGameSession.snapshot;
+    return {
+      badge: document.querySelector('[data-mode="magic"] .free-mode-badge')?.textContent.trim(),
+      economyMode: session?.economyMode,
+      wagerUnits: session?.wagerUnits,
+      balanceBefore: before,
+      balanceAfter: window.ArcadeLocalStore.getActiveProfile().balanceUnits,
+    };
+  })()`);
+  assert.equal(freeMode.badge, "FREE", "Lancer libre doit afficher le badge FREE");
+  assert.equal(freeMode.economyMode, "practice", "Lancer libre doit démarrer en mode gratuit");
+  assert.equal(freeMode.wagerUnits, 0, "Lancer libre ne doit engager aucun Coin");
+  assert.equal(freeMode.balanceAfter, freeMode.balanceBefore, "Lancer libre ne doit pas modifier le solde");
+
+  const rollingDice = await cdp.evaluate(`(() => {
+    const count = document.querySelector('#dice-count');
+    count.value = '3';
+    count.dispatchEvent(new Event('change', { bubbles: true }));
+    document.querySelector('#roll-button').click();
+    const dice = [...document.querySelectorAll('#play-die .result-die')];
+    return {
+      rolling: document.querySelector('#play-die').classList.contains('is-rolling'),
+      count: dice.length,
+      animationNames: dice.map((die) => getComputedStyle(die).animationName),
+      values: dice.map((die) => die.querySelector('.result-die-value')?.textContent),
+      centers: dice.map((die) => { const rect = die.getBoundingClientRect(); return Math.round(rect.left + rect.width / 2); }),
+    };
+  })()`);
+  assert.equal(rollingDice.rolling, true, "Le lancer doit déclencher une animation visible");
+  assert.equal(rollingDice.count, 3, "Chaque dé lancé doit posséder sa propre face");
+  assert(rollingDice.animationNames.every((name) => name === "dice-tumble"), "Chaque dé doit être animé séparément");
+  assert.equal(new Set(rollingDice.centers).size, 3, "Les dés ne doivent pas être superposés");
+  await delay(1100);
+  const settledDice = await cdp.evaluate(`({
+    rolling: document.querySelector('#play-die').classList.contains('is-rolling'),
+    values: [...document.querySelectorAll('#play-die .result-die-value')].map((node) => node.textContent),
+  })`);
+  assert.equal(settledDice.rolling, false, "L'animation doit s'arrêter sur le résultat final");
+  assert(settledDice.values.every((value) => /^\d+$/.test(value)), "Chaque dé doit afficher un résultat lisible");
+
   await cdp.send("Emulation.setDeviceMetricsOverride", {
     width: 1366, height: 768, deviceScaleFactor: 1, mobile: false,
   });
@@ -363,12 +617,32 @@ async function main() {
       key: window.ArcadeGameShell.gameKey,
       title: window.ArcadeGameShell.game?.title,
       tutorial: window.ArcadeGameShell.game?.tutorial?.length,
-      buttonHeight: document.querySelector('#arcadeGameShellButton').getBoundingClientRect().height
+      buttonHeight: document.querySelector('#arcadeGameShellButton').getBoundingClientRect().height,
+      chromeTop: (() => {
+        const control = document.querySelector('#arcadeSessionHud') || document.querySelector('#arcadeGameShellButton');
+        return Math.round(control.getBoundingClientRect().top);
+      })(),
+      shellGrouped: (() => {
+        const hud = document.querySelector('#arcadeSessionHud');
+        const shell = document.querySelector('#arcadeGameShellButton');
+        return hud ? shell.parentElement === hud : shell.classList.contains('arcade-game-shell-launcher');
+      })(),
+      commonCounts: [
+        document.querySelectorAll('#arcadeHomeButton').length,
+        document.querySelectorAll('#arcadeSessionHud').length,
+        document.querySelectorAll('#arcadeGameShellButton').length,
+      ]
     })`);
     assert.equal(commonMenu.key, page.key, `Mauvaise configuration détectée pour ${page.route}`);
     assert(commonMenu.title, `Titre commun absent pour ${page.route}`);
     assert.equal(commonMenu.tutorial, 3, `Tutoriel commun incomplet pour ${page.route}`);
-    assert(commonMenu.buttonHeight >= 38, `Bouton de menu trop petit pour ${page.route}`);
+    if (["farkle-boheme", "de"].includes(page.key)) assert.equal(commonMenu.buttonHeight, 0, `${page.key} doit masquer son bouton Menu du jeu redondant`);
+    else assert(commonMenu.buttonHeight >= 38, `Bouton de menu trop petit pour ${page.route}`);
+    assert(commonMenu.chromeTop < 100, `La commande commune reste en bas dans ${page.route}`);
+    assert(commonMenu.shellGrouped, `Le menu commun n'est pas regroupé correctement dans ${page.route}`);
+    assert.equal(commonMenu.commonCounts[0], 1, `Retour Accueil dupliqué dans ${page.route}`);
+    assert(commonMenu.commonCounts[1] <= 1, `Statut commun dupliqué dans ${page.route}`);
+    assert.equal(commonMenu.commonCounts[2], 1, `Menu commun dupliqué dans ${page.route}`);
     const externalResources = await cdp.evaluate(`performance.getEntriesByType('resource')
       .map((entry) => new URL(entry.name, location.href))
       .filter((url) => /^https?:$/.test(url.protocol) && url.origin !== location.origin)

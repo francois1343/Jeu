@@ -9,6 +9,7 @@ const read = (...parts) => fs.readFileSync(path.join(root, ...parts), "utf8");
 const migration = read("supabase", "migrations", "202608290001_arcade_economy.sql");
 const paidSessions = read("supabase", "migrations", "202609250002_paid_game_sessions.sql");
 const freeGames = read("supabase", "migrations", "202610060001_free_games.sql");
+const freeDailyChallenges = read("supabase", "migrations", "202610060002_free_daily_challenges.sql");
 const config = read("js", "core", "arcade-config.js");
 const gitignore = read(".gitignore");
 const sharedClient = read("supabase", "functions", "_shared", "supabase.ts");
@@ -58,6 +59,9 @@ assert.match(paidSessions, /grant execute on function public\.arcade_settle_clie
 assert.doesNotMatch(paidSessions, /p_(?:cost|payout|amount)_units/i, "Le navigateur ne doit jamais choisir un montant de portefeuille");
 assert.match(freeGames, /game_key in \('pile-face', 'phrase-forge'\)/i);
 assert.match(freeGames, /economy_enabled\s*=\s*false/i);
+assert.match(freeDailyChallenges, /play_cost_units\s*=\s*0/i);
+assert.match(freeDailyChallenges, /win_payout_units\s*=\s*200/i);
+assert.match(freeDailyChallenges, /metadata\s*->>\s*'game_key'\s+in\s*\('challenge_math'/i);
 
 assert.match(sharedClient, /authenticatedUser\(request/i, "Les fonctions doivent verifier l'utilisateur");
 assert.match(sharedClient, /SUPABASE_SECRET_KEYS/, "Les cles secretes Supabase actuelles doivent etre prises en charge");

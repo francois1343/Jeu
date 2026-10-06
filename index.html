@@ -76,7 +76,6 @@
             class="platform-action primary"
             type="button"
             data-open-dialog="challengeDialog"
-            data-requires-account
           >
             <span aria-hidden="true">⚡</span>
             <span
@@ -2170,10 +2169,11 @@
         </div>
         <section id="challengeLobby">
           <p class="dialog-copy">
-            Trois défis fixes sont proposés chaque jour. Chacun engage 1 Coin et
-            rapporte <strong>2 Coins</strong> si vous le réussissez. Les trois
-            réussis ajoutent <strong>5 Coins</strong>.
+            Trois défis gratuits sont proposés chaque jour. Aucun Coin n'est
+            demandé et chaque réussite rapporte <strong>2 Coins</strong>.
+            Une connexion est nécessaire uniquement pour enregistrer la tentative.
           </p>
+          <p id="challengeStatus" class="profile-status" role="status" aria-live="polite" hidden></p>
           <div class="challenge-grid">
             <button
               type="button"

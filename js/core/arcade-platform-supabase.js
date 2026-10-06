@@ -94,6 +94,8 @@
       session_not_found: "Cette session vérifiée est introuvable.",
       authentication_required: "Votre session a expiré. Reconnectez-vous.",
       origin_not_allowed: "Cette adresse du site n’est pas encore autorisée par le serveur.",
+      game_not_economy_enabled: "Ce défi n'est pas encore activé sur le serveur.",
+      wallet_not_found: "Le portefeuille du compte n'est pas encore disponible.",
     };
     const known = Object.keys(serverMessages).find((key) => message.includes(key));
     return known ? serverMessages[known] : "L’opération sécurisée n’a pas pu aboutir.";
@@ -391,8 +393,18 @@
     document.querySelectorAll("[data-challenge-key]").forEach((button) => {
       button.disabled = !state.account;
       const description = button.querySelector("small");
-      if (description) description.textContent = "Serveur · résultat certifié";
+      if (description) description.textContent = state.account
+        ? "Gratuit · une tentative par jour"
+        : "Connexion requise · participation gratuite";
     });
+    const status = element("challengeStatus");
+    if (status && !state.account) {
+      status.textContent = "Connectez-vous à votre compte pour enregistrer votre tentative gratuite.";
+      status.dataset.type = "info";
+      status.hidden = false;
+    } else if (status) {
+      status.hidden = true;
+    }
   }
 
   function renderChallenge(data) {
@@ -424,6 +436,8 @@
     }
     element("challengeLobby").hidden = true;
     element("activeChallenge").hidden = false;
+    const status = element("challengeStatus");
+    if (status) status.hidden = true;
   }
 
   async function startChallenge(clientKey) {
@@ -507,11 +521,23 @@
     document.querySelectorAll("[data-challenge-key]").forEach((button) => {
       button.addEventListener("click", async () => {
         button.disabled = true;
+        button.setAttribute("aria-busy", "true");
+        const status = element("challengeStatus");
+        if (status) {
+          status.textContent = "Préparation du défi gratuit…";
+          status.dataset.type = "info";
+          status.hidden = false;
+        }
         try {
           await startChallenge(button.dataset.challengeKey);
         } catch (error) {
-          setMessage(readableError(error), "error");
+          if (status) {
+            status.textContent = readableError(error);
+            status.dataset.type = "error";
+            status.hidden = false;
+          }
         } finally {
+          button.removeAttribute("aria-busy");
           button.disabled = false;
         }
       });

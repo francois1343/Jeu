@@ -79,7 +79,7 @@
           <p class="arcade-shell-explanation">L'essentiel pour jouer en moins de dix secondes.</p>
           <ol class="arcade-shell-tutorial" id="arcadeShellTutorial"></ol>
           <div class="arcade-shell-actions">
-            <button type="button" class="is-primary" id="arcadeShellTutorialStart">Compris, jouer</button>
+            <button type="button" class="is-primary" id="arcadeShellTutorialStart">J’ai compris</button>
             <button type="button" id="arcadeShellTutorialSkip">Ignorer</button>
           </div>
         </section>
@@ -140,15 +140,27 @@
   function tutorialSeenKey() {
     const profile = store?.getActiveProfile?.();
     const owner = profile?.id || profile?.pseudo || "local";
+    return `arcade.tutorial.seen.${owner}.${resolvedGameKey() || "game"}`;
+  }
+
+  function legacyTutorialSeenKey() {
+    const profile = store?.getActiveProfile?.();
+    const owner = profile?.id || profile?.pseudo || "local";
     return `arcade.tutorial.v${config.version || 1}.${owner}.${resolvedGameKey() || "game"}`;
   }
 
   function markTutorialSeen() {
-    try { global.localStorage?.setItem(tutorialSeenKey(), "1"); } catch (_) { /* Le tutoriel reste disponible sans stockage. */ }
+    try {
+      global.localStorage?.setItem(tutorialSeenKey(), "1");
+      global.localStorage?.setItem(legacyTutorialSeenKey(), "1");
+    } catch (_) { /* Le tutoriel reste disponible sans stockage. */ }
   }
 
   function tutorialWasSeen() {
-    try { return global.localStorage?.getItem(tutorialSeenKey()) === "1"; } catch (_) { return false; }
+    try {
+      return global.localStorage?.getItem(tutorialSeenKey()) === "1"
+        || global.localStorage?.getItem(legacyTutorialSeenKey()) === "1";
+    } catch (_) { return false; }
   }
 
   function renderTutorial() {
@@ -316,15 +328,18 @@
     const button = global.document.createElement("button");
     button.id = "arcadeGameShellButton";
     button.type = "button";
-    button.textContent = "Menu";
+    const buttonLabel = global.document.createElement("span");
+    buttonLabel.textContent = "Menu du jeu";
+    button.appendChild(buttonLabel);
     button.setAttribute("aria-haspopup", "dialog");
+    button.setAttribute("aria-label", "Ouvrir le menu commun du jeu");
+    button.hidden = gameConfig().showMenu === false;
     button.addEventListener("click", () => open("overview"));
     if (hud) {
       hud.appendChild(button);
       hud.classList.add("has-common-menu");
     } else {
       button.classList.add("arcade-game-shell-launcher");
-      button.setAttribute("aria-label", "Ouvrir le menu commun du jeu");
       global.document.body.appendChild(button);
     }
 

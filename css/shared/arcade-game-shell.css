@@ -3,33 +3,64 @@
 }
 
 #arcadeGameShellButton {
-  min-height: 44px;
-  padding: 0 10px;
-  border: 1px solid rgba(255,255,255,.22);
-  border-radius: 999px;
+  --arcade-shell-accent: var(--arcade-ui-accent, var(--accent, var(--accent-primary, var(--primary, #75d7e8))));
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 11px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-color: color-mix(in srgb, var(--arcade-shell-accent) 38%, transparent);
+  border-radius: 10px;
   background: rgba(255,255,255,.07);
-  color: #f5f8ff;
-  font: 700 12px Rajdhani, system-ui, sans-serif;
+  color: var(--arcade-shell-accent);
+  font: 800 11px Rajdhani, system-ui, sans-serif;
+  letter-spacing: .035em;
+  white-space: nowrap;
   cursor: pointer;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+
+#arcadeGameShellButton[hidden] {
+  display: none !important;
+}
+
+#arcadeGameShellButton::before {
+  content: "";
+  width: 15px;
+  height: 11px;
+  flex: 0 0 auto;
+  border-block: 2px solid currentColor;
+  background: linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat;
 }
 
 #arcadeGameShellButton:hover,
 #arcadeGameShellButton:focus-visible {
-  border-color: #75d7e8;
-  color: #8be7f6;
+  transform: translateY(-1px);
+  border-color: var(--arcade-shell-accent);
+  background: color-mix(in srgb, var(--arcade-shell-accent) 14%, transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--arcade-shell-accent) 18%, transparent);
   outline: 2px solid transparent;
 }
 
 .arcade-game-shell-dialog {
+  --arcade-shell-accent: var(--accent, var(--accent-primary, var(--primary, var(--neon-cyan, #75d7e8))));
+  --arcade-shell-accent-alt: var(--accent-2, var(--accent-secondary, var(--secondary, #f4d35e)));
+  --arcade-shell-surface: var(--surface-strong, var(--bg-card, var(--bg-secondary, #101725)));
+  --arcade-shell-text: var(--text, var(--text-primary, #f3f7fd));
   width: min(94vw, 720px);
   max-height: min(88dvh, 760px);
   margin: auto;
   padding: 0;
   overflow: auto;
   border: 1px solid rgba(117,215,232,.3);
+  border-color: color-mix(in srgb, var(--arcade-shell-accent) 34%, transparent);
   border-radius: 16px;
   background: #101725;
-  color: #f3f7fd;
+  background: color-mix(in srgb, var(--arcade-shell-surface) 96%, #08101d);
+  color: var(--arcade-shell-text);
   box-shadow: 0 28px 80px rgba(0,0,0,.62);
   font-family: Rajdhani, system-ui, sans-serif;
 }
@@ -51,7 +82,7 @@
 }
 
 .arcade-game-shell-panel > header span {
-  color: #75d7e8;
+  color: var(--arcade-shell-accent);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: .16em;
@@ -96,24 +127,26 @@
 }
 
 .arcade-game-shell-panel > nav button[aria-current="page"] {
-  background: #1c2a3f;
-  color: #85dcec;
+  background: color-mix(in srgb, var(--arcade-shell-accent) 14%, #101725);
+  color: var(--arcade-shell-accent);
 }
 
 #arcadeGameShellButton.arcade-game-shell-launcher {
   position: fixed;
   right: max(12px, env(safe-area-inset-right));
-  bottom: max(12px, env(safe-area-inset-bottom));
+  top: max(12px, env(safe-area-inset-top));
+  bottom: auto;
   z-index: 2147483000;
-  min-width: 74px;
+  min-height: 44px;
+  border-radius: 12px;
   background: rgba(10, 20, 38, .94);
-  box-shadow: 0 0 22px rgba(117, 215, 232, .18);
+  box-shadow: 0 12px 32px rgba(0,0,0,.28), 0 0 22px color-mix(in srgb, var(--arcade-shell-accent) 18%, transparent);
   backdrop-filter: blur(10px);
 }
 
 .arcade-game-shell-panel button:focus-visible,
 .arcade-game-shell-panel select:focus-visible {
-  outline: 3px solid #f4d35e;
+  outline: 3px solid var(--arcade-shell-accent-alt);
   outline-offset: 3px;
 }
 
@@ -134,8 +167,8 @@
   width: max-content;
   padding: 4px 8px;
   border-radius: 999px;
-  background: rgba(117,215,232,.1);
-  color: #85dcec;
+  background: color-mix(in srgb, var(--arcade-shell-accent) 11%, transparent);
+  color: var(--arcade-shell-accent);
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
@@ -203,8 +236,8 @@
   height: 34px;
   place-items: center;
   border-radius: 50%;
-  background: rgba(117,215,232,.12);
-  color: #85dcec;
+  background: color-mix(in srgb, var(--arcade-shell-accent) 12%, transparent);
+  color: var(--arcade-shell-accent);
   font-weight: 900;
 }
 
@@ -231,8 +264,8 @@
 }
 
 .arcade-shell-actions .is-primary {
-  border-color: #75d7e8;
-  background: #75d7e8;
+  border-color: var(--arcade-shell-accent);
+  background: var(--arcade-shell-accent);
   color: #07131b;
 }
 
@@ -261,7 +294,7 @@
   background: #151f31;
 }
 
-.arcade-shell-leaderboard li span { color: #75d7e8; font-weight: 800; }
+.arcade-shell-leaderboard li span { color: var(--arcade-shell-accent); font-weight: 800; }
 .arcade-shell-leaderboard li strong { color: #edf3fb; }
 .arcade-shell-leaderboard li b { color: #dfc477; }
 .arcade-shell-leaderboard .is-empty { display: block; padding: 18px; color: #a9b5c7; text-align: center; }
@@ -288,7 +321,7 @@
 .arcade-shell-settings input {
   width: 20px;
   height: 20px;
-  accent-color: #75d7e8;
+  accent-color: var(--arcade-shell-accent);
 }
 
 .arcade-shell-select {
@@ -305,7 +338,7 @@
 
 .arcade-game-shell-panel h3 {
   margin: 0 0 10px;
-  color: #85dcec;
+  color: var(--arcade-shell-accent);
   font-size: 20px;
 }
 
@@ -359,6 +392,9 @@ html[data-arcade-visual-intensity="vivid"] .arcade-game-shell-dialog {
 }
 
 @media (max-width: 620px) {
+  #arcadeGameShellButton { width: 42px; min-width: 42px; min-height: 40px; padding: 0; }
+  #arcadeGameShellButton > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  #arcadeGameShellButton.arcade-game-shell-launcher { width: auto; min-width: 44px; min-height: 44px; }
   .arcade-game-shell-panel { padding: 17px; }
   .arcade-game-shell-panel > nav { grid-template-columns: repeat(2, 1fr); }
   .arcade-shell-settings { grid-template-columns: 1fr; }

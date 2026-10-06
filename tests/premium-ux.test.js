@@ -51,10 +51,19 @@ pilots.forEach((pilot) => {
 
 const shellSource = read("js", "core", "arcade-game-shell.js");
 const shellStyles = read("css", "shared", "arcade-game-shell.css");
+const bridgeSource = read("js", "core", "arcade-game-bridge.js");
 assert.match(shellSource, /aria-live="polite"/, "Le résultat commun doit être annoncé");
 assert.match(shellSource, /visibilitychange/, "Le shell doit suspendre une partie passée en arrière-plan");
 assert.match(shellSource, /tutorialSeenKey/, "La consultation du tutoriel doit être mémorisée");
+assert.match(shellSource, /arcade\.tutorial\.seen/, "Le refus du tutoriel doit survivre aux mises à jour du menu");
+assert.match(shellSource, /legacyTutorialSeenKey/, "Les choix de tutoriel existants doivent rester reconnus");
 assert.match(shellStyles, /data-arcade-animations="off"/, "Le réglage d'animations commun doit être appliqué");
+
+assert.match(bridgeSource, /\.arcade-session-hud\{[\s\S]*top:max\([\s\S]*bottom:auto/, "Le statut de session doit rester en haut sur tous les jeux");
+assert.match(bridgeSource, /--arcade-ui-accent:var\(--accent,var\(--accent-primary/, "Le bandeau commun doit reprendre la couleur du jeu actif");
+assert.match(bridgeSource, /classList\.contains\("legacy-home-link"\)[\s\S]*classList\.add\("arcade-home-link"\)/, "Un retour Accueil existant doit être réutilisé au lieu d'être dupliqué");
+assert.match(shellStyles, /#arcadeGameShellButton\[hidden\][\s\S]*display:\s*none\s*!important/, "Les jeux possédant déjà leur menu doivent pouvoir masquer le bouton commun");
+assert.match(shellStyles, /#arcadeGameShellButton\.arcade-game-shell-launcher[\s\S]*top:\s*max\([\s\S]*bottom:\s*auto/, "Le bouton commun isolé ne doit jamais retomber en bas de l'écran");
 
 const poker = `${read("games", "Poker", "poker.html")}\n${read("games", "Poker", "poker.js")}`;
 assert.doesNotMatch(poker, /€|\beuros?\b/i, "Poker ne doit pas suggérer une monnaie réelle");

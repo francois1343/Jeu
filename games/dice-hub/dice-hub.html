@@ -34,7 +34,7 @@
           <span class="brand-mark" aria-hidden="true">FA</span>
           <span><strong>FRANCIS</strong><small>ARCADE / DICE DISTRICT</small></span>
         </a>
-        <div class="header-actions">
+        <div class="header-actions" data-arcade-session-slot>
           <span class="player-chip"><span aria-hidden="true">●</span><b id="player-name">JOUEUR LOCAL</b></span>
           <button class="icon-button" id="open-settings-header" type="button" aria-label="Ouvrir les paramètres" title="Paramètres">⚙</button>
           <a class="arcade-return" href="../../index.html" aria-label="Retour à Francis Arcade"><span aria-hidden="true">←</span> ARCADE</a>
@@ -60,7 +60,7 @@
                 <button class="table-card is-selected" type="button" role="radio" aria-checked="true" data-mode="magic">
                   <span class="mode-number">01</span>
                   <span class="mode-icon" aria-hidden="true"><span class="mini-die face-five"><i></i><i></i><i></i><i></i><i></i></span></span>
-                  <span class="mode-content"><strong>LANCER LIBRE</strong><small>1–12 dés · D2 à D100</small><em>DISPONIBLE</em></span>
+                  <span class="mode-content"><strong>LANCER LIBRE</strong><small>1–12 dés · D2 à D100</small><em class="free-mode-badge" aria-label="Mode gratuit">FREE</em></span>
                   <span class="mode-arrow" aria-hidden="true">↗</span>
                 </button>
                 <button class="table-card" type="button" role="radio" aria-checked="false" data-mode="421">
@@ -85,7 +85,6 @@
             </section>
 
             <aside class="launch-panel" aria-labelledby="selected-mode-title">
-              <div class="panel-topline"><span>TABLE SÉLECTIONNÉE</span><b id="mode-status">PRÊT</b></div>
               <div class="dice-emblem" id="menu-dice" aria-hidden="true"><span>●</span><span>●</span><span>●</span><span>●</span><span>●</span></div>
               <p class="panel-kicker" id="selected-mode-kicker">MODE CLASSIQUE</p>
               <h2 id="selected-mode-title">Dé Magique</h2>
@@ -95,11 +94,10 @@
                 <div><dt>DURÉE</dt><dd id="mode-duration">LIBRE</dd></div>
                 <div><dt>NIVEAU</dt><dd id="mode-level">FACILE</dd></div>
               </dl>
-              <button class="primary-button" id="play-button" type="button"><span>JOUER</span><i aria-hidden="true">▶</i></button>
+              <button class="primary-button" id="play-button" type="button" data-arcade-start-mode="magic"><span>JOUER</span><i aria-hidden="true">▶</i></button>
               <div class="secondary-actions">
                 <button class="text-button" id="open-rules" type="button">RÈGLES</button>
                 <button class="text-button" id="open-leaderboard" type="button">LEADERBOARD</button>
-                <button class="text-button" id="open-settings" type="button">PARAMÈTRES</button>
               </div>
               <p class="availability-note" id="availability-note">Mode d’entraînement gratuit · aucun Coin débité</p>
             </aside>
@@ -120,7 +118,7 @@
           <div class="game-layout">
             <section class="roll-stage" aria-labelledby="roll-title">
               <div class="stage-label"><span id="roll-title">GÉNÉRATEUR ALÉATOIRE</span><i id="generator-state">EN ATTENTE</i></div>
-              <button class="dice-tray" id="play-die" type="button" aria-label="Lancer les dés"><span class="result-die" id="dice-result">?</span></button>
+              <button class="dice-tray" id="play-die" type="button" aria-label="Lancer les dés"><span class="result-die" id="dice-result"><strong class="result-die-value">?</strong><small>DÉ 1</small></span></button>
               <div class="roll-summary" id="roll-summary" hidden><span>TOTAL</span><strong id="roll-total">—</strong></div>
               <p class="result-caption" id="result-caption" role="status" aria-live="polite">Configurez vos dés puis lancez-les.</p>
               <button class="primary-button roll-button" id="roll-button" type="button"><span>LANCER LES DÉS</span><i aria-hidden="true">↻</i></button>
