@@ -140,6 +140,10 @@ import { createClient } from "@supabase/supabase-js";
     return unwrap(await client.rpc(functionName, parameters));
   }
 
+  async function matchRpc(functionName, parameters = {}) {
+    return unwrap(await client.rpc(functionName, parameters));
+  }
+
   function settleGameRequest(item) {
     return arcadeRpc("arcade_settle_client_game", {
       p_session_id: item.sessionId,
@@ -169,6 +173,37 @@ import { createClient } from "@supabase/supabase-js";
         table: "connect4_rooms",
         filter: `id=eq.${roomId}`,
       }, onChange)
+      .subscribe((status, error) => onStatus?.(status, error));
+
+    return Object.freeze({
+      unsubscribe() {
+        return client.removeChannel(channel);
+      },
+    });
+  }
+
+  function subscribeArcadeMatch(matchId, onChange, onStatus) {
+    const id = String(matchId || "");
+    const channel = client
+      .channel(`arcade-match:${id}`)
+      .on("postgres_changes", {
+        event: "UPDATE",
+        schema: "public",
+        table: "matches",
+        filter: `id=eq.${id}`,
+      }, (payload) => onChange?.("match", payload))
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "match_players",
+        filter: `match_id=eq.${id}`,
+      }, (payload) => onChange?.("player", payload))
+      .on("postgres_changes", {
+        event: "INSERT",
+        schema: "public",
+        table: "match_events",
+        filter: `match_id=eq.${id}`,
+      }, (payload) => onChange?.("event", payload))
       .subscribe((status, error) => onStatus?.(status, error));
 
     return Object.freeze({
@@ -218,6 +253,59 @@ import { createClient } from "@supabase/supabase-js";
       return result;
     },
     flushPendingSettlements,
+    matches: Object.freeze({
+      create(gameKey, mode, options = {}) {
+        return matchRpc("arcade_match_create", {
+          p_game_key: String(gameKey || ""),
+          p_mode: String(mode || ""),
+          p_options: options,
+        });
+      },
+      findOpponent(gameKey, options = {}) {
+        return matchRpc("arcade_match_find", {
+          p_game_key: String(gameKey || ""),
+          p_options: options,
+        });
+      },
+      createInvite(matchId, inviteeUserId = null, ttlMinutes = 30) {
+        return matchRpc("arcade_match_create_invite", {
+          p_match_id: matchId,
+          p_invitee_user_id: inviteeUserId,
+          p_ttl_minutes: ttlMinutes,
+        });
+      },
+      acceptInvite(token) {
+        return matchRpc("arcade_match_accept_invite", { p_token: String(token || "") });
+      },
+      get(matchId) {
+        return matchRpc("arcade_match_get", { p_match_id: matchId });
+      },
+      heartbeat(matchId) {
+        return matchRpc("arcade_match_heartbeat", { p_match_id: matchId });
+      },
+      disconnect(matchId) {
+        return matchRpc("arcade_match_disconnect", { p_match_id: matchId });
+      },
+      submitTurn(matchId, expectedVersion, action, actorSlot = null) {
+        return matchRpc("arcade_match_submit_turn", {
+          p_match_id: matchId,
+          p_expected_version: expectedVersion,
+          p_action: action,
+          p_actor_slot: actorSlot,
+        });
+      },
+      reportResult(matchId, expectedVersion, result) {
+        return matchRpc("arcade_match_report_result", {
+          p_match_id: matchId,
+          p_expected_version: expectedVersion,
+          p_result: result,
+        });
+      },
+      abandon(matchId) {
+        return matchRpc("arcade_match_abandon", { p_match_id: matchId });
+      },
+      subscribe: subscribeArcadeMatch,
+    }),
     connect4: Object.freeze({
       createRoom(turnSeconds = 30) {
         return connect4Rpc("connect4_create_room", { p_turn_seconds: turnSeconds });

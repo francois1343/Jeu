@@ -11,6 +11,8 @@ const paidSessions = read("supabase", "migrations", "202609250002_paid_game_sess
 const freeGames = read("supabase", "migrations", "202610060001_free_games.sql");
 const freeDailyChallenges = read("supabase", "migrations", "202610060002_free_daily_challenges.sql");
 const connect4CoinGuard = read("supabase", "migrations", "202610110001_secure_connect4_live_coins.sql");
+const matchService = read("supabase", "migrations", "202610110002_arcade_match_service.sql");
+const matchReconnectGuard = read("supabase", "migrations", "202610110003_arcade_match_reconnect_timeout.sql");
 const config = read("js", "core", "arcade-config.js");
 const gitignore = read(".gitignore");
 const sharedClient = read("supabase", "functions", "_shared", "supabase.ts");
@@ -68,6 +70,16 @@ assert.match(connect4CoinGuard, /session_row\.game_key\s*=\s*'puissance4'/i);
 assert.match(connect4CoinGuard, /status\s*=\s*'cancelled'/i);
 assert.match(connect4CoinGuard, /'refund:connect4-live:'\s*\|\|\s*session_row\.id::text/i);
 assert.match(connect4CoinGuard, /grant execute on function public\.arcade_settle_client_game\(uuid, text, jsonb\) to authenticated/i);
+assert.match(matchService, /alter table public\.matches enable row level security/i);
+assert.match(matchService, /alter table public\.match_players enable row level security/i);
+assert.match(matchService, /alter table public\.match_invites enable row level security/i);
+assert.match(matchService, /grant execute on function public\.arcade_match_settle[\s\S]{0,160}to service_role/i);
+assert.doesNotMatch(matchService, /grant execute on function public\.arcade_match_settle[\s\S]{0,160}to authenticated/i);
+assert.match(matchService, /result_reported/i);
+assert.match(matchService, /awaiting_server_validation/i);
+assert.match(matchReconnectGuard, /security definer/i);
+assert.match(matchReconnectGuard, /reconnect_deadline\s*<=\s*clock_timestamp\(\)/i);
+assert.match(matchReconnectGuard, /result_source\s*=\s*'timeout'/i);
 
 assert.match(sharedClient, /authenticatedUser\(request/i, "Les fonctions doivent verifier l'utilisateur");
 assert.match(sharedClient, /SUPABASE_SECRET_KEYS/, "Les cles secretes Supabase actuelles doivent etre prises en charge");

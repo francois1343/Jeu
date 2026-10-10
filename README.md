@@ -37,6 +37,7 @@ La priorité n'est plus d'ajouter des jeux. Le travail porte maintenant sur la c
 | Sessions de jeu et mises         |  🟡 Hybride | Débit et paiement serveur ; résultats historiques encore déclarés par le client |
 | Vitrine « À jouer maintenant »   |     ✅      | Six jeux mis en avant sur l'accueil                            |
 | Bridge de session commun         |     ✅      | Les 43 pages de jeu communiquent avec la plateforme            |
+| Service ArcadeMatch              |  🟢 Serveur | 5 modes, tours, invitations, matchmaking et reconnexion         |
 | Console ADMIN et audit           |  ✅ Local   | Recherche, sauvegarde, import et export des données de test    |
 | Expérience Premium unifiée       | 🟠 En recette | Socle commun déployé sur les six pilotes ; recette humaine finale requise |
 | Comptes et synchronisation Cloud |  🟢 Actif   | Inscription, connexion, récupération et session Supabase       |
@@ -76,6 +77,9 @@ La spécification complète et la checklist de certification sont définies dans
 [`docs/CONTRAT-UX-PREMIUM.md`](docs/CONTRAT-UX-PREMIUM.md).
 Les preuves automatisées et les contrôles restant à signer sont suivis dans
 [`docs/AUDIT-6-PILOTES.md`](docs/AUDIT-6-PILOTES.md).
+
+Le contrat multijoueur partagé et son modèle de sécurité sont détaillés dans
+[`docs/ARCADE-MATCH.md`](docs/ARCADE-MATCH.md).
 
 ## 🌟 Les 6 pilotes Premium — sélection figée
 

@@ -654,6 +654,12 @@ async function main() {
   }
 
   await navigate(`${baseUrl}/games/puissance4/index.html`);
+  await waitFor("Boolean(window.ArcadeMatch?.MODES?.MATCHMAKING)", "Le service ArcadeMatch partage n'est pas charge");
+  assert.deepEqual(
+    await cdp.evaluate("Object.values(window.ArcadeMatch.MODES)"),
+    ["solo", "bot", "local", "invite", "matchmaking"],
+    "Les cinq modes ArcadeMatch ne sont pas disponibles dans les jeux",
+  );
   await waitFor("Boolean(window.THREE && window.THREE.OrbitControls)", "Three.js local n'est pas chargé dans Puissance 4");
   await waitFor("Boolean(window.Puissance4Live && window.Puissance4Game && window.ArcadeSupabase?.connect4)", "Le module Puissance 4 Live ne démarre pas");
   await cdp.evaluate("document.querySelector('[data-opp=live]').click(); true");

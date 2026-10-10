@@ -636,6 +636,7 @@
     if (config.mode === "supabase" && !global.ArcadeSupabase) {
       await loadSharedScript("../../vendor/supabase/arcade-supabase-client.min.js");
     }
+    await loadSharedScript("arcade-match.js");
     await init();
   }
 
