@@ -10,6 +10,7 @@ const migration = read("supabase", "migrations", "202608290001_arcade_economy.sq
 const paidSessions = read("supabase", "migrations", "202609250002_paid_game_sessions.sql");
 const freeGames = read("supabase", "migrations", "202610060001_free_games.sql");
 const freeDailyChallenges = read("supabase", "migrations", "202610060002_free_daily_challenges.sql");
+const connect4CoinGuard = read("supabase", "migrations", "202610110001_secure_connect4_live_coins.sql");
 const config = read("js", "core", "arcade-config.js");
 const gitignore = read(".gitignore");
 const sharedClient = read("supabase", "functions", "_shared", "supabase.ts");
@@ -62,6 +63,11 @@ assert.match(freeGames, /economy_enabled\s*=\s*false/i);
 assert.match(freeDailyChallenges, /play_cost_units\s*=\s*0/i);
 assert.match(freeDailyChallenges, /win_payout_units\s*=\s*200/i);
 assert.match(freeDailyChallenges, /metadata\s*->>\s*'game_key'\s+in\s*\('challenge_math'/i);
+assert.match(connect4CoinGuard, /security definer/i);
+assert.match(connect4CoinGuard, /session_row\.game_key\s*=\s*'puissance4'/i);
+assert.match(connect4CoinGuard, /status\s*=\s*'cancelled'/i);
+assert.match(connect4CoinGuard, /'refund:connect4-live:'\s*\|\|\s*session_row\.id::text/i);
+assert.match(connect4CoinGuard, /grant execute on function public\.arcade_settle_client_game\(uuid, text, jsonb\) to authenticated/i);
 
 assert.match(sharedClient, /authenticatedUser\(request/i, "Les fonctions doivent verifier l'utilisateur");
 assert.match(sharedClient, /SUPABASE_SECRET_KEYS/, "Les cles secretes Supabase actuelles doivent etre prises en charge");

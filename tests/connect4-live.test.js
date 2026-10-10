@@ -10,6 +10,8 @@ const html = fs.readFileSync(path.join(root, "games", "puissance4", "index.html"
 const game = fs.readFileSync(path.join(root, "games", "puissance4", "puissance4.js"), "utf8");
 const live = fs.readFileSync(path.join(root, "games", "puissance4", "puissance4-live.js"), "utf8");
 const client = fs.readFileSync(path.join(root, "js", "core", "arcade-supabase-client.entry.js"), "utf8");
+const config = fs.readFileSync(path.join(root, "js", "core", "arcade-config.js"), "utf8");
+const coinGuard = fs.readFileSync(path.join(root, "supabase", "migrations", "202610110001_secure_connect4_live_coins.sql"), "utf8");
 
 for (const table of ["connect4_ratings", "connect4_rooms", "connect4_matches"]) {
   assert.match(migration, new RegExp(`create table public\\.${table}`, "i"));
@@ -50,5 +52,10 @@ assert.match(client, /client\.rpc\(functionName, parameters\)/);
 assert.match(client, /postgres_changes/);
 assert.doesNotMatch(client, /from\(["']connect4_rooms["']\)\s*\.(?:insert|update|upsert|delete)/i);
 assert.doesNotMatch(live, /from\(["']connect4_/i);
+assert.match(config, /puissance4:\s*Object\.freeze\(\{\s*practiceModes:\s*Object\.freeze\(\["live"\]\)/, "Le Live ne doit ouvrir aucune mise");
+assert.match(coinGuard, /session_row\.game_key\s*=\s*'puissance4'/i);
+assert.match(coinGuard, /result_payload\s*->>\s*'mode'[\s\S]{0,80}'live'/i);
+assert.match(coinGuard, /caller_id,\s*'refund',\s*session_row\.wager_units/i, "Une mise Live issue d'un ancien client doit etre remboursee");
+assert.match(coinGuard, /'payout_units',\s*0/i, "Le backend ne doit jamais payer un resultat Live rapporte par le navigateur");
 
 console.log("Socle Puissance 4 Live autoritaire vérifié : OK");

@@ -41,6 +41,7 @@ window.ARCADE_CONFIG = Object.freeze({
       sudoku: Object.freeze({ practiceModes: Object.freeze(["insane"]) }),
       tetris: Object.freeze({ practiceModes: Object.freeze(["zen"]) }),
       de: Object.freeze({ practiceModes: Object.freeze(["magic"]) }),
+      puissance4: Object.freeze({ practiceModes: Object.freeze(["live"]) }),
       calculation: Object.freeze({ minimumAccuracy: 0.7 }),
       enigme: Object.freeze({ minimumAccuracy: 0.7 }),
       marmotte: Object.freeze({ minimumScore: 10 }),

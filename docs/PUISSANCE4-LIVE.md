@@ -26,7 +26,10 @@ périodique sert de secours. Un bouton **Reconnecter** apparaît si le canal Liv
 - un abandon ou une expiration du chrono accorde la victoire à l’adversaire ;
 - les salons en attente expirent après 30 minutes.
 
-Les Coins ne sont pas liés au classement dans ce prototype.
+Les Coins ne sont pas liés au classement dans ce prototype. Le mode Live est une partie
+gratuite : il n’ouvre aucune mise et ne verse aucun gain. Le backend refuse en plus tout
+règlement Live envoyé par l’ancien canal de résultat client et rembourse automatiquement
+une mise qui aurait été ouverte par une version du site restée en cache.
 
 ## Recette manuelle à deux navigateurs
 

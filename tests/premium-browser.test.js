@@ -161,48 +161,6 @@ async function main() {
   }
 
   await navigate(`${baseUrl}/index.html`);
-  await cdp.evaluate("window.ArcadeLocalStore.login('QA Calcul Toolbar'); true");
-  const calculationSession = await cdp.evaluate(`window.ArcadeLocalStore.createSession(${JSON.stringify({
-    gameKey: "calculation",
-    title: "Calcul Mental",
-    url: "/games/calculation/index.html",
-  })})`);
-  await navigate(`${baseUrl}/games/calculation/index.html?arcadeSession=${encodeURIComponent(calculationSession.id)}`);
-  await waitFor("Boolean(window.ArcadeGameSession && document.querySelector('#arcadeSessionHud #arcadeGameShellButton'))", "Calcul Mental ne regroupe pas ses commandes communes");
-  if (await cdp.evaluate("Boolean(document.querySelector('#arcadeGameShellDialog')?.open)")) {
-    await cdp.evaluate("document.querySelector('#arcadeShellTutorialSkip').click(); true");
-  }
-  for (const viewport of [[320, 568], [1366, 768]]) {
-    await cdp.send("Emulation.setDeviceMetricsOverride", {
-      width: viewport[0], height: viewport[1], deviceScaleFactor: 1, mobile: viewport[0] < 800,
-    });
-    await cdp.evaluate("window.dispatchEvent(new Event('resize')); true");
-    await delay(80);
-    const calculationChrome = await cdp.evaluate(`(() => {
-      const home = document.querySelector('#arcadeHomeButton');
-      const hud = document.querySelector('#arcadeSessionHud');
-      const menu = document.querySelector('#arcadeGameShellButton');
-      const homeRect = home.getBoundingClientRect(), hudRect = hud.getBoundingClientRect();
-      return {
-        hudTop: Math.round(hudRect.top),
-        menuTop: Math.round(menu.getBoundingClientRect().top),
-        menuParent: menu.parentElement?.id,
-        statusColor: getComputedStyle(hud.querySelector('strong')).color,
-        overlap: Math.min(homeRect.right,hudRect.right) > Math.max(homeRect.left,hudRect.left)
-          && Math.min(homeRect.bottom,hudRect.bottom) > Math.max(homeRect.top,hudRect.top),
-        reusedHome: home.classList.contains('arcade-home-link') && !home.classList.contains('legacy-home-link'),
-        counts: [document.querySelectorAll('#arcadeHomeButton').length, document.querySelectorAll('#arcadeSessionHud').length, document.querySelectorAll('#arcadeGameShellButton').length],
-      };
-    })()`);
-    assert(calculationChrome.hudTop < 80 && calculationChrome.menuTop < 80, `Calcul Mental conserve une commande en bas à ${viewport[0]}×${viewport[1]}`);
-    assert.equal(calculationChrome.menuParent, "arcadeSessionHud", "Calcul Mental doit réunir Menu et Coins dans le même bloc");
-    assert.equal(calculationChrome.overlap, false, `La barre de Calcul Mental se superpose à ${viewport[0]}×${viewport[1]}`);
-    assert.equal(calculationChrome.reusedHome, true, "Calcul Mental doit réutiliser son retour Accueil historique");
-    assert.deepEqual(calculationChrome.counts, [1, 1, 1], "Calcul Mental duplique une commande commune");
-    assert.match(calculationChrome.statusColor, /0,\s*212,\s*255/, "Le statut Calcul Mental doit reprendre son cyan");
-  }
-
-  await navigate(`${baseUrl}/index.html`);
   await waitFor("Boolean(window.ArcadeLocalStore)", "Le store Arcade n'est pas chargé");
   await waitFor("document.fonts.status === 'loaded'", "Les polices locales ne sont pas chargees");
   const homeTypography = await cdp.evaluate(`(() => {
@@ -487,6 +445,48 @@ async function main() {
   }
 
   await navigate(`${baseUrl}/index.html`);
+  await cdp.evaluate("window.ArcadeLocalStore.login('QA Calcul Toolbar'); true");
+  const calculationSession = await cdp.evaluate(`window.ArcadeLocalStore.createSession(${JSON.stringify({
+    gameKey: "calculation",
+    title: "Calcul Mental",
+    url: "/games/calculation/index.html",
+  })})`);
+  await navigate(`${baseUrl}/games/calculation/index.html?arcadeSession=${encodeURIComponent(calculationSession.id)}`);
+  await waitFor("Boolean(window.ArcadeGameSession && document.querySelector('#arcadeSessionHud #arcadeGameShellButton'))", "Calcul Mental ne regroupe pas ses commandes communes");
+  if (await cdp.evaluate("Boolean(document.querySelector('#arcadeGameShellDialog')?.open)")) {
+    await cdp.evaluate("document.querySelector('#arcadeShellTutorialSkip').click(); true");
+  }
+  for (const viewport of [[320, 568], [1366, 768]]) {
+    await cdp.send("Emulation.setDeviceMetricsOverride", {
+      width: viewport[0], height: viewport[1], deviceScaleFactor: 1, mobile: viewport[0] < 800,
+    });
+    await cdp.evaluate("window.dispatchEvent(new Event('resize')); true");
+    await delay(80);
+    const calculationChrome = await cdp.evaluate(`(() => {
+      const home = document.querySelector('#arcadeHomeButton');
+      const hud = document.querySelector('#arcadeSessionHud');
+      const menu = document.querySelector('#arcadeGameShellButton');
+      const homeRect = home.getBoundingClientRect(), hudRect = hud.getBoundingClientRect();
+      return {
+        hudTop: Math.round(hudRect.top),
+        menuTop: Math.round(menu.getBoundingClientRect().top),
+        menuParent: menu.parentElement?.id,
+        statusColor: getComputedStyle(hud.querySelector('strong')).color,
+        overlap: Math.min(homeRect.right,hudRect.right) > Math.max(homeRect.left,hudRect.left)
+          && Math.min(homeRect.bottom,hudRect.bottom) > Math.max(homeRect.top,hudRect.top),
+        reusedHome: home.classList.contains('arcade-home-link') && !home.classList.contains('legacy-home-link'),
+        counts: [document.querySelectorAll('#arcadeHomeButton').length, document.querySelectorAll('#arcadeSessionHud').length, document.querySelectorAll('#arcadeGameShellButton').length],
+      };
+    })()`);
+    assert(calculationChrome.hudTop < 80 && calculationChrome.menuTop < 80, `Calcul Mental conserve une commande en bas à ${viewport[0]}×${viewport[1]}`);
+    assert.equal(calculationChrome.menuParent, "arcadeSessionHud", "Calcul Mental doit réunir Menu et Coins dans le même bloc");
+    assert.equal(calculationChrome.overlap, false, `La barre de Calcul Mental se superpose à ${viewport[0]}×${viewport[1]}`);
+    assert.equal(calculationChrome.reusedHome, true, "Calcul Mental doit réutiliser son retour Accueil historique");
+    assert.deepEqual(calculationChrome.counts, [1, 1, 1], "Calcul Mental duplique une commande commune");
+    assert.match(calculationChrome.statusColor, /0,\s*212,\s*255/, "Le statut Calcul Mental doit reprendre son cyan");
+  }
+
+  await navigate(`${baseUrl}/index.html`);
   await cdp.evaluate("window.ArcadeLocalStore.login('QA Dice Responsive'); true");
   const diceSession = await cdp.evaluate(`window.ArcadeLocalStore.createSession(${JSON.stringify({
     gameKey: "de",
@@ -728,6 +728,28 @@ async function main() {
   })()`);
   await waitFor("/incorrect|impossible|confirmez/i.test(document.querySelector('#profileStatus')?.textContent || '')", "La connexion Supabase ne renvoie pas d'erreur utilisateur", 10000);
   assert.equal(await cdp.evaluate("Boolean(window.ArcadePlatform.getSession())"), false, "Une connexion invalide cree une session");
+  await navigate(`${baseUrl}/games/puissance4/index.html?arcadeServer=1&arcadeGame=puissance4`);
+  await waitFor("window.ArcadeGameSession?.state === 'created' && Boolean(window.ArcadeSupabase?.startGame)", "Le pont Puissance 4 Live ne demarre pas");
+  const connect4LiveEconomy = await cdp.evaluate(`(() => {
+    window.ArcadeGameSession.start({ mode: 'live', room: 'QA1234' });
+    const session = window.ArcadeGameSession.snapshot;
+    return {
+      state: session?.state,
+      economyMode: session?.economyMode,
+      wagerUnits: session?.wagerUnits,
+      payoutUnits: session?.payoutUnits,
+      serverSessionId: session?.id,
+      blocker: Boolean(document.querySelector('#arcadeSessionBlocker'))
+    };
+  })()`);
+  assert.deepEqual(connect4LiveEconomy, {
+    state: "started",
+    economyMode: "practice",
+    wagerUnits: 0,
+    payoutUnits: 0,
+    serverSessionId: null,
+    blocker: false,
+  }, "Puissance 4 Live ouvre encore une session Coins");
   await navigate(`${baseUrl}/games/snake/index.html?arcadeServer=1&arcadeGame=snake`);
   await waitFor("window.ArcadeGameSession?.state === 'created' && Boolean(window.ArcadeSupabase?.startGame)", "Le pont de mise serveur ne démarre pas");
   await cdp.evaluate("window.ArcadeGameSession.start({ source: 'signed_out_recipe' }); true");
