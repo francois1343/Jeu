@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <title>🧱 Casse-Briques</title>
     <!-- SEO_META_START -->
@@ -122,6 +122,7 @@
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
     <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
+    <link rel="stylesheet" href="responsive.css" />
   </head>
   <body>
     <a
@@ -141,7 +142,7 @@
       <div><span>Vies:</span> <strong id="lives">❤️❤️❤️</strong></div>
     </div>
 
-    <div style="position: relative">
+    <div class="breakout-table">
       <canvas id="game" width="600" height="500" aria-label="Zone de jeu Casse-Briques"></canvas>
 
       <div class="message" id="start-screen">

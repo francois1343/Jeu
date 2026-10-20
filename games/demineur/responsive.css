@@ -1,0 +1,24 @@
+.overlay {
+  inset: 64px 8px 8px;
+  width: auto;
+  height: auto;
+  padding: 12px;
+  border-radius: 16px;
+  overflow-y: auto;
+  align-items: safe center;
+}
+
+.overlay .menu {
+  width: min(100%, 500px);
+  max-height: 100%;
+  padding: clamp(16px, 4vw, 30px);
+  overflow-y: auto;
+}
+
+.menu h1 { font-size: clamp(28px, 8vw, 44px); }
+.difficulty-btn { min-width: 0; }
+
+#game-container { width: min(100%, 1180px); min-width: 0; padding: 68px 12px 20px; }
+.hud { flex-wrap: wrap; gap: 12px; justify-content: center; }
+.board-scroll { width: 100%; min-width: 0; overflow: auto; overscroll-behavior-inline: contain; border-radius: 12px; }
+#board { width: max-content; margin-inline: auto; }

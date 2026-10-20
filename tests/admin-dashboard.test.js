@@ -53,7 +53,7 @@ assert.match(worker, /data\/ux-audit\.json/);
 
 const audit = JSON.parse(read("data", "ux-audit.json"));
 assert(audit.summary.pages_audited >= 40, "L'audit doit couvrir tout le catalogue");
-assert.equal(audit.results.length, (audit.summary.pages_audited + 2) * 2, "Chaque page doit être testée sur deux viewports");
+assert.equal(audit.results.length, (audit.summary.pages_audited + 2) * (audit.viewports?.length || 2), "Chaque page doit être testée sur tous les viewports annoncés");
 assert(audit.findings.length >= 5);
 assert.equal(audit.roadmap.length, 4);
 

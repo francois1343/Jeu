@@ -96,7 +96,7 @@
     const cards = [
       ["Responsive", summary.responsive_pass_percent ?? 0, `${summary.pages_without_overflow ?? 0}/${summary.pages_audited ?? 0} pages sans débordement`],
       ["Cibles tactiles", summary.touch_target_pass_percent ?? 0, "Boutons et liens ≥ 44 px"],
-      ["Shell commun", summary.shared_shell_percent ?? 100, "Navigation cohérente"],
+      ["Superpositions", summary.overlap_free_percent ?? 0, `${summary.pages_without_overlaps ?? 0}/${summary.pages_audited ?? 0} accueils sans collision`],
       ["Validation serveur", Math.round(Number(quality.server_verified_games || 0) / catalog * 100), `${integer(quality.server_verified_games)}/${integer(quality.catalog_games)} jeux`],
     ];
     element("qualityProgress").innerHTML = cards.map(([label, value, note]) => `<article class="quality-card"><header><span>${label}</span><strong>${value}%</strong></header><div class="progress-track"><i style="width:${Math.max(0, Math.min(100, value))}%"></i></div><p>${note}</p></article>`).join("");

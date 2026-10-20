@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
 <meta name="theme-color" content="#1a1a2e" />
     <title>🌍 Open World</title>
@@ -985,6 +985,7 @@
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
     <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
+    <link rel="stylesheet" href="responsive.css" />
   </head>
   <body>
     <a
@@ -1023,6 +1024,8 @@
             class="icon-btn"
             onclick="toggleCollabPanel()"
             title="Communauté"
+            aria-controls="collabPanel"
+            aria-expanded="false"
           >
             👥
           </button>
@@ -1149,7 +1152,7 @@
     </div>
 
     <!-- PANNEAU COLLABORATION -->
-    <aside class="collab-panel" id="collabPanel">
+    <aside class="collab-panel" id="collabPanel" aria-hidden="true" inert>
       <div class="collab-header">
         <h3 class="collab-title">👥 Communauté</h3>
         <button type="button" class="icon-btn" onclick="toggleCollabPanel()">✕</button>
@@ -1946,13 +1949,19 @@
       function toggleCollabPanel() {
         const panel = document.getElementById("collabPanel");
         GameState.ui.collabPanelOpen = !GameState.ui.collabPanelOpen;
+        panel.inert = !GameState.ui.collabPanelOpen;
+        panel.setAttribute("aria-hidden", String(!GameState.ui.collabPanelOpen));
+        document.querySelector(".app-container").inert = GameState.ui.collabPanelOpen;
+        document.querySelector('[aria-controls="collabPanel"]').setAttribute("aria-expanded", String(GameState.ui.collabPanelOpen));
 
         if (GameState.ui.collabPanelOpen) {
           panel.classList.add("open");
           renderCollaborators();
           renderActivities();
+          panel.querySelector("button").focus();
         } else {
           panel.classList.remove("open");
+          document.querySelector('[aria-controls="collabPanel"]').focus();
         }
       }
 
@@ -2258,6 +2267,10 @@
       document.addEventListener("keydown", (e) => {
         // Échap pour fermer les modals ou revenir
         if (e.key === "Escape") {
+          if (GameState.ui.collabPanelOpen) {
+            toggleCollabPanel();
+            return;
+          }
           const modal = document.querySelector(".reward-modal.show");
           if (modal) {
             modal.remove();

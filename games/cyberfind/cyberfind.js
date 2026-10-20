@@ -737,7 +737,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function handleMouseWheel(event) {
     event.preventDefault();
-    zoomAtPoint(event.deltaY < 0 ? 1.16 : 0.86, event.clientX, event.clientY);
+    const bounds = elements.viewport.getBoundingClientRect();
+    zoomAtPoint(event.deltaY < 0 ? 1.16 : 0.86, event.clientX - bounds.left, event.clientY - bounds.top);
   }
 
   function beginMouseDrag(event) {

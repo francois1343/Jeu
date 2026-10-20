@@ -2,6 +2,12 @@
   pointer-events: auto;
 }
 
+/* Game-specific section/button rules must never reveal closed shell panels. */
+.arcade-game-shell-dialog:not([open]),
+.arcade-game-shell-dialog [hidden] {
+  display: none !important;
+}
+
 #arcadeGameShellButton {
   --arcade-shell-accent: var(--arcade-ui-accent, var(--accent, var(--accent-primary, var(--primary, #75d7e8))));
   display: inline-flex;

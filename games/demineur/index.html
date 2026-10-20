@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://nnqfomqgagfshujyfrtl.supabase.co wss://nnqfomqgagfshujyfrtl.supabase.co; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Démineur Pro</title>
     <!-- SEO_META_START -->
     <meta name="description" content="Trouvez toutes les mines cachées sans en faire exploser une seule ! Jouez gratuitement sur Francis Arcade." />
@@ -838,6 +838,7 @@ body {
 </style>
   <link rel="stylesheet" href="../../css/shared/arcade-home.css">
     <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
+    <link rel="stylesheet" href="responsive.css" />
 </head>
 <body>
   <a class="arcade-home-link" href="../../index.html" aria-label="Retour à l'accueil" title="Retour à l'accueil"><span class="arcade-home-icon" aria-hidden="true">⌂</span><span class="arcade-home-label">Accueil</span></a>
@@ -867,7 +868,9 @@ body {
     </div>
   </div>
   
-  <div id="board"></div>
+  <div class="board-scroll" tabindex="0" role="region" aria-label="Grille de démineur, défilement horizontal pour les grandes difficultés">
+    <div id="board"></div>
+  </div>
 </div>
 
 <!-- Menu Principal -->

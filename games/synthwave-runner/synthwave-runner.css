@@ -393,6 +393,8 @@ body {
 /* ============================================================ */
 
 #gameScreen {
+  top: 64px;
+  height: calc(100% - 64px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -434,6 +436,9 @@ body {
   text-shadow: 0 0 10px var(--color-secondary);
   letter-spacing: 2px;
   font-family: "Press Start 2P", "Courier New", monospace;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .hud-score,
@@ -451,7 +456,9 @@ body {
 
 .btn-pause {
   flex: 0 0 auto;
-  margin-left: 24px;
+  margin-left: 8px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 10px 14px;
   border-color: rgba(255, 255, 255, 0.7);
   font-size: clamp(9px, 1.2vw, 12px);
@@ -463,12 +470,12 @@ body {
 
 #gameCanvas {
   /* 25. Responsive : 800x400 virtuel, scaling sans déformation */
-  width: min(100%, 960px);
+  width: min(100%, 960px, calc((100dvh - 175px) * 2));
   height: auto;
   max-width: 960px;
-  max-height: calc(100dvh - 80px);
+  max-height: calc(100dvh - 175px);
 
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 2 / 1;
   object-fit: contain;
   background: linear-gradient(180deg, #1a0a3a 0%, #0a0e27 100%);
 

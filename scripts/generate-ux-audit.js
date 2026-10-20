@@ -13,6 +13,8 @@ const baseUrl = process.env.ARCADE_BASE_URL || `http://127.0.0.1:${port}`;
 const viewports = [
   { name: "desktop", width: 1366, height: 768, mobile: false },
   { name: "mobile", width: 390, height: 844, mobile: true },
+  { name: "mobile-small", width: 320, height: 568, mobile: true },
+  { name: "tablet", width: 768, height: 900, mobile: true },
 ];
 
 function walkHtml(directory) {
@@ -93,15 +95,45 @@ class DevTools {
 
 function measurementExpression() {
   return `(() => {
+    const modal = [...document.querySelectorAll('dialog[open]')].findLast((dialog) => dialog.matches(':modal'));
+    const boundsCache = new WeakMap();
+    const visibleBounds = (element) => {
+      if (boundsCache.has(element)) return boundsCache.get(element);
+      const rect = element.getBoundingClientRect();
+      let left = Math.max(0, rect.left), right = Math.min(innerWidth, rect.right);
+      let top = Math.max(0, rect.top), bottom = Math.min(innerHeight, rect.bottom);
+      for (let parent = element.parentElement; parent; parent = parent.parentElement) {
+        const style = getComputedStyle(parent), bounds = parent.getBoundingClientRect();
+        if (/(hidden|clip|auto|scroll)/.test(style.overflowX)) { left = Math.max(left, bounds.left); right = Math.min(right, bounds.right); }
+        if (/(hidden|clip|auto|scroll)/.test(style.overflowY)) { top = Math.max(top, bounds.top); bottom = Math.min(bottom, bounds.bottom); }
+      }
+      const bounds = { left, right, top, bottom, width: Math.max(0, right - left), height: Math.max(0, bottom - top) };
+      boundsCache.set(element, bounds);
+      return bounds;
+    };
+    const rendered = (element) => {
+      for (let parent = element; parent; parent = parent.parentElement) {
+        const style = getComputedStyle(parent);
+        if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) <= .02) return false;
+      }
+      const bounds = visibleBounds(element);
+      return bounds.width > 1 && bounds.height > 1;
+    };
+    const overlay = [...document.querySelectorAll('.overlay:not(.hidden),.modal.modal-active,.reward-modal.show')]
+      .filter((element) => rendered(element) && getComputedStyle(element).pointerEvents !== 'none')
+      .sort((a, b) => (parseInt(getComputedStyle(a).zIndex) || 0) - (parseInt(getComputedStyle(b).zIndex) || 0)).at(-1);
     const visible = (element) => {
-      const style = getComputedStyle(element); const rect = element.getBoundingClientRect();
-      return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity) > .02
-        && rect.width > 1 && rect.height > 1 && rect.bottom > 0 && rect.top < innerHeight;
+      if (!rendered(element)) return false;
+      if (element.closest('[inert]')) return false;
+      if (modal) return modal === element || modal.contains(element);
+      if (overlay && !overlay.contains(element) && overlay !== element
+        && !element.closest('#arcadeHomeButton,#arcadeSessionHud,#arcadeGameShellButton')) return false;
+      return true;
     };
     const name = (element) => (element.getAttribute('aria-label') || element.textContent || element.id || element.className || element.tagName)
       .replace(/\\s+/g, ' ').trim().slice(0, 54);
     const controls = [...document.querySelectorAll('button,a[href],input,select,textarea,[role="button"]')]
-      .filter((element) => visible(element) && !element.disabled && element.getAttribute('aria-hidden') !== 'true');
+      .filter((element) => visible(element) && !element.disabled && getComputedStyle(element).pointerEvents !== 'none' && element.getAttribute('aria-hidden') !== 'true');
     const smallTargets = controls.map((element) => {
       const rect = element.getBoundingClientRect();
       return { name: name(element), width: Math.round(rect.width), height: Math.round(rect.height) };
@@ -110,15 +142,16 @@ function measurementExpression() {
     for (let i = 0; i < controls.length; i += 1) for (let j = i + 1; j < controls.length; j += 1) {
       const left = controls[i], right = controls[j];
       if (left.contains(right) || right.contains(left)) continue;
-      const a = left.getBoundingClientRect(), b = right.getBoundingClientRect();
+      const a = visibleBounds(left), b = visibleBounds(right);
       const width = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
       const height = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
       const ratio = width * height / Math.max(1, Math.min(a.width * a.height, b.width * b.height));
-      if (ratio > .18) overlaps.push({ left: name(left), right: name(right), ratio: Number(ratio.toFixed(2)) });
+      if (ratio > .18) overlaps.push({ left: name(left), right: name(right), left_id: left.id, right_id: right.id, ratio: Number(ratio.toFixed(2)) });
     }
     const fixedCuts = [...document.querySelectorAll('body *')].filter(visible).map((element) => {
       const style = getComputedStyle(element); const rect = element.getBoundingClientRect();
       if (!['fixed','sticky'].includes(style.position)) return null;
+      if (!controls.some((control) => element === control || element.contains(control))) return null;
       if (rect.left < -2 || rect.right > innerWidth + 2 || rect.top < -2 || rect.bottom > innerHeight + 2) {
         return { name: name(element), position: style.position };
       }
@@ -188,8 +221,9 @@ async function main() {
     await cdp.connect();
     await cdp.send("Page.enable");
     await cdp.send("Runtime.enable");
+    await cdp.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
     await cdp.send("Page.addScriptToEvaluateOnNewDocument", {
-      source: "try { localStorage.setItem('arcade.qa.localMode', '1'); localStorage.setItem('arcade.shell.tutorial.dismissed.v1', '1'); } catch (_) {}",
+      source: "try { localStorage.setItem('arcade.qa.localMode', '1'); } catch (_) {}",
     });
 
     const results = [];
@@ -199,18 +233,28 @@ async function main() {
       });
       for (const page of pages) {
         try {
-          await cdp.send("Page.navigate", { url: `${baseUrl}/${page.route}` });
+          const destination = `${baseUrl}/${page.route}`;
+          await cdp.send("Page.navigate", { url: destination });
           await retry(async () => {
-            if (!await cdp.evaluate("document.readyState === 'complete'")) throw new Error("page_incomplete");
+            if (!await cdp.evaluate(`location.href === ${JSON.stringify(destination)} && document.readyState === 'complete'`)) throw new Error("page_incomplete");
             return true;
           }, 8000);
-          await delay(120);
+          await cdp.evaluate("document.fonts.ready.then(() => true)");
+          if (gamePages.includes(page.file)) {
+            await retry(async () => {
+              if (!await cdp.evaluate("Boolean(window.ArcadeGameShell)")) throw new Error("shell_incomplete");
+              return true;
+            }, 5000);
+            await cdp.evaluate("(() => { const dialog = document.getElementById('arcadeGameShellDialog'); if (dialog?.open) document.getElementById('arcadeShellTutorialSkip')?.click(); return true; })()");
+          }
+          await delay(page.label.includes("openworld") ? 1100 : 100);
           const metrics = await cdp.evaluate(measurementExpression());
           results.push({ page: page.label, viewport: viewport.name, ...metrics, score: score(metrics) });
         } catch (error) {
           results.push({ page: page.label, viewport: viewport.name, error: error.message, score: 0 });
         }
       }
+      console.log(`Audit UX : ${viewport.name}, ${pages.length} pages contrôlées.`);
     }
     cdp.close();
 
@@ -219,6 +263,7 @@ async function main() {
     const grouped = new Map();
     gameResults.forEach((item) => grouped.set(item.page, [...(grouped.get(item.page) || []), item]));
     const responsivePass = [...grouped.values()].filter((items) => items.length === viewports.length && items.every((item) => !item.error && item.horizontal_overflow_px <= 2 && item.fixed_cut_count === 0)).length;
+    const overlapPass = [...grouped.values()].filter((items) => items.length === viewports.length && items.every((item) => !item.error && item.overlap_count === 0)).length;
     const totalControls = gameResults.reduce((sum, item) => sum + (item.controls || 0), 0);
     const smallTargets = gameResults.reduce((sum, item) => sum + (item.small_target_count || 0), 0);
     const shellPages = gamePages.filter((file) => /arcade-game-(?:bridge|shell)\.js/.test(fs.readFileSync(file, "utf8"))).length;
@@ -228,12 +273,15 @@ async function main() {
 
     const report = {
       generated_at: new Date().toISOString(),
-      methodology: "Mesure navigateur headless de chaque jeu en 1366×768 et 390×844. Seuil cible tactile : 44 px.",
+      methodology: "Mesure navigateur des interfaces visibles en 1366×768, 390×844, 320×568 et 768×900, après fermeture du tutoriel et avec réduction des animations. Les ancêtres masqués, zones non interactives, fenêtres fermées, décors et parties hors des cadres défilants sont exclus des collisions de commandes. Seuil tactile : 44 px.",
+      viewports,
       summary: {
         pages_audited: gamePages.length,
         viewport_checks: gameResults.length,
         pages_without_overflow: responsivePass,
         responsive_pass_percent: percentage(responsivePass, gamePages.length),
+        pages_without_overlaps: overlapPass,
+        overlap_free_percent: percentage(overlapPass, gamePages.length),
         touch_target_pass_percent: percentage(Math.max(0, totalControls - smallTargets), totalControls),
         shared_shell_percent: percentage(shellPages, gamePages.length),
         average_ux_score: averageScore,
@@ -242,14 +290,14 @@ async function main() {
       },
       findings: [
         { severity: "critique", title: "Pop-ups de partie trop bloquantes", detail: "Le blocage technique commun est maintenant compact, mais les écrans avant/après partie propres à plusieurs jeux occupent encore tout le viewport. Les convertir progressivement en carte ou bottom-sheet.", scope: "PARCOURS DE JEU" },
-        { severity: "high", title: "Responsive encore inégal", detail: `${gamePages.length - responsivePass} jeu(x) présentent encore un débordement ou un élément fixe coupé sur au moins un viewport testé.`, scope: "MOBILE + PC" },
+        { severity: responsivePass === gamePages.length ? "confort" : "high", title: "Couverture responsive", detail: `${responsivePass}/${gamePages.length} jeux sans débordement horizontal ni commande fixe coupée aux quatre formats testés.`, scope: "MOBILE + TABLETTE + PC" },
         { severity: "high", title: "Cibles tactiles sous 44 px", detail: `${smallTargets} contrôle(s) mesuré(s) sous le seuil recommandé sur ${totalControls} contrôles visibles.`, scope: "ACCESSIBILITÉ" },
-        { severity: "medium", title: "Hiérarchie des actions à uniformiser", detail: "Une action primaire, une secondaire et le retour Arcade doivent conserver la même position et la même importance d'un jeu à l'autre.", scope: "DESIGN SYSTEM" },
+        { severity: overlapPass === gamePages.length ? "confort" : "high", title: "Superpositions des commandes", detail: `${overlapPass}/${gamePages.length} interfaces d'accueil sans collision de commandes aux quatre formats testés. Les parties, pauses et menus de 12 jeux sont aussi couverts par la recette responsive interactive.`, scope: "NAVIGATION + COMMANDES" },
         { severity: "medium", title: "Zone de jeu pas toujours au-dessus de la ligne de flottaison", detail: "Plusieurs introductions et tableaux prennent trop de hauteur sur un PC 768 px. Réduire les entêtes et rendre les panneaux secondaires repliables.", scope: "DESKTOP" },
         { severity: "confort", title: "Migration React/Vue prématurée", detail: "Le principal risque est la cohérence produit, pas la bibliothèque. Consolider d'abord le shell, les composants CSS et les services; migrer seulement si l'état partagé devient un frein mesuré.", scope: "ARCHITECTURE" },
       ],
       roadmap: [
-        { status: "EN COURS", title: "Stabiliser le shell responsive", detail: "Navigation unique, pop-ups compacts, cibles 44 px et recette automatique sur les 43 jeux.", progress: 58 },
+        { status: "EN COURS", title: "Stabiliser le shell responsive", detail: "Navigation unique, pop-ups compacts, cibles 44 px et recette automatique sur les 43 jeux.", progress: Math.round((percentage(responsivePass, gamePages.length) + percentage(overlapPass, gamePages.length) + percentage(Math.max(0, totalControls - smallTargets), totalControls)) / 3) },
         { status: "À CERTIFIER", title: "Finir six jeux pilotes", detail: "Snake, Puissance 4, Dice District, 421, Dés de Bohême et Calcul mental comme référence UX.", progress: 48 },
         { status: "EN CONSTRUCTION", title: "Autorité serveur et multijoueur", detail: "Coins, résultats, tours, invitations, reconnexion et abandon gérés côté serveur.", progress: 38 },
         { status: "APRÈS BÊTA", title: "Préparer la commercialisation", detail: "Mesure de rétention, consentement analytics, support, modération, paiements et exploitation.", progress: 18 },
@@ -267,7 +315,11 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+module.exports = { DevTools, retry, measurementExpression, viewports };
+
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

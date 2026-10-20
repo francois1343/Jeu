@@ -91,7 +91,7 @@ button { font: inherit; }
 .leaderboard-points small { display: block; margin-top: .12rem; color: var(--cyan); font-size: .5rem; letter-spacing: .08em; }
 .leaderboard-empty { margin: 1.8rem 0 .5rem; color: #718398; font: .82rem/1.6 system-ui, sans-serif; text-align: center; }
 
-.hud { position: absolute; top: max(12px, env(safe-area-inset-top)); left: 50%; width: min(620px, calc(100% - 128px)); min-height: 72px; transform: translateX(-50%); display: grid; grid-template-columns: repeat(2,1fr) 70px repeat(2,1fr); align-items: center; background: rgba(5,9,17,.82); border: 1px solid rgba(175,220,255,.16); border-radius: 14px; box-shadow: 0 12px 35px rgba(0,0,0,.45); backdrop-filter: blur(10px); }
+.hud { position: absolute; top: max(68px, calc(env(safe-area-inset-top) + 56px)); left: 50%; width: min(620px, calc(100% - 128px)); min-height: 72px; transform: translateX(-50%); display: grid; grid-template-columns: repeat(2,1fr) 70px repeat(2,1fr); align-items: center; background: rgba(5,9,17,.82); border: 1px solid rgba(175,220,255,.16); border-radius: 14px; box-shadow: 0 12px 35px rgba(0,0,0,.45); backdrop-filter: blur(10px); }
 .hud-stat { padding: .55rem; text-align: center; }
 .hud-stat small { display: block; color: #718399; font-size: .53rem; letter-spacing: .12em; }
 .hud-stat strong { display: block; margin-top: .18rem; color: var(--white); font-size: clamp(.85rem, 2.6vw, 1.25rem); }
@@ -116,7 +116,7 @@ button { font: inherit; }
 .status-message.good { color: var(--cyan); } .status-message.bad { color: var(--red); }
 
 .icon-btn { position: absolute; top: max(18px, env(safe-area-inset-top)); z-index: 3; width: 44px; height: 44px; color: #b7c5d4; background: rgba(5,9,17,.82); border: 1px solid rgba(255,255,255,.16); border-radius: 10px; cursor: pointer; pointer-events: auto; }
-#btn-pause { right: 18px; } .sound-btn { left: 18px; }
+#btn-pause { right: 18px; top: 72px; } .sound-btn { left: 18px; top: 72px; }
 .icon-btn:hover { color: var(--cyan); border-color: var(--cyan); }
 
 #pause-screen h2 { margin: 0 0 1.5rem; color: var(--cyan); font-size: 2.4rem; }
@@ -136,7 +136,7 @@ button { font: inherit; }
   .status-message { top: 84px; white-space: nowrap; }
   .zone-labels { padding-inline: 12px; bottom: 14px; }
   .zone-label strong { font-size: .52rem; } .zone-label small { font-size: .6rem; }
-  .icon-btn { top: 18px; width: 44px; height: 44px; } #btn-pause { right: 12px; } .sound-btn { left: 12px; }
+  .icon-btn { top: 18px; width: 44px; height: 44px; } #btn-pause { right: 12px; top: 68px; } .sound-btn { left: 12px; top: 68px; }
 }
 
 @media (max-width: 460px) { .rule-grid { grid-template-columns: 1fr; } .panel { padding: 1.35rem; } .lead { margin-block: .85rem; } .warning { margin-block: .85rem; } }
