@@ -211,6 +211,21 @@
     updateEconomyCopy();
   }
 
+  async function refreshAdminAccess() {
+    const button = element("openAdminButton");
+    if (!button || !api?.checkAdminAccess) return;
+    button.setAttribute("hidden", "");
+    try {
+      const access = await api.checkAdminAccess();
+      if (access?.authorized) {
+        button.removeAttribute("hidden");
+        button.title = "Ouvrir le centre de pilotage sécurisé";
+      }
+    } catch (_) {
+      // Un compte joueur ordinaire ne doit ni voir ni deviner l'accès admin.
+    }
+  }
+
   function updateEconomyCopy() {
     const economy = state.economy;
     if (!economy) return;
@@ -234,6 +249,7 @@
         return null;
       }
       renderSignedIn(account);
+      refreshAdminAccess();
       return account;
     } catch (error) {
       renderSignedOut();

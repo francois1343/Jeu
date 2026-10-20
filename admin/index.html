@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="description" content="Centre de pilotage privé de Francis Arcade : activité, Coins serveur, joueurs, qualité UX et progression vers la bêta." />
+    <meta property="og:title" content="Centre de pilotage · Francis Arcade" />
+    <meta property="og:description" content="Tableau de bord privé pour suivre l'activité, l'économie et l'avancement UX de Francis Arcade." />
+    <meta property="og:site_name" content="Francis Arcade" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://nnqfomqgagfshujyfrtl.supabase.co wss://nnqfomqgagfshujyfrtl.supabase.co"
+    />
+    <title>Pilotage · Francis Arcade</title>
+    <link rel="stylesheet" href="../css/shared/arcade-fonts.css" />
+    <link rel="stylesheet" href="admin.css" />
+    <link rel="stylesheet" href="admin-controls.css" />
+  </head>
+  <body>
+    <header class="admin-header">
+      <a class="brand" href="../index.html" aria-label="Retour à Francis Arcade">
+        <span class="brand-mark" aria-hidden="true">FA</span>
+        <span><strong>Francis Arcade</strong><small>Centre de pilotage</small></span>
+      </a>
+      <div class="header-actions">
+        <span class="sync-state" id="syncState" data-state="idle"><i></i><span>Connexion…</span></span>
+        <label class="range-control">Période
+          <select id="rangeDays">
+            <option value="7">7 jours</option>
+            <option value="30" selected>30 jours</option>
+            <option value="90">90 jours</option>
+          </select>
+        </label>
+        <button class="icon-button" id="refreshDashboard" type="button" aria-label="Actualiser les données">↻</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="access-panel" id="accessPanel" aria-live="polite">
+        <span class="access-icon" aria-hidden="true">◇</span>
+        <p class="eyebrow">ACCÈS PROTÉGÉ</p>
+        <h1>Vérification administrateur</h1>
+        <p id="accessMessage">Connexion au serveur et contrôle de vos droits…</p>
+        <a class="primary-link" href="../index.html">Revenir à l’accueil</a>
+      </section>
+
+      <div id="dashboard" hidden>
+        <section class="hero-row">
+          <div>
+            <p class="eyebrow">ÉTAT DU PRODUIT · DONNÉES SERVEUR</p>
+            <h1>Tableau de bord</h1>
+            <p class="hero-copy">Une vue synthétique de l’activité, de l’économie et de la qualité UX de l’arcade.</p>
+          </div>
+          <div class="readiness-orb" id="readinessOrb" style="--value:0">
+            <strong id="readinessValue">0%</strong><span>prêt pré-bêta</span>
+          </div>
+        </section>
+
+        <nav class="section-tabs" aria-label="Sections du tableau de bord">
+          <button type="button" data-view="overview" aria-selected="true">Vue d’ensemble</button>
+          <button type="button" data-view="players" aria-selected="false">Joueurs & Coins</button>
+          <button type="button" data-view="quality" aria-selected="false">UX/UI & progression</button>
+        </nav>
+
+        <section class="dashboard-view" data-panel="overview">
+          <div class="metric-grid" id="metricGrid"></div>
+          <div class="dashboard-grid two-columns">
+            <article class="panel chart-panel">
+              <div class="panel-heading"><div><p class="eyebrow">CROISSANCE</p><h2>Comptes créés</h2></div><span id="signupTotalLabel"></span></div>
+              <svg id="signupChart" class="line-chart" viewBox="0 0 640 220" role="img" aria-label="Comptes créés par jour"></svg>
+            </article>
+            <article class="panel chart-panel">
+              <div class="panel-heading"><div><p class="eyebrow">ENGAGEMENT</p><h2>Parties lancées</h2></div><span id="sessionTotalLabel"></span></div>
+              <svg id="sessionChart" class="line-chart alt" viewBox="0 0 640 220" role="img" aria-label="Parties lancées par jour"></svg>
+            </article>
+          </div>
+          <div class="dashboard-grid two-columns">
+            <article class="panel"><div class="panel-heading"><div><p class="eyebrow">ÉCONOMIE</p><h2>Répartition des soldes</h2></div></div><div class="bar-list" id="coinDistribution"></div></article>
+            <article class="panel"><div class="panel-heading"><div><p class="eyebrow">CATALOGUE</p><h2>Jeux les plus joués</h2></div></div><div class="ranking-list" id="topGames"></div></article>
+          </div>
+        </section>
+
+        <section class="dashboard-view" data-panel="players" hidden>
+          <article class="panel table-panel">
+            <div class="panel-heading player-heading">
+              <div><p class="eyebrow">COMPTES SUPABASE</p><h2>Joueurs et portefeuille</h2></div>
+              <label class="search-control">Rechercher <input id="playerSearch" type="search" placeholder="Pseudo…" autocomplete="off" /></label>
+            </div>
+            <div class="table-scroll" tabindex="0">
+              <table>
+                <thead><tr><th>Joueur</th><th>Solde</th><th>Gagnés</th><th>Dépensés</th><th>Parties</th><th>Victoires</th><th>Dernière connexion</th></tr></thead>
+                <tbody id="playerRows"></tbody>
+              </table>
+            </div>
+            <p class="table-note" id="playerCount"></p>
+          </article>
+        </section>
+
+        <section class="dashboard-view" data-panel="quality" hidden>
+          <div class="quality-grid" id="qualityProgress"></div>
+          <div class="dashboard-grid quality-layout">
+            <article class="panel findings-panel">
+              <div class="panel-heading"><div><p class="eyebrow">AUDIT MULTI-ÉCRANS</p><h2>Défauts prioritaires</h2></div><span id="auditDate"></span></div>
+              <div id="auditFindings" class="finding-list"></div>
+            </article>
+            <aside class="panel architecture-panel">
+              <p class="eyebrow">ARCHITECTURE</p>
+              <h2>React ou Vue maintenant ?</h2>
+              <strong class="decision-badge">NON, PAS ENCORE</strong>
+              <p>Une migration complète aujourd’hui déplacerait les bugs au lieu de les résoudre. Le catalogue contient beaucoup de jeux autonomes qui fonctionnent bien en JavaScript natif.</p>
+              <ol>
+                <li><b>Maintenant :</b> stabiliser le shell, les modales et les composants communs.</li>
+                <li><b>Ensuite :</b> isoler accueil, admin et matchmaking en modules.</li>
+                <li><b>Plus tard :</b> choisir React/Vue uniquement si ces écrans deviennent difficiles à maintenir sans framework.</li>
+              </ol>
+              <p class="architecture-note">Recommandation : Web Components ou petits modules ES pour le socle partagé ; conserver les moteurs de jeux indépendants.</p>
+            </aside>
+          </div>
+          <article class="panel roadmap-panel">
+            <div class="panel-heading"><div><p class="eyebrow">ROADMAP</p><h2>Chemin vers une bêta commercialisable</h2></div></div>
+            <div class="roadmap" id="roadmap"></div>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <template id="metricTemplate">
+      <article class="metric-card"><span class="metric-icon"></span><div><small></small><strong></strong><p></p></div></article>
+    </template>
+    <script src="../js/core/arcade-config.js"></script>
+    <script src="../vendor/supabase/arcade-supabase-client.min.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

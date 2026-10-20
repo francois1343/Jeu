@@ -50,7 +50,14 @@
 
   document.addEventListener("click", (event) => {
     const button = event.target.closest?.("#openAdminButton");
-    if (!button || global.ArcadeAdminData) return;
+    if (!button) return;
+    if (global.ARCADE_CONFIG?.mode === "supabase") {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      global.location.assign("admin/index.html");
+      return;
+    }
+    if (global.ArcadeAdminData) return;
     event.preventDefault();
     event.stopImmediatePropagation();
     load({ open: true });

@@ -236,6 +236,12 @@ import { createClient } from "@supabase/supabase-js";
         answer: String(answer),
       });
     },
+    checkAdminAccess() {
+      return invoke("admin-dashboard", { scope: "access" });
+    },
+    getAdminDashboard(days = 30) {
+      return invoke("admin-dashboard", { days: Number(days) || 30 });
+    },
     startGame(gameKey, idempotencyKey) {
       return arcadeRpc("arcade_start_client_game", {
         p_game_key: String(gameKey || ""),

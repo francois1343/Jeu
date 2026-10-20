@@ -1,0 +1,10 @@
+.brand,
+.range-control select,
+.icon-button {
+  min-height: 44px;
+}
+
+.icon-button {
+  width: 44px;
+  height: 44px;
+}

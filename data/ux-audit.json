@@ -1,0 +1,4043 @@
+{
+  "generated_at": "2026-10-20T19:55:58.531Z",
+  "methodology": "Mesure navigateur headless de chaque jeu en 1366×768 et 390×844. Seuil cible tactile : 44 px.",
+  "summary": {
+    "pages_audited": 43,
+    "viewport_checks": 86,
+    "pages_without_overflow": 38,
+    "responsive_pass_percent": 88,
+    "touch_target_pass_percent": 88,
+    "shared_shell_percent": 100,
+    "average_ux_score": 80,
+    "commercial_readiness_percent": 68,
+    "worst_checks": [
+      "games/pixel-forge/index.html (mobile, 42/100)",
+      "games/pong/index.html (mobile, 44/100)",
+      "games/cybermorpion/index.html (mobile, 48/100)",
+      "games/memory/index.html (mobile, 50/100)",
+      "games/pixel-forge/index.html (desktop, 54/100)",
+      "games/Cyber-Symbol Poker/Cyber-SymbolPoker.html (mobile, 54/100)",
+      "games/Synthwave Edition/SynthwaveEdition.html (mobile, 54/100)",
+      "games/simon/index.html (desktop, 56/100)"
+    ]
+  },
+  "findings": [
+    {
+      "severity": "critique",
+      "title": "Pop-ups de partie trop bloquantes",
+      "detail": "Le blocage technique commun est maintenant compact, mais les écrans avant/après partie propres à plusieurs jeux occupent encore tout le viewport. Les convertir progressivement en carte ou bottom-sheet.",
+      "scope": "PARCOURS DE JEU"
+    },
+    {
+      "severity": "high",
+      "title": "Responsive encore inégal",
+      "detail": "5 jeu(x) présentent encore un débordement ou un élément fixe coupé sur au moins un viewport testé.",
+      "scope": "MOBILE + PC"
+    },
+    {
+      "severity": "high",
+      "title": "Cibles tactiles sous 44 px",
+      "detail": "166 contrôle(s) mesuré(s) sous le seuil recommandé sur 1391 contrôles visibles.",
+      "scope": "ACCESSIBILITÉ"
+    },
+    {
+      "severity": "medium",
+      "title": "Hiérarchie des actions à uniformiser",
+      "detail": "Une action primaire, une secondaire et le retour Arcade doivent conserver la même position et la même importance d'un jeu à l'autre.",
+      "scope": "DESIGN SYSTEM"
+    },
+    {
+      "severity": "medium",
+      "title": "Zone de jeu pas toujours au-dessus de la ligne de flottaison",
+      "detail": "Plusieurs introductions et tableaux prennent trop de hauteur sur un PC 768 px. Réduire les entêtes et rendre les panneaux secondaires repliables.",
+      "scope": "DESKTOP"
+    },
+    {
+      "severity": "confort",
+      "title": "Migration React/Vue prématurée",
+      "detail": "Le principal risque est la cohérence produit, pas la bibliothèque. Consolider d'abord le shell, les composants CSS et les services; migrer seulement si l'état partagé devient un frein mesuré.",
+      "scope": "ARCHITECTURE"
+    }
+  ],
+  "roadmap": [
+    {
+      "status": "EN COURS",
+      "title": "Stabiliser le shell responsive",
+      "detail": "Navigation unique, pop-ups compacts, cibles 44 px et recette automatique sur les 43 jeux.",
+      "progress": 58
+    },
+    {
+      "status": "À CERTIFIER",
+      "title": "Finir six jeux pilotes",
+      "detail": "Snake, Puissance 4, Dice District, 421, Dés de Bohême et Calcul mental comme référence UX.",
+      "progress": 48
+    },
+    {
+      "status": "EN CONSTRUCTION",
+      "title": "Autorité serveur et multijoueur",
+      "detail": "Coins, résultats, tours, invitations, reconnexion et abandon gérés côté serveur.",
+      "progress": 38
+    },
+    {
+      "status": "APRÈS BÊTA",
+      "title": "Préparer la commercialisation",
+      "detail": "Mesure de rétention, consentement analytics, support, modération, paiements et exploitation.",
+      "progress": 18
+    }
+  ],
+  "results": [
+    {
+      "page": "index.html",
+      "viewport": "desktop",
+      "title": "🎮 Mini Jeux Arcade",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 6844,
+      "controls": 3,
+      "small_targets": [
+        {
+          "name": "👤 Choisir un pseudo",
+          "width": 177,
+          "height": 42
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Catalogue Arcade"
+      ],
+      "tiny_text_count": 1,
+      "score": 97
+    },
+    {
+      "page": "games/2048/index.html",
+      "viewport": "desktop",
+      "title": "2048 Néon",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 13,
+      "small_targets": [
+        {
+          "name": "🔄 Nouveau",
+          "width": 225,
+          "height": 43
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 97
+    },
+    {
+      "page": "games/421/index.html",
+      "viewport": "desktop",
+      "title": "421 · Dice District",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 11,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "TABLE 02 · DICE DISTRICT",
+        "Trois dés, trois lancers. Gardez les bons dés et rempo",
+        "VOUS",
+        "IA",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 5,
+      "score": 95
+    },
+    {
+      "page": "games/bataille-navale/index.html",
+      "viewport": "desktop",
+      "title": "Bataille Navale",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 15,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "📖 Consulter les règles",
+          "right": "Ignorer",
+          "ratio": 0.68
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Tirs aléatoires",
+        "Poursuite basique",
+        "Stratégie en damier",
+        "Analyse probabiliste",
+        "Clic droit ou touche R pour pivoter un navire",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 6,
+      "score": 88
+    },
+    {
+      "page": "games/BubbleShooter/BubbleShooter.html",
+      "viewport": "desktop",
+      "title": "Cyber-Bubble Shooter 80s",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 18,
+      "small_targets": [
+        {
+          "name": "MENU",
+          "width": 55,
+          "height": 32
+        },
+        {
+          "name": "SAUVER",
+          "width": 69,
+          "height": 32
+        },
+        {
+          "name": "TOP SCORES",
+          "width": 97,
+          "height": 32
+        },
+        {
+          "name": "TOP SCORES",
+          "width": 176,
+          "height": 39
+        },
+        {
+          "name": "PARAMETRES",
+          "width": 176,
+          "height": 39
+        },
+        {
+          "name": "Échanger les bulles",
+          "width": 38,
+          "height": 38
+        },
+        {
+          "name": "Couper les effets sonores",
+          "width": 42,
+          "height": 42
+        }
+      ],
+      "small_target_count": 7,
+      "overlaps": [
+        {
+          "left": "TOP SCORES",
+          "right": "Ignorer",
+          "ratio": 0.21
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "VISE souris ou fleches | TIRE clic ou espace | SWAP X",
+        "MENU",
+        "SAUVER",
+        "TOP SCORES",
+        "ARCADE PROTOCOL // 1984",
+        "points",
+        "TOP SCORES",
+        "PARAMETRES",
+        "SOURIS / TOUCHER POUR VISER · ESPACE POUR TIRER · X PO",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 10,
+      "score": 70
+    },
+    {
+      "page": "games/calculation/index.html",
+      "viewport": "desktop",
+      "title": "🧮 Calcul Mental - Speed Math",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 17,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "⏱️ Classique",
+          "right": "Ignorer",
+          "ratio": 0.75
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 93
+    },
+    {
+      "page": "games/casse-bloc/index.html",
+      "viewport": "desktop",
+      "title": "🧱 Casse-Briques",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 11,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 99
+    },
+    {
+      "page": "games/crossy-turfu/index.html",
+      "viewport": "desktop",
+      "title": "🐔 Crossy Turfu",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 12,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 99
+    },
+    {
+      "page": "games/Cyber-Bounty Hunter/Cyber-BountyHunter.html",
+      "viewport": "desktop",
+      "title": "Cyber-Bounty Hunter",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 11,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 99
+    },
+    {
+      "page": "games/Cyber-CoreSorter/Cyber-CoreSorter.html",
+      "viewport": "desktop",
+      "title": "Cyber-Core Sorter",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 13,
+      "small_targets": [
+        {
+          "name": "◇ CLASSEMENT LOCAL",
+          "width": 442,
+          "height": 43
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [
+        {
+          "left": "◇ CLASSEMENT LOCAL",
+          "right": "Ignorer",
+          "ratio": 0.9
+        },
+        {
+          "left": "Désactiver le son",
+          "right": "Retourner à l'accueil de l'Arcade",
+          "ratio": 0.86
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "PROTOCOLE DE CONFINEMENT",
+        "◇ CLASSEMENT LOCAL",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 3,
+      "score": 83
+    },
+    {
+      "page": "games/Cyber-Symbol Poker/Cyber-SymbolPoker.html",
+      "viewport": "desktop",
+      "title": "Cyber-Symbol Poker",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 13,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 99
+    },
+    {
+      "page": "games/cyberfind/index.html",
+      "viewport": "desktop",
+      "title": "CYBERFIND — Chasse aux anomalies",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 16,
+      "small_targets": [
+        {
+          "name": "Mettre en pause",
+          "width": 39,
+          "height": 38
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "ANOMALIES",
+        "TEMPS",
+        "✦ INDICE",
+        "Mettre en pause",
+        "—",
+        "10 anomalies · détente",
+        "16 anomalies · dense",
+        "24 anomalies · exigeant",
+        "32 anomalies · chaos total",
+        "Chaque mission génère une nouvelle scène. Échap ouvre ",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 11,
+      "score": 88
+    },
+    {
+      "page": "games/cyberflux/index.html",
+      "viewport": "desktop",
+      "title": "🐤 Cyber Flux — Flappy Bird 3.0",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 19,
+      "small_targets": [
+        {
+          "name": "setting-music",
+          "width": 285,
+          "height": 42
+        },
+        {
+          "name": "setting-sfx",
+          "width": 285,
+          "height": 42
+        },
+        {
+          "name": "ACTIVÉ",
+          "width": 103,
+          "height": 42
+        }
+      ],
+      "small_target_count": 3,
+      "overlaps": [
+        {
+          "left": "▶ JOUER",
+          "right": "🔄 REJOUER",
+          "ratio": 0.36
+        },
+        {
+          "left": "▶ JOUER",
+          "right": "🏠 MENU",
+          "ratio": 0.42
+        },
+        {
+          "left": "▶ JOUER",
+          "right": "ACTIVÉ",
+          "ratio": 1
+        },
+        {
+          "left": "⚙️ OPTIONS",
+          "right": "🏠 MENU",
+          "ratio": 0.38
+        },
+        {
+          "left": "⚙️ OPTIONS",
+          "right": "← RETOUR",
+          "ratio": 0.78
+        },
+        {
+          "left": "⚙️ OPTIONS",
+          "right": "Ignorer",
+          "ratio": 0.51
+        },
+        {
+          "left": "🔄 REJOUER",
+          "right": "ACTIVÉ",
+          "ratio": 0.31
+        },
+        {
+          "left": "🏠 MENU",
+          "right": "ACTIVÉ",
+          "ratio": 0.4
+        },
+        {
+          "left": "🏠 MENU",
+          "right": "Ignorer",
+          "ratio": 0.48
+        },
+        {
+          "left": "Facile Normal Difficile Extrême",
+          "right": "Tutoriel",
+          "ratio": 0.61
+        },
+        {
+          "left": "Facile Normal Difficile Extrême",
+          "right": "Classement",
+          "ratio": 0.73
+        },
+        {
+          "left": "Facile Normal Difficile Extrême",
+          "right": "Paramètres",
+          "ratio": 0.61
+        }
+      ],
+      "overlap_count": 12,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 63
+    },
+    {
+      "page": "games/cybermorpion/index.html",
+      "viewport": "desktop",
+      "title": "Cyber-Morpion 80s",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 17,
+      "small_targets": [
+        {
+          "name": "3x3 (Aligner 3)",
+          "width": 102,
+          "height": 38
+        },
+        {
+          "name": "5x5 (Aligner 4)",
+          "width": 102,
+          "height": 38
+        },
+        {
+          "name": "2 Joueurs",
+          "width": 102,
+          "height": 26
+        },
+        {
+          "name": "IA",
+          "width": 102,
+          "height": 26
+        },
+        {
+          "name": "REJOUER",
+          "width": 182,
+          "height": 37
+        },
+        {
+          "name": "RÉINIT. SCORES",
+          "width": 182,
+          "height": 37
+        },
+        {
+          "name": "Sons",
+          "width": 66,
+          "height": 37
+        }
+      ],
+      "small_target_count": 7,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "GRILLE",
+        "3x3 (Aligner 3)",
+        "5x5 (Aligner 4)",
+        "ADVERSAIRE",
+        "2 Joueurs",
+        "IA",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 7,
+      "score": 79
+    },
+    {
+      "page": "games/demineur/index.html",
+      "viewport": "desktop",
+      "title": "Démineur Pro",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 17,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "😊",
+          "right": "🔴 Expert 30×16 • 99 mines",
+          "ratio": 1
+        },
+        {
+          "left": "🟢 Débutant 8×8 • 10 mines",
+          "right": "Tutoriel",
+          "ratio": 1
+        },
+        {
+          "left": "🟢 Débutant 8×8 • 10 mines",
+          "right": "Classement",
+          "ratio": 0.44
+        },
+        {
+          "left": "🟡 Intermédiaire 16×16 • 40 mines",
+          "right": "Classement",
+          "ratio": 0.44
+        },
+        {
+          "left": "🟡 Intermédiaire 16×16 • 40 mines",
+          "right": "Paramètres",
+          "ratio": 1
+        }
+      ],
+      "overlap_count": 5,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 69
+    },
+    {
+      "page": "games/dice-hub/dice-hub.html",
+      "viewport": "desktop",
+      "title": "Dice District · Francis Arcade",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 18,
+      "small_targets": [
+        {
+          "name": "Retour à Francis Arcade",
+          "width": 190,
+          "height": 40
+        },
+        {
+          "name": "Ouvrir les paramètres",
+          "width": 40,
+          "height": 40
+        },
+        {
+          "name": "Retour à Francis Arcade",
+          "width": 103,
+          "height": 40
+        },
+        {
+          "name": "RÈGLES",
+          "width": 58,
+          "height": 29
+        },
+        {
+          "name": "LEADERBOARD",
+          "width": 105,
+          "height": 29
+        }
+      ],
+      "small_target_count": 5,
+      "overlaps": [
+        {
+          "left": "03 DÉS DE BOHÊMEFarkle · 6 désDISPONIBLE ↗",
+          "right": "J’ai compris",
+          "ratio": 0.43
+        },
+        {
+          "left": "04 ARÈNE DE DÉS NÉONDés menteurs · Craps expressDISPON",
+          "right": "Ignorer",
+          "ratio": 0.45
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [
+        {
+          "name": "sunset-orb",
+          "position": "fixed"
+        }
+      ],
+      "fixed_cut_count": 1,
+      "tiny_text": [
+        "ARCADE / DICE DISTRICT",
+        "Retour à Francis Arcade",
+        "MODE CLASSIQUE",
+        "RÈGLES",
+        "LEADERBOARD"
+      ],
+      "tiny_text_count": 5,
+      "score": 68
+    },
+    {
+      "page": "games/enigme/index.html",
+      "viewport": "desktop",
+      "title": "Énigme Cosmique · Missions",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 12,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 99
+    },
+    {
+      "page": "games/geominds/index.html",
+      "viewport": "desktop",
+      "title": "🎮 GéoMinds - Géométrie & Logique Spatiale",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 15,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "📊 Statistiques",
+          "right": "Ignorer",
+          "ratio": 1
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 93
+    },
+    {
+      "page": "games/hifumi/index.html",
+      "viewport": "desktop",
+      "title": "🪨 Pierre Feuille Ciseaux - VS IA",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 234,
+      "controls": 16,
+      "small_targets": [
+        {
+          "name": "Detente",
+          "width": 162,
+          "height": 40
+        },
+        {
+          "name": "Tactique",
+          "width": 162,
+          "height": 40
+        },
+        {
+          "name": "Analyse",
+          "width": 162,
+          "height": 40
+        }
+      ],
+      "small_target_count": 3,
+      "overlaps": [
+        {
+          "left": "🪨 Pierre",
+          "right": "Ignorer",
+          "ratio": 0.2
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 87
+    },
+    {
+      "page": "games/jeuxdescartes/jeuxdescartes.html",
+      "viewport": "desktop",
+      "title": "Neon Card Match | Francis Arcade",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 16,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Francis Arcade · 198X Edition",
+        "Préparez la transmission",
+        "Facile 1 couleur",
+        "Normal 2 couleurs",
+        "Difficile 4 couleurs",
+        "Lancer une partie",
+        "Classement du jour",
+        "Retour à l'arcade",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 9,
+      "score": 91
+    },
+    {
+      "page": "games/jeuxdesphrases/jeuxdesphrases.html",
+      "viewport": "desktop",
+      "title": "Forge à histoires | Francis Arcade",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 362,
+      "controls": 13,
+      "small_targets": [
+        {
+          "name": "Invoquer une idée",
+          "width": 183,
+          "height": 40
+        },
+        {
+          "name": "Copier la phrase",
+          "width": 177,
+          "height": 40
+        },
+        {
+          "name": "Effacer",
+          "width": 80,
+          "height": 29
+        }
+      ],
+      "small_target_count": 3,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Francis Arcade · Atelier imaginaire",
+        "Portail à idées instables",
+        "Invoquer une idée",
+        "Copier la phrase",
+        "Votre grimoire",
+        "Effacer",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 7,
+      "score": 87
+    },
+    {
+      "page": "games/labyrinthe/index.html",
+      "viewport": "desktop",
+      "title": "🧭 Safari Maze - Labyrinthe Aventure",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 15,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "🚀 Nouvelle Aventure",
+          "right": "Tutoriel",
+          "ratio": 0.95
+        },
+        {
+          "left": "🚀 Nouvelle Aventure",
+          "right": "Classement",
+          "ratio": 0.95
+        },
+        {
+          "left": "🚀 Nouvelle Aventure",
+          "right": "Paramètres",
+          "ratio": 0.95
+        }
+      ],
+      "overlap_count": 3,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 81
+    },
+    {
+      "page": "games/marmotte/index.html",
+      "viewport": "desktop",
+      "title": "Neon Whack — Tape-Taupe",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 17,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "HIGH VOLTAGE ARCADE · 1986",
+        "SELECT MODE",
+        "Ambiance chill",
+        "Rythme arcade",
+        "Zone de danger",
+        "Hyper vitesse",
+        "Aucune pitié",
+        "Tes 5 meilleures parties sont sauvegardées sur cet app",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 9,
+      "score": 91
+    },
+    {
+      "page": "games/memory/index.html",
+      "viewport": "desktop",
+      "title": "🧩 Memory - Jeu de Cartes",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 297,
+      "controls": 22,
+      "small_targets": [
+        {
+          "name": "🐾 Animaux",
+          "width": 97,
+          "height": 40
+        },
+        {
+          "name": "🍕 Nourriture",
+          "width": 107,
+          "height": 40
+        },
+        {
+          "name": "⚽ Sports",
+          "width": 84,
+          "height": 40
+        },
+        {
+          "name": "🌸 Nature",
+          "width": 87,
+          "height": 40
+        },
+        {
+          "name": "Neon",
+          "width": 58,
+          "height": 40
+        },
+        {
+          "name": "Musique",
+          "width": 76,
+          "height": 40
+        },
+        {
+          "name": "Voyage",
+          "width": 68,
+          "height": 40
+        }
+      ],
+      "small_target_count": 7,
+      "overlaps": [
+        {
+          "left": "🐾 Animaux",
+          "right": "Ignorer",
+          "ratio": 0.51
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "ClassiqueSans pression",
+        "ObservationApercu de la grille",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 3,
+      "score": 77
+    },
+    {
+      "page": "games/Neon Dice Arena/NeonDiceArena.html",
+      "viewport": "desktop",
+      "title": "Arène de dés néon — Casino synthwave",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 12,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 99
+    },
+    {
+      "page": "games/neon-overdrive/index.html",
+      "viewport": "desktop",
+      "title": "🌌 NEON OVERDRIVE 🌌",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 66,
+      "controls": 15,
+      "small_targets": [
+        {
+          "name": "[ CLEAR LEADERBOARD ]",
+          "width": 152,
+          "height": 31
+        },
+        {
+          "name": "Mettre le jeu en pause",
+          "width": 64,
+          "height": 32
+        },
+        {
+          "name": "[ TRY AGAIN ]",
+          "width": 178,
+          "height": 38
+        },
+        {
+          "name": "[ MAIN MENU ]",
+          "width": 178,
+          "height": 38
+        }
+      ],
+      "small_target_count": 4,
+      "overlaps": [
+        {
+          "left": "[ CLEAR LEADERBOARD ]",
+          "right": "[ MAIN MENU ]",
+          "ratio": 0.31
+        },
+        {
+          "left": "Mettre le jeu en pause",
+          "right": "Ouvrir le menu commun du jeu",
+          "ratio": 1
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "[ CLEAR LEADERBOARD ]",
+        "🖱️ Desktop: Déplace ta souris",
+        "📱 Mobile: Touche l'écran",
+        "⚡ Le tir est automatique",
+        "🔴 Esquive les projectiles!",
+        "Mettre le jeu en pause",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 7,
+      "score": 73
+    },
+    {
+      "page": "games/neon-runner/index.html",
+      "viewport": "desktop",
+      "title": "🎮 Neon Runner",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 14,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "🎮 NOUVELLE PARTIE",
+          "right": "Tutoriel",
+          "ratio": 0.23
+        },
+        {
+          "left": "🎮 NOUVELLE PARTIE",
+          "right": "Classement",
+          "ratio": 0.39
+        },
+        {
+          "left": "🎮 NOUVELLE PARTIE",
+          "right": "Paramètres",
+          "ratio": 0.23
+        }
+      ],
+      "overlap_count": 3,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 81
+    },
+    {
+      "page": "games/neontron/index.html",
+      "viewport": "desktop",
+      "title": "Neontron — Lightcycle Duel",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 14,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "ENTRER DANS L’ARÈNE",
+          "right": "Ignorer",
+          "ratio": 0.46
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "TRACE TA LIGNE. COUPE LA SIENNE.",
+        "Réflexes espacés",
+        "Lecture à 6 cases",
+        "Arène verrouillée",
+        "ENTRER DANS L’ARÈNE",
+        "Aucun demi-tour • Premier à 3 manches",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 7,
+      "score": 87
+    },
+    {
+      "page": "games/openworld/index.html",
+      "viewport": "desktop",
+      "title": "🌍 Open World",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 19,
+      "small_targets": [
+        {
+          "name": "👥",
+          "width": 40,
+          "height": 40
+        },
+        {
+          "name": "📊",
+          "width": 40,
+          "height": 40
+        },
+        {
+          "name": "⚙️",
+          "width": 40,
+          "height": 40
+        },
+        {
+          "name": "✕",
+          "width": 40,
+          "height": 40
+        }
+      ],
+      "small_target_count": 4,
+      "overlaps": [
+        {
+          "left": "Retour à l'accueil",
+          "right": "Ouvrir la carte des savoirs",
+          "ratio": 0.94
+        },
+        {
+          "left": "📊",
+          "right": "Ouvrir le menu commun du jeu",
+          "ratio": 1
+        },
+        {
+          "left": "⚙️",
+          "right": "Ouvrir le menu commun du jeu",
+          "ratio": 1
+        }
+      ],
+      "overlap_count": 3,
+      "fixed_cuts": [
+        {
+          "name": "👥 Communauté ✕ Explorateurs en ligne Activité récente",
+          "position": "fixed"
+        }
+      ],
+      "fixed_cut_count": 1,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 68
+    },
+    {
+      "page": "games/pixel-forge/index.html",
+      "viewport": "desktop",
+      "title": "🕹️ Pixel Forge",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 21,
+      "small_targets": [
+        {
+          "name": "Retour au menu",
+          "width": 41,
+          "height": 40
+        },
+        {
+          "name": "Enregistrer la progression",
+          "width": 41,
+          "height": 40
+        },
+        {
+          "name": "Paramètres",
+          "width": 41,
+          "height": 40
+        },
+        {
+          "name": "ANNULER",
+          "width": 148,
+          "height": 29
+        },
+        {
+          "name": "CONFIRMER RESET",
+          "width": 148,
+          "height": 29
+        },
+        {
+          "name": "soundToggle",
+          "width": 44,
+          "height": 24
+        },
+        {
+          "name": "vibrationToggle",
+          "width": 44,
+          "height": 24
+        },
+        {
+          "name": "🗑️ EFFACER TOUTES LES DONNÉES",
+          "width": 167,
+          "height": 31
+        },
+        {
+          "name": "FERMER",
+          "width": 63,
+          "height": 29
+        }
+      ],
+      "small_target_count": 9,
+      "overlaps": [
+        {
+          "left": "INITIALISER LA FORGE APPUYER POUR COMMENCER",
+          "right": "FERMER",
+          "ratio": 0.49
+        },
+        {
+          "left": "Cliquer pour générer des bits",
+          "right": "Classement",
+          "ratio": 0.76
+        },
+        {
+          "left": "ANNULER",
+          "right": "🗑️ EFFACER TOUTES LES DONNÉES",
+          "ratio": 0.88
+        }
+      ],
+      "overlap_count": 3,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "NEURAL ARCADE SYSTEM",
+        "FORGEUR DE MONDES NUMÉRIQUES",
+        "[ SYSTÈME PRÊT ]",
+        "Construis la console rétro ultime en cliquant frénétiq",
+        "v1.0 — Années 80 à l'infini",
+        "INITIALISER LA FORGE APPUYER POUR COMMENCER",
+        "APPUYER POUR COMMENCER",
+        "16-BITS // 5.0K BITS RESTANTS",
+        "💾 BITS COLLECTÉS",
+        "+0 bits/sec",
+        "+1 PAR CLIC",
+        "TOUCHEZ LE CŒUR POUR FORGER",
+        "Installer CPU 386",
+        "Installer RAM 16MB",
+        "Sacrifie tous tes bits pour obtenir un bonus de puissa",
+        "Bits actuels : 0 Bonus de prestige : 0%",
+        "ANNULER",
+        "CONFIRMER RESET",
+        "🔊 Activer le son",
+        "📳 Activer les vibrations"
+      ],
+      "tiny_text_count": 20,
+      "score": 54
+    },
+    {
+      "page": "games/Poker/poker.html",
+      "viewport": "desktop",
+      "title": "River Room — Texas Hold'em",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 15,
+      "small_targets": [
+        {
+          "name": "River Room",
+          "width": 155,
+          "height": 36
+        },
+        {
+          "name": "player-count",
+          "width": 443,
+          "height": 16
+        }
+      ],
+      "small_target_count": 2,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Blindes fixes · 1 000 jetons",
+        "Blindes progressives",
+        "Votre progression reste uniquement sur cet appareil.",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 4,
+      "score": 92
+    },
+    {
+      "page": "games/pong/index.html",
+      "viewport": "desktop",
+      "title": "Pong Néon Pro",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 16,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "🎮 Mode Classique",
+          "right": "Tutoriel",
+          "ratio": 0.36
+        },
+        {
+          "left": "🎮 Mode Classique",
+          "right": "Classement",
+          "ratio": 0.4
+        },
+        {
+          "left": "🎮 Mode Classique",
+          "right": "Paramètres",
+          "ratio": 0.36
+        },
+        {
+          "left": "⏱️ Contre-la-montre",
+          "right": "Tutoriel",
+          "ratio": 0.3
+        },
+        {
+          "left": "⏱️ Contre-la-montre",
+          "right": "Classement",
+          "ratio": 0.33
+        },
+        {
+          "left": "⏱️ Contre-la-montre",
+          "right": "Paramètres",
+          "ratio": 0.3
+        }
+      ],
+      "overlap_count": 6,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 69
+    },
+    {
+      "page": "games/puissance4/index.html",
+      "viewport": "desktop",
+      "title": "Puissance 4 Advance — Retro Edition",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 16,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "ÉDITION ARCADE • 1988",
+        "FORMAT DU PLATEAU",
+        "Grille 7 × 6",
+        "Volume 4 × 4 × 4",
+        "ADVERSAIRE",
+        "DUEL LOCAL",
+        "VS ORDINATEUR",
+        "DUEL LIVE",
+        "TIP Centre fort, victoire proche.",
+        "UN CLASSIQUE • UNE DIMENSION EN PLUS",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 11,
+      "score": 90
+    },
+    {
+      "page": "games/reflex/index.html",
+      "viewport": "desktop",
+      "title": "⏱️ Chrono Réflexe",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 16,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "✓ Fermer",
+          "right": "Ignorer",
+          "ratio": 0.2
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 93
+    },
+    {
+      "page": "games/reflex-lab/index.html",
+      "viewport": "desktop",
+      "title": "Reflex Lab",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 14,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "◎Cibles multiplesVise les cibles qui apparaissent dans",
+          "right": "J’ai compris",
+          "ratio": 0.46
+        },
+        {
+          "left": "◎Cibles multiplesVise les cibles qui apparaissent dans",
+          "right": "Ignorer",
+          "ratio": 0.53
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Active les dalles LED avant qu elles ne changent.",
+        "Touche la bonne voie, sans rater une note.",
+        "Vise les cibles qui apparaissent dans l arene.",
+        "Le test pur : clique des que le signal passe au vert.",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 5,
+      "score": 83
+    },
+    {
+      "page": "games/simon/index.html",
+      "viewport": "desktop",
+      "title": "🎮 SIMON NÉON 🎮",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 28,
+      "small_targets": [
+        {
+          "name": "Normal",
+          "width": 117,
+          "height": 41
+        },
+        {
+          "name": "Strict",
+          "width": 117,
+          "height": 41
+        }
+      ],
+      "small_target_count": 2,
+      "overlaps": [
+        {
+          "left": "Normal Rejoue la séquence en cas d'erreur",
+          "right": "Bouton jaune",
+          "ratio": 0.45
+        },
+        {
+          "left": "Normal Rejoue la séquence en cas d'erreur",
+          "right": "Bouton bleu",
+          "ratio": 0.45
+        },
+        {
+          "left": "Normal Rejoue la séquence en cas d'erreur",
+          "right": "[ REJOUER ]",
+          "ratio": 0.68
+        },
+        {
+          "left": "Normal Rejoue la séquence en cas d'erreur",
+          "right": "[ RETOUR ]",
+          "ratio": 0.39
+        },
+        {
+          "left": "⚔️ Strict 1 erreur = Game Over !",
+          "right": "Bouton jaune",
+          "ratio": 0.49
+        },
+        {
+          "left": "⚔️ Strict 1 erreur = Game Over !",
+          "right": "Bouton bleu",
+          "ratio": 0.49
+        },
+        {
+          "left": "⚔️ Strict 1 erreur = Game Over !",
+          "right": "[ MENU ]",
+          "ratio": 1
+        },
+        {
+          "left": "⚔️ Strict 1 erreur = Game Over !",
+          "right": "[ RETOUR ]",
+          "ratio": 0.44
+        },
+        {
+          "left": "🐢 Lent",
+          "right": "Bouton jaune",
+          "ratio": 1
+        },
+        {
+          "left": "🐢 Lent",
+          "right": "Ignorer",
+          "ratio": 0.24
+        },
+        {
+          "left": "⚙️ Normal",
+          "right": "Bouton jaune",
+          "ratio": 0.48
+        },
+        {
+          "left": "⚙️ Normal",
+          "right": "Bouton bleu",
+          "ratio": 0.48
+        }
+      ],
+      "overlap_count": 31,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "[ LEADERBOARD ]",
+        "Bouton vert",
+        "Bouton rouge",
+        "Bouton jaune",
+        "Bouton bleu",
+        "[ REJOUER ]",
+        "[ MENU ]",
+        "Normal",
+        "Strict",
+        "[ RETOUR ]",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 11,
+      "score": 56
+    },
+    {
+      "page": "games/snake/index.html",
+      "viewport": "desktop",
+      "title": "🐍 Snake Néon",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 17,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "🎮 Classique Snake original",
+          "right": "Tutoriel",
+          "ratio": 0.35
+        },
+        {
+          "left": "🎮 Classique Snake original",
+          "right": "Classement",
+          "ratio": 0.18
+        },
+        {
+          "left": "⚡ Speed Ça accélère !",
+          "right": "Classement",
+          "ratio": 0.18
+        },
+        {
+          "left": "⚡ Speed Ça accélère !",
+          "right": "Paramètres",
+          "ratio": 0.35
+        },
+        {
+          "left": "⚙️ Options",
+          "right": "Ignorer",
+          "ratio": 0.31
+        }
+      ],
+      "overlap_count": 5,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 69
+    },
+    {
+      "page": "games/spider-solitaire/index.html",
+      "viewport": "desktop",
+      "title": "Cyber Spider Solitaire",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 19,
+      "small_targets": [
+        {
+          "name": "Activer le thème sombre",
+          "width": 38,
+          "height": 38
+        },
+        {
+          "name": "↩️",
+          "width": 38,
+          "height": 38
+        },
+        {
+          "name": "💡",
+          "width": 38,
+          "height": 38
+        },
+        {
+          "name": "Accueil",
+          "width": 38,
+          "height": 38
+        },
+        {
+          "name": "🏆 LEADERBOARD",
+          "width": 338,
+          "height": 43
+        },
+        {
+          "name": "Activer le thème sombre",
+          "width": 338,
+          "height": 43
+        }
+      ],
+      "small_target_count": 6,
+      "overlaps": [
+        {
+          "left": "💡",
+          "right": "Ouvrir le menu commun du jeu",
+          "ratio": 0.95
+        },
+        {
+          "left": "Accueil",
+          "right": "Ouvrir le menu commun du jeu",
+          "ratio": 0.95
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 75
+    },
+    {
+      "page": "games/sudoku/index.html",
+      "viewport": "desktop",
+      "title": "Sudoku Master & Solver",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 41,
+      "controls": 23,
+      "small_targets": [
+        {
+          "name": "Facile",
+          "width": 86,
+          "height": 30
+        },
+        {
+          "name": "Moyen",
+          "width": 86,
+          "height": 30
+        },
+        {
+          "name": "Difficile",
+          "width": 86,
+          "height": 30
+        },
+        {
+          "name": "☾ Sombre",
+          "width": 69,
+          "height": 30
+        },
+        {
+          "name": "☀ Lumineux",
+          "width": 82,
+          "height": 30
+        },
+        {
+          "name": "Néon cyan",
+          "width": 21,
+          "height": 21
+        },
+        {
+          "name": "Néon violet",
+          "width": 19,
+          "height": 19
+        },
+        {
+          "name": "Néon rose",
+          "width": 19,
+          "height": 19
+        },
+        {
+          "name": "Néon vert",
+          "width": 19,
+          "height": 19
+        }
+      ],
+      "small_target_count": 9,
+      "overlaps": [
+        {
+          "left": "∞ InsaneGrille libre · Solveur IA inclus →",
+          "right": "J’ai compris",
+          "ratio": 0.85
+        },
+        {
+          "left": "∞ InsaneGrille libre · Solveur IA inclus →",
+          "right": "Ignorer",
+          "ratio": 0.85
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Entraînez votre logique",
+        "51 cases données · Idéal pour débuter",
+        "39 cases données · Le bon équilibre",
+        "27 cases données · Pour les experts",
+        "Grille libre · Solveur IA inclus",
+        "Facile",
+        "Moyen",
+        "Difficile",
+        "Aucun chrono pour le moment.Lancez une partie pour ouv",
+        "☾ Sombre",
+        "☀ Lumineux",
+        "N mode crayon · H indice intelligent · Flèches pour na",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 13,
+      "score": 60
+    },
+    {
+      "page": "games/Synthwave Edition/SynthwaveEdition.html",
+      "viewport": "desktop",
+      "title": "Neon Air Hockey - Synthwave Edition",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 20,
+      "small_targets": [
+        {
+          "name": "1 Joueur (IA)",
+          "width": 149,
+          "height": 40
+        },
+        {
+          "name": "2 Joueurs",
+          "width": 140,
+          "height": 40
+        },
+        {
+          "name": "Facile",
+          "width": 102,
+          "height": 40
+        },
+        {
+          "name": "Moyen",
+          "width": 102,
+          "height": 40
+        },
+        {
+          "name": "Expert",
+          "width": 110,
+          "height": 40
+        },
+        {
+          "name": "3 Buts",
+          "width": 104,
+          "height": 40
+        },
+        {
+          "name": "5 Buts",
+          "width": 105,
+          "height": 40
+        },
+        {
+          "name": "7 Buts",
+          "width": 102,
+          "height": 40
+        },
+        {
+          "name": "PARAMÈTRES",
+          "width": 418,
+          "height": 40
+        }
+      ],
+      "small_target_count": 9,
+      "overlaps": [
+        {
+          "left": "LANCER LA PARTIE",
+          "right": "Ignorer",
+          "ratio": 0.51
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 75
+    },
+    {
+      "page": "games/synthwave-runner/index.html",
+      "viewport": "desktop",
+      "title": "🌅 SYNTHWAVE RUNNER 🌅",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 14,
+      "small_targets": [
+        {
+          "name": "Mettre le jeu en pause",
+          "width": 79,
+          "height": 39
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 1,
+      "score": 97
+    },
+    {
+      "page": "games/taquin/index.html",
+      "viewport": "desktop",
+      "title": "Pixel Taquin - Sliding Tile Puzzle",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 144,
+      "controls": 34,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "Facile · 3x3",
+          "right": "Paramètres",
+          "ratio": 0.2
+        },
+        {
+          "left": "Moyen · 4x4",
+          "right": "Paramètres",
+          "ratio": 0.32
+        },
+        {
+          "left": "Difficile · 5x5",
+          "right": "Règles",
+          "ratio": 0.37
+        },
+        {
+          "left": "🔢 Numéros : ON",
+          "right": "Règles",
+          "ratio": 0.24
+        },
+        {
+          "left": "🍬 Candy",
+          "right": "J’ai compris",
+          "ratio": 0.46
+        },
+        {
+          "left": "🍬 Candy",
+          "right": "Ignorer",
+          "ratio": 0.28
+        },
+        {
+          "left": "🏜️ Desert",
+          "right": "Ignorer",
+          "ratio": 0.29
+        }
+      ],
+      "overlap_count": 7,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "SLIDING TILE PUZZLE",
+        "🔢 Numéros : ON",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 3,
+      "score": 67
+    },
+    {
+      "page": "games/tetris/index.html",
+      "viewport": "desktop",
+      "title": "Neon Tetris",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 16,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Choisissez votre partie",
+        "Progression classique · vitesse croissante",
+        "40 lignes · contre-la-montre",
+        "2 minutes · score maximal",
+        "Sans fin · aucune pression",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 6,
+      "score": 94
+    },
+    {
+      "page": "games/Yahtzee/yahtzee.html",
+      "viewport": "desktop",
+      "title": "Dés de Bohême — Farkle à 6 dés",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 12,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "PRENDRE PLACE",
+          "right": "Ignorer",
+          "ratio": 0.51
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retourner au Dice District",
+        "La table de l'aubergiste",
+        "Adversaire Henry contre l'aubergiste (IA)Henry contre ",
+        "Henry contre l'aubergiste (IA)Henry contre Joueur 2",
+        "Objectif 2 000 points3 000 points5 000 points",
+        "2 000 points3 000 points5 000 points"
+      ],
+      "tiny_text_count": 6,
+      "score": 88
+    },
+    {
+      "page": "admin/index.html",
+      "viewport": "desktop",
+      "title": "Pilotage · Francis Arcade",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 4,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "ACCÈS PROTÉGÉ"
+      ],
+      "tiny_text_count": 1,
+      "score": 99
+    },
+    {
+      "page": "index.html",
+      "viewport": "mobile",
+      "title": "🎮 Mini Jeux Arcade",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 20689,
+      "controls": 5,
+      "small_targets": [
+        {
+          "name": "Installer",
+          "width": 159,
+          "height": 42
+        },
+        {
+          "name": "Plus tard",
+          "width": 159,
+          "height": 42
+        }
+      ],
+      "small_target_count": 2,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [],
+      "tiny_text_count": 0,
+      "score": 96
+    },
+    {
+      "page": "games/2048/index.html",
+      "viewport": "mobile",
+      "title": "2048 Néon",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 17,
+      "small_targets": [
+        {
+          "name": "🔄 Nouveau",
+          "width": 170,
+          "height": 43
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [
+        {
+          "left": "⬅️",
+          "right": "J’ai compris",
+          "ratio": 0.31
+        },
+        {
+          "left": "➡️",
+          "right": "J’ai compris",
+          "ratio": 0.31
+        },
+        {
+          "left": "⬇️",
+          "right": "J’ai compris",
+          "ratio": 0.34
+        },
+        {
+          "left": "⬇️",
+          "right": "Ignorer",
+          "ratio": 0.51
+        }
+      ],
+      "overlap_count": 4,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 72
+    },
+    {
+      "page": "games/421/index.html",
+      "viewport": "mobile",
+      "title": "421 · Dice District",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 147,
+      "controls": 11,
+      "small_targets": [
+        {
+          "name": "Retourner au Dice District",
+          "width": 108,
+          "height": 42
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retourner au Dice District",
+        "TABLE 02 · DICE DISTRICT",
+        "Trois dés, trois lancers. Gardez les bons dés et rempo",
+        "VOUS",
+        "IA",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 6,
+      "score": 92
+    },
+    {
+      "page": "games/bataille-navale/index.html",
+      "viewport": "mobile",
+      "title": "Bataille Navale",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 15,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Tirs aléatoires",
+        "Poursuite basique",
+        "Stratégie en damier",
+        "Analyse probabiliste",
+        "Clic droit ou touche R pour pivoter un navire",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 7,
+      "score": 93
+    },
+    {
+      "page": "games/BubbleShooter/BubbleShooter.html",
+      "viewport": "mobile",
+      "title": "Cyber-Bubble Shooter 80s",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 18,
+      "small_targets": [
+        {
+          "name": "MENU",
+          "width": 39,
+          "height": 30
+        },
+        {
+          "name": "SAUVER",
+          "width": 51,
+          "height": 30
+        },
+        {
+          "name": "TOP SCORES",
+          "width": 74,
+          "height": 30
+        },
+        {
+          "name": "TOP SCORES",
+          "width": 143,
+          "height": 39
+        },
+        {
+          "name": "PARAMETRES",
+          "width": 143,
+          "height": 39
+        },
+        {
+          "name": "Échanger les bulles",
+          "width": 38,
+          "height": 38
+        },
+        {
+          "name": "Couper les effets sonores",
+          "width": 42,
+          "height": 42
+        }
+      ],
+      "small_target_count": 7,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour accueil",
+        "VISE souris ou fleches | TIRE clic ou espace | SWAP X",
+        "MENU",
+        "SAUVER",
+        "TOP SCORES",
+        "ARCADE PROTOCOL // 1984",
+        "points",
+        "TOP SCORES",
+        "PARAMETRES",
+        "SOURIS / TOUCHER POUR VISER · ESPACE POUR TIRER · X PO",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 11,
+      "score": 76
+    },
+    {
+      "page": "games/calculation/index.html",
+      "viewport": "mobile",
+      "title": "🧮 Calcul Mental - Speed Math",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 18,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "Commencer",
+          "right": "J’ai compris",
+          "ratio": 1
+        },
+        {
+          "left": "🏆 Classement",
+          "right": "Ignorer",
+          "ratio": 0.85
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 86
+    },
+    {
+      "page": "games/casse-bloc/index.html",
+      "viewport": "mobile",
+      "title": "🧱 Casse-Briques",
+      "horizontal_overflow_px": 108,
+      "vertical_scroll_px": 0,
+      "controls": 11,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 68
+    },
+    {
+      "page": "games/crossy-turfu/index.html",
+      "viewport": "mobile",
+      "title": "🐔 Crossy Turfu",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 12,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 98
+    },
+    {
+      "page": "games/Cyber-Bounty Hunter/Cyber-BountyHunter.html",
+      "viewport": "mobile",
+      "title": "Cyber-Bounty Hunter",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 11,
+      "small_targets": [
+        {
+          "name": "Retourner à l'accueil de l'Arcade",
+          "width": 79,
+          "height": 42
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu",
+        "Retourner à l'accueil de l'Arcade"
+      ],
+      "tiny_text_count": 2,
+      "score": 96
+    },
+    {
+      "page": "games/Cyber-CoreSorter/Cyber-CoreSorter.html",
+      "viewport": "mobile",
+      "title": "Cyber-Core Sorter",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 13,
+      "small_targets": [
+        {
+          "name": "◇ CLASSEMENT LOCAL",
+          "width": 314,
+          "height": 43
+        },
+        {
+          "name": "Retourner à l'accueil de l'Arcade",
+          "width": 79,
+          "height": 42
+        }
+      ],
+      "small_target_count": 2,
+      "overlaps": [
+        {
+          "left": "Désactiver le son",
+          "right": "Retourner à l'accueil de l'Arcade",
+          "ratio": 0.73
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "PROTOCOLE DE CONFINEMENT",
+        "◇ CLASSEMENT LOCAL",
+        "Ouvrir le menu commun du jeu",
+        "Retourner à l'accueil de l'Arcade"
+      ],
+      "tiny_text_count": 4,
+      "score": 86
+    },
+    {
+      "page": "games/Cyber-Symbol Poker/Cyber-SymbolPoker.html",
+      "viewport": "mobile",
+      "title": "Cyber-Symbol Poker",
+      "horizontal_overflow_px": 36,
+      "vertical_scroll_px": 0,
+      "controls": 13,
+      "small_targets": [
+        {
+          "name": "Retourner à l'accueil de l'Arcade",
+          "width": 79,
+          "height": 42
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [
+        {
+          "left": "-",
+          "right": "Ignorer",
+          "ratio": 0.43
+        },
+        {
+          "left": "DISTRIBUER",
+          "right": "Ignorer",
+          "ratio": 0.63
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu",
+        "Retourner à l'accueil de l'Arcade"
+      ],
+      "tiny_text_count": 2,
+      "score": 54
+    },
+    {
+      "page": "games/cyberfind/index.html",
+      "viewport": "mobile",
+      "title": "CYBERFIND — Chasse aux anomalies",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 16,
+      "small_targets": [
+        {
+          "name": "Mettre en pause",
+          "width": 32,
+          "height": 38
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [
+        {
+          "left": "Mettre en pause",
+          "right": "Ouvrir le menu commun du jeu",
+          "ratio": 1
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "ANOMALIES",
+        "TEMPS",
+        "✦ INDICE",
+        "Mettre en pause",
+        "—",
+        "10 anomalies · détente",
+        "16 anomalies · dense",
+        "24 anomalies · exigeant",
+        "32 anomalies · chaos total",
+        "Chaque mission génère une nouvelle scène. Échap ouvre ",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 12,
+      "score": 82
+    },
+    {
+      "page": "games/cyberflux/index.html",
+      "viewport": "mobile",
+      "title": "🐤 Cyber Flux — Flappy Bird 3.0",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 19,
+      "small_targets": [
+        {
+          "name": "setting-music",
+          "width": 285,
+          "height": 42
+        },
+        {
+          "name": "setting-sfx",
+          "width": 285,
+          "height": 42
+        },
+        {
+          "name": "ACTIVÉ",
+          "width": 103,
+          "height": 42
+        }
+      ],
+      "small_target_count": 3,
+      "overlaps": [
+        {
+          "left": "▶ JOUER",
+          "right": "🔄 REJOUER",
+          "ratio": 0.36
+        },
+        {
+          "left": "▶ JOUER",
+          "right": "🏠 MENU",
+          "ratio": 0.42
+        },
+        {
+          "left": "▶ JOUER",
+          "right": "ACTIVÉ",
+          "ratio": 1
+        },
+        {
+          "left": "⚙️ OPTIONS",
+          "right": "🏠 MENU",
+          "ratio": 0.38
+        },
+        {
+          "left": "⚙️ OPTIONS",
+          "right": "← RETOUR",
+          "ratio": 0.78
+        },
+        {
+          "left": "🔄 REJOUER",
+          "right": "ACTIVÉ",
+          "ratio": 0.31
+        },
+        {
+          "left": "🏠 MENU",
+          "right": "ACTIVÉ",
+          "ratio": 0.4
+        },
+        {
+          "left": "Facile Normal Difficile Extrême",
+          "right": "Règles",
+          "ratio": 0.69
+        },
+        {
+          "left": "← RETOUR",
+          "right": "J’ai compris",
+          "ratio": 0.28
+        }
+      ],
+      "overlap_count": 9,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 62
+    },
+    {
+      "page": "games/cybermorpion/index.html",
+      "viewport": "mobile",
+      "title": "Cyber-Morpion 80s",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 17,
+      "small_targets": [
+        {
+          "name": "3x3 (Aligner 3)",
+          "width": 83,
+          "height": 38
+        },
+        {
+          "name": "5x5 (Aligner 4)",
+          "width": 83,
+          "height": 38
+        },
+        {
+          "name": "2 Joueurs",
+          "width": 83,
+          "height": 26
+        },
+        {
+          "name": "IA",
+          "width": 83,
+          "height": 26
+        },
+        {
+          "name": "REJOUER",
+          "width": 150,
+          "height": 37
+        },
+        {
+          "name": "RÉINIT. SCORES",
+          "width": 150,
+          "height": 37
+        },
+        {
+          "name": "Sons",
+          "width": 53,
+          "height": 37
+        }
+      ],
+      "small_target_count": 7,
+      "overlaps": [
+        {
+          "left": "3x3 (Aligner 3)",
+          "right": "Partie",
+          "ratio": 0.65
+        },
+        {
+          "left": "5x5 (Aligner 4)",
+          "right": "Partie",
+          "ratio": 0.89
+        },
+        {
+          "left": "2 Joueurs",
+          "right": "Tutoriel",
+          "ratio": 1
+        },
+        {
+          "left": "IA",
+          "right": "Tutoriel",
+          "ratio": 0.73
+        },
+        {
+          "left": "REJOUER",
+          "right": "Ignorer",
+          "ratio": 0.2
+        },
+        {
+          "left": "RÉINIT. SCORES",
+          "right": "Ignorer",
+          "ratio": 0.24
+        }
+      ],
+      "overlap_count": 6,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "GRILLE",
+        "3x3 (Aligner 3)",
+        "5x5 (Aligner 4)",
+        "ADVERSAIRE",
+        "2 Joueurs",
+        "IA",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 8,
+      "score": 48
+    },
+    {
+      "page": "games/demineur/index.html",
+      "viewport": "mobile",
+      "title": "Démineur Pro",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 17,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "😊",
+          "right": "🔴 Expert 30×16 • 99 mines",
+          "ratio": 0.78
+        },
+        {
+          "left": "🟢 Débutant 8×8 • 10 mines",
+          "right": "Fermer le menu",
+          "ratio": 0.37
+        },
+        {
+          "left": "🟢 Débutant 8×8 • 10 mines",
+          "right": "Partie",
+          "ratio": 0.97
+        },
+        {
+          "left": "🟢 Débutant 8×8 • 10 mines",
+          "right": "Tutoriel",
+          "ratio": 0.97
+        },
+        {
+          "left": "🟡 Intermédiaire 16×16 • 40 mines",
+          "right": "Classement",
+          "ratio": 0.8
+        },
+        {
+          "left": "🟡 Intermédiaire 16×16 • 40 mines",
+          "right": "Paramètres",
+          "ratio": 0.8
+        },
+        {
+          "left": "🟡 Intermédiaire 16×16 • 40 mines",
+          "right": "Règles",
+          "ratio": 1
+        }
+      ],
+      "overlap_count": 7,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 68
+    },
+    {
+      "page": "games/dice-hub/dice-hub.html",
+      "viewport": "mobile",
+      "title": "Dice District · Francis Arcade",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 752,
+      "controls": 13,
+      "small_targets": [
+        {
+          "name": "Retour à Francis Arcade",
+          "width": 111,
+          "height": 36
+        },
+        {
+          "name": "Retour à Francis Arcade",
+          "width": 42,
+          "height": 40
+        }
+      ],
+      "small_target_count": 2,
+      "overlaps": [
+        {
+          "left": "03 DÉS DE BOHÊMEFarkle · 6 désDISPONIBLE ↗",
+          "right": "J’ai compris",
+          "ratio": 0.57
+        },
+        {
+          "left": "03 DÉS DE BOHÊMEFarkle · 6 désDISPONIBLE ↗",
+          "right": "Ignorer",
+          "ratio": 1
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [
+        {
+          "name": "sunset-orb",
+          "position": "fixed"
+        }
+      ],
+      "fixed_cut_count": 1,
+      "tiny_text": [
+        "Retour à Francis Arcade"
+      ],
+      "tiny_text_count": 1,
+      "score": 78
+    },
+    {
+      "page": "games/enigme/index.html",
+      "viewport": "mobile",
+      "title": "Énigme Cosmique · Missions",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 12,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 98
+    },
+    {
+      "page": "games/geominds/index.html",
+      "viewport": "mobile",
+      "title": "🎮 GéoMinds - Géométrie & Logique Spatiale",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 15,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "⚙️ Paramètres",
+          "right": "J’ai compris",
+          "ratio": 0.19
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 92
+    },
+    {
+      "page": "games/hifumi/index.html",
+      "viewport": "mobile",
+      "title": "🪨 Pierre Feuille Ciseaux - VS IA",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 65,
+      "controls": 17,
+      "small_targets": [
+        {
+          "name": "Detente",
+          "width": 101,
+          "height": 40
+        },
+        {
+          "name": "Tactique",
+          "width": 101,
+          "height": 40
+        },
+        {
+          "name": "Analyse",
+          "width": 101,
+          "height": 40
+        }
+      ],
+      "small_target_count": 3,
+      "overlaps": [
+        {
+          "left": "🔄 Recommencer",
+          "right": "Ignorer",
+          "ratio": 0.71
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 86
+    },
+    {
+      "page": "games/jeuxdescartes/jeuxdescartes.html",
+      "viewport": "mobile",
+      "title": "Neon Card Match | Francis Arcade",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 16,
+      "small_targets": [
+        {
+          "name": "Lancer une partie",
+          "width": 340,
+          "height": 39
+        },
+        {
+          "name": "Classement du jour",
+          "width": 340,
+          "height": 39
+        }
+      ],
+      "small_target_count": 2,
+      "overlaps": [
+        {
+          "left": "Classement du jour",
+          "right": "J’ai compris",
+          "ratio": 0.89
+        },
+        {
+          "left": "Retour à l'arcade",
+          "right": "Ignorer",
+          "ratio": 0.9
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Francis Arcade · 198X Edition",
+        "Préparez la transmission",
+        "Facile 1 couleur",
+        "1 couleur",
+        "Normal 2 couleurs",
+        "2 couleurs",
+        "Difficile 4 couleurs",
+        "4 couleurs",
+        "Lancer une partie",
+        "Classement du jour",
+        "Retour à l'arcade",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 13,
+      "score": 74
+    },
+    {
+      "page": "games/jeuxdesphrases/jeuxdesphrases.html",
+      "viewport": "mobile",
+      "title": "Forge à histoires | Francis Arcade",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 436,
+      "controls": 13,
+      "small_targets": [
+        {
+          "name": "Invoquer une idée",
+          "width": 297,
+          "height": 40
+        },
+        {
+          "name": "Copier la phrase",
+          "width": 297,
+          "height": 40
+        },
+        {
+          "name": "Effacer",
+          "width": 80,
+          "height": 29
+        }
+      ],
+      "small_target_count": 3,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Francis Arcade · Atelier imaginaire",
+        "Portail à idées instables",
+        "Invoquer une idée",
+        "Copier la phrase",
+        "Votre grimoire",
+        "Effacer",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 8,
+      "score": 86
+    },
+    {
+      "page": "games/labyrinthe/index.html",
+      "viewport": "mobile",
+      "title": "🧭 Safari Maze - Labyrinthe Aventure",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 15,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "🚀 Nouvelle Aventure",
+          "right": "Classement",
+          "ratio": 0.22
+        },
+        {
+          "left": "🚀 Nouvelle Aventure",
+          "right": "Paramètres",
+          "ratio": 0.22
+        },
+        {
+          "left": "🚀 Nouvelle Aventure",
+          "right": "Règles",
+          "ratio": 0.94
+        },
+        {
+          "left": "❓ Comment jouer",
+          "right": "J’ai compris",
+          "ratio": 1
+        }
+      ],
+      "overlap_count": 4,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 74
+    },
+    {
+      "page": "games/marmotte/index.html",
+      "viewport": "mobile",
+      "title": "Neon Whack — Tape-Taupe",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 17,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "★ FACILE 40 secondes Ambiance chill",
+          "right": "Classement",
+          "ratio": 0.78
+        },
+        {
+          "left": "★ FACILE 40 secondes Ambiance chill",
+          "right": "Paramètres",
+          "ratio": 0.78
+        },
+        {
+          "left": "★ FACILE 40 secondes Ambiance chill",
+          "right": "Règles",
+          "ratio": 0.86
+        },
+        {
+          "left": "▶JOUER",
+          "right": "J’ai compris",
+          "ratio": 0.31
+        },
+        {
+          "left": "🏆 LEADERBOARD",
+          "right": "J’ai compris",
+          "ratio": 0.42
+        },
+        {
+          "left": "🏆 LEADERBOARD",
+          "right": "Ignorer",
+          "ratio": 0.51
+        }
+      ],
+      "overlap_count": 6,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "HIGH VOLTAGE ARCADE · 1986",
+        "SELECT MODE",
+        "Ambiance chill",
+        "Rythme arcade",
+        "Zone de danger",
+        "Hyper vitesse",
+        "Aucune pitié",
+        "Tes 5 meilleures parties sont sauvegardées sur cet app",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 10,
+      "score": 60
+    },
+    {
+      "page": "games/memory/index.html",
+      "viewport": "mobile",
+      "title": "🧩 Memory - Jeu de Cartes",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 164,
+      "controls": 24,
+      "small_targets": [
+        {
+          "name": "🐾 Animaux",
+          "width": 97,
+          "height": 40
+        },
+        {
+          "name": "🍕 Nourriture",
+          "width": 107,
+          "height": 40
+        },
+        {
+          "name": "⚽ Sports",
+          "width": 84,
+          "height": 40
+        },
+        {
+          "name": "🌸 Nature",
+          "width": 87,
+          "height": 40
+        },
+        {
+          "name": "Neon",
+          "width": 58,
+          "height": 40
+        },
+        {
+          "name": "Musique",
+          "width": 76,
+          "height": 40
+        },
+        {
+          "name": "Voyage",
+          "width": 68,
+          "height": 40
+        }
+      ],
+      "small_target_count": 7,
+      "overlaps": [
+        {
+          "left": "ClassiqueSans pression",
+          "right": "J’ai compris",
+          "ratio": 0.61
+        },
+        {
+          "left": "ClassiqueSans pression",
+          "right": "Ignorer",
+          "ratio": 0.2
+        },
+        {
+          "left": "ObservationApercu de la grille",
+          "right": "J’ai compris",
+          "ratio": 0.61
+        },
+        {
+          "left": "ObservationApercu de la grille",
+          "right": "Ignorer",
+          "ratio": 0.2
+        },
+        {
+          "left": "RushBonus x1,25",
+          "right": "Ignorer",
+          "ratio": 0.3
+        },
+        {
+          "left": "AleatoireTout est tire au sort",
+          "right": "Ignorer",
+          "ratio": 0.3
+        }
+      ],
+      "overlap_count": 6,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "ClassiqueSans pression",
+        "ObservationApercu de la grille",
+        "RushBonus x1,25",
+        "AleatoireTout est tire au sort",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 6,
+      "score": 50
+    },
+    {
+      "page": "games/Neon Dice Arena/NeonDiceArena.html",
+      "viewport": "mobile",
+      "title": "Arène de dés néon — Casino synthwave",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 12,
+      "small_targets": [
+        {
+          "name": "Retourner au Dice District",
+          "width": 108,
+          "height": 42
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retourner au Dice District",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 96
+    },
+    {
+      "page": "games/neon-overdrive/index.html",
+      "viewport": "mobile",
+      "title": "🌌 NEON OVERDRIVE 🌌",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 15,
+      "small_targets": [
+        {
+          "name": "[ CLEAR LEADERBOARD ]",
+          "width": 152,
+          "height": 31
+        },
+        {
+          "name": "Mettre le jeu en pause",
+          "width": 64,
+          "height": 32
+        },
+        {
+          "name": "[ TRY AGAIN ]",
+          "width": 178,
+          "height": 38
+        },
+        {
+          "name": "[ MAIN MENU ]",
+          "width": 178,
+          "height": 38
+        }
+      ],
+      "small_target_count": 4,
+      "overlaps": [
+        {
+          "left": "[ CLEAR LEADERBOARD ]",
+          "right": "[ MAIN MENU ]",
+          "ratio": 0.84
+        },
+        {
+          "left": "Mettre le jeu en pause",
+          "right": "Ouvrir le menu commun du jeu",
+          "ratio": 0.66
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "[ CLEAR LEADERBOARD ]",
+        "🖱️ Desktop: Déplace ta souris",
+        "📱 Mobile: Touche l'écran",
+        "⚡ Le tir est automatique",
+        "🔴 Esquive les projectiles!",
+        "Mettre le jeu en pause",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 8,
+      "score": 72
+    },
+    {
+      "page": "games/neon-runner/index.html",
+      "viewport": "mobile",
+      "title": "🎮 Neon Runner",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 14,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "🎮 NOUVELLE PARTIE",
+          "right": "Règles",
+          "ratio": 0.33
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 92
+    },
+    {
+      "page": "games/neontron/index.html",
+      "viewport": "mobile",
+      "title": "Neontron — Lightcycle Duel",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 14,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "TRACE TA LIGNE. COUPE LA SIENNE.",
+        "Réflexes espacés",
+        "Lecture à 6 cases",
+        "Arène verrouillée",
+        "ENTRER DANS L’ARÈNE",
+        "Aucun demi-tour • Premier à 3 manches",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 8,
+      "score": 92
+    },
+    {
+      "page": "games/openworld/index.html",
+      "viewport": "mobile",
+      "title": "🌍 Open World",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 19,
+      "small_targets": [
+        {
+          "name": "👥",
+          "width": 40,
+          "height": 40
+        },
+        {
+          "name": "📊",
+          "width": 40,
+          "height": 40
+        },
+        {
+          "name": "⚙️",
+          "width": 40,
+          "height": 40
+        },
+        {
+          "name": "✕",
+          "width": 40,
+          "height": 40
+        }
+      ],
+      "small_target_count": 4,
+      "overlaps": [
+        {
+          "left": "Retour à l'accueil",
+          "right": "Ouvrir la carte des savoirs",
+          "ratio": 0.8
+        },
+        {
+          "left": "⚙️",
+          "right": "Ouvrir le menu commun du jeu",
+          "ratio": 1
+        },
+        {
+          "left": "👨 Adulte",
+          "right": "J’ai compris",
+          "ratio": 0.31
+        },
+        {
+          "left": "👴 Senior",
+          "right": "J’ai compris",
+          "ratio": 0.31
+        }
+      ],
+      "overlap_count": 4,
+      "fixed_cuts": [
+        {
+          "name": "👥 Communauté ✕ Explorateurs en ligne Activité récente",
+          "position": "fixed"
+        }
+      ],
+      "fixed_cut_count": 1,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 61
+    },
+    {
+      "page": "games/pixel-forge/index.html",
+      "viewport": "mobile",
+      "title": "🕹️ Pixel Forge",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 21,
+      "small_targets": [
+        {
+          "name": "Retour au menu",
+          "width": 41,
+          "height": 40
+        },
+        {
+          "name": "Enregistrer la progression",
+          "width": 41,
+          "height": 40
+        },
+        {
+          "name": "Paramètres",
+          "width": 41,
+          "height": 40
+        },
+        {
+          "name": "ANNULER",
+          "width": 147,
+          "height": 30
+        },
+        {
+          "name": "CONFIRMER RESET",
+          "width": 147,
+          "height": 30
+        },
+        {
+          "name": "soundToggle",
+          "width": 45,
+          "height": 25
+        },
+        {
+          "name": "vibrationToggle",
+          "width": 45,
+          "height": 25
+        },
+        {
+          "name": "🗑️ EFFACER TOUTES LES DONNÉES",
+          "width": 170,
+          "height": 32
+        },
+        {
+          "name": "FERMER",
+          "width": 64,
+          "height": 30
+        }
+      ],
+      "small_target_count": 9,
+      "overlaps": [
+        {
+          "left": "INITIALISER LA FORGE APPUYER POUR COMMENCER",
+          "right": "FERMER",
+          "ratio": 0.22
+        },
+        {
+          "left": "Cliquer pour générer des bits",
+          "right": "Classement",
+          "ratio": 0.37
+        },
+        {
+          "left": "Cliquer pour générer des bits",
+          "right": "Paramètres",
+          "ratio": 0.35
+        },
+        {
+          "left": "Cliquer pour générer des bits",
+          "right": "Règles",
+          "ratio": 0.37
+        },
+        {
+          "left": "ANNULER",
+          "right": "🗑️ EFFACER TOUTES LES DONNÉES",
+          "ratio": 0.87
+        }
+      ],
+      "overlap_count": 5,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "NEURAL ARCADE SYSTEM",
+        "FORGEUR DE MONDES NUMÉRIQUES",
+        "[ SYSTÈME PRÊT ]",
+        "Construis la console rétro ultime en cliquant frénétiq",
+        "v1.0 — Années 80 à l'infini",
+        "INITIALISER LA FORGE APPUYER POUR COMMENCER",
+        "APPUYER POUR COMMENCER",
+        "16-BITS // 5.0K BITS RESTANTS",
+        "💾 BITS COLLECTÉS",
+        "+0 bits/sec",
+        "+1 PAR CLIC",
+        "TOUCHEZ LE CŒUR POUR FORGER",
+        "Installer CPU 386",
+        "Installer RAM 16MB",
+        "Installer GPU 8-bits",
+        "Sacrifie tous tes bits pour obtenir un bonus de puissa",
+        "Bits actuels : 0 Bonus de prestige : 0%",
+        "ANNULER",
+        "CONFIRMER RESET"
+      ],
+      "tiny_text_count": 20,
+      "score": 42
+    },
+    {
+      "page": "games/Poker/poker.html",
+      "viewport": "mobile",
+      "title": "River Room — Texas Hold'em",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 239,
+      "controls": 13,
+      "small_targets": [
+        {
+          "name": "River Room",
+          "width": 155,
+          "height": 36
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [
+        {
+          "left": "●Partie libreBlindes fixes · 1 000 jetons",
+          "right": "J’ai compris",
+          "ratio": 0.56
+        },
+        {
+          "left": "♛TournoiBlindes progressives",
+          "right": "J’ai compris",
+          "ratio": 0.56
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour accueil",
+        "Blindes fixes · 1 000 jetons",
+        "Blindes progressives",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 4,
+      "score": 82
+    },
+    {
+      "page": "games/pong/index.html",
+      "viewport": "mobile",
+      "title": "Pong Néon Pro",
+      "horizontal_overflow_px": 208,
+      "vertical_scroll_px": 0,
+      "controls": 16,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "🎮 Mode Classique",
+          "right": "Classement",
+          "ratio": 0.88
+        },
+        {
+          "left": "🎮 Mode Classique",
+          "right": "Paramètres",
+          "ratio": 0.88
+        },
+        {
+          "left": "🎮 Mode Classique",
+          "right": "Règles",
+          "ratio": 0.21
+        },
+        {
+          "left": "⏱️ Contre-la-montre",
+          "right": "Règles",
+          "ratio": 0.52
+        }
+      ],
+      "overlap_count": 4,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 44
+    },
+    {
+      "page": "games/puissance4/index.html",
+      "viewport": "mobile",
+      "title": "Puissance 4 Advance — Retro Edition",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 295,
+      "controls": 14,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "CLASSIQUEGrille 7 × 6 2D",
+          "right": "J’ai compris",
+          "ratio": 0.24
+        },
+        {
+          "left": "CLASSIQUEGrille 7 × 6 2D",
+          "right": "Ignorer",
+          "ratio": 0.61
+        },
+        {
+          "left": "ADVANCEVolume 4 × 4 × 4 3D",
+          "right": "J’ai compris",
+          "ratio": 0.24
+        },
+        {
+          "left": "ADVANCEVolume 4 × 4 × 4 3D",
+          "right": "Ignorer",
+          "ratio": 0.61
+        }
+      ],
+      "overlap_count": 4,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "FORMAT DU PLATEAU",
+        "Grille 7 × 6",
+        "Volume 4 × 4 × 4",
+        "ADVERSAIRE",
+        "DUEL LOCAL",
+        "VS ORDINATEUR",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 8,
+      "score": 68
+    },
+    {
+      "page": "games/reflex/index.html",
+      "viewport": "mobile",
+      "title": "⏱️ Chrono Réflexe",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 16,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "☰",
+          "right": "Fermer le menu",
+          "ratio": 0.46
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 92
+    },
+    {
+      "page": "games/reflex-lab/index.html",
+      "viewport": "mobile",
+      "title": "Reflex Lab",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 14,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "▦HypergridActive les dalles LED avant qu elles ne chan",
+          "right": "Règles",
+          "ratio": 0.77
+        },
+        {
+          "left": "⏱Chrono ReflexeLe test pur : clique des que le signal ",
+          "right": "J’ai compris",
+          "ratio": 1
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Active les dalles LED avant qu elles ne changent.",
+        "Touche la bonne voie, sans rater une note.",
+        "Vise les cibles qui apparaissent dans l arene.",
+        "Le test pur : clique des que le signal passe au vert.",
+        "Ouvrir le menu commun du jeu",
+        "Retourner à l'accueil de l'Arcade"
+      ],
+      "tiny_text_count": 6,
+      "score": 82
+    },
+    {
+      "page": "games/simon/index.html",
+      "viewport": "mobile",
+      "title": "🎮 SIMON NÉON 🎮",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 28,
+      "small_targets": [
+        {
+          "name": "Normal",
+          "width": 117,
+          "height": 41
+        },
+        {
+          "name": "Strict",
+          "width": 117,
+          "height": 41
+        }
+      ],
+      "small_target_count": 2,
+      "overlaps": [
+        {
+          "left": "Normal Rejoue la séquence en cas d'erreur",
+          "right": "Bouton jaune",
+          "ratio": 0.42
+        },
+        {
+          "left": "Normal Rejoue la séquence en cas d'erreur",
+          "right": "Bouton bleu",
+          "ratio": 0.42
+        },
+        {
+          "left": "Normal Rejoue la séquence en cas d'erreur",
+          "right": "[ REJOUER ]",
+          "ratio": 0.58
+        },
+        {
+          "left": "Normal Rejoue la séquence en cas d'erreur",
+          "right": "[ RETOUR ]",
+          "ratio": 0.29
+        },
+        {
+          "left": "⚔️ Strict 1 erreur = Game Over !",
+          "right": "Bouton jaune",
+          "ratio": 0.47
+        },
+        {
+          "left": "⚔️ Strict 1 erreur = Game Over !",
+          "right": "Bouton bleu",
+          "ratio": 0.47
+        },
+        {
+          "left": "⚔️ Strict 1 erreur = Game Over !",
+          "right": "[ REJOUER ]",
+          "ratio": 0.25
+        },
+        {
+          "left": "⚔️ Strict 1 erreur = Game Over !",
+          "right": "[ MENU ]",
+          "ratio": 1
+        },
+        {
+          "left": "⚔️ Strict 1 erreur = Game Over !",
+          "right": "[ RETOUR ]",
+          "ratio": 0.54
+        },
+        {
+          "left": "🐢 Lent",
+          "right": "↻ Recommencer",
+          "ratio": 0.96
+        },
+        {
+          "left": "⚙️ Normal",
+          "right": "↻ Recommencer",
+          "ratio": 0.42
+        },
+        {
+          "left": "⚙️ Normal",
+          "right": "✕ Quitter",
+          "ratio": 0.42
+        }
+      ],
+      "overlap_count": 25,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "[ LEADERBOARD ]",
+        "Bouton vert",
+        "Bouton rouge",
+        "Bouton jaune",
+        "Bouton bleu",
+        "[ REJOUER ]",
+        "[ MENU ]",
+        "Normal",
+        "Strict",
+        "[ RETOUR ]",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 12,
+      "score": 56
+    },
+    {
+      "page": "games/snake/index.html",
+      "viewport": "mobile",
+      "title": "🐍 Snake Néon",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 17,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "🎮 Classique Snake original",
+          "right": "Règles",
+          "ratio": 0.73
+        },
+        {
+          "left": "🏆 Records",
+          "right": "J’ai compris",
+          "ratio": 0.68
+        }
+      ],
+      "overlap_count": 2,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 86
+    },
+    {
+      "page": "games/spider-solitaire/index.html",
+      "viewport": "mobile",
+      "title": "Cyber Spider Solitaire",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 19,
+      "small_targets": [
+        {
+          "name": "Activer le thème sombre",
+          "width": 38,
+          "height": 38
+        },
+        {
+          "name": "↩️",
+          "width": 38,
+          "height": 38
+        },
+        {
+          "name": "💡",
+          "width": 38,
+          "height": 38
+        },
+        {
+          "name": "Accueil",
+          "width": 38,
+          "height": 38
+        },
+        {
+          "name": "🏆 LEADERBOARD",
+          "width": 289,
+          "height": 43
+        },
+        {
+          "name": "Activer le thème sombre",
+          "width": 289,
+          "height": 43
+        }
+      ],
+      "small_target_count": 6,
+      "overlaps": [
+        {
+          "left": "Accueil",
+          "right": "Ouvrir le menu commun du jeu",
+          "ratio": 0.85
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 2,
+      "score": 80
+    },
+    {
+      "page": "games/sudoku/index.html",
+      "viewport": "mobile",
+      "title": "Sudoku Master & Solver",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 244,
+      "controls": 17,
+      "small_targets": [
+        {
+          "name": "Facile",
+          "width": 92,
+          "height": 30
+        },
+        {
+          "name": "Moyen",
+          "width": 92,
+          "height": 30
+        },
+        {
+          "name": "Difficile",
+          "width": 92,
+          "height": 30
+        }
+      ],
+      "small_target_count": 3,
+      "overlaps": [
+        {
+          "left": "01 Facile51 cases données · Idéal pour débuter →",
+          "right": "Règles",
+          "ratio": 0.49
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Entraînez votre logique",
+        "51 cases données · Idéal pour débuter",
+        "39 cases données · Le bon équilibre",
+        "27 cases données · Pour les experts",
+        "Grille libre · Solveur IA inclus",
+        "Facile",
+        "Moyen",
+        "Difficile",
+        "Aucun chrono pour le moment.Lancez une partie pour ouv",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 11,
+      "score": 78
+    },
+    {
+      "page": "games/Synthwave Edition/SynthwaveEdition.html",
+      "viewport": "mobile",
+      "title": "Neon Air Hockey - Synthwave Edition",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 20,
+      "small_targets": [
+        {
+          "name": "1 Joueur (IA)",
+          "width": 149,
+          "height": 40
+        },
+        {
+          "name": "2 Joueurs",
+          "width": 140,
+          "height": 40
+        },
+        {
+          "name": "Facile",
+          "width": 102,
+          "height": 40
+        },
+        {
+          "name": "Moyen",
+          "width": 102,
+          "height": 40
+        },
+        {
+          "name": "Expert",
+          "width": 110,
+          "height": 40
+        },
+        {
+          "name": "3 Buts",
+          "width": 104,
+          "height": 40
+        },
+        {
+          "name": "5 Buts",
+          "width": 105,
+          "height": 40
+        },
+        {
+          "name": "7 Buts",
+          "width": 102,
+          "height": 40
+        },
+        {
+          "name": "PARAMÈTRES",
+          "width": 301,
+          "height": 40
+        },
+        {
+          "name": "Retourner à l'accueil de l'Arcade",
+          "width": 79,
+          "height": 42
+        }
+      ],
+      "small_target_count": 10,
+      "overlaps": [
+        {
+          "left": "1 Joueur (IA)",
+          "right": "Classement",
+          "ratio": 0.26
+        },
+        {
+          "left": "1 Joueur (IA)",
+          "right": "Règles",
+          "ratio": 0.6
+        },
+        {
+          "left": "2 Joueurs",
+          "right": "Paramètres",
+          "ratio": 0.26
+        },
+        {
+          "left": "PARAMÈTRES",
+          "right": "J’ai compris",
+          "ratio": 0.9
+        }
+      ],
+      "overlap_count": 4,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Ouvrir le menu commun du jeu",
+        "Retourner à l'accueil de l'Arcade"
+      ],
+      "tiny_text_count": 2,
+      "score": 54
+    },
+    {
+      "page": "games/synthwave-runner/index.html",
+      "viewport": "mobile",
+      "title": "🌅 SYNTHWAVE RUNNER 🌅",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 14,
+      "small_targets": [
+        {
+          "name": "Mettre le jeu en pause",
+          "width": 68,
+          "height": 34
+        }
+      ],
+      "small_target_count": 1,
+      "overlaps": [
+        {
+          "left": "Mettre le jeu en pause",
+          "right": "Ouvrir le menu commun du jeu",
+          "ratio": 0.27
+        }
+      ],
+      "overlap_count": 1,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "🖱️ ESPACE / ↑ / TAP : Sauter",
+        "⬇️ FLÈCHE BAS / glisser vers le bas : piquer",
+        "🌀 Double saut activé",
+        "⏸ ÉCHAP / P : Pause",
+        "⚡ Esquive les obstacles !",
+        "Mettre le jeu en pause",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 8,
+      "score": 84
+    },
+    {
+      "page": "games/taquin/index.html",
+      "viewport": "mobile",
+      "title": "Pixel Taquin - Sliding Tile Puzzle",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 482,
+      "controls": 28,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [
+        {
+          "left": "Facile · 3x3",
+          "right": "Classement",
+          "ratio": 0.87
+        },
+        {
+          "left": "Moyen · 4x4",
+          "right": "Classement",
+          "ratio": 0.79
+        },
+        {
+          "left": "Difficile · 5x5",
+          "right": "Paramètres",
+          "ratio": 0.99
+        },
+        {
+          "left": "🔢 Numéros : ON",
+          "right": "Règles",
+          "ratio": 0.21
+        },
+        {
+          "left": "🍬 Candy",
+          "right": "J’ai compris",
+          "ratio": 0.69
+        },
+        {
+          "left": "🏜️ Desert",
+          "right": "J’ai compris",
+          "ratio": 0.69
+        },
+        {
+          "left": "🌸 Sakura",
+          "right": "Ignorer",
+          "ratio": 0.51
+        },
+        {
+          "left": "❄️ Glacier",
+          "right": "Ignorer",
+          "ratio": 0.51
+        }
+      ],
+      "overlap_count": 8,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "SLIDING TILE PUZZLE",
+        "🔢 Numéros : ON",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 4,
+      "score": 66
+    },
+    {
+      "page": "games/tetris/index.html",
+      "viewport": "mobile",
+      "title": "Neon Tetris",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 16,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retour à l'accueil",
+        "Choisissez votre partie",
+        "Progression classique · vitesse croissante",
+        "40 lignes · contre-la-montre",
+        "2 minutes · score maximal",
+        "Sans fin · aucune pression",
+        "Ouvrir le menu commun du jeu"
+      ],
+      "tiny_text_count": 7,
+      "score": 93
+    },
+    {
+      "page": "games/Yahtzee/yahtzee.html",
+      "viewport": "mobile",
+      "title": "Dés de Bohême — Farkle à 6 dés",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 12,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Retourner au Dice District",
+        "La table de l'aubergiste",
+        "Adversaire Henry contre l'aubergiste (IA)Henry contre ",
+        "Henry contre l'aubergiste (IA)Henry contre Joueur 2",
+        "Objectif 2 000 points3 000 points5 000 points",
+        "2 000 points3 000 points5 000 points",
+        "PRENDRE PLACE"
+      ],
+      "tiny_text_count": 7,
+      "score": 93
+    },
+    {
+      "page": "admin/index.html",
+      "viewport": "mobile",
+      "title": "Pilotage · Francis Arcade",
+      "horizontal_overflow_px": 0,
+      "vertical_scroll_px": 0,
+      "controls": 4,
+      "small_targets": [],
+      "small_target_count": 0,
+      "overlaps": [],
+      "overlap_count": 0,
+      "fixed_cuts": [],
+      "fixed_cut_count": 0,
+      "tiny_text": [
+        "Période 7 jours 30 jours 90 jours",
+        "ACCÈS PROTÉGÉ"
+      ],
+      "tiny_text_count": 2,
+      "score": 98
+    }
+  ]
+}

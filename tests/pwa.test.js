@@ -41,6 +41,8 @@ assert.match(worker, /APP_SHELL/);
 assert.match(worker, /SKIP_WAITING/);
 assert.match(worker, /staleWhileRevalidate/);
 assert.match(worker, /arcade-admin-loader\.js/);
+assert.match(worker, /admin\/index\.html/);
+assert.match(worker, /data\/ux-audit\.json/);
 assert.doesNotMatch(worker, /arcade-favicon\.png/, "Le favicon source lourd ne doit pas être précaché");
 assert.doesNotMatch(worker, /francis_arcade_audit_global/, "Les données ADMIN doivent être chargées à la demande");
 for (const sharedAsset of [

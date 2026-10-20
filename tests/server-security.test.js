@@ -13,6 +13,8 @@ const freeDailyChallenges = read("supabase", "migrations", "202610060002_free_da
 const connect4CoinGuard = read("supabase", "migrations", "202610110001_secure_connect4_live_coins.sql");
 const matchService = read("supabase", "migrations", "202610110002_arcade_match_service.sql");
 const matchReconnectGuard = read("supabase", "migrations", "202610110003_arcade_match_reconnect_timeout.sql");
+const adminDashboardMigration = read("supabase", "migrations", "202610200001_admin_dashboard.sql");
+const adminDashboardFunction = read("supabase", "functions", "admin-dashboard", "index.ts");
 const config = read("js", "core", "arcade-config.js");
 const gitignore = read(".gitignore");
 const sharedClient = read("supabase", "functions", "_shared", "supabase.ts");
@@ -80,6 +82,12 @@ assert.match(matchService, /awaiting_server_validation/i);
 assert.match(matchReconnectGuard, /security definer/i);
 assert.match(matchReconnectGuard, /reconnect_deadline\s*<=\s*clock_timestamp\(\)/i);
 assert.match(matchReconnectGuard, /result_source\s*=\s*'timeout'/i);
+assert.match(adminDashboardMigration, /security definer/i);
+assert.match(adminDashboardMigration, /revoke execute[\s\S]*from public, anon, authenticated/i);
+assert.match(adminDashboardMigration, /grant execute[\s\S]*to service_role/i);
+assert.match(adminDashboardFunction, /authenticatedUser\(request\)/i);
+assert.match(adminDashboardFunction, /ARCADE_ADMIN_EMAILS/i);
+assert.match(adminDashboardFunction, /assertAllowedOrigin\(request\)/i);
 
 assert.match(sharedClient, /authenticatedUser\(request/i, "Les fonctions doivent verifier l'utilisateur");
 assert.match(sharedClient, /SUPABASE_SECRET_KEYS/, "Les cles secretes Supabase actuelles doivent etre prises en charge");
