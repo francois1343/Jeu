@@ -95,6 +95,39 @@ assert.match(sharedClient, /SUPABASE_PUBLISHABLE_KEYS/, "Les cles publiques Supa
 assert.match(sharedHttp, /assertAllowedOrigin/, "Les origines doivent etre controlees");
 assert.match(sharedHttp, /"Vary": "Origin"/, "Les reponses CORS doivent varier selon l'origine");
 
+// Exercise the actual server CORS helpers with the headers sent by the browser SDK.
+const corsModule = { exports: {} };
+require("node:vm").runInNewContext(
+  require("esbuild").transformSync(sharedHttp, { loader: "ts", format: "cjs" }).code,
+  {
+    module: corsModule,
+    exports: corsModule.exports,
+    Deno: { env: { get: (name) => name === "ALLOWED_ORIGINS" ? "https://francois1343.github.io,http://127.0.0.1:4173" : undefined } },
+    Response,
+    console: { error() {} },
+  },
+);
+const cors = corsModule.exports;
+const applicationHeaders = ["authorization", "apikey", "content-type", "x-client-info", "x-application-name"];
+for (const origin of ["https://francois1343.github.io", "http://127.0.0.1:4173"]) {
+  const request = new Request("https://example.test/functions/v1/admin-dashboard", {
+    method: "OPTIONS",
+    headers: {
+      Origin: origin,
+      "Access-Control-Request-Method": "POST",
+      "Access-Control-Request-Headers": applicationHeaders.join(","),
+    },
+  });
+  const headers = new Headers(cors.corsHeaders(request));
+  assert.equal(headers.get("Access-Control-Allow-Origin"), origin);
+  const permittedHeaders = headers.get("Access-Control-Allow-Headers").toLowerCase().split(",").map((name) => name.trim());
+  for (const name of applicationHeaders) assert(permittedHeaders.includes(name), `En-tete navigateur refuse par CORS : ${name}`);
+  assert.doesNotThrow(() => cors.assertAllowedOrigin(request));
+}
+const unknownOrigin = new Request("https://example.test", { headers: { Origin: "https://untrusted.example" } });
+assert.throws(() => cors.assertAllowedOrigin(unknownOrigin), (error) => error.status === 403 && error.code === "origin_not_allowed");
+assert.notEqual(new Headers(cors.corsHeaders(unknownOrigin)).get("Access-Control-Allow-Origin"), "https://untrusted.example");
+
 assert.match(gitignore, /supabase\/functions\/\.env/, "Les secrets locaux des fonctions doivent etre ignores");
 assert.match(config, /mode:\s*arcadeLocalQaMode\s*\?\s*"local-test"\s*:\s*"supabase"/, "Supabase doit etre le mode normal");
 assert.match(config, /\["127\.0\.0\.1",\s*"localhost"\]/, "Le mode QA local doit rester limite a la machine locale");
