@@ -481,6 +481,7 @@
     if (!api) {
       setConnection("INDISPONIBLE");
       DOM.liveChoice.disabled = true;
+      DOM.liveChoice.title = "Mode en ligne temporairement indisponible. Jouez contre un bot ou à deux sur cet écran.";
       return;
     }
     await refreshAuth();

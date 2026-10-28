@@ -704,6 +704,14 @@ async function main() {
   assert.deepEqual(runtimeErrors, [], `Erreurs JavaScript navigateur :\n${runtimeErrors.join("\n")}`);
   await cdp.evaluate("sessionStorage.setItem('arcade.qa.serverMode', '1'); localStorage.removeItem('arcade.qa.localMode'); true");
   await navigate(`${baseUrl}/index.html`);
+  if (await cdp.evaluate("window.ARCADE_CONFIG?.mode === 'guest'")) {
+    assert.equal(await cdp.evaluate("Boolean(window.ArcadeSupabase)"), false, "Le mode invité ne doit pas initialiser le client serveur");
+    assert.equal(await cdp.evaluate("document.querySelector('#accountButton').disabled"), true);
+    assert.deepEqual(runtimeErrors, []);
+    cdp.close();
+    console.log(`Recette navigateur : six pilotes et ${catalogPages.length} pages vérifiés; services serveur volontairement en pause, mode invité actif.`);
+    return;
+  }
   await waitFor("window.ARCADE_CONFIG?.mode === 'supabase' && Boolean(window.ArcadeSupabase) && Boolean(window.ArcadePlatform?.isConfigured())", "Le mode Supabase ne s'initialise pas");
   await cdp.evaluate("document.querySelector('#accountButton').click(); true");
   await waitFor("document.querySelector('#accountDialog')?.open", "Le dialogue de connexion Supabase ne s'ouvre pas");

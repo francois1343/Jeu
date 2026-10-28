@@ -1,8 +1,10 @@
 const arcadeLocalQaMode = ["127.0.0.1", "localhost"].includes(window.location?.hostname || "")
   && window.localStorage?.getItem("arcade.qa.localMode") === "1";
+// Temporary public access while the hosted services are paused. Set false to restore server mode.
+const arcadeGuestAccess = true;
 
 window.ARCADE_CONFIG = Object.freeze({
-  mode: arcadeLocalQaMode ? "local-test" : "supabase",
+  mode: arcadeLocalQaMode ? "local-test" : arcadeGuestAccess ? "guest" : "supabase",
   supabaseProjectRef: "nnqfomqgagfshujyfrtl",
   supabaseUrl: "https://nnqfomqgagfshujyfrtl.supabase.co",
   supabasePublishableKey: "sb_publishable_zx73xi5nc32mmLuqEdvgcQ_rx9e3HtN",

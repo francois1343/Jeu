@@ -518,6 +518,8 @@
   async function init() {
     injectStyles();
     injectHomeButton();
+    // Ignore old paid-session URLs during guest access; never settle or debit them locally.
+    if (config.mode === "guest") sessionId = null;
     serverMode = config.mode === "supabase" && params.get("arcadeFree") !== "1";
     if (serverMode) {
       serverApi = global.ArcadeSupabase;

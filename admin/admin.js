@@ -122,6 +122,11 @@
   }
 
   async function load() {
+    if (global.ARCADE_CONFIG?.mode === "guest") {
+      showAccess("Les services en ligne sont temporairement en pause. Les jeux restent accessibles gratuitement depuis l’accueil.");
+      setSync("Services en pause");
+      return;
+    }
     setSync("Synchronisation…", "idle");
     const session = await api?.getSession?.();
     if (!session) {

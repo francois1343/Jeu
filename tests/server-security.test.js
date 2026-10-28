@@ -129,7 +129,7 @@ assert.throws(() => cors.assertAllowedOrigin(unknownOrigin), (error) => error.st
 assert.notEqual(new Headers(cors.corsHeaders(unknownOrigin)).get("Access-Control-Allow-Origin"), "https://untrusted.example");
 
 assert.match(gitignore, /supabase\/functions\/\.env/, "Les secrets locaux des fonctions doivent etre ignores");
-assert.match(config, /mode:\s*arcadeLocalQaMode\s*\?\s*"local-test"\s*:\s*"supabase"/, "Supabase doit etre le mode normal");
+assert.match(config, /mode:\s*arcadeLocalQaMode\s*\?\s*"local-test"\s*:\s*arcadeGuestAccess\s*\?\s*"guest"\s*:\s*"supabase"/, "Le mode invite temporaire doit etre distinct du backend et du mode QA");
 assert.match(config, /\["127\.0\.0\.1",\s*"localhost"\]/, "Le mode QA local doit rester limite a la machine locale");
 assert.match(config, /supabaseUrl:\s*"https:\/\/[a-z]+\.supabase\.co"/, "L'URL publique Supabase doit etre configuree");
 assert.match(config, /supabasePublishableKey:\s*"sb_publishable_[A-Za-z0-9_-]+"/, "La cle publishable doit etre configuree");

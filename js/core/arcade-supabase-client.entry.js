@@ -4,6 +4,10 @@ import { createClient } from "@supabase/supabase-js";
   "use strict";
 
   const config = global.ARCADE_CONFIG || {};
+  if (config.mode === "guest") {
+    global.ArcadeSupabase = null;
+    return;
+  }
   const url = String(config.supabaseUrl || "").replace(/\/$/, "");
   const publishableKey = String(config.supabasePublishableKey || "");
 

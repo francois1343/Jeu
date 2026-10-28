@@ -11,6 +11,7 @@
     "audit:ux": "node scripts/generate-ux-audit.js",
     "test:premium-browser": "node tests/premium-browser.test.js",
     "test:responsive-browser": "node tests/responsive-browser.test.js",
+    "test:guest-browser": "node tests/guest-browser.test.js",
     "serve": "python -m http.server 4173 --bind 127.0.0.1",
     "supabase:start": "npx supabase start",
     "supabase:dry-run": "npx supabase db push --dry-run",
