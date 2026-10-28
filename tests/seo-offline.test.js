@@ -28,7 +28,10 @@ for (const page of pages) {
     assert.ok(!descriptions.has(description), `Meta description dupliquée : ${relative}`);
     descriptions.add(description);
   }
-  assert.doesNotMatch(source, /<(?:script|link)\b[^>]*(?:src|href)="https?:\/\//i, `Dépendance CDN distante : ${relative}`);
+  for (const tag of source.matchAll(/<(?:script|link)\b[^>]*>/gi)) {
+    const resource = /^<script\b/i.test(tag[0]) || /\brel=["'](?:stylesheet|preload|modulepreload)["']/i.test(tag[0]);
+    if (resource) assert.doesNotMatch(tag[0], /(?:src|href)="https?:\/\//i, `Dépendance CDN distante : ${relative}`);
+  }
 }
 
 const missing = fs.readFileSync(path.join(root, "404.html"), "utf8");

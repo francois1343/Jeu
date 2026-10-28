@@ -3211,6 +3211,16 @@
         animation: shopFrameShift 5s linear infinite;
       }
 
+      .arcade-support[hidden], .arcade-support [hidden] { display: none !important; }
+      .arcade-support { margin: 0 0 24px; padding: 20px; border: 1px solid rgba(155, 92, 255, .3); border-radius: 18px; background: rgba(18, 22, 42, .8); }
+      .arcade-support h2 { margin: 0 0 8px; font-size: 1.2rem; }
+      .arcade-support p { line-height: 1.6; }
+      .arcade-support-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 16px 0; }
+      .arcade-support-actions .btn { white-space: normal; text-align: center; min-height: 44px; }
+      .arcade-support-donate { color: #e7e0ff; border: 1px solid rgba(155, 92, 255, .5); text-decoration: none; }
+      .arcade-support-note { font-size: .9rem; opacity: .85; margin: 8px 0 0; }
+      @media (max-width: 520px) { .arcade-support-actions > * { width: 100%; } }
+
       @keyframes shopFrameShift {
         to { background-position: 0 0, 250% 0; }
       }

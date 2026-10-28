@@ -87,5 +87,6 @@ window.ARCADE_CONFIG = Object.freeze({
   paypal: Object.freeze({
     environment: "production",
     hostedButtonId: "",
+    donationUrl: "",
   }),
 });

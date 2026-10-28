@@ -27,7 +27,13 @@
     <link rel="apple-touch-icon" href="assets/icons/arcade-icon-v2-180.png" />
 
     <link rel="stylesheet" href="css/shared/arcade-fonts.css" />
-    <link rel="stylesheet" href="css/home.css?v=37" />
+    <link rel="stylesheet" href="css/home.css?v=38" />
+    <!-- SEO_DEPLOY_START -->
+    <link rel="canonical" href="https://francois1343.github.io/Jeu/" />
+    <meta property="og:url" content="https://francois1343.github.io/Jeu/" />
+    <meta property="og:image" content="https://francois1343.github.io/Jeu/assets/icons/arcade-icon-v2-512.png" />
+    <meta name="twitter:image" content="https://francois1343.github.io/Jeu/assets/icons/arcade-icon-v2-512.png" />
+    <!-- SEO_DEPLOY_END -->
   </head>
   <body>
     <!-- Particules décoratives -->
@@ -119,6 +125,19 @@
             >
           </button>
         </div>
+      </section>
+
+      <section class="arcade-support" id="supportArcade" aria-labelledby="supportArcadeTitle" hidden>
+        <div>
+          <h2 id="supportArcadeTitle">Un coup de pouce à l’Arcade</h2>
+          <p>Tout est facultatif : une vidéo pour des Coins fictifs, ou un soutien libre au créateur.</p>
+        </div>
+        <div class="arcade-support-actions">
+          <button type="button" class="btn btn-primary" id="watchRewardedAdButton" hidden>Choisir une vidéo · Coins bonus</button>
+          <a class="btn arcade-support-donate" id="paypalSupportLink" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" hidden>Soutenir via PayPal ↗</a>
+        </div>
+        <p class="arcade-support-note">Un don est sans contrepartie en Coins. Les Coins ne sont ni vendus ni convertibles en argent réel.</p>
+        <p id="supportStatus" class="arcade-support-note" role="status" aria-live="polite" hidden></p>
       </section>
 
       <div
@@ -2820,6 +2839,7 @@
     <script src="js/arcade-admin-loader.js"></script>
     <script src="js/core/arcade-platform-supabase.js"></script>
     <script src="js/core/arcade-platform.js"></script>
+    <script src="js/core/arcade-support.js"></script>
     <script src="js/core/arcade-shop.js"></script>
     <script src="js/core/arcade-game-sdk.js"></script>
     <script src="js/home.js"></script>

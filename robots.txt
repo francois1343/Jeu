@@ -1,5 +1,3 @@
 User-agent: *
 Allow: /
-
-# La directive Sitemap sera ajoutée par `npm run seo:sitemap`
-# dès que le domaine HTTPS de production sera connu.
+Sitemap: https://francois1343.github.io/Jeu/sitemap.xml

@@ -148,9 +148,14 @@ Cette sélection reste stable jusqu'à la fin du cycle de recette Premium. Un re
 - génération du sitemap dès que le domaine HTTPS est connu :
 
 ```powershell
-$env:ARCADE_SITE_URL="https://votre-domaine.example"
+$env:ARCADE_SITE_URL="https://francois1343.github.io/Jeu/"
 npm run seo:sitemap
 ```
+
+Les sous-chemins GitHub Pages sont pris en charge. Le sitemap exclut
+l’administration et les pages `noindex`. Les boutons de soutien PayPal et de
+vidéo récompensée restent masqués sans configuration réelle ; voir
+[`docs/MONETISATION-PROGRESSIVE.md`](docs/MONETISATION-PROGRESSIVE.md).
 
 ---
 

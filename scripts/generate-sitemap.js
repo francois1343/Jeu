@@ -10,9 +10,11 @@ if (!rawOrigin) {
 }
 
 const origin = new URL(rawOrigin);
-if (origin.protocol !== "https:" || origin.pathname !== "/" || origin.search || origin.hash) {
-  throw new Error("ARCADE_SITE_URL doit être une origine HTTPS sans chemin, requête ni fragment.");
+if (origin.protocol !== "https:" || origin.search || origin.hash || origin.username || origin.password) {
+  throw new Error("ARCADE_SITE_URL doit être une URL HTTPS sans identifiants, requête ni fragment.");
 }
+// A project hosted by GitHub Pages lives below /Jeu/, not at the host root.
+if (!origin.pathname.endsWith("/")) origin.pathname += "/";
 
 function walk(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -27,6 +29,8 @@ const publicPages = walk(root)
   .filter((file) => file.endsWith(".html"))
   .map((file) => ({ file, relative: path.relative(root, file).replaceAll(path.sep, "/") }))
   .filter((page) => !excluded.has(page.relative))
+  .filter((page) => !page.relative.startsWith("admin/"))
+  .filter((page) => !/<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["'][^"']*\bnoindex\b)[^>]*>/i.test(fs.readFileSync(page.file, "utf8")))
   .sort((left, right) => left.relative.localeCompare(right.relative, "fr"))
   .map((page) => ({
     ...page,
@@ -67,4 +71,4 @@ fs.writeFileSync(path.join(root, "robots.txt"), [
   "",
 ].join("\n"), "utf8");
 
-console.log(`Sitemap généré : ${locations.length} URL pour ${origin.origin}.`);
+console.log(`Sitemap généré : ${locations.length} URL pour ${origin.href}.`);
