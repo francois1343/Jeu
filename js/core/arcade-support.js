@@ -15,7 +15,9 @@
       const url = new URL(settings.donationUrl);
       const allowed = new Set(["paypal.me", "www.paypal.me", "paypal.com", "www.paypal.com"]);
       if (url.protocol !== "https:" || url.username || url.password || !allowed.has(url.hostname)) return null;
-      if (url.hostname.endsWith("paypal.com") && !url.pathname.startsWith("/donate")) return null;
+      const donation = /^\/donate(?:\/|$)/.test(url.pathname);
+      const receptionQr = /^\/qrcodes\/managed\/[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}\/?$/i.test(url.pathname);
+      if (url.hostname.endsWith("paypal.com") && !donation && !receptionQr) return null;
       if (url.pathname === "/") return null;
       return url.href;
     } catch {
@@ -74,6 +76,15 @@
     if (donation && donationAddress) {
       donation.href = donationAddress;
       donation.hidden = false;
+      const qrPath = String(config.paypal?.qrImage || "");
+      if (/^assets\/[a-zA-Z0-9/_-]+\.png$/.test(qrPath)) {
+        const image = document.getElementById("paypalQrImage");
+        if (image) image.src = qrPath;
+        const block = document.getElementById("paypalQrBlock");
+        const note = document.getElementById("paypalQrNote");
+        if (block && image) block.hidden = false;
+        if (note) note.hidden = false;
+      }
     }
     const reward = document.getElementById("watchRewardedAdButton");
     const ready = providerReady();

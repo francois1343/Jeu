@@ -137,6 +137,11 @@
           <a class="btn arcade-support-donate" id="paypalSupportLink" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" hidden>Soutenir via PayPal ↗</a>
         </div>
         <p class="arcade-support-note">Un don est sans contrepartie en Coins. Les Coins ne sont ni vendus ni convertibles en argent réel.</p>
+        <p class="arcade-support-note" id="paypalQrNote" hidden>Ce lien peut ouvrir l’application PayPal. Sur ordinateur, vous pouvez scanner le QR code avec votre téléphone.</p>
+        <details class="arcade-support-qr" id="paypalQrBlock" hidden>
+          <summary>Afficher le QR code PayPal</summary>
+          <img id="paypalQrImage" width="250" height="250" alt="QR code PayPal pour soutenir le créateur de Francis Arcade" loading="lazy" />
+        </details>
         <p id="supportStatus" class="arcade-support-note" role="status" aria-live="polite" hidden></p>
       </section>
 

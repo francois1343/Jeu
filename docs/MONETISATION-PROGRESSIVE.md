@@ -8,9 +8,15 @@ n’active aucun fournisseur et n’encaisse aucun paiement.
 
 Dans `js/core/arcade-config.js`, renseigner soit `paypal.hostedButtonId` avec un
 identifiant réel de bouton Donate, soit `paypal.donationUrl` avec un lien HTTPS
-PayPal.Me ou PayPal Donate fourni par l’exploitant. Le bouton reste masqué sans
+PayPal.Me, PayPal Donate ou QR de réception géré fourni par l’exploitant. Le bouton reste masqué sans
 adresse valide. Un simple lien ouvre PayPal à la demande, sans charger son SDK
 dans la page ni modifier la CSP. Aucun don ne crédite de Coins.
+
+Le QR fourni par François a été décodé et son URL est renseignée dans la copie de
+travail. Le QR original est affichable sur ordinateur pour le scanner avec un
+téléphone. La lecture HTTP sur ordinateur redirige vers la page de l’application
+PayPal : la réception réelle et le nom du destinataire restent à vérifier dans
+le parcours PayPal avant publication. Aucun paiement de test n’a été effectué.
 
 Pour créer un bouton Donate, PayPal indique de vérifier l’éligibilité depuis le
 [créateur de boutons](https://www.paypal.com/donate/buttons).
@@ -36,6 +42,12 @@ relais restent donc à implémenter et à tester avant activation. La CSP devra
 alors être adaptée aux seuls domaines nécessaires, et la présentation de la
 confidentialité/du consentement devra correspondre aux services réellement actifs.
 Cette modification ne prétend pas fournir cette activation commerciale complète.
+
+Les [règles Google sur les récompenses](https://support.google.com/adsense/answer/9121589?hl=fr)
+interdisent l’argent, les cryptomonnaies et les récompenses convertibles en argent.
+Les Coins Arcade doivent rester internes et non transférables. Un projet distinct
+qui rémunère ses spectateurs nécessiterait des contrats publicitaires autorisant
+expressément cette incitation, une économie vérifiée et un examen juridique.
 
 Références : [accès H5 Games Ads](https://developers.google.com/ad-placement/docs/signup),
 [API et récompenses](https://developers.google.com/ad-placement/apis).

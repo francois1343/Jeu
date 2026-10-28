@@ -6,7 +6,7 @@ const vm = require("node:vm");
 const source = fs.readFileSync(path.join(__dirname, "../js/core/arcade-support.js"), "utf8");
 
 function setup(options = {}) {
-  const nodes = new Map(["supportArcade", "paypalSupportLink", "watchRewardedAdButton", "supportStatus"].map(id => [id, {
+  const nodes = new Map(["supportArcade", "paypalSupportLink", "watchRewardedAdButton", "supportStatus", "paypalQrImage", "paypalQrBlock", "paypalQrNote"].map(id => [id, {
     hidden: true, disabled: false, textContent: "", handlers: {},
     addEventListener(name, handler) { this.handlers[name] = handler; },
     setAttribute() {}, removeAttribute() {},
@@ -31,6 +31,14 @@ function setup(options = {}) {
   assert.equal(support.paypalUrl({donationUrl: "https://user:secret@paypal.com/donate"}), null);
   assert.equal(support.paypalUrl({donationUrl: "https://paypal.me/ExampleCreator"}), "https://paypal.me/ExampleCreator");
   assert.equal(support.paypalUrl({hostedButtonId: "ABC1234567890"}), "https://www.paypal.com/donate/?hosted_button_id=ABC1234567890");
+  const receptionQr = "https://www.paypal.com/qrcodes/managed/da87cc2d-20d0-49d3-be3b-fae1b667bcdf";
+  assert.equal(support.paypalUrl({donationUrl: receptionQr}), receptionQr);
+  assert.equal(support.paypalUrl({donationUrl: "https://www.paypal.com/qrcodes/managed/not-a-valid-id"}), null);
+  const qr = setup({paypal: {donationUrl: receptionQr, qrImage: "assets/paypal-reception-qr.png"}});
+  assert.equal(qr.nodes.get("paypalQrBlock").hidden, false);
+  assert.equal(qr.nodes.get("paypalQrImage").src, "assets/paypal-reception-qr.png");
+  const remoteQr = setup({paypal: {donationUrl: receptionQr, qrImage: "https://example.org/tracker.png"}});
+  assert.equal(remoteQr.nodes.get("paypalQrBlock").hidden, true);
   const donation = setup({paypal: {donationUrl: "https://paypal.me/ExampleCreator"}});
   assert.equal(donation.nodes.get("supportArcade").hidden, false);
   assert.equal(donation.nodes.get("paypalSupportLink").hidden, false);

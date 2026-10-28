@@ -3219,6 +3219,9 @@
       .arcade-support-actions .btn { white-space: normal; text-align: center; min-height: 44px; }
       .arcade-support-donate { color: #e7e0ff; border: 1px solid rgba(155, 92, 255, .5); text-decoration: none; }
       .arcade-support-note { font-size: .9rem; opacity: .85; margin: 8px 0 0; }
+      .arcade-support-qr { margin-top: 14px; }
+      .arcade-support-qr summary { cursor: pointer; padding: 8px 0; }
+      .arcade-support-qr img { display: block; width: min(250px, 100%); height: auto; margin-top: 10px; border-radius: 12px; }
       @media (max-width: 520px) { .arcade-support-actions > * { width: 100%; } }
 
       @keyframes shopFrameShift {
