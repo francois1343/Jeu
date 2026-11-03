@@ -281,7 +281,24 @@
           });
         }
 
-        function updateCatalog() {
+        let page = 0;
+        const previous = document.getElementById("catalogPrevious");
+        const next = document.getElementById("catalogNext");
+        const pageLabel = document.getElementById("catalogPage");
+        function pageSize() {
+          const columns = getComputedStyle(grid).gridTemplateColumns.split(" ").length;
+          // Measure real cards: fonts, zoom and rotation can all change row height.
+          const cards = entries.filter((entry) => !entry.card.hidden);
+          const rowHeight = Math.max(1, ...cards.map(({ card }) => card.getBoundingClientRect().height));
+          const gap = parseFloat(getComputedStyle(grid).rowGap) || 0;
+          const top = grid.getBoundingClientRect().top + window.scrollY;
+          const navHeight = document.querySelector(".arcade-bottom-nav").getBoundingClientRect().height;
+          const available = window.innerHeight - top - navHeight - 76;
+          const rows = Math.max(1, Math.min(4, Math.floor((available + gap) / (rowHeight + gap))));
+          return columns * rows;
+        }
+        function updateCatalog(resetPage = true) {
+          if (resetPage) page = 0;
           const query = normalizeCatalogText(search.value.trim());
           const stats = new Map((window.ArcadeStats?.getGameStats?.() || []).map((stat) => [stat.key, stat]));
           const visible = entries.filter((entry) =>
@@ -301,10 +318,24 @@
             return left.order - right.order;
           });
 
+          // Reveal matches briefly for synchronous measurement, before the browser paints.
           entries.forEach((entry) => { entry.card.hidden = true; });
-          visible.forEach((entry) => { entry.card.hidden = false; grid.appendChild(entry.card); });
+          visible.forEach((entry) => { entry.card.hidden = false; });
+          const size = pageSize();
+          entries.forEach((entry) => { entry.card.hidden = true; });
+          const pages = Math.max(1, Math.ceil(visible.length / size));
+          page = Math.min(page, pages - 1);
+          visible.slice(page * size, (page + 1) * size).forEach((entry) => { entry.card.hidden = false; grid.appendChild(entry.card); });
+          if (previous) previous.disabled = page === 0;
+          if (next) next.disabled = page >= pages - 1;
+          if (pageLabel) pageLabel.textContent = visible.length ? `${page + 1} / ${pages}` : "Aucun jeu";
           result.textContent = `${visible.length} ${visible.length > 1 ? "jeux" : "jeu"}`;
           empty.hidden = visible.length > 0;
+          document.getElementById("filterResultCount").textContent = `(${visible.length})`;
+          const filterCount = Number(activeCategory !== "all") + Number(difficulty.value !== "all") + Number(sort.value !== "recommended");
+          const badge = document.getElementById("activeFilterCount");
+          badge.hidden = filterCount === 0;
+          badge.textContent = ` · ${filterCount}`;
           clear.hidden = !query && activeCategory === "all" && difficulty.value === "all" && sort.value === "recommended";
         }
 
@@ -312,6 +343,31 @@
           selectCategory(button.dataset.categoryFilter || "all");
           updateCatalog();
         }));
+        previous?.addEventListener("click", () => { page--; updateCatalog(false); pageLabel?.focus({ preventScroll: true }); });
+        next?.addEventListener("click", () => { page++; updateCatalog(false); pageLabel?.focus({ preventScroll: true }); });
+        let resizeTimer;
+        window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => updateCatalog(false), 150); });
+        document.getElementById("compactGames")?.addEventListener("click", () => {
+          document.querySelectorAll(".compact-sheet[open]").forEach((dialog) => dialog.close());
+          // Returning to the catalogue must not summon the mobile keyboard.
+          document.getElementById("catalogTitle").focus({ preventScroll: true });
+          window.scrollTo({ top: 0, behavior: "auto" });
+        });
+        document.getElementById("compactSelection")?.addEventListener("click", () => {
+          document.getElementById("arcadeSelection").showModal();
+        });
+        if (window.ARCADE_CONFIG?.mode === "guest") {
+          document.querySelector("#compactAccount span").textContent = "Infos";
+        }
+        document.getElementById("compactAccount")?.addEventListener("click", () => {
+          const account = document.getElementById("accountButton");
+          if (account && !account.disabled) account.click();
+          else document.getElementById("arcadeWallet").showModal();
+        });
+        entries.forEach(({ card, title }) => {
+          card.querySelector(".btn-launch")?.setAttribute("aria-label", `Jouer à ${title}`);
+        });
+        document.fonts?.ready.then(() => updateCatalog(false));
         search.addEventListener("input", updateCatalog);
         sort.addEventListener("change", updateCatalog);
         difficulty.addEventListener("change", updateCatalog);
@@ -337,7 +393,7 @@
         exploreGamesButton?.addEventListener("click", () => { document.querySelector(".games-grid")?.scrollIntoView({ behavior: preferences.animations ? "smooth" : "auto", block: "start" }); });
         feedbackButton?.addEventListener("click", () => { prefillFeedbackPseudo(); setFeedbackStatus(""); const dialog = document.getElementById("feedbackDialog"); if (dialog instanceof HTMLDialogElement && !dialog.open) dialog.showModal(); });
         feedbackForm?.addEventListener("submit", handleFeedbackSubmit);
-        document.querySelectorAll(".footer-link[data-open-dialog]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); const dialog = document.getElementById(link.dataset.openDialog); if (dialog instanceof HTMLDialogElement && !dialog.open) dialog.showModal(); }));
+        document.querySelectorAll(".footer-link[data-open-dialog], .arcade-bottom-nav [data-open-dialog], .catalog-filter-toggle[data-open-dialog]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); const dialog = document.getElementById(link.dataset.openDialog); if (dialog instanceof HTMLDialogElement && !dialog.open) dialog.showModal(); }));
         document.querySelectorAll(".info-dialog [data-close-dialog]").forEach((button) => button.addEventListener("click", () => { const dialog = button.closest("dialog"); if (dialog?.open) dialog.close(); }));
         document.querySelectorAll(".info-dialog").forEach((dialog) => dialog.addEventListener("click", (event) => { if (event.target === dialog && dialog.open) dialog.close(); }));
         const requestedDialog = location.hash ? document.getElementById(location.hash.slice(1)) : null;
@@ -355,14 +411,3 @@
           { once: true },
         );
       });
-
-      // ===== EMPÊCHER LE SCROLL HORIZONTAL =====
-      document.body.addEventListener(
-        "touchmove",
-        (e) => {
-          if (e.touches.length > 1) {
-            e.preventDefault();
-          }
-        },
-        { passive: false },
-      );

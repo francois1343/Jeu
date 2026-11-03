@@ -56,7 +56,8 @@ assert.ok(events.some((event) => event.type === "arcade:preferences-change"));
 
 const gameBridge = fs.readFileSync(path.join(root, "js", "core", "arcade-game-bridge.js"), "utf8");
 assert.match(gameBridge, /arcadeHomeButton/, "Le pont commun doit fournir un retour Accueil à chaque jeu");
-assert.match(gameBridge, /← Accueil/, "Le retour commun doit être clairement libellé");
+assert.match(gameBridge, /label.textContent = "Accueil"/, "Le retour commun doit être clairement libellé");
+assert.match(gameBridge, /icon.className = "arcade-home-icon"/, "Le retour doit afficher une icône sur mobile");
 
 assert.deepEqual(ARCADE_GAME_CONFIG.transitions.created, ["started", "abandoned"]);
 assert.deepEqual(ARCADE_GAME_CONFIG.transitions.started, ["won", "lost", "abandoned"]);

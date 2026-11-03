@@ -573,6 +573,33 @@
       .history { margin-top:17px; padding-top:16px; }.history-title{color:#91a4c6}.history-item{width:32px;height:32px}
       @media (max-width:500px) { body{padding:62px 10px 16px}.game-container{padding:23px 13px;border-radius:22px}.arena{min-height:142px;padding:17px 7px}.fighter-choice{width:76px;height:76px;font-size:45px}.choice-btn{height:102px;font-size:40px}.scoreboard{margin-bottom:14px}.result{font-size:15px}.vs{font-size:13px;padding:0 6px} }
       @media (prefers-reduced-motion:reduce) { *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important} }
+
+      @media(max-width:650px), (max-height:900px){
+        body{padding:60px 10px 12px;align-items:flex-start}
+        .game-container{padding:14px}.match-eyebrow{display:none}
+        h1{font-size:26px;margin-bottom:4px}.subtitle{margin-bottom:10px;font-size:13px}
+        .scoreboard{padding:8px;margin-bottom:10px}.score-value{font-size:24px}
+        .arena{min-height:96px;padding:8px;margin-bottom:8px}
+        .fighter-choice{width:58px;height:58px;font-size:34px}
+        .result{min-height:36px;font-size:14px;margin-bottom:8px;padding:6px}
+        .choices{margin-bottom:10px;gap:8px}.choice-btn{height:74px;font-size:30px;overflow:hidden}.choice-btn::before{pointer-events:none}
+        .choice-name,.choice-btn:hover .choice-name{bottom:6px}
+        .difficulty-selector{margin-bottom:8px;padding:3px}.diff-btn{min-height:44px}
+        .difficulty-hint{margin:0 0 8px}.history{margin-top:10px;padding-top:8px}
+      }
+      @media(max-height:500px) and (min-width:651px){
+        .game-container{max-width:800px;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}
+        h1,.subtitle{grid-column:1/-1}.scoreboard,.arena,.result,.choices{margin:0}
+        .history{margin:0;padding:0}
+      }
+
+      @media(max-height:700px){
+        .subtitle,.difficulty-hint{display:none}.game-container{padding:10px}
+        .scoreboard{padding:6px;margin-bottom:6px}.score-value{font-size:20px}
+        .arena{min-height:80px;margin-bottom:6px}.fighter-choice{width:48px;height:48px;font-size:28px}
+        .choices{margin-bottom:6px}.choice-btn{height:64px;font-size:26px}
+        .history{margin-top:6px;padding-top:6px}
+      }
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
     <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
