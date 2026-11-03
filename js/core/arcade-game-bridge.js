@@ -156,7 +156,14 @@
     home.id = "arcadeHomeButton";
     home.className = "arcade-home-link";
     home.href = new URL("../../index.html", global.location.href).href;
-    home.textContent = "← Accueil";
+    const icon = document.createElement("span");
+    icon.className = "arcade-home-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = "←";
+    const label = document.createElement("span");
+    label.className = "arcade-home-label";
+    label.textContent = "Accueil";
+    home.append(icon, label);
     home.setAttribute("aria-label", "Retourner à l'accueil de l'Arcade");
     home.addEventListener("click", () => {
       if (session?.state === "created" || session?.state === "started") abandon("home_navigation");

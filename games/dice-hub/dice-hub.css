@@ -355,3 +355,52 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
  #menu-screen .hub-layout { grid-template-columns:minmax(0,1.4fr) minmax(250px,1fr); }
 }
 @media(max-width:480px) { #menu-screen .mode-grid { grid-template-columns:1fr; } }
+/* Thumb-sized controls; the table stays visible while secondary statistics fold away. */
+.control-panel { display: block; min-height: 0; align-self: start; }
+.control-panel > summary { min-height: 44px; padding: 10px 0; cursor: pointer; color: var(--accent); font-weight: 700; }
+.control-panel[open] > summary { margin-bottom: 12px; }
+@media (max-width: 1100px), (max-height: 800px) {
+  .app-shell { width: calc(100% - 24px); padding-bottom: 16px; }
+  .site-header { min-height: 60px; gap: 10px; }
+  #menu-screen .hero-copy { padding: 0; }
+  #menu-screen .hero-copy .eyebrow { display: none; }
+  #menu-screen .hero-copy p { margin: 6px 0; font-size: 14px; }
+  #menu-screen .hub-layout { margin-top: 12px; gap: 12px; }
+  #menu-screen .mode-section > .section-heading { flex-direction: row; align-items: center; margin-bottom: 10px; }
+  #menu-screen .section-heading h2 { font-size: 14px; }
+  #menu-screen .section-heading > div > span, #menu-screen .live-badge { display: none; }
+  #menu-screen .mode-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  #menu-screen .table-card { min-height: 88px; padding: 10px; grid-template-columns: 1fr; gap: 4px; }
+  #menu-screen .mode-icon, #menu-screen .mode-arrow, #menu-screen .mode-content em { display: none; }
+  #menu-screen .mode-content strong { font-size: 11px; }
+  #menu-screen .mode-content small { font-size: 13px; margin: 6px 0 0; }
+  #menu-screen .launch-panel { padding: 12px; }
+  .launch-panel .panel-kicker, .launch-panel .dice-emblem, .launch-panel .mode-facts { display: none; }
+  .launch-panel h2 { margin: 0 0 6px; font-size: 20px; }
+  #selected-mode-description { margin: 0 0 10px; min-height: 0; font-size: 14px; }
+  .primary-button { min-height: 48px; }
+  .availability-note { margin-top: 6px; font-size: 12px; }
+  .secondary-actions { margin-top: 6px; }
+  .text-button, .icon-button, .back-button, .compact-button, .preset-grid button { min-height: 44px; }
+  .game-toolbar { margin: 12px 0; }
+  .game-layout { gap: 12px; }
+  .roll-stage { min-height: 0; padding: 40px 12px 12px; }
+  .dice-tray { min-height: 120px; padding: 12px; }
+  .result-die { width: 90px; }
+  .result-caption { margin: 12px 0; font-size: 14px; }
+  .keyboard-hint { display: none; }
+  .control-panel { min-height: 0; padding: 8px 14px; align-self: start; }
+}
+@media (max-height: 500px) and (min-width: 651px) {
+  #menu-screen .hero-copy h1 { font-size: 24px; }
+  #menu-screen .hero-copy p { display: none; }
+  #menu-screen .hub-layout { grid-template-columns: 1.2fr 1fr; }
+  #menu-screen .table-card { min-height: 68px; }
+  .game-layout { grid-template-columns: 1.2fr 1fr; }
+  .game-toolbar { margin: 6px 0; }
+  .dice-tray { min-height: 80px; }.result-die { width: 64px; }
+}
+@media (max-width: 1100px), (max-height: 800px) {
+  #game-screen { padding-top: 8px; }
+  .game-toolbar { gap: 8px; padding-bottom: 8px; }
+}

@@ -587,3 +587,15 @@ button:hover:not(:disabled) {
     opacity: 0.42;
   }
 }
+/* Give the generated phrase and primary actions priority on small screens. */
+@media (max-width: 1100px), (max-height: 850px) {
+  body { padding: 60px 12px 16px; }
+  .story-forge { padding: 16px; }
+  .forge-header h1 { font-size: clamp(28px, 5vw, 40px); }
+  .intro { margin: 10px auto 16px; font-size: 15px; }
+  .forge-console { padding: 14px; margin-top: 12px; }
+  .generator__sentence { min-height: 88px; padding: 12px; font-size: 18px; }
+  .forge-actions button { min-height: 44px; }
+  .imagination-guide, .phrase-history { padding: 12px; margin-top: 12px; }
+  .history-list { max-height: 140px; }
+}

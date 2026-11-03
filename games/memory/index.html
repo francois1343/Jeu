@@ -812,6 +812,29 @@
       .memory-lb-filter { min-height:34px; padding:7px 10px; border:1px solid rgba(255,255,255,.13); border-radius:999px; background:rgba(255,255,255,.04); color:#aebed7; font:700 11px inherit; cursor:pointer; }
       .memory-lb-filter.active { color:#06121b; background:#00d4ff; border-color:#00d4ff; }
       .memory-lb-summary { min-height:18px; margin:0 0 13px; color:#92a4c6; text-align:center; font-size:12px; }
+
+      @media(max-width:1100px), (max-height:900px){
+        .menu-screen{padding:60px 10px 12px}
+        .menu-container.memory-2026{padding:14px;max-width:650px}
+        .memory-eyebrow,.memory-2026 .game-logo{display:none}
+        .memory-2026 .game-title{font-size:28px}
+        .memory-2026 .game-subtitle{margin-bottom:10px;font-size:14px}
+        .memory-2026 .section-title{margin:10px 0 7px}
+        .memory-2026 .diff-card{min-height:72px;padding:8px}
+        .memory-2026 .diff-icon{font-size:22px;margin-bottom:4px}
+        .memory-mode-btn{min-height:54px}.memory-mode-grid{margin-bottom:10px}
+        .memory-mode-note{margin:0 0 8px}.memory-2026 .theme-pill{min-height:44px;padding:7px 10px}
+        .memory-2026 .play-btn{min-height:48px;margin-top:10px}
+        .memory-2026 .secondary-btn{min-height:44px;margin-top:8px}
+      }
+      @media(max-height:500px) and (min-width:651px){
+        .menu-container.memory-2026{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;max-width:800px}
+        .memory-2026 .game-title,.memory-2026 .game-subtitle{grid-column:1/-1;margin:0}
+        .memory-mode-note{display:none}.memory-mode-grid{margin:0}.memory-2026 .section-title{margin-top:0}
+      }
+
+      .theme-section > summary{min-height:44px;cursor:pointer}
+      @media(max-height:700px){.memory-2026 .game-subtitle{display:none}.memory-2026 .section-title{margin:6px 0}.memory-mode-note{display:none}}
     </style>
     <link rel="stylesheet" href="../../css/shared/arcade-home.css" />
     <link rel="stylesheet" href="../../css/shared/arcade-fonts.css" />
@@ -875,8 +898,8 @@
           </div>
         </div>
 
-        <div class="theme-section">
-          <div class="section-title">Thème</div>
+        <details class="theme-section">
+          <summary class="section-title">Changer le thème</summary>
           <div class="theme-pills">
             <button
               type="button"
@@ -915,7 +938,7 @@
               🌸 Nature
             </button>
           </div>
-        </div>
+        </details>
 
         <button type="button" class="play-btn" onclick="startGame()">▶ Jouer</button>
         <button type="button" class="secondary-btn" onclick="showLeaderboard()">

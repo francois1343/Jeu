@@ -29,7 +29,7 @@
       daily.removeAttribute("data-open-dialog");
       text('.platform-actions .platform-action.primary strong', "Choisir un jeu");
       text('.platform-actions .platform-action.primary small', "Gratuit · sans inscription");
-      daily.addEventListener("click", () => document.querySelector(".games-grid")?.scrollIntoView({ behavior: "smooth" }));
+      daily.addEventListener("click", () => { document.getElementById("arcadeWallet")?.close(); document.getElementById("compactGames")?.click(); });
     }
     document.querySelectorAll(".game-card").forEach((card) => {
       card.dataset.free = "true";

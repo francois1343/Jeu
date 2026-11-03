@@ -1415,3 +1415,17 @@ body::after {
     gap: 0.6rem;
   }
 }
+/* Short screens keep the start action near the options. */
+@media (max-width: 1100px), (max-height: 850px) {
+  .menu-card { padding: 16px; gap: 12px; }
+  .menu-card .logo { font-size: clamp(24px, 5vw, 36px); }
+  .menu-options { gap: 10px; }
+  .menu-card .eyebrow { display: none; }
+  .menu-actions .btn, .menu-options .btn { min-height: 44px; }
+}
+@media (max-height: 500px) and (min-width: 651px) {
+  .menu-card { display: grid; grid-template-columns: 1fr 1fr; }
+  .menu-card .logo, .menu-intro { grid-column: 1; }
+  .menu-options { grid-column: 2; grid-row: 1 / 5; }
+  .menu-actions { grid-column: 1; width: 100%; }
+}
