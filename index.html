@@ -27,7 +27,7 @@
     <link rel="apple-touch-icon" href="assets/icons/arcade-icon-v2-180.png" />
 
     <link rel="stylesheet" href="css/shared/arcade-fonts.css" />
-    <link rel="stylesheet" href="css/home.css?v=37" />
+    <link rel="stylesheet" href="css/home.css?v=38" />
   </head>
   <body>
     <!-- Particules décoratives -->
@@ -59,6 +59,7 @@
         </div>
       </header>
 
+      <details class="compact-disclosure" id="arcadeWallet"><summary>🪙 Coins & compte <span>Solde, défis et boutique</span></summary>
       <section class="platform-dashboard" aria-labelledby="arcadeEconomyTitle">
         <div class="platform-intro">
           <span class="platform-kicker">ÉCONOMIE · BÊTA SERVEUR</span>
@@ -120,6 +121,7 @@
           </button>
         </div>
       </section>
+      </details>
 
       <div
         class="platform-message"
@@ -280,6 +282,7 @@
           </button>
         </div>
       </section>
+      <details class="compact-disclosure" id="arcadeSelection"><summary>✦ La sélection Arcade <span>6 jeux à découvrir</span></summary>
       <section class="featured-games" aria-labelledby="featuredGamesTitle">
         <div class="featured-heading">
           <div>
@@ -392,6 +395,7 @@
           </article>
         </div>
       </section>
+      </details>
       <p class="catalog-empty" id="catalogEmpty" hidden>
         Aucun jeu ne correspond à ces critères. Essayez une autre recherche ou
         effacez les filtres.
@@ -1569,6 +1573,17 @@
         </article>
       </main>
 
+      <nav class="catalog-pages" aria-label="Pages du catalogue">
+        <button type="button" id="catalogPrevious" aria-label="Page précédente">← Précédent</button>
+        <span id="catalogPage" tabindex="-1" role="status" aria-live="polite"></span>
+        <button type="button" id="catalogNext" aria-label="Page suivante">Suivant →</button>
+      </nav>
+      <nav class="arcade-bottom-nav" aria-label="Navigation principale">
+        <button type="button" id="compactGames" aria-label="Revenir au catalogue">🎮<span>Jeux</span></button>
+        <button type="button" id="compactSelection">✦<span>Sélection</span></button>
+        <button type="button" id="compactAccount">👤<span>Compte</span></button>
+        <button type="button" data-open-dialog="settingsDialog">⚙<span>Réglages</span></button>
+      </nav>
       <!-- Footer -->
       <footer class="footer">
         <nav class="footer-links" aria-label="Informations et préférences">

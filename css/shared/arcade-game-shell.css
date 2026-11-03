@@ -424,3 +424,13 @@ html[data-arcade-visual-intensity="vivid"] .arcade-game-shell-dialog {
     transition-delay: 0ms !important;
   }
 }
+
+/* Short screens: compact shared game navigation. */
+@media (max-width:1100px), (max-height:700px) {
+ .arcade-game-shell-dialog { max-height:94dvh; width:min(96vw,720px); }
+ .arcade-game-shell-panel { padding:16px; }
+ .arcade-game-shell-panel>header { gap:10px; }
+ .arcade-game-shell-panel h2 { font-size:21px; }
+ .arcade-game-shell-panel>nav { position:sticky; top:-16px; z-index:2; background:var(--arcade-shell-surface); }
+ .arcade-shell-session-card { padding:12px; }
+}

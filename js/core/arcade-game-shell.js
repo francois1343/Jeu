@@ -71,6 +71,7 @@
           </div>
           <div class="arcade-shell-actions">
             <button type="button" class="is-primary" id="arcadeShellContinue">Jouer</button>
+            <button type="button" id="arcadeShellFullscreen" hidden>Plein écran</button>
             <button type="button" id="arcadeShellReplay" class="arcade-session-replay" hidden>Rejouer</button>
             <button type="button" class="is-danger" id="arcadeShellHome">Retour à l’Arcade</button>
           </div>
@@ -350,6 +351,20 @@
     dialog.addEventListener("keydown", (event) => event.stopPropagation());
     dialog.addEventListener("cancel", (event) => { event.preventDefault(); close(); });
     dialog.querySelectorAll("[data-shell-view]").forEach((tab) => tab.addEventListener("click", () => showView(tab.dataset.shellView)));
+    const fullscreen = element("arcadeShellFullscreen");
+    fullscreen.hidden = !global.document.fullscreenEnabled;
+    fullscreen.addEventListener("click", async () => {
+      try {
+        if (global.document.fullscreenElement) await global.document.exitFullscreen();
+        else await global.document.documentElement.requestFullscreen();
+        close();
+      } catch (_) {
+        element("arcadeShellStatus").textContent = "Le plein écran n’est pas disponible dans ce navigateur.";
+      }
+    });
+    global.document.addEventListener("fullscreenchange", () => {
+      fullscreen.textContent = global.document.fullscreenElement ? "Quitter le plein écran" : "Plein écran";
+    });
     element("arcadeShellContinue").addEventListener("click", close);
     element("arcadeShellReplay").addEventListener("click", () => sessionApi.id && sessionApi.replay());
     element("arcadeShellHome").addEventListener("click", goHome);

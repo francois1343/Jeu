@@ -281,7 +281,17 @@
           });
         }
 
-        function updateCatalog() {
+        let page = 0;
+        const previous = document.getElementById("catalogPrevious");
+        const next = document.getElementById("catalogNext");
+        const pageLabel = document.getElementById("catalogPage");
+        function pageSize() {
+          const columns = getComputedStyle(grid).gridTemplateColumns.split(" ").length;
+          const rows = window.innerHeight < 650 ? 1 : window.innerHeight < 1000 ? 2 : 3;
+          return Math.max(1, columns * rows);
+        }
+        function updateCatalog(resetPage = true) {
+          if (resetPage) page = 0;
           const query = normalizeCatalogText(search.value.trim());
           const stats = new Map((window.ArcadeStats?.getGameStats?.() || []).map((stat) => [stat.key, stat]));
           const visible = entries.filter((entry) =>
@@ -302,7 +312,13 @@
           });
 
           entries.forEach((entry) => { entry.card.hidden = true; });
-          visible.forEach((entry) => { entry.card.hidden = false; grid.appendChild(entry.card); });
+          const size = pageSize();
+          const pages = Math.max(1, Math.ceil(visible.length / size));
+          page = Math.min(page, pages - 1);
+          visible.slice(page * size, (page + 1) * size).forEach((entry) => { entry.card.hidden = false; grid.appendChild(entry.card); });
+          if (previous) previous.disabled = page === 0;
+          if (next) next.disabled = page >= pages - 1;
+          if (pageLabel) pageLabel.textContent = visible.length ? `${page + 1} / ${pages}` : "Aucun jeu";
           result.textContent = `${visible.length} ${visible.length > 1 ? "jeux" : "jeu"}`;
           empty.hidden = visible.length > 0;
           clear.hidden = !query && activeCategory === "all" && difficulty.value === "all" && sort.value === "recommended";
@@ -312,6 +328,34 @@
           selectCategory(button.dataset.categoryFilter || "all");
           updateCatalog();
         }));
+        previous?.addEventListener("click", () => { page--; updateCatalog(false); pageLabel?.focus({ preventScroll: true }); });
+        next?.addEventListener("click", () => { page++; updateCatalog(false); pageLabel?.focus({ preventScroll: true }); });
+        let resizeTimer;
+        window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => updateCatalog(false), 150); });
+        document.getElementById("compactGames")?.addEventListener("click", () => {
+          document.getElementById("arcadeSelection").open = false;
+          document.getElementById("arcadeWallet").open = false;
+          search.focus({ preventScroll: true });
+          document.querySelector(".catalog-controls").scrollIntoView({ block: "start" });
+        });
+        document.getElementById("compactSelection")?.addEventListener("click", () => {
+          const selection = document.getElementById("arcadeSelection");
+          selection.open = !selection.open;
+          if (selection.open) selection.scrollIntoView({ block: "start" });
+        });
+        if (window.ARCADE_CONFIG?.mode === "guest") {
+          document.querySelector("#arcadeWallet > summary").textContent = "ⓘ Accès libre · informations";
+          document.querySelector("#compactAccount span").textContent = "Infos";
+        }
+        document.getElementById("compactAccount")?.addEventListener("click", () => {
+          const account = document.getElementById("accountButton");
+          if (account && !account.disabled) account.click();
+          else {
+            const wallet = document.getElementById("arcadeWallet");
+            wallet.open = !wallet.open;
+            if (wallet.open) wallet.scrollIntoView({ block: "start" });
+          }
+        });
         search.addEventListener("input", updateCatalog);
         sort.addEventListener("change", updateCatalog);
         difficulty.addEventListener("change", updateCatalog);

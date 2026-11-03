@@ -3250,3 +3250,69 @@
           white-space: normal;
         }
       }
+
+/* Compact catalogue, preserving the Arcade neon identity. */
+.app-container { padding: 12px 20px 90px; }
+.header { display:flex; align-items:center; flex-wrap:wrap; gap:12px; padding:8px 0 16px; text-align:left; }
+.header .logo { margin:0; font-size:13px; letter-spacing:2px; }
+.header .title { margin:0; font-size:23px; }
+.header .subtitle,.header .header-line { display:none; }
+.header .account-strip { margin:0 0 0 auto; padding:0; width:auto; }
+.compact-disclosure { margin-bottom:10px; border:1px solid #ffffff20; border-radius:12px; background:#111827cc; }
+.compact-disclosure>summary { min-height:44px; padding:12px 16px; cursor:pointer; color:var(--neon-cyan); font-weight:700; }
+.compact-disclosure>summary span { margin-left:10px; color:var(--text-secondary); font-weight:400; }
+.compact-disclosure .platform-dashboard,.compact-disclosure .featured-games { margin:0; border:0; padding:16px; }
+.catalog-controls { margin:12px 0; padding:14px; scroll-margin-top:12px; }
+.catalog-heading { margin-bottom:10px; }
+.catalog-heading h2 { font-size:clamp(18px,2.5vw,24px); }
+.catalog-heading p:not(.catalog-results),.catalog-kicker { display:none; }
+.catalog-search-row { gap:10px; }
+.catalog-filter-row { margin-top:10px; }
+.catalog-filter-group { gap:6px; }
+.catalog-filter { min-height:44px; padding:8px 12px; }
+.games-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; padding:0; }
+.games-grid .game-card { padding:14px; border-radius:14px; gap:6px; min-width:0; animation:none; opacity:1; }
+.games-grid .game-icon { width:40px; height:40px; font-size:24px; margin:0; }
+.games-grid .game-title { font-size:15px; line-height:1.3; margin:0; overflow-wrap:anywhere; }
+.games-grid .game-tags { margin:0; gap:4px; }
+.games-grid .tag { font-size:11px; padding:3px 6px; }
+.games-grid .game-description { font-size:14px; line-height:1.25; margin:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.games-grid .game-interactive { display:none; }
+.games-grid .btn-launch { min-height:44px; padding:10px 8px; margin-top:auto; font-size:12px; width:100%; white-space:normal; }
+.games-grid .free-badge { top:8px; right:8px; font-size:9px; padding:3px 6px; }
+.games-grid .game-card:hover { transform:translateY(-2px); }
+.catalog-pages { display:flex; justify-content:center; align-items:center; gap:18px; margin:14px 0; }
+.catalog-pages button { min-height:44px; padding:8px 16px; border:1px solid #ffffff30; border-radius:10px; color:#fff; background:#111827; font:inherit; cursor:pointer; }
+.catalog-pages button:disabled { opacity:.4; cursor:default; }
+.arcade-bottom-nav { position:fixed; z-index:90; bottom:0; left:50%; transform:translateX(-50%); width:min(100%,560px); display:grid; grid-template-columns:repeat(4,1fr); padding:6px 10px calc(6px + env(safe-area-inset-bottom)); background:#0a0e1af5; border:1px solid #00ffff40; border-radius:18px 18px 0 0; backdrop-filter:blur(16px); }
+.arcade-bottom-nav button { display:grid; place-items:center; gap:3px; min-height:48px; border:0; background:transparent; color:var(--neon-cyan); font:inherit; font-size:19px; cursor:pointer; }
+.arcade-bottom-nav button span { color:#fff; font-size:12px; }
+.arcade-bottom-nav button:hover { background:#ffffff10; border-radius:10px; }
+.pwa-prompt { bottom:calc(80px + env(safe-area-inset-bottom)); }
+.footer { padding:12px 0; margin-top:16px; }
+:where(.arcade-bottom-nav button,.catalog-pages button,.compact-disclosure summary):focus-visible { outline:2px solid var(--neon-cyan); outline-offset:3px; }
+@media(max-width:1100px) {
+ .games-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+ .header .platform-state { display:none; }
+}
+@media(max-width:650px) {
+ .app-container { padding:10px 12px 90px; }
+ .games-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+ .header { gap:6px; padding-bottom:10px; }
+ .header .logo { font-size:11px; letter-spacing:1px; }
+ .header .title,.header .account-balance-label,.compact-disclosure>summary span { display:none; }
+ .catalog-controls { padding:10px; }
+ .catalog-search-row { flex-wrap:wrap; }
+ .catalog-selects { width:100%; }
+ .catalog-filter-label { display:none; }
+ .catalog-filter-group { flex-wrap:nowrap; overflow-x:auto; max-width:100%; padding-bottom:3px; }
+ .catalog-filter { flex:0 0 auto; }
+ .games-grid .game-card { padding:10px; }
+ .games-grid .game-title { font-size:12px; }
+ .games-grid .game-description { font-size:13px; }
+}
+@media(max-width:650px) {
+ .catalog-selects { grid-template-columns:1fr 1fr; }
+ .catalog-filter-row { min-width:0; }
+ .catalog-filter-group { min-width:0; }
+}
