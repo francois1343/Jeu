@@ -3,8 +3,8 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const root = path.resolve(__dirname, "..");
-const skippedDirectories = new Set([".git", "node_modules", "supabase", "docs", "tests"]);
+const root = path.resolve(process.env.ARCADE_STATIC_DIR || path.join(__dirname, ".."));
+const skippedDirectories = new Set([".git", "node_modules", "dist", "supabase", "docs", "tests"]);
 const issues = [];
 
 function collectFiles(directory) {

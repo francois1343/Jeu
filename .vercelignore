@@ -1,0 +1,11 @@
+.git/
+node_modules/
+dist/
+.env*
+supabase/
+docs/
+tests/
+.vscode/
+Francis_Arcade_Audit_Trello.xlsx
+francis_arcade_audit_global_export.csv
+francis_arcade_audit_global.json

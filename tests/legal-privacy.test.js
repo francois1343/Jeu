@@ -47,7 +47,7 @@ assert.match(feedback, /RETENTION_DAYS/);
 
 function collect(directory, extension) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    if ([".git", "node_modules"].includes(entry.name)) return [];
+    if ([".git", "node_modules", "dist"].includes(entry.name)) return [];
     const fullPath = path.join(directory, entry.name);
     if (entry.isDirectory()) return collect(fullPath, extension);
     return entry.isFile() && fullPath.endsWith(extension) ? [fullPath] : [];

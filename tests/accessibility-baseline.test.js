@@ -8,7 +8,7 @@ const root = path.resolve(__dirname, "..");
 
 function htmlFiles(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    if (entry.name === "node_modules" || entry.name === ".git") return [];
+    if (["node_modules", ".git", "dist"].includes(entry.name)) return [];
     const fullPath = path.join(directory, entry.name);
     if (entry.isDirectory()) return htmlFiles(fullPath);
     return entry.isFile() && entry.name.toLowerCase().endsWith(".html") ? [fullPath] : [];

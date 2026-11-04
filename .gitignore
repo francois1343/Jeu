@@ -11,5 +11,7 @@ supabase/.branches/
 
 # Dépendances et sorties natives
 node_modules/
+dist/
+.vercel/
 android/.gradle/
 android/app/build/

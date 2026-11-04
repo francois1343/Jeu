@@ -8,7 +8,7 @@ const root = path.resolve(__dirname, "..");
 
 function walk(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    if ([".git", "node_modules"].includes(entry.name)) return [];
+    if ([".git", "node_modules", "dist"].includes(entry.name)) return [];
     const entryPath = path.join(directory, entry.name);
     return entry.isDirectory() ? walk(entryPath) : [entryPath];
   });
@@ -28,7 +28,10 @@ for (const page of pages) {
     assert.ok(!descriptions.has(description), `Meta description dupliquée : ${relative}`);
     descriptions.add(description);
   }
-  assert.doesNotMatch(source, /<(?:script|link)\b[^>]*(?:src|href)="https?:\/\//i, `Dépendance CDN distante : ${relative}`);
+  for (const tag of source.match(/<(?:script|link)\b[^>]*>/gi) || []) {
+    if (/^<link\b/i.test(tag) && /\brel=["'](?:canonical|alternate)["']/i.test(tag)) continue;
+    assert.doesNotMatch(tag, /(?:src|href)=["']https?:\/\//i, `Dépendance CDN distante : ${relative}`);
+  }
 }
 
 const missing = fs.readFileSync(path.join(root, "404.html"), "utf8");

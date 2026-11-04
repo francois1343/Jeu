@@ -9,12 +9,13 @@ const { DevTools, retry } = require("../scripts/generate-ux-audit.js");
 const root = path.resolve(__dirname, "..");
 const chrome = process.env.CHROME_PATH;
 assert(chrome && fs.existsSync(chrome), "Définir CHROME_PATH vers Chrome ou Chromium");
-const base = "http://127.0.0.1:4182";
+const base = (process.env.ARCADE_BASE_URL || "http://127.0.0.1:4182").replace(/\/$/, "");
+const staticRoot = path.resolve(process.env.ARCADE_STATIC_DIR || root);
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function main() {
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), "arcade-mobile-"));
-  const server = spawn("python", ["-m", "http.server", "4182", "--bind", "127.0.0.1"], { cwd: root, stdio: "ignore" });
-  const browser = spawn(chrome, ["--headless=new", "--remote-debugging-port=9392", `--user-data-dir=${profile}`, "--no-first-run", "--mute-audio", "about:blank"], { stdio: "ignore" });
+  const server = process.env.ARCADE_BASE_URL ? null : spawn("python", ["-m", "http.server", "4182", "--bind", "127.0.0.1"], { cwd: staticRoot, stdio: "ignore", windowsHide: true });
+  const browser = spawn(chrome, ["--headless=new", "--remote-debugging-port=9392", `--user-data-dir=${profile}`, "--no-first-run", "--mute-audio", "about:blank"], { stdio: "ignore", windowsHide: true });
   let cdp, checks = 0;
   try {
     await retry(async () => assert((await fetch(base)).ok));
@@ -30,7 +31,7 @@ async function main() {
     const search = text => cdp.evaluate(`(() => { const input = document.getElementById('gameSearch'); input.value=${JSON.stringify(text)}; input.dispatchEvent(new Event('input',{bubbles:true})); return true; })()`);
     const navigate = async route => {
       await cdp.send("Page.navigate", { url: `${base}/${route}` });
-      await retry(async () => assert(await cdp.evaluate(`location.pathname===${JSON.stringify('/'+route)} && document.readyState==='complete'`)));
+      await retry(async () => assert(await cdp.evaluate(`location.pathname===${JSON.stringify(new URL(`${base}/${route}`).pathname)} && document.readyState==='complete'`)));
       await cdp.evaluate("document.fonts.ready.then(() => true)"); await pause(200);
       await cdp.evaluate("(() => { if(window.ArcadeGameShell?.isOpen) document.getElementById('arcadeShellTutorialSkip')?.click(); return true; })()");
     };
@@ -85,6 +86,6 @@ async function main() {
       console.log(`${width}×${height} : ${checks} contrôles cumulés`);
     }
     console.log(`Découverte mobile : ${checks} contrôles réussis.`);
-  } finally { cdp?.close(); browser.kill(); server.kill(); }
+  } finally { cdp?.close(); browser.kill(); server?.kill(); }
 }
 main().catch(error => { console.error(error); process.exitCode=1; });

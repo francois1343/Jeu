@@ -6,6 +6,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 function findHtmlFiles(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    if (["node_modules", ".git", "dist"].includes(entry.name)) return [];
     const filePath = path.join(directory, entry.name);
     if (entry.isDirectory()) return findHtmlFiles(filePath);
     return entry.isFile() && entry.name.endsWith(".html") ? [filePath] : [];

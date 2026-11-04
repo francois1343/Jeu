@@ -3,12 +3,12 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const root = path.resolve(__dirname, "..");
+function applyMetadata(root) {
 const homePath = path.join(root, "index.html");
 
 function walk(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    if ([".git", "node_modules"].includes(entry.name)) return [];
+    if ([".git", "node_modules", "dist", "tests", "docs"].includes(entry.name) || entry.isSymbolicLink()) return [];
     const entryPath = path.join(directory, entry.name);
     return entry.isDirectory() ? walk(entryPath) : [entryPath];
   });
@@ -126,4 +126,11 @@ for (const page of pages) {
   fs.writeFileSync(page, source, "utf8");
 }
 
-console.log(`Métadonnées SEO actualisées : ${pages.length} pages.`);
+return pages.length;
+}
+
+if (require.main === module) {
+  const root = path.resolve(process.argv[2] || path.join(__dirname, "..", "dist"));
+  console.log(`Métadonnées SEO actualisées : ${applyMetadata(root)} pages.`);
+}
+module.exports = { applyMetadata };
