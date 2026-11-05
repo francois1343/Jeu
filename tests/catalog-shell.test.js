@@ -13,7 +13,7 @@ const shell = sandbox.window.ARCADE_GAME_CONFIG.shell;
 const home = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const catalogKeys = [...new Set([...home.matchAll(/data-game="([^"]+)"/g)].map((match) => match[1]))];
 
-assert.equal(catalogKeys.length, 43, "L’index doit exposer les 43 entrées attendues");
+assert.equal(catalogKeys.length, 44, "L’index doit exposer les 44 entrées, Bingo compris");
 for (const key of catalogKeys) {
   const game = shell.games[key];
   assert(game, `Configuration du menu commun absente pour ${key}`);
@@ -31,7 +31,7 @@ function htmlFiles(directory) {
 }
 
 const pages = htmlFiles(path.join(root, "games"));
-assert.equal(pages.length, 43, "Le catalogue doit conserver ses 43 pages de jeu");
+assert.equal(pages.length, 44, "Le catalogue doit contenir 44 pages de jeu, Bingo compris");
 for (const page of pages) {
   const folder = path.basename(path.dirname(page)).toLocaleLowerCase("fr");
   const key = shell.routeAliases[folder];

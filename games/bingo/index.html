@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none' https://nnqfomqgagfshujyfrtl.supabase.co wss://nnqfomqgagfshujyfrtl.supabase.co; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <title>Bingo 75 — Francis Arcade</title>
+    <!-- SEO_META_START -->
+    <meta name="description" content="Cochez les numéros annoncés, complétez une ligne ou le carton plein et battez votre record local. Un bingo gratuit, sans mise ni gain monétaire. Jouez gratuitement sur Francis Arcade." />
+    <meta property="og:title" content="Bingo 75 — Francis Arcade" />
+    <meta property="og:description" content="Cochez les numéros annoncés, complétez une ligne ou le carton plein et battez votre record local. Un bingo gratuit, sans mise ni gain monétaire. Jouez gratuitement sur Francis Arcade." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Francis Arcade" />
+    <meta property="og:locale" content="fr_BE" />
+    <meta name="twitter:card" content="summary" />
+    <!-- SEO_META_END -->
+    <link rel="icon" href="../../assets/icons/favicon.svg">
+  <link rel="stylesheet" href="../../css/shared/arcade-fonts.css">
+  <link rel="stylesheet" href="bingo.css">
+  <script src="engine.js" defer></script>
+  <script src="bingo.js" defer></script>
+    <!-- SEO_DEPLOY_START -->
+    <link rel="canonical" href="https://francois1343.github.io/Jeu/games/bingo/index.html" />
+    <meta property="og:url" content="https://francois1343.github.io/Jeu/games/bingo/index.html" />
+    <meta property="og:image" content="https://francois1343.github.io/Jeu/assets/icons/arcade-icon-v2-512.png" />
+    <meta name="twitter:image" content="https://francois1343.github.io/Jeu/assets/icons/arcade-icon-v2-512.png" />
+    <!-- SEO_DEPLOY_END -->
+  </head>
+<body data-arcade-shell="false">
+  <header class="topbar"><a href="../../index.html">← Francis Arcade</a><span>GRATUIT · SANS MISE · SANS GAIN MONÉTAIRE</span></header>
+  <main>
+    <section class="intro"><p class="eyebrow">UN TIRAGE, UNE CASE, UNE LIGNE</p><h1>Bingo<span>75</span></h1><p>Ouvre l’œil. Coche les numéros annoncés. À toi le Bingo !</p></section>
+    <div class="layout">
+      <section class="panel card-panel" aria-labelledby="card-title">
+        <div class="panel-head"><h2 id="card-title">Ton carton</h2><label for="goal">Objectif<select id="goal"><option value="line">Ligne, colonne ou diagonale</option><option value="full">Carton plein</option></select></label></div>
+        <div class="letters" aria-hidden="true"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>
+        <div id="card" class="card" role="group" aria-label="Carton de 25 cases. Le centre est libre."></div>
+        <button type="button" id="claim" class="primary claim">Bingo ! Vérifier mon carton</button>
+        <p id="notice" class="notice" role="status" aria-live="polite" aria-atomic="true">Tire ton premier numéro pour commencer.</p>
+      </section>
+      <aside class="panel draw-panel" aria-labelledby="draw-title">
+        <div class="panel-head"><h2 id="draw-title">Le tirage</h2><span id="count">0 / 75</span></div>
+        <div class="ball" id="ball" aria-live="off"><span id="last-letter">PRÊT ?</span><strong id="last-number">75</strong></div>
+        <button type="button" id="draw" class="primary">Tirer un numéro</button>
+        <button type="button" id="auto" aria-pressed="false">Tirage auto · toutes les 4 s</button>
+        <p class="hint">L’auto se met en pause si tu quittes l’onglet ou si une combinaison est disponible.</p>
+        <div class="history-head"><h3>Numéros annoncés</h3><span id="history-count">Aucun</span></div>
+        <ol id="history" class="history" aria-label="Historique du tirage, plus récent en premier"></ol>
+        <div class="record"><span>Meilleur tirage local</span><strong id="best">—</strong><small>Moins de numéros, c’est mieux. Le tirage reste aléatoire.</small></div>
+        <button type="button" id="restart">Nouvelle grille</button>
+      </aside>
+    </div>
+    <details class="panel rules"><summary>Comment jouer ?</summary><p>Chaque colonne possède ses numéros : B de 1 à 15, I de 16 à 30, N de 31 à 45, G de 46 à 60 et O de 61 à 75. Le centre est gratuit et toujours coché.</p><ol><li>Choisis ton objectif avant le premier tirage.</li><li>Tire les numéros un par un ou active le tirage automatique.</li><li>Coche uniquement les numéros déjà annoncés. Tu peux consulter tout l’historique.</li><li>Complète une ligne, une colonne ou une diagonale ; en mode carton plein, remplis toutes les cases. Appuie sur « Bingo ! » pour valider.</li></ol><p>Mode solo local, sans classement en ligne, mise, gain monétaire ou récompense en Coins. Les records sont conservés sur ce navigateur uniquement, si le stockage est disponible. « Nouvelle grille » recommence la partie.</p></details>
+  </main>
+  <footer>Francis Arcade · Un jeu de loisir, à ton rythme.</footer>
+</body>
+</html>

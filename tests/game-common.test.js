@@ -70,9 +70,16 @@ function collect(directory) {
   });
 }
 collect(path.join(root, "games"));
-assert.equal(pages.length, 43, "Le parc de jeux attendu doit rester complet");
+assert.equal(pages.length, 44, "Le parc comprend désormais les 43 jeux existants et le Bingo gratuit");
 pages.forEach((page) => {
   const html = fs.readFileSync(page, "utf8");
+  if (path.relative(root, page).split(path.sep).join("/") === "games/bingo/index.html") {
+    assert.match(html, /data-arcade-shell="false"/, "Bingo utilise ses propres règles de loisir");
+    assert.match(html, /connect-src 'none'/, "Bingo reste autonome et sans économie distante");
+    assert.match(html, /href="\.\.\/\.\.\/index\.html"/, "Bingo garde son retour Accueil");
+    assert.doesNotMatch(html, /arcade-game-bridge\.js/, "Le pont économique ne doit pas être lancé par Bingo");
+    return;
+  }
   assert.match(html, /arcade-game-bridge\.js/, `${path.relative(root, page)} doit charger le pont central`);
 });
 

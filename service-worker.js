@@ -1,7 +1,11 @@
-const CACHE = "arcade-station-v72";
+const CACHE = "arcade-station-v73";
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./games/bingo/index.html",
+  "./games/bingo/engine.js",
+  "./games/bingo/bingo.js",
+  "./games/bingo/bingo.css",
   "./manifest.webmanifest",
   "./offline.html",
   "./404.html",

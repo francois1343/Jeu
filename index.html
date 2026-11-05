@@ -422,6 +422,14 @@
       </p>
       <!-- Grille de jeux -->
       <main class="games-grid">
+        <article class="game-card bingo fade-in" onclick="focusCard(this)" data-game="bingo" data-free="true">
+          <span class="free-badge" aria-label="Jeu gratuit">FREE</span>
+          <div class="game-icon" aria-hidden="true">🔢</div>
+          <h2 class="game-title">Bingo 75</h2>
+          <div class="game-tags"><span class="tag difficulty-easy">Facile</span><span class="tag">Arcade</span><span class="tag">Sans mise</span></div>
+          <p class="game-description">Cochez les numéros annoncés, complétez une ligne ou le carton plein et battez votre record local. Un bingo gratuit, sans mise ni gain monétaire.</p>
+          <button type="button" class="btn btn-primary btn-launch" onclick="launchGame('games/bingo/index.html', event)">Jouer au Bingo</button>
+        </article>
         <!-- Pile ou Face -->
         <article
           class="game-card coin fade-in"

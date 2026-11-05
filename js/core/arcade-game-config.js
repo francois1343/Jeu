@@ -18,6 +18,7 @@
   }
 
   const games = Object.freeze({
+    bingo: game("Bingo 75", "Cochez les numéros annoncés et complétez une ligne, une colonne, une diagonale ou le carton plein. Mode gratuit sans mise ni gain monétaire.", "Tirez les numéros, cochez les cases correspondantes, puis annoncez Bingo. Le centre est libre.", "Consultez l’historique et mettez le tirage automatique en pause pour vérifier votre carton."),
     "2048": game("2048", "Fusionnez les tuiles de même valeur et atteignez 2048 avant de bloquer la grille.", "Utilisez les flèches du clavier ou faites glisser la grille sur écran tactile.", "Préservez un coin pour votre plus grande tuile et évitez les mouvements désordonnés."),
     "421-duel": game("421 Duel", "Lancez jusqu’à trois fois, gardez les dés utiles et remportez trois manches avant l’IA.", "Sélectionnez les dés à conserver, puis relancez ou validez votre main.", "421 bat le brelan, le double, la suite puis les autres mains.", { pauseSupported: true }),
     bataille: game("Bataille Navale", "Placez votre flotte puis coulez tous les navires adverses avant de perdre les vôtres.", "Choisissez une case de la grille ennemie à chaque tour ; les impacts sont mémorisés.", "Espacez vos tirs après un échec et encadrez rapidement chaque navire touché."),
@@ -87,6 +88,7 @@
       leaderboardLimit: 10,
       catalogKeys: Object.freeze(Object.keys(games)),
       routeAliases: Object.freeze({
+        bingo: "bingo",
         "2048": "2048",
         "421": "421-duel",
         "bataille-navale": "bataille",
