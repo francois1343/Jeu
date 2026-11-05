@@ -991,9 +991,11 @@
       <!-- Footer -->
       <footer class="footer">
         <div class="footer-links">
-          <a href="#" class="footer-link">À propos</a>
-          <a href="#" class="footer-link">Paramètres</a>
-          <a href="#" class="footer-link">Crédits</a>
+          <a href="legal/mentions-legales.html" class="footer-link">Mentions légales</a>
+          <a href="legal/confidentialite.html" class="footer-link">Confidentialité</a>
+          <button class="footer-link footer-link-button" id="openPrivacyControlsButton" type="button">
+            Gérer mes données
+          </button>
         </div>
         <p>© 2026 Francis Arcade • Fait avec 💜</p>
       </footer>
@@ -1048,6 +1050,28 @@
           </div>
           <h3 class="dialog-section-title">Dernières transactions</h3>
           <ul class="transaction-list" id="transactionList"></ul>
+          <section class="data-controls" aria-labelledby="dataControlsTitle">
+            <h3 class="dialog-section-title" id="dataControlsTitle">Vos données locales</h3>
+            <p class="dialog-copy">
+              Téléchargez une copie JSON lisible par machine, supprimez uniquement ce profil ou
+              effacez toutes les données Arcade Station enregistrées dans ce navigateur.
+            </p>
+            <div class="data-actions">
+              <button class="btn btn-secondary" id="exportLocalDataButton" type="button">
+                Exporter mes données
+              </button>
+              <button class="btn btn-danger" id="deleteProfileButton" type="button">
+                Supprimer ce profil
+              </button>
+              <button class="btn btn-danger data-clear-all" id="clearDeviceDataButton" type="button">
+                Tout effacer sur cet appareil
+              </button>
+            </div>
+            <p class="data-action-result" id="dataActionResult" role="status" aria-live="polite"></p>
+            <p class="data-privacy-link">
+              <a href="legal/confidentialite.html">Consulter la politique de confidentialité</a>
+            </p>
+          </section>
           <button class="btn btn-secondary signout-button" id="signOutButton" type="button">Changer de pseudo</button>
         </section>
       </div>

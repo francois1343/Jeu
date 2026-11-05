@@ -206,6 +206,34 @@
       .sort((left, right) => left.pseudo.localeCompare(right.pseudo, "fr"));
   }
 
+  function deleteActiveProfile() {
+    const state = readState();
+    const profileId = state.activeProfileId;
+    const profile = profileId ? state.profiles[profileId] : null;
+    if (!profile) throw new Error("profile_required");
+
+    delete state.profiles[profileId];
+    state.activeProfileId = null;
+    writeState(state);
+    return clone(profile);
+  }
+
+  function clearAllLocalData() {
+    const removedKeys = [];
+    try {
+      for (let index = localStorage.length - 1; index >= 0; index -= 1) {
+        const key = localStorage.key(index);
+        if (key !== null) removedKeys.push(key);
+      }
+      removedKeys.forEach((key) => localStorage.removeItem(key));
+    } catch (_) {
+      // La copie en mémoire est tout de même réinitialisée si le stockage est indisponible.
+    }
+    memoryFallback = emptyState();
+    global.dispatchEvent?.(new CustomEvent("arcade-local-store-change"));
+    return removedKeys;
+  }
+
   function createSession({ gameKey, title, url }) {
     const state = readState();
     const profile = state.profiles[state.activeProfileId];
@@ -374,6 +402,8 @@
     getProfile,
     getActiveProfile,
     listProfiles,
+    deleteActiveProfile,
+    clearAllLocalData,
     createSession,
     getSession,
     getActiveSession,

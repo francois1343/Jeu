@@ -166,6 +166,88 @@
     return state.profile;
   }
 
+  function parseLocalValue(value) {
+    try {
+      return JSON.parse(value);
+    } catch (_) {
+      return value;
+    }
+  }
+
+  function collectDeviceData() {
+    const deviceData = {};
+    for (let index = 0; index < global.localStorage.length; index += 1) {
+      const key = global.localStorage.key(index);
+      if (!key || key === store.storageKey || key === "arcade.fictionalCoins.v1") continue;
+      deviceData[key] = parseLocalValue(global.localStorage.getItem(key));
+    }
+    return deviceData;
+  }
+
+  function downloadJson(value, filename) {
+    const blob = new Blob([JSON.stringify(value, null, 2)], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.hidden = true;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+
+  function exportLocalData() {
+    const profile = store.getActiveProfile();
+    if (!profile) throw new Error("profile_required");
+    const exportedAt = new Date().toISOString();
+    const safePseudo = profile.pseudo.toLocaleLowerCase("fr-BE").replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "profil";
+    const payload = {
+      format: "arcade-station-local-export",
+      version: 1,
+      exportedAt,
+      scope: "active-profile-and-device-game-data",
+      application: {
+        name: "Arcade Station",
+        mode: config.mode,
+        origin: global.location.origin,
+      },
+      profile,
+      deviceGameData: collectDeviceData(),
+      notes: [
+        "Les autres profils locaux enregistrés dans ce navigateur sont exclus.",
+        "Les scores, sauvegardes et préférences de jeu ne sont pas toujours rattachés à un profil et peuvent être partagés sur cet appareil.",
+      ],
+    };
+    downloadJson(payload, `arcade-station-${safePseudo}-${exportedAt.slice(0, 10)}.json`);
+    setText("dataActionResult", "Export JSON téléchargé. Il contient le profil actif et les données de jeu de cet appareil.");
+    return payload;
+  }
+
+  function deleteCurrentProfile() {
+    const profile = store.getActiveProfile();
+    if (!profile) throw new Error("profile_required");
+    const confirmed = global.confirm(
+      `Supprimer définitivement le profil local « ${profile.pseudo} », son solde, ses sessions et son historique ? Les sauvegardes propres aux jeux resteront sur cet appareil.`,
+    );
+    if (!confirmed) return false;
+    store.deleteActiveProfile();
+    refreshAccount();
+    setMessage(`Le profil local ${profile.pseudo} a été supprimé définitivement.`, "success");
+    return true;
+  }
+
+  function clearDeviceData() {
+    const confirmed = global.confirm(
+      "Effacer définitivement tous les profils, soldes, historiques, scores, sauvegardes et préférences d’Arcade Station stockés dans ce navigateur ? Cette action est irréversible.",
+    );
+    if (!confirmed) return false;
+    const removedKeys = store.clearAllLocalData();
+    refreshAccount();
+    setMessage(`${removedKeys.length} élément(s) de stockage local ont été supprimés de cet appareil.`, "success");
+    return true;
+  }
+
   function openDialog(id) {
     const dialog = element(id);
     if (typeof dialog?.showModal === "function" && !dialog.open) dialog.showModal();
@@ -376,6 +458,19 @@
       refreshAccount();
       setMessage("Profil local fermé. Les données restent enregistrées sur cet appareil.", "success");
     });
+    element("exportLocalDataButton")?.addEventListener("click", () => {
+      try { exportLocalData(); }
+      catch (error) { setText("dataActionResult", readableError(error)); }
+    });
+    element("deleteProfileButton")?.addEventListener("click", () => {
+      try { deleteCurrentProfile(); }
+      catch (error) { setText("dataActionResult", readableError(error)); }
+    });
+    element("clearDeviceDataButton")?.addEventListener("click", () => {
+      try { clearDeviceData(); }
+      catch (error) { setText("dataActionResult", readableError(error)); }
+    });
+    element("openPrivacyControlsButton")?.addEventListener("click", openAccountDialog);
     element("adminForm")?.addEventListener("submit", handleAdminAdjustment);
     element("challengeForm")?.addEventListener("submit", submitChallenge);
     element("backToChallenges")?.addEventListener("click", resetChallengeLobby);
@@ -428,6 +523,9 @@
     reportGameResult: store.finishSession,
     startChallenge,
     settleChallenge,
+    exportLocalData,
+    deleteCurrentProfile,
+    clearDeviceData,
   });
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
